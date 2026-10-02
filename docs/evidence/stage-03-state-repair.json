@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "devbox": "stage03-final",
+  "failure": "Save-State Move-Item destination collision while guest-status read provisioning.json; current WDK payload directory was empty",
+  "transfer": {
+    "beforeSha256": "d2e8b362183e243aa83a0db53aac72ee3582bc2e108fde0d56c0c28894d7b85b",
+    "afterSha256": "cffbe8d391617115a964967321d6f888d7e5857cbe19262722f43f8fe5ba5700"
+  },
+  "hashVerified": true,
+  "latestTransfer": {
+    "beforeSha256": "cffbe8d391617115a964967321d6f888d7e5857cbe19262722f43f8fe5ba5700",
+    "afterSha256": "0e9afcf03a772b8bab21e46e59330e78e6f22cf01232340e2f6e8ca01c16a35e"
+  },
+  "latestTransfers": [
+    {
+      "beforeSha256": "0e9afcf03a772b8bab21e46e59330e78e6f22cf01232340e2f6e8ca01c16a35e",
+      "afterSha256": "6c71e624467b39cdb7ca7f918cce33d48fb0f139083f89eefa4c2271ae018a7b",
+      "file": "Provision.ps1"
+    },
+    {
+      "beforeSha256": "3153fd61286f3861538855464a308859e98f0cf0a163a04c4cdf7d87e890f659",
+      "afterSha256": "69af3c32ee15ce3f0e27642f1bad969262a2b26098cefbd6ebd0bd365d158bd8",
+      "file": "Toolchain.ps1"
+    }
+  ],
+  "regressionEvidence": "stage-03-state-race.json",
+  "historyTransfer": {
+    "beforeSha256": "6c71e624467b39cdb7ca7f918cce33d48fb0f139083f89eefa4c2271ae018a7b",
+    "afterSha256": "b24bc5e70646a87d8cd935fd024b27266aa8784641a41a0baf3e39e8552824e0"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "state": "verified",
+  "scope": "Two concurrent headless QEMU devboxes, distinct state and SSH/VNC ports; second guest uses an earlier partial lock",
+  "startJobId": "op-c2a05fa6d8cf4d1aba66fa0252a013f2",
+  "devboxes": [
+    {
+      "name": "stage03-final",
+      "ports": {
+        "ssh": 38599,
+        "viewer": 56893
+      },
+      "identity": "f03023223352493dab795ca834a3d798",
+      "state": "running",
+      "containerId": "d5e28cf082a9378e66a23b47fc763e9b71d32459a5bea8522f84adec48387b80",
+      "loaded": true
+    },
+    {
+      "name": "stage03-native",
+      "ports": {
+        "ssh": 56825,
+        "viewer": 47755
+      },
+      "identity": "3ba2c1328c37488d8cd69cf9d78bba36",
+      "state": "running",
+      "containerId": "74337f66576f0e9973f98e4b9f021772496a3fa6bde7f5ca2c5cd430d05194de",
+      "loaded": true
+    }
+  ],
+  "stopJobId": "op-8dc86ef569c14bc682439faa9c4e801c",
+  "cleanStopState": "succeeded",
+  "secondDevboxDiskPreserved": true
+}

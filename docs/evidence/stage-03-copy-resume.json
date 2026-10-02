@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "devbox": "stage03-complete",
+  "identity": "4c6923aacf28423da202d7c9305c6c6d",
+  "shutdownJobId": "op-203d044a303f4571b759edfee820c82f",
+  "before": {
+    "phase": "copy-payload",
+    "currentTool": "vs-build-tools",
+    "retries": 2,
+    "rebootCount": 1,
+    "verifiedTools": [
+      "openssh"
+    ],
+    "sshPrivateKeySha256": "1d9b686ead4617436b90479864a9eede5cb55ab090bd13f854e83e1e4874396a",
+    "knownHostsSha256": "902d75c57ed29135a7e07f7eb1dfb3ac87cdcc9d64fd8cecec5286ed29be0d33"
+  },
+  "observed": "2026-10-02T21:28:13.911858+00:00",
+  "after": {
+    "phase": "copy-payload",
+    "currentTool": "vs-build-tools",
+    "retries": 3,
+    "rebootCount": 1,
+    "verifiedTools": [
+      "openssh"
+    ],
+    "diskPreserved": true,
+    "identityPreserved": true,
+    "sshKeyIdentityPreserved": true,
+    "startupJobId": "op-682f9bcf7688496296108f9e00baf1ec"
+  },
+  "scope": "Clean host shutdown during cache-copy phase; partial file length alone does not prove transferred bytes.",
+  "state": "resumed"
+}

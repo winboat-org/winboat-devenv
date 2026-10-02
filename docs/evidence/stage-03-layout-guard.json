@@ -1,0 +1,11 @@
+{
+  "readOnlyAfterCopy": false,
+  "schemaVersion": 1,
+  "unsafePathsRefused": [
+    "../escape.txt",
+    "..\\escape.txt",
+    "C:\\escape.txt"
+  ],
+  "windowsPowerShell": "5.1.26100.1591",
+  "localManifestWritePassed": true
+}

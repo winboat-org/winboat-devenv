@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "devbox": "stage03-final",
+  "failure": "Rustup requested /dist/dist/2026-07-14/channel-rust-nightly.toml.sha256; local HTTP returned 404, no release found",
+  "fix": "RUSTUP_DIST_SERVER selects the server origin; rustup adds /dist. Native stdout/stderr and HTTP server diagnostics retained.",
+  "payloadSha256": "300442071888987d4ead02064be2283f2368740fc9743a248b3b1d6018fbbdb2",
+  "state": "verified",
+  "installedProbe": {
+    "id": "rust",
+    "version": "nightly-2026-07-14",
+    "verified": true,
+    "componentIds": [
+      "rust-src",
+      "x86_64-pc-windows-msvc",
+      "i686-pc-windows-msvc"
+    ]
+  },
+  "distribution": {
+    "localManifestSha256": "e769d02280ed65edeac3eb95c81bfd252bad2526b2b3cf47665ea633b0d3e1aa",
+    "sourceManifestSha256": "568e13b2561803b95d44ff6fa1c81bd18ddcf0fbdc45c1e2a4a02b9515eaf716",
+    "offline": true
+  }
+}

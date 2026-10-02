@@ -1,0 +1,31 @@
+{
+  "payloadRefresh": "stage-03-payload-repair.json",
+  "taskName": "WinBoatDev-Provision",
+  "after": {
+    "phase": "install",
+    "retries": 3,
+    "verifiedTools": [
+      "openssh"
+    ],
+    "rebootCount": 1
+  },
+  "ready": true,
+  "before": {
+    "phase": "install",
+    "retries": 2,
+    "tool": "vs-build-tools",
+    "robocopyPids": [
+      7652
+    ],
+    "completionMarkerPresent": false
+  },
+  "stopped": {
+    "phase": "install",
+    "partialVersionProbePassed": false,
+    "completionMarkerPresent": false,
+    "taskState": "stopped"
+  },
+  "schemaVersion": 1,
+  "devbox": "stage03-final",
+  "state": "install-task-interrupted-and-resumed"
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "devbox": "stage03-complete",
+  "backend": "TigerVNC",
+  "guestTaskBefore": {
+    "taskName": "WinBoatDev-Viewer-Acceptance",
+    "observed": "2026-10-03T04:32:00.2159210Z",
+    "pid": 4240,
+    "tick": 2,
+    "state": "running"
+  },
+  "cycles": [
+    {
+      "open": {
+        "state": "open",
+        "backend": "tigervnc",
+        "pid": 2088886,
+        "vmStopped": false
+      },
+      "close": {
+        "state": "closed",
+        "backend": "tigervnc",
+        "vmStopped": false
+      },
+      "vmState": "running",
+      "containerId": "b6c39bb717c0b0059d49645d54fcf8dc98b3903a4f0d6b5e8cacb8db187c854b",
+      "qemuPid": 10,
+      "guestTask": {
+        "taskName": "WinBoatDev-Viewer-Acceptance",
+        "observed": "2026-10-03T04:32:20.2287314Z",
+        "pid": 4240,
+        "tick": 4,
+        "state": "running"
+      }
+    },
+    {
+      "open": {
+        "state": "open",
+        "backend": "tigervnc",
+        "pid": 2089134,
+        "vmStopped": false
+      },
+      "close": {
+        "state": "closed",
+        "backend": "tigervnc",
+        "vmStopped": false
+      },
+      "vmState": "running",
+      "containerId": "b6c39bb717c0b0059d49645d54fcf8dc98b3903a4f0d6b5e8cacb8db187c854b",
+      "qemuPid": 10,
+      "guestTask": {
+        "taskName": "WinBoatDev-Viewer-Acceptance",
+        "observed": "2026-10-03T04:32:30.2455912Z",
+        "pid": 4240,
+        "tick": 5,
+        "state": "running"
+      }
+    }
+  ],
+  "guestTaskCompletion": {
+    "taskName": "WinBoatDev-Viewer-Acceptance",
+    "observed": "2026-10-03T04:33:40.2975299Z",
+    "pid": 4240,
+    "tick": 12,
+    "state": "complete"
+  }
+}

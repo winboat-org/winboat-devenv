@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "devbox": "stage03-final",
+  "reason": "Windows PowerShell 5.1 String.Split overload found in live mirror; regex split fixes both path guards. Local installer layouts normalize publisher ReadOnly attributes before explicit Rust manifest relocation.",
+  "before": [
+    {
+      "attributes": "ReadOnly, Archive, NotContentIndexed",
+      "file": "Mirror.ps1",
+      "sha256": "1ecc199d03aaeb5070ed85f173905ac9e38e321e3d8525efe7a20bfbf2f2a17d"
+    },
+    {
+      "attributes": "ReadOnly, Archive, NotContentIndexed",
+      "file": "Toolchain.ps1",
+      "sha256": "b2bc2318eefa02ba77d30b789d20332640b9fe65699b6c2707584498b2dfe577"
+    }
+  ],
+  "after": [
+    {
+      "attributes": "Archive, NotContentIndexed",
+      "file": "Mirror.ps1",
+      "sha256": "eda3ac8348dbfd828aa6d26a95a74144603f5ce3c2f92b8690fe06efdc50ee54"
+    },
+    {
+      "attributes": "Archive, NotContentIndexed",
+      "file": "Toolchain.ps1",
+      "sha256": "3153fd61286f3861538855464a308859e98f0cf0a163a04c4cdf7d87e890f659"
+    }
+  ],
+  "hashVerified": true,
+  "provisionLockChanged": false,
+  "originalPreparedPayloads": "Retained in answer media/state; running task retains loaded functions until planned task restart"
+}

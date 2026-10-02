@@ -1,0 +1,152 @@
+[
+  {
+    "input": "rust-nightly",
+    "url": "https://static.rust-lang.org/dist/2026-07-14/channel-rust-nightly.toml",
+    "resolvedUrl": "https://static.rust-lang.org/dist/2026-07-14/channel-rust-nightly.toml",
+    "size": 929652,
+    "sha256": "568e13b2561803b95d44ff6fa1c81bd18ddcf0fbdc45c1e2a4a02b9515eaf716"
+  },
+  {
+    "input": "vs-channel",
+    "url": "https://aka.ms/vs/17/release/channel",
+    "resolvedUrl": "https://download.visualstudio.microsoft.com/download/pr/bc92e2cb-33de-4a0c-995d-efa817f16b16/0dbdfd40c17757e64fc9f72cd9954ec8471c04fd8461a77806e5291e23239ac0/VisualStudio.17.Release.chman",
+    "size": 91781,
+    "sha256": "fca418ba94ffbcfb7a2b25f10f16f39dd09660568d21eef4bd3f274cb0b27b8c",
+    "items": [
+      {
+        "id": "Microsoft.VisualStudio.Manifests.VisualStudio",
+        "version": "17.14.37710.0",
+        "payloads": [
+          {
+            "fileName": "VisualStudio.vsman",
+            "sha256": "6e470016e4324c84c255ffd0beb3767d17ec89cc8561e9409ee3e1f6d29400f5",
+            "size": 30443537,
+            "url": "https://download.visualstudio.microsoft.com/download/pr/bc92e2cb-33de-4a0c-995d-efa817f16b16/6e470016e4324c84c255ffd0beb3767d17ec89cc8561e9409ee3e1f6d29400f5/VisualStudio.vsman"
+          }
+        ]
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.BuildTools",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.Community",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.Community",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.Enterprise",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.Enterprise",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.Professional",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.Professional",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.TeamExplorer",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.TestAgent",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "Microsoft.VisualStudio.Product.TestController",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "VisualStudio.17.Release",
+        "version": "17.14.37710.0",
+        "payloads": null
+      },
+      {
+        "id": "VisualStudio.17.Release.Bootstrappers.Setup",
+        "version": "3.14.2094.286130193",
+        "payloads": [
+          {
+            "fileName": "vs_Setup.exe",
+            "sha256": "497879210134d4c2458717eac153e94cab9336a4484da73240041c011daf1884",
+            "size": 4476216,
+            "url": "https://download.visualstudio.microsoft.com/download/pr/bc92e2cb-33de-4a0c-995d-efa817f16b16/497879210134d4c2458717eac153e94cab9336a4484da73240041c011daf1884/vs_Setup.exe"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "input": "vulkan-sdk-sha",
+    "url": "https://sdk.lunarg.com/sdk/sha/1.4.350.0/windows/vulkansdk-windows-X64-1.4.350.0.exe",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "input": "vs-catalog",
+    "url": "https://download.visualstudio.microsoft.com/download/pr/bc92e2cb-33de-4a0c-995d-efa817f16b16/6e470016e4324c84c255ffd0beb3767d17ec89cc8561e9409ee3e1f6d29400f5/VisualStudio.vsman",
+    "declaredSha256": "6e470016e4324c84c255ffd0beb3767d17ec89cc8561e9409ee3e1f6d29400f5",
+    "observedSha256": "f0a50ea157222c29abd5ea6ff01bfc3c33b04e011c5e45ee2ca38ef0778e5643",
+    "size": 17954732,
+    "verified": false,
+    "error": "catalog hash differs from the pinned channel"
+  },
+  {
+    "input": "windows-sdk",
+    "url": "https://download.microsoft.com/download/466df871-c7b6-43b5-a1c3-dab7816e38fc/KIT_BUNDLE_WINDOWSSDK_MEDIACREATION/winsdksetup.exe",
+    "resolvedUrl": "https://download.microsoft.com/download/466df871-c7b6-43b5-a1c3-dab7816e38fc/KIT_BUNDLE_WINDOWSSDK_MEDIACREATION/winsdksetup.exe",
+    "size": 1451520,
+    "sha256": "6a879a51866dad34a36957160600a65951294a8aa495bd608661599756290864"
+  },
+  {
+    "input": "windows-wdk",
+    "url": "https://download.microsoft.com/download/41fb59c2-1723-45f9-a270-96b73ad58233/KIT_BUNDLE_WDK_MEDIACREATION/wdksetup.exe",
+    "resolvedUrl": "https://download.microsoft.com/download/41fb59c2-1723-45f9-a270-96b73ad58233/KIT_BUNDLE_WDK_MEDIACREATION/wdksetup.exe",
+    "size": 1406016,
+    "sha256": "ed82c46bd98e0f1d07fd6e5075900e42aedc3fa5e68c06a8764b3dc5303cff1b"
+  },
+  {
+    "input": "vulkan-sdk",
+    "url": "https://sdk.lunarg.com/sdk/download/1.4.350.0/windows/vulkansdk-windows-X64-1.4.350.0.exe",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "input": "rustup",
+    "url": "https://static.rust-lang.org/rustup/archive/1.28.2/x86_64-pc-windows-msvc/rustup-init.exe",
+    "resolvedUrl": "https://static.rust-lang.org/rustup/archive/1.28.2/x86_64-pc-windows-msvc/rustup-init.exe",
+    "size": 13551616,
+    "sha256": "88d8258dcf6ae4f7a80c7d1088e1f36fa7025a1cfd1343731b4ee6f385121fc0"
+  },
+  {
+    "input": "vs-catalog-recheck",
+    "url": "https://download.visualstudio.microsoft.com/download/pr/bc92e2cb-33de-4a0c-995d-efa817f16b16/6e470016e4324c84c255ffd0beb3767d17ec89cc8561e9409ee3e1f6d29400f5/VisualStudio.vsman",
+    "declaredSha256": "6e470016e4324c84c255ffd0beb3767d17ec89cc8561e9409ee3e1f6d29400f5",
+    "timestamp": "2026-10-02T19:36:02.820411+00:00",
+    "size": 17954732,
+    "observedSha256": "f0a50ea157222c29abd5ea6ff01bfc3c33b04e011c5e45ee2ca38ef0778e5643",
+    "headers": {
+      "Content-Length": "17954732",
+      "Content-Encoding": null,
+      "Content-Type": "application/octet-stream",
+      "Last-Modified": "Thu, 10 Sep 2026 23:59:43 GMT"
+    },
+    "verified": false
+  }
+]

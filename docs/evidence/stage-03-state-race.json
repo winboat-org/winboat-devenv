@@ -1,0 +1,9 @@
+{
+  "temporaryStateLeft": false,
+  "readerSharingViolation": "retried",
+  "originalWriterError": "Cannot create a file when that file already exists.\r\n",
+  "elapsedMilliseconds": 3192,
+  "schemaVersion": 1,
+  "atomicReplacement": "passed",
+  "finalPhase": "after"
+}

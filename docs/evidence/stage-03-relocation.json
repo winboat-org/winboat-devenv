@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "state": "passed",
+  "relocatedRootHadSpaces": true,
+  "discovery": "cwd discovery from copied tracked root",
+  "localOverrides": "Existing external workspace state, managed repositories and outputs selected explicitly; running container preserved",
+  "environmentUsername": "stage03-alternate-user",
+  "osUidChanged": false,
+  "containerId": "d5e28cf082a9378e66a23b47fc763e9b71d32459a5bea8522f84adec48387b80",
+  "identity": "f03023223352493dab795ca834a3d798",
+  "ports": {
+    "ssh": 38599,
+    "viewer": 56893
+  },
+  "hostLoadedIdentityVerified": true,
+  "guestIdentity": "WB-DEVBOX",
+  "guestTransport": "same pinned-key SSH",
+  "operationIds": {
+    "status": "op-938a64f2c15a462889080a76a8ddfd8a",
+    "guest-status": "op-6d9dbc035eb34273a63daf3846b0eeb1"
+  },
+  "scope": "Live control/SSH from relocated root with a different USER/LOGNAME and explicit paths; fresh startup on another OS user or host remains unvalidated"
+}
