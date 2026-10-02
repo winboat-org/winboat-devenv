@@ -1,0 +1,89 @@
+# Shared offline installation operations. All inputs come from the Nix cache.
+function New-ToolLayout($tool, $paths) {
+    $layout = Join-Path $root ('layouts\' + $tool.id)
+    New-Item -ItemType Directory -Path $layout -Force | Out-Null
+    for ($i = 0; $i -lt $tool.payloads.Count; $i++) {
+        $relative = $tool.payloads[$i].relativePath
+        if ([IO.Path]::IsPathRooted($relative) -or $relative.Split('\','/') -contains '..') { throw 'Unsafe installer layout path' }
+        $destination = Join-Path $layout $relative
+        New-Item -ItemType Directory -Path (Split-Path $destination) -Force | Out-Null
+        Copy-Item -LiteralPath $paths[$i] -Destination $destination -Force
+    }
+    return $layout
+}
+function Install-Kit($tool, $paths) {
+    $layout = New-ToolLayout $tool $paths
+    $installer = Join-Path $layout $tool.payloads[0].relativePath
+    $process = Start-Process -FilePath $installer -ArgumentList @('/quiet','/norestart','/ceip','off','/features', ($tool.componentIds -join ' ')) -Wait -PassThru
+    if ($process.ExitCode -notin @(0,3010)) { throw "Kit installer exited with $($process.ExitCode)" }
+    if ($process.ExitCode -eq 3010) { $state.installerRebootPending = $true }
+}
+function Get-KitVersion([string]$Kind) {
+    $kits = 'C:\Program Files (x86)\Windows Kits\10'
+    $required = if ($Kind -eq 'windows-sdk') {
+        @('Include\10.0.26100.0\shared\specstrings.h','Include\10.0.26100.0\um\Windows.h',
+          'Lib\10.0.26100.0\um\x64\kernel32.lib','Lib\10.0.26100.0\ucrt\x64\ucrt.lib',
+          'bin\10.0.26100.0\x64\signtool.exe','Debuggers\x64\cdb.exe')
+    } else { @('Include\10.0.26100.0\km\ntddk.h','Lib\10.0.26100.0\km\x64\ntoskrnl.lib') }
+    foreach ($file in $required) { if (-not (Test-Path -LiteralPath (Join-Path $kits $file))) { return } }
+    $display = if ($Kind -eq 'windows-sdk') { '^Windows Software Development Kit - Windows 10\.0\.26100\.' } else { '^Windows Driver Kit - Windows 10\.0\.26100\.' }
+    $entries = @(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*',
+        'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue |
+        Where-Object { $_.PSObject.Properties['DisplayName'] -and $_.DisplayName -match $display })
+    $versions = @($entries | ForEach-Object DisplayVersion | Select-Object -Unique)
+    if ($versions.Count -eq 1) { $versions[0] }
+}
+function Install-Rust($tool, $paths) {
+    $layout = New-ToolLayout $tool $paths
+    $env:RUSTUP_HOME = 'C:\WinBoatDev\tools\rustup'
+    $env:CARGO_HOME = 'C:\WinBoatDev\tools\cargo'
+    $env:RUSTUP_INIT_SKIP_PATH_CHECK = 'yes'
+    Native (Join-Path $layout 'rustup-init.exe') @('-y','--default-host','x86_64-pc-windows-msvc','--default-toolchain','none','--no-modify-path')
+    $listener = New-Object Net.Sockets.TcpListener([Net.IPAddress]::Loopback, 0)
+    $listener.Start(); $port = $listener.LocalEndpoint.Port; $listener.Stop()
+    # Rustup uses HTTP distribution metadata. Serve a verified local layout on
+    # loopback only, with relocated URLs and a corresponding local checksum.
+    $server = Start-Process 'C:\WinBoatDev\tools\Python\python.exe' -ArgumentList @('-B','-m','http.server', $port, '--bind','127.0.0.1','--directory', $layout) -WindowStyle Hidden -PassThru
+    try {
+        $manifestPath = Join-Path $layout ('dist\2026-07-14\channel-rust-nightly.toml')
+        $manifest = (Get-Content -Raw -LiteralPath $paths[1]).Replace('https://static.rust-lang.org', ('http://127.0.0.1:' + $port))
+        [IO.File]::WriteAllText($manifestPath, $manifest, (New-Object Text.UTF8Encoding($false)))
+        $hash = (Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash.ToLower()
+        [IO.File]::WriteAllText(($manifestPath + '.sha256'), ($hash + '  channel-rust-nightly.toml'), (New-Object Text.UTF8Encoding($false)))
+        $env:RUSTUP_DIST_SERVER = 'http://127.0.0.1:' + $port + '/dist'
+        Start-Sleep -Seconds 2
+        if ($server.HasExited) { throw 'Local Rust distribution server failed to start' }
+        Native (Join-Path $env:CARGO_HOME 'bin\rustup.exe') @('toolchain','install',$tool.version,'--profile','minimal','--component','rust-src','--target','i686-pc-windows-msvc','--no-self-update')
+        Native (Join-Path $env:CARGO_HOME 'bin\rustup.exe') @('default', $tool.version)
+        $state.rustDistribution = @{ sourceManifestSha256 = $tool.payloads[1].sha256; localManifestSha256 = $hash; offline = $true }
+    } finally { if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force }; Remove-Item Env:\RUSTUP_DIST_SERVER -ErrorAction SilentlyContinue }
+}
+function Get-RustVersion {
+    $rustup = 'C:\WinBoatDev\tools\cargo\bin\rustup.exe'
+    $env:RUSTUP_HOME = 'C:\WinBoatDev\tools\rustup'; $env:CARGO_HOME = 'C:\WinBoatDev\tools\cargo'
+    if (-not (Test-Path -LiteralPath $rustup)) { return }
+    $version = & $rustup run 'nightly-2026-07-14' rustc --version
+    if ($LASTEXITCODE -ne 0 -or $version -ne 'rustc 1.99.0-nightly (daf2e5e18 2026-07-13)') { return }
+    $components = & $rustup component list --toolchain 'nightly-2026-07-14' --installed
+    foreach ($component in @('rust-src','rust-std-i686-pc-windows-msvc','rust-std-x86_64-pc-windows-msvc')) {
+        if ($components -notcontains $component) { return }
+    }
+    'nightly-2026-07-14'
+}
+function Install-CargoHelper($tool, $paths) {
+    $directory = Join-Path 'C:\WinBoatDev\tools\helpers' $tool.id
+    Expand-Archive -LiteralPath $paths[0] -DestinationPath $directory -Force
+    for ($i = 1; $i -lt $paths.Count; $i++) {
+        Copy-Item -LiteralPath $paths[$i] -Destination (Join-Path $directory $tool.payloads[$i].file) -Force
+    }
+    $bin = 'C:\WinBoatDev\tools\cargo\bin'
+    New-Item -ItemType Directory -Path $bin -Force | Out-Null
+    Get-ChildItem -LiteralPath $directory -Filter '*.exe' -File | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $bin -Force }
+}
+function Get-CargoHelperVersion([string]$Name) {
+    $file = Join-Path 'C:\WinBoatDev\tools\cargo\bin' ($Name + '.exe')
+    if (Test-Path -LiteralPath $file) {
+        $version = & $file --version
+        if ($LASTEXITCODE -eq 0) { ($version -split ' ')[-1] }
+    }
+}

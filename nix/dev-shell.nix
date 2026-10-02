@@ -47,7 +47,7 @@ in
     exec ${pkgs.python3}/bin/python3 ${../tests/devbox.py} "$@"
   '';
   scripts.wb-windows-check.exec = ''
-    exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows"
+    exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
   '';
   env.WB_WORKSPACE_ROOT = config.devenv.root;
   env.WB_NIXPKGS = toString pkgs.path;

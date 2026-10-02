@@ -2,6 +2,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $root = 'C:\ProgramData\WinBoatDev'
+. (Join-Path $root 'Toolchain.ps1')
 $statePath = Join-Path $root 'provisioning.json'
 $lockPath = Join-Path $root 'provision.lock.json'
 $lock = Get-Content -Raw -LiteralPath $lockPath | ConvertFrom-Json
@@ -22,47 +23,28 @@ function Save-State {
     Move-Item -LiteralPath $temp -Destination $statePath -Force
 }
 function Native([string]$File, [string[]]$Arguments) {
-    & $File @Arguments
-    if ($LASTEXITCODE -ne 0) { throw "$File exited with $LASTEXITCODE" }
+    $process = Start-Process -FilePath $File -ArgumentList $Arguments -NoNewWindow -Wait -PassThru
+    if ($process.ExitCode -ne 0) { throw "$File exited with $($process.ExitCode)" }
 }
-function Download-Payload($payload) {
-    $destination = Join-Path $root ('downloads\' + $payload.sha256 + '-' + $payload.file)
+function Copy-Payload($payload) {
+    # Preserve the publisher filename (pip validates wheel filenames). The
+    # containing hash directory keeps cache identities separate.
+    $destination = Join-Path $root ('downloads\' + $payload.sha256 + '\' + $payload.file)
     New-Item -ItemType Directory -Path (Split-Path $destination) -Force | Out-Null
     if (Test-Path -LiteralPath $destination) {
         if ((Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLower() -eq $payload.sha256) { return $destination }
         throw 'Existing payload has an unexpected hash'
     }
-    $state.phase = 'download'; $state.currentPayload = $payload.file; Save-State
+    $state.phase = 'copy-payload'; $state.currentPayload = $payload.file; Save-State
     $partial = $destination + '.partial'
-    Invoke-WebRequest -Uri $payload.url -OutFile $partial -UseBasicParsing
+    $source = Join-Path '\\10.0.2.2\tools\files' ($payload.sha256 + '-' + $payload.file)
+    if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { throw "Nix-prefetched payload is missing: $($payload.file)" }
+    Copy-Item -LiteralPath $source -Destination $partial -Force
     if ((Get-FileHash -LiteralPath $partial -Algorithm SHA256).Hash.ToLower() -ne $payload.sha256) { throw "Payload hash mismatch: $($payload.file)" }
     Move-Item -LiteralPath $partial -Destination $destination
     return $destination
 }
-try {
-    Start-Transcript -Path (Join-Path $root 'provision.log') -Append | Out-Null
-    $state.retries = [int]$state.retries + 1
-    if ($lock.schemaVersion -ne 1 -or $env:COMPUTERNAME -ne 'WB-DEVBOX') { throw 'Guest identity or lock schema mismatch' }
-    $pending = @($lock.tools | Where-Object status -ne 'locked' | ForEach-Object id)
-    New-Item -ItemType Directory -Path 'C:\WinBoatDev\src', 'C:\WinBoatDev\build' -Force | Out-Null
-    foreach ($tool in $lock.tools) {
-        if ($tool.status -ne 'locked') { continue }
-        $state.phase = 'install'; $state.currentTool = $tool.id; Save-State
-        $paths = @($tool.payloads | ForEach-Object { Download-Payload $_ })
-        $probe = [ScriptBlock]::Create($tool.probe)
-        $observed = & $probe
-        if (-not $observed -or [string]$observed -ne $tool.version) {
-            $installer = [ScriptBlock]::Create($tool.install)
-            & $installer $paths $root
-            $observed = & $probe
-            if ([string]$observed -ne $tool.version) { throw "Installed $($tool.id) version differs: expected $($tool.version), observed $observed" }
-        }
-        $state.tools = @($state.tools | Where-Object id -ne $tool.id) + @(@{ id = $tool.id; version = [string]$observed;
-            verified = $true; payloads = $tool.payloads; componentIds = $tool.componentIds })
-        Save-State
-    }
-    # Install pre-generated host keys so the host trusts an authenticated key;
-    # neither ssh-keyscan nor accepting an unknown key establishes identity.
+function Configure-SSH {
     $sshRoot = 'C:\ProgramData\ssh'
     New-Item -ItemType Directory -Path $sshRoot -Force | Out-Null
     foreach ($file in @('ssh_host_ed25519_key', 'ssh_host_ed25519_key.pub')) {
@@ -79,7 +61,60 @@ try {
     if (-not (Get-NetFirewallRule -Name 'WinBoatDev-SSH' -ErrorAction SilentlyContinue)) {
         New-NetFirewallRule -Name 'WinBoatDev-SSH' -DisplayName 'WinBoatDev SSH' -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow | Out-Null
     }
-    $sharePassword = Get-Content -Raw -LiteralPath (Join-Path $root 'share-password')
+}
+try {
+    Start-Transcript -Path (Join-Path $root 'provision.log') -Append | Out-Null
+    $state.retries = [int]$state.retries + 1
+    if ($lock.schemaVersion -ne 1) { throw 'Guest lock schema mismatch' }
+    # Setup's requested name is not an observation. Enforce the contract in the
+    # durable startup task and record an actual reboot before installing tools.
+    $state.computerName = (Get-CimInstance Win32_ComputerSystem).Name
+    if ($state.computerName -ne 'WB-DEVBOX') {
+        if (-not $state.ContainsKey('identityRenameAttempts')) { $state.identityRenameAttempts = 0 }
+        if ([int]$state.identityRenameAttempts -ge 2) { throw 'Computer name did not converge after identity reboots' }
+        Rename-Computer -NewName 'WB-DEVBOX' -Force
+        $state.identityRenameAttempts = [int]$state.identityRenameAttempts + 1
+        $state.phase = 'reboot-identity'; $state.rebootCount = [int]$state.rebootCount + 1; Save-State
+        Restart-Computer -Force
+        exit 3010
+    }
+    $pending = @($lock.tools | Where-Object status -ne 'locked' | ForEach-Object id)
+    New-Item -ItemType Directory -Path 'C:\WinBoatDev\src', 'C:\WinBoatDev\build' -Force | Out-Null
+    $sharePassword = (Get-Content -Raw -LiteralPath (Join-Path $root 'share-password')).Trim()
+    if (-not (Get-SmbMapping -RemotePath '\\10.0.2.2\tools' -ErrorAction SilentlyContinue)) {
+        New-SmbMapping -RemotePath '\\10.0.2.2\tools' -UserName 'wbdev' -Password $sharePassword -Persistent $true | Out-Null
+    }
+    $cacheLock = '\\10.0.2.2\tools\provision.lock.json'
+    if ((Get-FileHash -LiteralPath $cacheLock -Algorithm SHA256).Hash.ToLower() -ne $state.lockSha256) {
+        throw 'Container tool cache differs from the prepared provisioning lock'
+    }
+    $state.payloadSource = 'nix-container-cache'; Save-State
+    foreach ($tool in $lock.tools) {
+        if ($tool.status -ne 'locked') { continue }
+        $state.phase = 'install'; $state.currentTool = $tool.id; Save-State
+        $paths = @($tool.payloads | ForEach-Object { Copy-Payload $_ })
+        $probe = [ScriptBlock]::Create($tool.probe)
+        $observed = & $probe
+        if (-not $observed -or [string]$observed -ne $tool.version) {
+            $installer = [ScriptBlock]::Create($tool.install)
+            & $installer $paths $root
+            $observed = & $probe
+            if ([string]$observed -ne $tool.version) { throw "Installed $($tool.id) version differs: expected $($tool.version), observed $observed" }
+        }
+        $state.tools = @($state.tools | Where-Object id -ne $tool.id) + @(@{ id = $tool.id; version = [string]$observed;
+            verified = $true; payloads = $tool.payloads; componentIds = $tool.componentIds })
+        if ($tool.id -eq 'openssh') { Configure-SSH }
+        Save-State
+    }
+    if ($state.ContainsKey('installerRebootPending') -and $state.installerRebootPending) {
+        $state.installerRebootPending = $false
+        $state.phase = 'reboot-installers'; $state.rebootCount = [int]$state.rebootCount + 1; Save-State
+        Restart-Computer -Force
+        exit 3010
+    }
+    # Install pre-generated host keys so the host trusts an authenticated key;
+    # neither ssh-keyscan nor accepting an unknown key establishes identity.
+    Configure-SSH
     if (-not (Get-SmbMapping -LocalPath 'Z:' -ErrorAction SilentlyContinue)) {
         New-SmbMapping -LocalPath 'Z:' -RemotePath '\\10.0.2.2\workspace' -UserName 'wbdev' -Password $sharePassword -Persistent $true | Out-Null
     }

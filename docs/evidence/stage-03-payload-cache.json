@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "status": "verified",
+  "output": "/nix/store/7br376jmaq6m4z44sxgd5qa0xz5lylr7-winboat-windows-payloads",
+  "lockSha256": "b72bad6c234b15d71af5932d0ae5b4a65fb001eb1d6c669ff8765807aa21e4c9",
+  "tools": 12,
+  "uniquePayloads": 544,
+  "bytes": 2564586256,
+  "pendingTools": [
+    "vs-build-tools",
+    "vulkan-sdk"
+  ],
+  "allCacheFilesMatchLockedSha256": true,
+  "failuresResolved": [
+    "source lock must enter Nix store before sandboxed build",
+    "SDK and WDK cache duplicates must be materialized once"
+  ]
+}

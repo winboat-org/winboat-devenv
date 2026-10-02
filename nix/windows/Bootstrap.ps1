@@ -4,7 +4,7 @@ $root = 'C:\ProgramData\WinBoatDev'
 New-Item -ItemType Directory -Path $root -Force | Out-Null
 & icacls.exe $root /inheritance:r /grant:r '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-544:(OI)(CI)F' | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'Cannot protect provisioning state' }
-foreach ($file in @('Provision.ps1', 'Mirror.ps1', 'BuildFixture.ps1', 'TestDriver.c', 'provision.lock.json', 'authorized_keys',
+foreach ($file in @('Provision.ps1', 'Toolchain.ps1', 'Mirror.ps1', 'BuildFixture.ps1', 'TestDriver.c', 'provision.lock.json', 'authorized_keys',
                     'share-password', 'ssh_host_ed25519_key', 'ssh_host_ed25519_key.pub')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $file) -Destination (Join-Path $root $file) -Force
 }

@@ -112,10 +112,37 @@ class DevboxTests(unittest.TestCase):
         with self.assertRaises(Failure):
             devbox.settings(self.ws)
 
+    def test_offline_lock_rejects_path_escape_and_empty_locked_tool(self):
+        path = self.root / 'config/provision.lock.json'
+        tool = {'id': 'fixture', 'status': 'locked', 'install': 'install', 'probe': 'probe',
+                'payloads': [{'file': 'setup.exe', 'url': 'https://example.invalid/setup.exe',
+                              'sha256': '1' * 64, 'relativePath': '../external/setup.exe'}]}
+        write_json(path, {'schemaVersion': 1, 'tools': [tool]})
+        with self.assertRaises(Failure):
+            devbox.provision_lock(self.ws)
+        tool['payloads'][0]['relativePath'] = 'Installers/setup.exe'
+        write_json(path, {'schemaVersion': 1, 'tools': [tool]})
+        self.assertEqual(devbox.provision_lock(self.ws)['unresolved'], [])
+        tool['payloads'] = []
+        write_json(path, {'schemaVersion': 1, 'tools': [tool]})
+        with self.assertRaises(Failure):
+            devbox.provision_lock(self.ws)
+
+    def test_changed_prepared_lock_refuses_image_build_before_network(self):
+        directory = self.root / 'prepared'
+        write_json(directory / 'answer/provision.lock.json', {'changed': True})
+        record = {'provisioning': {'lockSha256': '2' * 64}}
+        with patch.object(devbox.subprocess, 'run') as execute:
+            with self.assertRaises(Failure):
+                devbox.build_image(self.ws, directory, record, {})
+            execute.assert_not_called()
+
     def test_interrupted_creation_preserves_keys_and_existing_disk(self):
         media = {"sha256": "d" * 64, "image": {"index": 1}, "locale": "en-US"}
         artifact = {"manifestSha256": "e" * 64, "output": str(self.root / "stack")}
         payloads = self.root / "payloads"; payloads.mkdir()
+        (self.root / "config").mkdir()
+        (self.root / "config/provision.lock.json").write_text('{}\n')
         stack = Path(artifact["output"]); (stack / "share/qemu").mkdir(parents=True)
         (stack / "share/qemu/edk2-i386-vars.fd").write_bytes(b"firmware")
         args = argparse.Namespace(name="resume", iso="input.iso", manifest="manifest.json", iso_sha256=None,

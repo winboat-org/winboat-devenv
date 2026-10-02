@@ -5,6 +5,14 @@ let
   # storePath retains the exact verified Stage 2 output and its entire closure.
   # There is no distribution QEMU in this image and no mutable base-image tag.
   stack = builtins.storePath spec.hostStack;
+  payloads = import ./windows-payloads.nix {
+    inherit pkgs;
+    lockFile = builtins.path {
+      path = builtins.toPath spec.provisionLock;
+      name = "provision.lock.json";
+    };
+    lockSha256 = spec.provisionLockSha256;
+  };
   supervisor = pkgs.writeText "winboat-devbox-run.py" (builtins.readFile ./scripts/devbox-run.py);
   launch = pkgs.writeShellScriptBin "winboat-devbox" ''
     export WB_STACK=${stack}
@@ -13,6 +21,7 @@ let
     export WB_SMBPASSWD=${pkgs.samba}/bin/smbpasswd
     export WB_NIX=${pkgs.nix}/bin/nix
     export WB_MESA=${pkgs.mesa}
+    export WB_WINDOWS_PAYLOADS=${payloads}
     exec ${pkgs.python3}/bin/python3 ${supervisor}
   '';
 in
@@ -46,6 +55,7 @@ pkgs.dockerTools.buildLayeredImage {
       "org.winboat.host-stack" = spec.hostStack;
       "org.winboat.manifest-sha256" = spec.manifestSha256;
       "org.winboat.lock-sha256" = spec.lockSha256;
+      "org.winboat.provision-lock-sha256" = spec.provisionLockSha256;
     };
   };
 }

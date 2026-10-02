@@ -43,6 +43,9 @@ for directory in ['tpm', 'samba', 'samba/private', 'samba/lock', 'samba/cache']:
 # The workspace is read-only in both the container mount and SMB configuration.
 # Authenticated SMB avoids enabling insecure guest logons in Windows.
 config = state / 'samba/smb.conf'
+payloads = Path(os.environ['WB_WINDOWS_PAYLOADS'])
+if sha(payloads / 'provision.lock.json') != settings['provisionLockSha256']:
+    raise RuntimeError('Container provisioning payload lock differs from the prepared guest')
 config.write_text('''[global]
   server role = standalone server
   security = user
@@ -65,6 +68,12 @@ config.write_text('''[global]
   wide links = no
   veto files = /.state/.git/.devenv*/.direnv/.codex/.agents/.aws/.claude/out/build/node_modules/local*.json/.env*/*.key/*.pfx/*.p12/*.iso/*.qcow2/*.vhd*/
   delete veto files = no
+[tools]
+  path = ''' + str(payloads) + '''
+  read only = yes
+  valid users = wbdev
+  follow symlinks = no
+  wide links = no
 ''')
 password = (state / 'secrets/password').read_text().strip()
 subprocess.run([os.environ['WB_SMBPASSWD'], '-s', '-a', 'wbdev', '-c', str(config)],

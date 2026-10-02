@@ -1,0 +1,16 @@
+[
+  {
+    "tool": "windows-sdk",
+    "manifestSha256": "2e2fbd15db9652e014238135b0e4daef673292a0506f5c59c9e041f2583c9b2a",
+    "bootstrapSha256": "6a879a51866dad34a36957160600a65951294a8aa495bd608661599756290864",
+    "externalPayloads": 296,
+    "failures": []
+  },
+  {
+    "tool": "windows-wdk",
+    "manifestSha256": "71d411444a3ce634a6a29616aea8eb7d887a49e7ec59463101a20eef794c5d47",
+    "bootstrapSha256": "ed82c46bd98e0f1d07fd6e5075900e42aedc3fa5e68c06a8764b3dc5303cff1b",
+    "externalPayloads": 241,
+    "failures": []
+  }
+]

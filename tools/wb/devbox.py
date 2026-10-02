@@ -253,11 +253,22 @@ def provision_lock(ws):
     if data.get("schemaVersion") != 1:
         raise Failure("unsupported provisioning lock schema", 2)
     unresolved = [item["id"] for item in data["tools"] if item.get("status") != "locked"]
+    ids = [item["id"] for item in data["tools"]]
+    if len(set(ids)) != len(ids) or any(not re.fullmatch(r"[a-z][a-z0-9-]*", value) for value in ids):
+        raise Failure("invalid or duplicate provisioning tool identities", 2)
     for item in data["tools"]:
         if item.get("status") == "locked":
+            if not item.get("payloads") or not item.get("install") or not item.get("probe"):
+                raise Failure("locked tool lacks offline payload/install/probe: " + item["id"], 2)
             for payload in item.get("payloads", []):
                 if not re.fullmatch(r"[0-9a-f]{64}", payload.get("sha256", "")):
                     raise Failure("invalid provisioning payload hash: " + item["id"], 2)
+                if (not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._+-]*", payload.get("file", ""))
+                        or not payload.get("url", "").startswith("https://")):
+                    raise Failure("invalid provisioning payload file/source: " + item["id"], 2)
+                relative = payload.get("relativePath", payload["file"]).replace("\\", "/")
+                if relative.startswith("/") or ":" in relative or any(part in ("", ".", "..") for part in relative.split("/")):
+                    raise Failure("unsafe offline installer layout path: " + item["id"], 2)
     return {"sha256": digest(path), "data": data, "unresolved": unresolved}
 
 
@@ -419,7 +430,9 @@ def create(ws, args, operation_id):
         for path in Path(os.environ["WB_DEVBOX_PAYLOADS"]).iterdir():
             shutil.copyfile(path, payload / path.name)
         shutil.copyfile(secrets_dir / "ssh.pub", payload / "authorized_keys")
-        write_json(payload / "provision.lock.json", provision["data"])
+        # Keep byte identity between the tracked lock, guest answer media and
+        # Nix-prefetched cache. Reformatting JSON would break this contract.
+        shutil.copyfile(ws.root / "config/provision.lock.json", payload / "provision.lock.json")
         atomic_write(payload / "share-password", password)
         run([os.environ["WB_XORRISO"], "-as", "mkisofs", "-J", "-r", "-V", "WBANSWER", "-o", directory / "answer.partial.iso", payload])
         (directory / "answer.partial.iso").replace(directory / "answer.iso")
@@ -469,9 +482,13 @@ def inspect(rt, record):
 
 
 def build_image(ws, directory, record, rt):
+    provision_path = directory / "answer/provision.lock.json"
+    if digest(provision_path) != record["provisioning"]["lockSha256"]:
+        raise Failure("prepared guest provisioning lock changed", 2)
     spec = {"schemaVersion": 1, "system": os.environ["WB_SYSTEM"], "hostStack": record["hostArtifact"]["output"],
             "identity": record["identity"], "manifestSha256": record["hostArtifact"]["manifestSha256"],
-            "lockSha256": digest(ws.root / "devenv.lock")}
+            "lockSha256": digest(ws.root / "devenv.lock"), "provisionLock": str(provision_path),
+            "provisionLockSha256": record["provisioning"]["lockSha256"]}
     write_json(directory / "image-spec.json", spec)
     command = [os.environ["WB_NIX"], "build", "--json", "--out-link", directory / "container-image",
                "--file", os.environ["WB_DEVBOX_EXPRESSION"], "--argstr", "nixpkgsPath", os.environ["WB_NIXPKGS"],
@@ -491,8 +508,11 @@ def build_image(ws, directory, record, rt):
     labels = data.get("Config", {}).get("Labels", {})
     if labels.get("org.winboat.manifest-sha256") != spec["manifestSha256"]:
         raise Failure("imported image manifest label differs", 3)
+    if labels.get("org.winboat.provision-lock-sha256") != spec["provisionLockSha256"]:
+        raise Failure("imported image provisioning lock label differs", 3)
     return {"id": image_id, "archiveSha256": file_hash(archive), "output": str(archive),
             "derivation": output["drvPath"], "lockSha256": spec["lockSha256"],
+            "provisionLockSha256": spec["provisionLockSha256"],
             "hostStack": spec["hostStack"], "manifestSha256": spec["manifestSha256"]}
 
 
@@ -529,6 +549,7 @@ def up(ws, name, operation_id, rebuild_image=False):
             run(rt["command"] + ["rm", container_name(record)])
         write_json(directory / "launch.json", {"cpus": record["cpus"], "memoryMiB": record["memoryMiB"],
                    "renderNode": observed["renderNode"], "attachMedia": not record["provisioning"]["verified"],
+                   "provisionLockSha256": record["provisioning"]["lockSha256"],
                    "initialBoot": record.get("initialBootPending", False),
                    "expectedImages": artifact["expectedImages"]})
         (directory / "host-observation.json").unlink(missing_ok=True)
