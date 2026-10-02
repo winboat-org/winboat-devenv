@@ -1,8 +1,9 @@
 # Implementation stages
 
-**Stage 1 is implemented and validated for repository/MCP operations. Stage 2
-is next.** The genuine Nix lock and all twelve source pins are resolved.
-Build/devbox/release command surfaces remain specifications. See
+**Stage 2 native/cross build acceptance is implemented; Stage 3 is next.**
+The genuine Nix lock is unchanged. Six recipe commits and matching parent/child
+pins are local only; canonical publication is pending. Windows MSVC/WDK execution
+and WinBoat/Electron/CLVK dependency closure completion remain pending. See
 [validation](../validation.md) for measured checks and the upstream native Fish
 activation limitation; interactive activation tests were excluded at the
 maintainer's request.
@@ -11,7 +12,7 @@ maintainer's request.
 | --- | --- | --- | --- |
 | 0 | devenv initialization, inventory/seed pins, docs and agent guidance | Empty workspace | Complete |
 | [1](01-workspace.md) | Setup/doctor, repo sync, checkpoints, push pins, forks, initial Node MCP | 0 | Complete for requested repository/MCP scope; activation limitation documented |
-| [2](02-builds.md) | Per-repo Nix recipes, native/cross builds, ABI and output contracts | 1 | Planned |
+| [2](02-builds.md) | Per-repo Nix recipes, native/cross builds, ABI and output contracts | 1 | Native/cross acceptance passed; guest execution and full app/compiler closures pending |
 | [3](03-devbox.md) | Containerized headless Windows provisioning, shared workspace and viewer | 2 host QEMU/renderer outputs | Planned |
 | [4](04-windows-control.md) | Windows builds, Helios installation, strict inventory, devbox MCP | 2, 3 | Planned |
 | [5](05-agents.md) | Claude/Codex setup, SSH/Nix integrations, agent workflows | 1, 4 | Planned |

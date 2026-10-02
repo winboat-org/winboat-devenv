@@ -170,3 +170,13 @@ returns the recorded nonzero exit code as well as its JSON state.
 Run `devenv test` for local bare-repository and MCP acceptance. The suite checks
 our command behavior; interactive shell activation remains owned by devenv.
 No organization changes are pushed by the test suite.
+
+## Component builds
+
+Stage 2 adds `wb build list`, target plans/runs and artifact verification.
+See [build usage](builds.md) for clean release snapshots, captured development
+diffs, native/guest roots and retained Nix closures. MCP adds `build_list`,
+`build_run` and `build_verify` (19 tools total). Build runs default to durable
+background jobs over MCP; CLI uses `--background`. Plans evaluate shared Nix
+contracts and do not execute compilers or initialize unselected sources.
+Windows MSVC/WDK targets fail with code 3 until Stage 4 supplies the backend.

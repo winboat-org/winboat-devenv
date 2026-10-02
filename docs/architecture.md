@@ -1,8 +1,9 @@
 # Architecture and implementation contracts
 
-This document specifies the target system. Stage 1 implements workspace and
-repository operations and their Node MCP proxy; the stage index tracks later
-build, devbox and release delivery.
+This document specifies the target system. Stages 1 and 2 implement workspace,
+repository and native/cross build operations with their Node MCP proxy. The
+stage index tracks Windows execution, devbox and release delivery; [build
+usage](builds.md) records the current artifact and dispatch contracts.
 
 ## Workspace and configuration
 

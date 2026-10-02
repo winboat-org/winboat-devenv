@@ -37,7 +37,51 @@ retained. See [activation](auto-activation.md) for explicit execution/direnv use
 Interactive entry/exit behavior across all shells is not claimed as validated.
 
 Source reachability and clean synchronization establish a reproducible source
-snapshot, not component/build/graphics compatibility. No component was compiled,
-no Windows guest was provisioned, and no real organization push or GitHub fork
-creation was attempted. Those remain outside Stage 1. The next work is the
-[Stage 2 handoff](handoffs/stage-02.md).
+snapshot, not component/build/graphics compatibility. Stage 1 compiled no component,
+provisioned no Windows guest, and attempted no organization push or GitHub fork
+creation. Those remain outside Stage 1. The next work is the
+[Stage 3 handoff](handoffs/stage-03.md), following the Stage 2 checks below.
+
+## Stage 2 native/cross builds
+
+The unchanged lock supplies six standalone component shells and shared root
+operations. [Stage 2 evidence](evidence/stage-02-validation.json) records exact
+local commits, manifests, source modes and retained checks. [Build usage](builds.md)
+describes exports and guest dispatch.
+
+| Check | Result | What it establishes |
+| --- | --- | --- |
+| Six standalone shells/interfaces | Passed | Own genuine lock, explicit hashed sources/dependencies, no assumed parent path |
+| Native QEMU/renderer/protocol | Passed | Isolated fork output, 19 modules, 80 paired headers and immutable closure |
+| QEMU unit suite | 105 passed, 3 expected skips | Native executables run; seccomp confinement, sandbox loopback and alternate AIO backend account for skips |
+| Renderer CPU regressions | 5 passed | Queue synchronization, fault tracing/dispatch, string buffer and format-fuzzer checks |
+| Venus protocol round-trip | Passed | Generator and paired wire headers from the exact protocol pin |
+| Host smoke | Passed | Display enumeration, paired renderer loader identity, SDL/OpenGL module mappings and QMP using SDL dummy display |
+| Mesa host | 46 tests passed | Forked Venus/Zink/softpipe output with paired protocol headers and symbols |
+| Helios protocol | 14 tests passed | Rust wire library/source artifact with undeclared-license notice |
+| WBFreeRDP | Build passed | Forked native binaries/libraries, source license and debug output |
+| DXVK cross-build | 4 x64 DLLs passed | PE64, embedded DWARF, exact imports and static GCC/C++/pthread runtime dependencies |
+| Guest/application plans | 11 evaluated | MSVC `/MT` engine contracts, x64/x86, local mirrors/tasks; unavailable execution fails with code 3 |
+| Artifact verification | Passed | Complete file/link sets and hashes; tamper, extra files and escaping debug links refused |
+| `devenv test` and MCP | 25 tests passed, 19 tools | Publication tests plus snapshots/checkout filters, selective plans, artifacts and typed build proxy behavior |
+| Local checkpoints/pins | Passed | Explicit paths, matching gitlinks and local object verification; no GitHub publication |
+
+Final evidence separates release builds at clean declared pins from earlier
+development snapshots. Development failures/logs remain in ignored state,
+including corrected sandbox exports, license paths, wraps, cross dependencies
+and the initially skipped QEMU suite. Mesa's release export also exposed and
+corrected handling of its declared CRLF checkout filter. Parsing alone was
+never build validation.
+
+Hardware Vulkan/render-server tests, interactive SDL, installed Windows outputs
+and driver/DLL loaded-state acceptance remain pending. The CPU smoke starts no
+installed guest. MSVC/WDK execution awaits Stage 4; WinBoat, Electron and CLVK
+adapters refuse missing fixed dependency closures. Helios does not declare a
+root/protocol license; its artifact retains attribution and a clarification
+notice rather than inventing one.
+
+All QEMU gitlinks and LookingGlass remain uninitialized. The only additional
+shader fetch was DXVK's declared nested SPIR-V header gitlink. Six new recipe
+commits and matching parent/pins are local-only; exact checks use ignored local
+remote overrides. Canonical reachability remains pending publication. Component
+CI, release bundles and guest installs were not attempted.

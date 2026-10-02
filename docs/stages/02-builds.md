@@ -1,7 +1,11 @@
 # Stage 2 — Nix component builds
 
-Status: planned. Prerequisite: Stage 1. Windows-only output acceptance continues
-in Stage 4 after the devbox is available.
+Status: implemented for native/cross acceptance. Prerequisite: Stage 1.
+Six standalone recipes, shared CLI/MCP builds and local coherent pins are in
+place. Measured checks and limitations are in [validation](../validation.md)
+and [build usage](../builds.md). Canonical publication is pending. Windows-only
+execution continues in Stage 4; full WinBoat/Electron/CLVK fixed dependency
+closures are explicit pending inputs, not successful builds.
 
 ## Outcome
 

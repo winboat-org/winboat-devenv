@@ -1,0 +1,996 @@
+{
+  "schemaVersion": 1,
+  "stage": 2,
+  "recordedAt": "2026-10-02T17:59:16.876483+00:00",
+  "scope": "native/cross acceptance; Windows execution and full app/compiler closures pending",
+  "rootBuildCommits": [
+    "7d9ce79c1ce087e89bfc8bcd2ab6e688c52a539a",
+    "a88260fa2a2e9b3167b2ea51d3b6a2138fa98ad5"
+  ],
+  "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+  "lockUnchangedFromStage1": true,
+  "sources": [
+    {
+      "repository": "WBFreeRDP",
+      "revision": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0",
+      "pin": {
+        "rev": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0",
+        "ref": "refs/heads/winboat-3.30",
+        "provenance": "canonical-winboat-3.30-2026-10-02"
+      },
+      "clean": true
+    },
+    {
+      "repository": "clvk-helios",
+      "revision": "56c626132782bf083a80a6c17f5ca763be0ff8fb",
+      "pin": {
+        "rev": "56c626132782bf083a80a6c17f5ca763be0ff8fb",
+        "ref": "refs/heads/main",
+        "provenance": "reference-helios-windows-ci"
+      },
+      "clean": true
+    },
+    {
+      "repository": "dxil-spirv",
+      "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+      "pin": {
+        "rev": "f4651bd076a2613728823ec289abc121a348a48a",
+        "ref": "refs/heads/master",
+        "provenance": "reference-vkd3d-gitlink"
+      },
+      "clean": true
+    },
+    {
+      "repository": "dxvk",
+      "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+      "pin": {
+        "rev": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+        "ref": "refs/heads/master",
+        "provenance": "stage-02-local-unpublished"
+      },
+      "clean": true
+    },
+    {
+      "repository": "electron",
+      "revision": "c328b030fd3357139f66c8a3a84a4384c0136eed",
+      "pin": {
+        "rev": "c328b030fd3357139f66c8a3a84a4384c0136eed",
+        "ref": "refs/heads/winboat-43.2.0",
+        "provenance": "canonical-winboat-43.2.0-2026-10-02"
+      },
+      "clean": true
+    },
+    {
+      "repository": "helios",
+      "revision": "38d245a077d1aa7e121df2fab5035dcc6db9f889",
+      "pin": {
+        "rev": "38d245a077d1aa7e121df2fab5035dcc6db9f889",
+        "ref": "refs/heads/master",
+        "provenance": "stage-02-local-unpublished"
+      },
+      "clean": true
+    },
+    {
+      "repository": "mesa-helios",
+      "revision": "8d653f8eeae01750ccad377ce68216823ea998fb",
+      "pin": {
+        "rev": "8d653f8eeae01750ccad377ce68216823ea998fb",
+        "ref": "refs/heads/main",
+        "provenance": "stage-02-local-unpublished"
+      },
+      "clean": true
+    },
+    {
+      "repository": "qemu-helios",
+      "revision": "548ec555d23db9cd6c5de656ee8b7016206a9035",
+      "pin": {
+        "rev": "548ec555d23db9cd6c5de656ee8b7016206a9035",
+        "ref": "refs/heads/helios-11.1.1",
+        "provenance": "stage-02-local-unpublished"
+      },
+      "clean": true
+    },
+    {
+      "repository": "venus-protocol",
+      "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+      "pin": {
+        "rev": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+        "ref": "refs/heads/main",
+        "provenance": "reference-helios-gitlink"
+      },
+      "clean": true
+    },
+    {
+      "repository": "virglrenderer",
+      "revision": "8668479d681f47ade80808c9d3fc1457540d7d58",
+      "pin": {
+        "rev": "8668479d681f47ade80808c9d3fc1457540d7d58",
+        "ref": "refs/heads/main",
+        "provenance": "stage-02-local-unpublished"
+      },
+      "clean": true
+    },
+    {
+      "repository": "vkd3d-proton",
+      "revision": "56bc6cfcf1fc36c2ce213d903d04591077abc52f",
+      "pin": {
+        "rev": "56bc6cfcf1fc36c2ce213d903d04591077abc52f",
+        "ref": "refs/heads/master",
+        "provenance": "stage-02-local-unpublished"
+      },
+      "clean": true
+    },
+    {
+      "repository": "winboat",
+      "revision": "17563cacb82ca31efe5feb12e3968f51951f1085",
+      "pin": {
+        "rev": "17563cacb82ca31efe5feb12e3968f51951f1085",
+        "ref": "refs/heads/main",
+        "provenance": "reference-winboat-head"
+      },
+      "clean": true
+    }
+  ],
+  "componentCheckpointReceipt": "op-c4395ff3414d4fd39833ca4ef88b13bf",
+  "localPinVerification": [
+    {
+      "repository": "helios",
+      "revision": "38d245a077d1aa7e121df2fab5035dcc6db9f889",
+      "developmentRef": "refs/heads/master",
+      "localObjectVerified": true,
+      "canonicalReachability": "pending-publication",
+      "sourceOverride": "workspace.remotes.helios",
+      "receiptId": "op-da2bb674eff04eac89e20b791aafaa03"
+    },
+    {
+      "repository": "qemu-helios",
+      "revision": "548ec555d23db9cd6c5de656ee8b7016206a9035",
+      "developmentRef": "refs/heads/helios-11.1.1",
+      "localObjectVerified": true,
+      "canonicalReachability": "pending-publication",
+      "sourceOverride": "workspace.remotes.qemu-helios",
+      "receiptId": "op-09938b1741604cfbb87a851e53d91a19"
+    },
+    {
+      "repository": "dxvk",
+      "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+      "developmentRef": "refs/heads/master",
+      "localObjectVerified": true,
+      "canonicalReachability": "pending-publication",
+      "sourceOverride": "workspace.remotes.dxvk",
+      "receiptId": "op-14d418c985434981bb9b6c8536c2b689"
+    },
+    {
+      "repository": "virglrenderer",
+      "revision": "8668479d681f47ade80808c9d3fc1457540d7d58",
+      "developmentRef": "refs/heads/main",
+      "localObjectVerified": true,
+      "canonicalReachability": "pending-publication",
+      "sourceOverride": "workspace.remotes.virglrenderer",
+      "receiptId": "op-e662ffef22154d13bfd5a76a09c06ceb"
+    },
+    {
+      "repository": "mesa-helios",
+      "revision": "8d653f8eeae01750ccad377ce68216823ea998fb",
+      "developmentRef": "refs/heads/main",
+      "localObjectVerified": true,
+      "canonicalReachability": "pending-publication",
+      "sourceOverride": "workspace.remotes.mesa-helios",
+      "receiptId": "op-c7dc005c986e4b348e85e189f2cae6bc"
+    },
+    {
+      "repository": "vkd3d-proton",
+      "revision": "56bc6cfcf1fc36c2ce213d903d04591077abc52f",
+      "developmentRef": "refs/heads/master",
+      "localObjectVerified": true,
+      "canonicalReachability": "pending-publication",
+      "sourceOverride": "workspace.remotes.vkd3d-proton",
+      "receiptId": "op-6616a5321a6b4a9eb27f02980d73b2ae"
+    }
+  ],
+  "publication": {
+    "pushed": false,
+    "canonicalReachability": "pending-publication",
+    "trackedSourceUrls": "canonical; local paths remain in ignored overrides"
+  },
+  "standaloneShells": [
+    {
+      "repository": "helios",
+      "exitCode": 0,
+      "lockMatchesRoot": true
+    },
+    {
+      "repository": "qemu-helios",
+      "exitCode": 0,
+      "lockMatchesRoot": true
+    },
+    {
+      "repository": "dxvk",
+      "exitCode": 0,
+      "lockMatchesRoot": true
+    },
+    {
+      "repository": "virglrenderer",
+      "exitCode": 0,
+      "lockMatchesRoot": true
+    },
+    {
+      "repository": "mesa-helios",
+      "exitCode": 0,
+      "lockMatchesRoot": true
+    },
+    {
+      "repository": "vkd3d-proton",
+      "exitCode": 0,
+      "lockMatchesRoot": true
+    }
+  ],
+  "builds": {
+    "host-stack": {
+      "jobId": "op-f3f633c271e64a6684a4eabc7604dd01",
+      "operationId": "op-b7503c95e1ce4032b9114f59d6c958f3",
+      "state": "built-and-verified",
+      "mode": "release",
+      "configuration": "release",
+      "abi": "linux-x86_64",
+      "manifest": "out/native/op-b7503c95e1ce4032b9114f59d6c958f3/manifest.json",
+      "manifestSha256": "02ae3e7a900c01899e9a948d0b8cab2456e9aae26eb2b3837d2d36412dca6e19",
+      "filesVerified": 1118,
+      "licenseFiles": 10,
+      "symbolFiles": 99,
+      "embeddedSymbols": false,
+      "sourceRevisions": {
+        "qemu-helios": "548ec555d23db9cd6c5de656ee8b7016206a9035",
+        "virglrenderer": "8668479d681f47ade80808c9d3fc1457540d7d58",
+        "venus-protocol": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78"
+      },
+      "sourceNarHashes": {
+        "qemu-helios": "sha256-A3NNVl8shDupQaKzJqPbjd7+zeKu1aidF1HVIvhMWPc=",
+        "virglrenderer": "sha256-jR/ptS1By5/JyzdZ19PurYibw+Q1O37Cyieo4XQpa6c=",
+        "venus-protocol": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s="
+      },
+      "outputs": [
+        {
+          "drvPath": "/nix/store/wcrlcz3b57fssq803p395xsn6mj96b54-winboat-host-stack.drv",
+          "outputs": {
+            "out": "/nix/store/6hijgp1wvqyq7vp5j46q8lih7kz672h6-winboat-host-stack"
+          }
+        }
+      ],
+      "closurePaths": 431,
+      "recipe": {
+        "expression": "/nix/store/6n0sjyfhx9jzp3r6pcs7d379h2kpv4f2-winboat-build-operations/build.nix",
+        "rootRevision": "a88260fa2a2e9b3167b2ea51d3b6a2138fa98ad5",
+        "sharedOperationsNarHash": "sha256-VZCfYLcb4jVvfp6MBiaHW25ZRSCJgHpWMwQ8sXna4bs=",
+        "controlPlaneStorePath": "/nix/store/p28bb3pbyvv05y8ba7nkjmd55db53n2g-winboat-operation-sources",
+        "rootDiffSha256": "24242918c537647ae404004693e773939e67fa423533481eeaf6fa88d7299103"
+      },
+      "installed": false,
+      "loaded": false
+    },
+    "dxvk-win64": {
+      "jobId": "op-b2e069c9cca548379b4f264097de854f",
+      "operationId": "op-8046135e891445c58727ec3f413586c0",
+      "state": "built-and-verified",
+      "mode": "release",
+      "configuration": "release",
+      "abi": "windows-x86_64-mingw-static-cxx-runtime",
+      "manifest": "out/guest/op-8046135e891445c58727ec3f413586c0/manifest.json",
+      "manifestSha256": "78f0e26caa1a72651366f27ce412437830869646dd772ccbfcde021a52ff8198",
+      "filesVerified": 15,
+      "licenseFiles": 7,
+      "symbolFiles": 0,
+      "embeddedSymbols": true,
+      "sourceRevisions": {
+        "dxvk": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa"
+      },
+      "sourceNarHashes": {
+        "dxvk": "sha256-uCtFWNqLnH0jVBYLIBvGXVD7ekc3N9UOxDGIoSYDets="
+      },
+      "outputs": [
+        {
+          "drvPath": "/nix/store/7508kqbibcj7v5k02sa0hfkq018jr2yc-helios-dxvk-mingw64-x86_64-w64-mingw32-3.0.2.drv",
+          "outputs": {
+            "out": "/nix/store/xzrwlbn1sbna7awky6q7sqk011cll96n-helios-dxvk-mingw64-x86_64-w64-mingw32-3.0.2"
+          }
+        }
+      ],
+      "closurePaths": 24,
+      "recipe": {
+        "expression": "/nix/store/6n0sjyfhx9jzp3r6pcs7d379h2kpv4f2-winboat-build-operations/build.nix",
+        "rootRevision": "a88260fa2a2e9b3167b2ea51d3b6a2138fa98ad5",
+        "sharedOperationsNarHash": "sha256-VZCfYLcb4jVvfp6MBiaHW25ZRSCJgHpWMwQ8sXna4bs=",
+        "controlPlaneStorePath": "/nix/store/p28bb3pbyvv05y8ba7nkjmd55db53n2g-winboat-operation-sources",
+        "rootDiffSha256": "24242918c537647ae404004693e773939e67fa423533481eeaf6fa88d7299103"
+      },
+      "installed": false,
+      "loaded": false
+    },
+    "mesa-host": {
+      "jobId": "op-aabaa02fe7d849ca9d46baf0f57af6c8",
+      "operationId": "op-e73311e16c234d0e9a30e984106fa3ff",
+      "state": "built-and-verified",
+      "mode": "release",
+      "configuration": "release",
+      "abi": "linux-x86_64",
+      "manifest": "out/native/op-e73311e16c234d0e9a30e984106fa3ff/manifest.json",
+      "manifestSha256": "25730857f9390d7734194044d1753d1d217c1a4dda5f8de44992fbd0f3cdd3aa",
+      "filesVerified": 236,
+      "licenseFiles": 7,
+      "symbolFiles": 21,
+      "embeddedSymbols": false,
+      "sourceRevisions": {
+        "mesa-helios": "8d653f8eeae01750ccad377ce68216823ea998fb",
+        "venus-protocol": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78"
+      },
+      "sourceNarHashes": {
+        "mesa-helios": "sha256-EUBeOqmwLBIS2MsXMLqL4Gp6YHItBlA4HG7u3wnOnDU=",
+        "venus-protocol": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s="
+      },
+      "outputs": [
+        {
+          "drvPath": "/nix/store/0d5az81vgnbc0lncx4ckwq436wnm1q7j-mesa-host-with-symbols.drv",
+          "outputs": {
+            "out": "/nix/store/fjaq5j7a6yb3a0xn3hbsgzjd38lq3f46-mesa-host-with-symbols"
+          }
+        }
+      ],
+      "closurePaths": 44,
+      "recipe": {
+        "expression": "/nix/store/6n0sjyfhx9jzp3r6pcs7d379h2kpv4f2-winboat-build-operations/build.nix",
+        "rootRevision": "a88260fa2a2e9b3167b2ea51d3b6a2138fa98ad5",
+        "sharedOperationsNarHash": "sha256-VZCfYLcb4jVvfp6MBiaHW25ZRSCJgHpWMwQ8sXna4bs=",
+        "controlPlaneStorePath": "/nix/store/p28bb3pbyvv05y8ba7nkjmd55db53n2g-winboat-operation-sources",
+        "rootDiffSha256": "24242918c537647ae404004693e773939e67fa423533481eeaf6fa88d7299103"
+      },
+      "installed": false,
+      "loaded": false
+    },
+    "helios-protocol": {
+      "jobId": "op-019f6065ef7045508feb92a801cb8af6",
+      "operationId": "op-f5521509a8c841be8eed16a8512b9c4a",
+      "state": "built-and-verified",
+      "mode": "release",
+      "configuration": "release",
+      "abi": "rust-linux",
+      "manifest": "out/native/op-f5521509a8c841be8eed16a8512b9c4a/manifest.json",
+      "manifestSha256": "b2402c0b68d90326fb58ad9b6f061c9517473fad8f2debd15cfaaf87edd470bf",
+      "filesVerified": 11,
+      "licenseFiles": 2,
+      "symbolFiles": 0,
+      "embeddedSymbols": false,
+      "sourceRevisions": {
+        "helios": "38d245a077d1aa7e121df2fab5035dcc6db9f889"
+      },
+      "sourceNarHashes": {
+        "helios": "sha256-pBvBegEzLhzBSeLc8iP2QKHm4E6Mr9UNB3mn09NFr2Y="
+      },
+      "outputs": [
+        {
+          "drvPath": "/nix/store/pgp14y4zxlgr60yz3nrfpfjpkngb3n14-helios-protocol-0.1.0.drv",
+          "outputs": {
+            "out": "/nix/store/swjkb58pqblbd8r42sjss0y895hbfmkk-helios-protocol-0.1.0"
+          }
+        }
+      ],
+      "closurePaths": 1,
+      "recipe": {
+        "expression": "/nix/store/6n0sjyfhx9jzp3r6pcs7d379h2kpv4f2-winboat-build-operations/build.nix",
+        "rootRevision": "a88260fa2a2e9b3167b2ea51d3b6a2138fa98ad5",
+        "sharedOperationsNarHash": "sha256-VZCfYLcb4jVvfp6MBiaHW25ZRSCJgHpWMwQ8sXna4bs=",
+        "controlPlaneStorePath": "/nix/store/p28bb3pbyvv05y8ba7nkjmd55db53n2g-winboat-operation-sources",
+        "rootDiffSha256": "24242918c537647ae404004693e773939e67fa423533481eeaf6fa88d7299103"
+      },
+      "installed": false,
+      "loaded": false
+    },
+    "WBFreeRDP": {
+      "jobId": "op-4f91f7929dfa4beba53d7ed1f4ba58ee",
+      "operationId": "op-3c452cb96dcf4e40a896741cf9372c53",
+      "state": "built-and-verified",
+      "mode": "release",
+      "configuration": "release",
+      "abi": "linux-x86_64",
+      "manifest": "out/native/op-3c452cb96dcf4e40a896741cf9372c53/manifest.json",
+      "manifestSha256": "0550a6c559991a6b8b0d8fa69c0bf6fe65c4c91d335a9d073ead6798a07a3436",
+      "filesVerified": 472,
+      "licenseFiles": 1,
+      "symbolFiles": 63,
+      "embeddedSymbols": false,
+      "sourceRevisions": {
+        "WBFreeRDP": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0"
+      },
+      "sourceNarHashes": {
+        "WBFreeRDP": "sha256-wrPkYfrb37kuhC9ayNX+z73LnFES32L64JMVGEWHK2U="
+      },
+      "outputs": [
+        {
+          "drvPath": "/nix/store/29mnjn1byvrf00gpz69v5z0vnpbalp4q-WBFreeRDP-with-symbols.drv",
+          "outputs": {
+            "out": "/nix/store/6a3cgki2dvwhz5m8j3392n34gjm7gspc-WBFreeRDP-with-symbols"
+          }
+        }
+      ],
+      "closurePaths": 300,
+      "recipe": {
+        "expression": "/nix/store/6n0sjyfhx9jzp3r6pcs7d379h2kpv4f2-winboat-build-operations/build.nix",
+        "rootRevision": "a88260fa2a2e9b3167b2ea51d3b6a2138fa98ad5",
+        "sharedOperationsNarHash": "sha256-VZCfYLcb4jVvfp6MBiaHW25ZRSCJgHpWMwQ8sXna4bs=",
+        "controlPlaneStorePath": "/nix/store/p28bb3pbyvv05y8ba7nkjmd55db53n2g-winboat-operation-sources",
+        "rootDiffSha256": "24242918c537647ae404004693e773939e67fa423533481eeaf6fa88d7299103"
+      },
+      "installed": false,
+      "loaded": false
+    }
+  },
+  "checks": {
+    "integrationTests": 25,
+    "devenvTestExitCode": 0,
+    "qemuUnitPassed": 105,
+    "qemuUnitSkipped": [
+      "unit - qemu:test-seccomp",
+      "unit - qemu:test-nested-aio-poll",
+      "unit - qemu:test-yank"
+    ],
+    "skipReasons": [
+      "sandbox already uses seccomp",
+      "sandbox has no IPv4 loopback",
+      "fdmon_poll_ops is not selected"
+    ],
+    "rendererCpuTestsPassed": 5,
+    "venusRoundtripTestsPassed": 1,
+    "mesaTestsPassed": 46,
+    "heliosProtocolTestsPassed": 14,
+    "qemuModules": 19,
+    "protocolHeaders": 80,
+    "smoke": {
+      "schemaVersion": 1,
+      "qemu": "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1",
+      "renderer": "/nix/store/0kid75j28bj7mfgaf3cnny1pis1yrzfg-helios-virglrenderer-1.3.0",
+      "protocol": "/nix/store/gwgiq6qb7qz1fg4hcqld38m16dq1hvih-winboat-venus-protocol-1.1.3",
+      "displayHelp": "Available display backend types:\nnone\nsdl\negl-headless\ncurses\ndbus\n\nSome display backends support suboptions, which can be set with\n   -display backend,option=value,option=value...\nFor a short list of the suboptions for each display, see the top-level -help output; more detail is in the documentation.\n",
+      "sdlSession": "dummy-driver-qmp-quit",
+      "mappedModules": [
+        "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/bin/qemu-system-x86_64",
+        "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/lib/qemu/ui-opengl.so",
+        "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/lib/qemu/ui-sdl.so"
+      ],
+      "gpuRendering": "pending-interactive-hardware-verification",
+      "guestInstalled": false
+    },
+    "rendererActualLoad": [
+      "9:\tcalling init: /nix/store/0kid75j28bj7mfgaf3cnny1pis1yrzfg-helios-virglrenderer-1.3.0/lib/libvirglrenderer.so.1"
+    ],
+    "peImages": [
+      {
+        "path": "bin/d3d10core.dll",
+        "imports": [
+          "d3d11.dll",
+          "KERNEL32.dll",
+          "msvcrt.dll"
+        ],
+        "embeddedDebug": true
+      },
+      {
+        "path": "bin/d3d11.dll",
+        "imports": [
+          "ADVAPI32.dll",
+          "dxgi.dll",
+          "GDI32.dll",
+          "KERNEL32.dll",
+          "msvcrt.dll",
+          "SETUPAPI.dll",
+          "USER32.dll"
+        ],
+        "embeddedDebug": true
+      },
+      {
+        "path": "bin/d3d9.dll",
+        "imports": [
+          "ADVAPI32.dll",
+          "GDI32.dll",
+          "KERNEL32.dll",
+          "msvcrt.dll",
+          "SETUPAPI.dll",
+          "USER32.dll"
+        ],
+        "embeddedDebug": true
+      },
+      {
+        "path": "bin/dxgi.dll",
+        "imports": [
+          "ADVAPI32.dll",
+          "GDI32.dll",
+          "KERNEL32.dll",
+          "msvcrt.dll",
+          "SETUPAPI.dll",
+          "USER32.dll",
+          "VERSION.dll"
+        ],
+        "embeddedDebug": true
+      }
+    ],
+    "qemuUninitializedGitlinks": [
+      "roms/QemuMacDrivers",
+      "roms/SLOF",
+      "roms/edk2",
+      "roms/ipxe",
+      "roms/openbios",
+      "roms/opensbi",
+      "roms/qboot",
+      "roms/qemu-palcode",
+      "roms/seabios",
+      "roms/seabios-hppa",
+      "roms/skiboot",
+      "roms/u-boot",
+      "roms/u-boot-sam460ex",
+      "roms/vbootrom",
+      "tests/lcitool/libvirt-ci",
+      "third_party/Vulkan-Headers"
+    ],
+    "lookingGlassUninitialized": true,
+    "additionalShaderHeaderRevision": "c8ad050fcb29e42a2f57d9f59e97488f465c436d",
+    "syntaxAndFormatting": "Node syntax, Python compilation, task Nix formatting and whitespace passed"
+  },
+  "mcp": {
+    "launch": [
+      "devenv",
+      "shell",
+      "--",
+      "wb",
+      "mcp"
+    ],
+    "protocolVersion": "2025-11-25",
+    "toolNames": [
+      "workspace_status",
+      "workspace_setup",
+      "repo_list",
+      "repo_status",
+      "repo_plan",
+      "repo_verify",
+      "repo_sync",
+      "repo_checkpoint",
+      "repo_pin",
+      "repo_push",
+      "repo_fork",
+      "repo_branch",
+      "repo_reconcile",
+      "job_status",
+      "job_cancel",
+      "job_resume",
+      "build_list",
+      "build_run",
+      "build_verify"
+    ],
+    "toolCount": 19,
+    "buildListCliParity": true,
+    "enginePlanArchiveCount": 8,
+    "unavailableBackendExitCode": 3
+  },
+  "plans": {
+    "dxvk-engine-x64": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "abi": "msvc",
+        "architecture": "x64",
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "crt": "mt",
+        "execution": "durable-elevated-task",
+        "outputs": [
+          "src/dxvk/libdxvk.a",
+          "src/d3d11/libhelios_d3d11_static.a",
+          "subprojects/dxbc-spirv/libdxbc_spv.a",
+          "subprojects/libdisplay-info/libdisplay-info.a",
+          "src/spirv/libspirv.a",
+          "src/util/libutil.a",
+          "src/wsi/libwsi.a",
+          "src/vulkan/libvkcommon.a"
+        ],
+        "payloadTransport": "Nix-declared-shared-operation",
+        "purpose": "build",
+        "requirements": [
+          "LLVM-22.1.8-clang-cl-lld-link",
+          "MSVC-v143",
+          "SDK-10.0.26100.0",
+          "fixed-shader-tools"
+        ],
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "dxvk-engine-x86": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "abi": "msvc",
+        "architecture": "x86",
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "crt": "mt",
+        "execution": "durable-elevated-task",
+        "outputs": [
+          "src/dxvk/libdxvk.a",
+          "src/d3d11/libhelios_d3d11_static.a",
+          "subprojects/dxbc-spirv/libdxbc_spv.a",
+          "subprojects/libdisplay-info/libdisplay-info.a",
+          "src/spirv/libspirv.a",
+          "src/util/libutil.a",
+          "src/wsi/libwsi.a",
+          "src/vulkan/libvkcommon.a"
+        ],
+        "payloadTransport": "Nix-declared-shared-operation",
+        "purpose": "build",
+        "requirements": [
+          "LLVM-22.1.8-clang-cl-lld-link",
+          "MSVC-v143",
+          "SDK-10.0.26100.0",
+          "fixed-shader-tools"
+        ],
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "vkd3d-engine-x64": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "abi": "msvc",
+        "architecture": "x64",
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "crt": "mt",
+        "execution": "durable-elevated-task",
+        "outputs": [
+          "libs/d3d12core/libhelios_d3d12_static.a",
+          "shader-libraries",
+          "pdb"
+        ],
+        "payloadTransport": "Nix-declared-shared-operation",
+        "purpose": "build",
+        "requirements": [
+          "LLVM-22.1.8-clang-cl-lld-link",
+          "MSVC-v143",
+          "SDK-10.0.26100.0",
+          "dxil-spirv-at-paired-pin",
+          "fixed-SPIRV-Tools"
+        ],
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "vkd3d-engine-x86": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "abi": "msvc",
+        "architecture": "x86",
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "crt": "mt",
+        "execution": "durable-elevated-task",
+        "outputs": [
+          "libs/d3d12core/libhelios_d3d12_static.a",
+          "shader-libraries",
+          "pdb"
+        ],
+        "payloadTransport": "Nix-declared-shared-operation",
+        "purpose": "build",
+        "requirements": [
+          "LLVM-22.1.8-clang-cl-lld-link",
+          "MSVC-v143",
+          "SDK-10.0.26100.0",
+          "dxil-spirv-at-paired-pin",
+          "fixed-SPIRV-Tools"
+        ],
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "helios-guest-x64": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "architecture": "x64",
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "crt": "mt",
+        "execution": "durable-elevated-task",
+        "payloadTransport": "Nix-declared-shared-operation",
+        "payloads": [
+          "ci/windows/Build-Umd.ps1",
+          "ci/windows/Build-Driver.ps1"
+        ],
+        "purpose": "build",
+        "requirements": [
+          "MSVC-v143",
+          "SDK-and-WDK-10.0.26100.0",
+          "LLVM-22.1.8",
+          "bindgen-0.72",
+          "Rust-nightly-2026-07-14",
+          "local-CARGO_TARGET_DIR",
+          "paired-static-CRT-DXVK-vkd3d"
+        ],
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "helios-guest-x86": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "architecture": "x86",
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "crt": "mt",
+        "execution": "durable-elevated-task",
+        "payloadTransport": "Nix-declared-shared-operation",
+        "payloads": [
+          "ci/windows/Build-Umd.ps1"
+        ],
+        "purpose": "build",
+        "requirements": [
+          "MSVC-v143",
+          "SDK-and-WDK-10.0.26100.0",
+          "LLVM-22.1.8",
+          "bindgen-0.72",
+          "Rust-nightly-2026-07-14",
+          "local-CARGO_TARGET_DIR",
+          "paired-static-CRT-DXVK-vkd3d"
+        ],
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "mesa-guest-x64": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "architecture": "x64",
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "execution": "durable-elevated-task",
+        "payloadTransport": "Nix-declared-shared-operation",
+        "protocol": "@protocolArtifact@",
+        "purpose": "build",
+        "requirements": [
+          "MinGW-w64-x64-or-x86-static-runtime",
+          "fixed-shader-tools",
+          "SDK-10.0.26100.0",
+          "fixed-Meson-wrap-closure"
+        ],
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "mesa-guest-x86": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "architecture": "x86",
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "execution": "durable-elevated-task",
+        "payloadTransport": "Nix-declared-shared-operation",
+        "protocol": "@protocolArtifact@",
+        "purpose": "build",
+        "requirements": [
+          "MinGW-w64-x64-or-x86-static-runtime",
+          "fixed-shader-tools",
+          "SDK-10.0.26100.0",
+          "fixed-Meson-wrap-closure"
+        ],
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "clvk-helios": {
+      "evaluated": true,
+      "backend": "devbox",
+      "available": false,
+      "dispatch": {
+        "backend": "devbox",
+        "backendAvailable": false,
+        "bindingContract": {
+          "rule": "Stage 4 binds applicable tokens to verified local Windows mirrors, build directories and transferred recipe files before execution.",
+          "schemaVersion": 1,
+          "tokens": [
+            "@sourceDirectory@",
+            "@buildDirectory@",
+            "@nativeFile@",
+            "@heliosSourceDirectory@",
+            "@protocolArtifact@"
+          ]
+        },
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "buildSystem": "CMake/Ninja",
+        "cargoTargetRoot": "C:\\WinBoatDev\\build\\cargo",
+        "execution": "durable-elevated-task",
+        "inputContract": {
+          "identity": "The complete compiler/gitlink closure requires immutable source and archive hashes, including clspv's nested dependencies.",
+          "required": [
+            "clvk-helios",
+            "clspv",
+            "LLVM/Clang",
+            "SPIRV-Tools",
+            "SPIRV-Headers",
+            "SPIRV-LLVM-Translator",
+            "OpenCL-Headers",
+            "OpenCL-loader"
+          ],
+          "schemaVersion": 1
+        },
+        "payloadTransport": "Nix-declared-shared-operation",
+        "purpose": "build",
+        "reason": "Fixed compiler/header/translator inputs and the Stage 4 guest backend are unavailable; no compiler or downloads were run.",
+        "sourceMirrorRoot": "C:\\WinBoatDev\\src"
+      }
+    },
+    "winboat": {
+      "evaluated": true,
+      "backend": "unavailable",
+      "available": false,
+      "dispatch": {
+        "backend": "unavailable",
+        "backendAvailable": false,
+        "buildSystem": "Bun/Vite/electron-builder",
+        "inputContract": {
+          "identity": "Verified dependency cache and exact manifested Electron/guest-server artifacts; no install scripts may fetch binaries.",
+          "required": [
+            "winboat",
+            "Bun-lock-cache",
+            "patched-usb-native-module",
+            "Electron-fork-binary",
+            "guest-server-payload"
+          ],
+          "schemaVersion": 1
+        },
+        "reason": "The Bun lock has no fixed Nix dependency cache; the forked Electron binary and guest-server payload are not available as verified artifacts."
+      }
+    },
+    "electron": {
+      "evaluated": true,
+      "backend": "unavailable",
+      "available": false,
+      "dispatch": {
+        "backend": "unavailable",
+        "backendAvailable": false,
+        "buildSystem": "GN/Ninja",
+        "inputContract": {
+          "identity": "Each source/package requires an exact revision and verified NAR or archive hash.",
+          "required": [
+            "electron",
+            "Chromium-at-DEPS-revision",
+            "depot_tools",
+            "Node",
+            "V8",
+            "CIPD-packages",
+            "sysroots",
+            "GN-args",
+            "patches-config"
+          ],
+          "schemaVersion": 1
+        },
+        "reason": "The pinned Electron checkout has no verified Chromium/depot_tools/CIPD/sysroot source closure; build-time downloads are disabled."
+      }
+    }
+  },
+  "developmentEvidence": {
+    "retainedUnder": ".state/builds, .state/jobs and .state/operations",
+    "supersededFailuresPreserved": true
+  },
+  "pending": [
+    "canonical publication of new recipe commits",
+    "hardware Vulkan and renderer/GPU tests",
+    "interactive SDL",
+    "Stage 4 MSVC/WDK execution and installed/loaded guest identity",
+    "fixed WinBoat/Electron/CLVK dependency closures",
+    "Helios root/protocol license clarification",
+    "component CI and release bundles"
+  ]
+}

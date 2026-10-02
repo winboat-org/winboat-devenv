@@ -4,6 +4,13 @@
 pin file. `devenv.lock` separately pins Nix packages/modules. Nix evaluation
 exports the combined manifest, so CLI and MCP never maintain another list.
 
+Stage 2 adds local recipe commits in the six Helios repositories, updates parent
+gitlinks, and records coherent pins verified through ignored `workspace.remotes`
+overrides to managed clones. The [Stage 2 evidence](evidence/stage-02-validation.json)
+lists these exact commits. Canonical URLs stay unchanged; new commit reachability
+on those remotes is pending. Stage 1's canonical evidence describes the seed,
+not publication of the new recipes.
+
 ## Inventory and layout
 
 All canonical URLs use `https://github.com/winboat-org/<repository>.git`.
