@@ -62,11 +62,27 @@ for some children; confirm the seeded objects exist in the organization fork.
 Do not replace a paired graphics revision with remote HEAD merely to make sync
 succeed. An intentional update needs a coherent parent/pin change.
 
-WBFreeRDP and Electron have `rev = null`: no verified object ID was available.
-Stage 1 resolves them against the actual development refs and records the
-provenance. A null `ref` with an exact `rev` permits pinned checkout, but does not
-establish which branch a push should track. Discover/explicitly configure the
-development ref before updating pins on push; never guess `main` or `master`.
+Stage 1 resolved WBFreeRDP at `winboat-3.30` and Electron at `winboat-43.2.0`.
+Their exact revisions and all ten unchanged seed objects were fetched from the
+canonical organization URLs. The retained [source verification](evidence/stage-01-sources.json)
+records advertised refs and object identities independently of seed provenance.
+
+| Repository | Verified publication ref |
+| --- | --- |
+| helios, dxvk, vkd3d-proton, dxil-spirv | `refs/heads/master` |
+| qemu-helios | `refs/heads/helios-11.1.1` |
+| virglrenderer, mesa-helios, venus-protocol, clvk-helios | `refs/heads/main` |
+| winboat | `refs/heads/main` |
+| WBFreeRDP | `refs/heads/winboat-3.30` |
+| electron | `refs/heads/winboat-43.2.0` |
+
+The reference-only `helios-native-fl12` and `gpu-accel` branch names are absent
+from the canonical DXIL-SPIRV and WinBoat remotes. Their source SHAs remain
+unchanged. DXIL-SPIRV advertises that SHA on `master`; WinBoat's advertised
+default is `main`, whose tip differs from the seed. Pin verification establishes
+object availability and ref existence, not that every seed is a ref's current
+tip or a tested graphics stack. Select an explicit fork URL/ref before publishing
+local WinBoat development rather than forcing the reference branch onto main.
 
 `wb-check` checks scaffold structure. `wb-check --ready` also requires every
 revision and a generated Nix lock. Stage 1 adds reachability and consistency

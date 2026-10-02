@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "repositories": [
+    {
+      "repository": "WBFreeRDP",
+      "canonicalUrl": "https://github.com/winboat-org/WBFreeRDP.git",
+      "revision": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0",
+      "developmentRef": "refs/heads/winboat-3.30",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/master\tHEAD",
+        "9e3f5a9d49a9fbf02f449122934fdfd027dbed53\tHEAD",
+        "9e3f5a9d49a9fbf02f449122934fdfd027dbed53\trefs/heads/master",
+        "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0\trefs/heads/winboat-3.30"
+      ],
+      "timestamp": 1790952761.532563
+    },
+    {
+      "repository": "clvk-helios",
+      "canonicalUrl": "https://github.com/winboat-org/clvk-helios.git",
+      "revision": "56c626132782bf083a80a6c17f5ca763be0ff8fb",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/main\tHEAD",
+        "56c626132782bf083a80a6c17f5ca763be0ff8fb\tHEAD",
+        "56c626132782bf083a80a6c17f5ca763be0ff8fb\trefs/heads/clvk-d3d11-sharing",
+        "58787fbd54d9a63352bae5451c5c3d6ddeac57c6\trefs/heads/codex/win32-gl-sharing",
+        "93742490431e7c77428384b8698bd6594df04611\trefs/heads/helios/gl-sharing-hardening",
+        "f88a84cb91939aa51d26ae8b6454f25bf5b86ca0\trefs/heads/helios/unmap-host-handoff",
+        "56c626132782bf083a80a6c17f5ca763be0ff8fb\trefs/heads/main"
+      ],
+      "timestamp": 1790952768.3352356
+    },
+    {
+      "repository": "dxil-spirv",
+      "canonicalUrl": "https://github.com/winboat-org/dxil-spirv.git",
+      "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+      "developmentRef": "refs/heads/master",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/master\tHEAD",
+        "f4651bd076a2613728823ec289abc121a348a48a\tHEAD",
+        "f4651bd076a2613728823ec289abc121a348a48a\trefs/heads/master"
+      ],
+      "timestamp": 1790952775.8202899
+    },
+    {
+      "repository": "dxvk",
+      "canonicalUrl": "https://github.com/winboat-org/dxvk.git",
+      "revision": "da42d2d289eb956305abddce9099b076d1e8a73b",
+      "developmentRef": "refs/heads/master",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/master\tHEAD",
+        "da42d2d289eb956305abddce9099b076d1e8a73b\tHEAD",
+        "b297d064a241f4a32f397c5468f0c45ad60184e6\trefs/heads/codex/exit8-rgb10-conversion",
+        "ec7ad9135b7119b8d82ca24c8a84c5f94d94aa29\trefs/heads/dx12",
+        "b79b310f292a95872114ec167a0f7e33a9bba9e7\trefs/heads/fix/passmark-dx11-timer",
+        "da42d2d289eb956305abddce9099b076d1e8a73b\trefs/heads/master"
+      ],
+      "timestamp": 1790952783.439752
+    },
+    {
+      "repository": "electron",
+      "canonicalUrl": "https://github.com/winboat-org/electron.git",
+      "revision": "c328b030fd3357139f66c8a3a84a4384c0136eed",
+      "developmentRef": "refs/heads/winboat-43.2.0",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/winboat-43.2.0\tHEAD",
+        "c328b030fd3357139f66c8a3a84a4384c0136eed\tHEAD",
+        "7ca7c501663134e2c612ad0831b2e7dc0e79b8a3\trefs/heads/main",
+        "c328b030fd3357139f66c8a3a84a4384c0136eed\trefs/heads/winboat-43.2.0"
+      ],
+      "timestamp": 1790952793.5057583
+    },
+    {
+      "repository": "helios",
+      "canonicalUrl": "https://github.com/winboat-org/helios.git",
+      "revision": "52c02799a042ecab25b9e812db9c002ba98ddb7c",
+      "developmentRef": "refs/heads/master",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/master\tHEAD",
+        "52c02799a042ecab25b9e812db9c002ba98ddb7c\tHEAD",
+        "bf914db097b4a9c66998a7341e01c416170fccfc\trefs/heads/clvk-d3d11-sharing",
+        "32795b0bb2cb7f2e7eb064c077f677add94624ba\trefs/heads/codex/exit8-rgb10-conversion",
+        "ce5662b03c95f623c27955a54fdcdbc0df63ecf2\trefs/heads/fix/passmark-dx11-timer",
+        "8be14ec837c200c4fe3e7c6de7bcb7a6de3852ab\trefs/heads/helios/clspv-pointer-array-alloca-fix",
+        "4e9f843e86a5c3d4b6433cb19fda9907e28de2ce\trefs/heads/kmd-legacy",
+        "52c02799a042ecab25b9e812db9c002ba98ddb7c\trefs/heads/master",
+        "d4e8092fab70b701e221e1faa1bdf4c85245cb79\trefs/heads/wddm-dx12",
+        "d2bb2e1eb53a6643f194370e8c0ba4709e9989dd\trefs/heads/wip/installer-selfcontained"
+      ],
+      "timestamp": 1790952801.8756402
+    },
+    {
+      "repository": "mesa-helios",
+      "canonicalUrl": "https://github.com/winboat-org/mesa-helios.git",
+      "revision": "89bd0676a4e69740d9900fb13561b14acc4997d6",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/main\tHEAD",
+        "89bd0676a4e69740d9900fb13561b14acc4997d6\tHEAD",
+        "3c905599fb7f08095224a69748e2fe0babc3c590\trefs/heads/dx12",
+        "89bd0676a4e69740d9900fb13561b14acc4997d6\trefs/heads/main",
+        "d55969f822bc714a02a57962e4e649175016909a\trefs/heads/wddm-dev"
+      ],
+      "timestamp": 1790952835.2236695
+    },
+    {
+      "repository": "qemu-helios",
+      "canonicalUrl": "https://github.com/winboat-org/qemu-helios.git",
+      "revision": "37e165580f5eaeb861e311bcc8530e635af0a143",
+      "developmentRef": "refs/heads/helios-11.1.1",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/master\tHEAD",
+        "a759542a2c62f0fd3b65f5a66ad9868201014669\tHEAD",
+        "58343750f1bea7ee1863aa0d86719cb031c6c690\trefs/heads/codex/vnc-readback-pacing",
+        "58343750f1bea7ee1863aa0d86719cb031c6c690\trefs/heads/helios-11.0.1",
+        "37e165580f5eaeb861e311bcc8530e635af0a143\trefs/heads/helios-11.1.1",
+        "a759542a2c62f0fd3b65f5a66ad9868201014669\trefs/heads/master"
+      ],
+      "timestamp": 1790952852.793086
+    },
+    {
+      "repository": "venus-protocol",
+      "canonicalUrl": "https://github.com/winboat-org/venus-protocol.git",
+      "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/main\tHEAD",
+        "fe08e82c3819e8ee3c547b1ea810fde61f46fa78\tHEAD",
+        "fe08e82c3819e8ee3c547b1ea810fde61f46fa78\trefs/heads/main"
+      ],
+      "timestamp": 1790952860.3791907
+    },
+    {
+      "repository": "virglrenderer",
+      "canonicalUrl": "https://github.com/winboat-org/virglrenderer.git",
+      "revision": "5d0e47bd8ad9ba75a62c2e048b927c9d0dc45b05",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/main\tHEAD",
+        "5d0e47bd8ad9ba75a62c2e048b927c9d0dc45b05\tHEAD",
+        "5d0e47bd8ad9ba75a62c2e048b927c9d0dc45b05\trefs/heads/main"
+      ],
+      "timestamp": 1790952867.5125613
+    },
+    {
+      "repository": "vkd3d-proton",
+      "canonicalUrl": "https://github.com/winboat-org/vkd3d-proton.git",
+      "revision": "9494617539385c6d2d9925984d55d3f9d3143d0d",
+      "developmentRef": "refs/heads/master",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/master\tHEAD",
+        "9494617539385c6d2d9925984d55d3f9d3143d0d\tHEAD",
+        "9a2716c0db938e545e6765c3db48ba4e08a6bfd4\trefs/heads/helios",
+        "9494617539385c6d2d9925984d55d3f9d3143d0d\trefs/heads/master"
+      ],
+      "timestamp": 1790952877.5466323
+    },
+    {
+      "repository": "winboat",
+      "canonicalUrl": "https://github.com/winboat-org/winboat.git",
+      "revision": "17563cacb82ca31efe5feb12e3968f51951f1085",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true,
+      "advertisedRefs": [
+        "ref: refs/heads/main\tHEAD",
+        "b9a2df2cc33b2a5e2dc95b3f0472d832f44e86d3\tHEAD",
+        "4863cf1d1b5d301bc329a3e8e10cfb07a9e2db01\trefs/heads/0.9.1",
+        "ce73d1870921cb642e807b8a629a8083625d311d\trefs/heads/0.9.2",
+        "54204370eb78843241b424eecccffaed63190bb1\trefs/heads/1.0-bleeding-edge",
+        "8ce676aa77592dbf909e8bcac553feadf9a7c438\trefs/heads/chore/uprev-appimage",
+        "dacdd660d1808cac8213702f7a379b5a12bf69e9\trefs/heads/feat/custom-location",
+        "2033c91fdf6075fe5e49d6434b899c6815a54b78\trefs/heads/feat/podman-support",
+        "b0b987fa4e2f91e5f1043a4760be17353d291ca4\trefs/heads/feat/port-selection",
+        "b9a2df2cc33b2a5e2dc95b3f0472d832f44e86d3\trefs/heads/main",
+        "802f1d554cc37bf5ace881c819640f2fffd83aa7\trefs/heads/remove-dynamic-ports",
+        "2dac4f5fb56aae41a602cb4ef9dd80b74d7245a7\trefs/heads/xdg-data-dirs"
+      ],
+      "timestamp": 1790952885.4291472
+    }
+  ]
+}

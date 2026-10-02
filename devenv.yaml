@@ -2,6 +2,8 @@
 inputs:
   nixpkgs:
     url: github:cachix/devenv-nixpkgs/rolling
+  devenv-cli:
+    url: github:cachix/devenv/v2.4.0
 
 # Commit the generated devenv.lock before treating this shell as reproducible.
 # Component source revisions live separately in nix/pins.nix.
