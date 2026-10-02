@@ -56,9 +56,9 @@ WinBoat is the local `gpu-accel` checkout at
 `17563cacb82ca31efe5feb12e3968f51951f1085`; its untracked files are excluded.
 
 These ten revisions describe source objects, not deployed versions or a tested
-bundle. Remote availability was not verified because shell networking was
-unavailable. Local remote aliases/URLs differ from the canonical organization
-for some children; confirm the seeded objects exist in the organization fork.
+bundle. At scaffold creation, remote verification was blocked by networking;
+Stage 1 resolved that check. Local reference aliases/URLs differ from canonical
+organization URLs for some children; verification used the canonical sources.
 Do not replace a paired graphics revision with remote HEAD merely to make sync
 succeed. An intentional update needs a coherent parent/pin change.
 
@@ -117,5 +117,5 @@ Fork mode changes `origin` to a chosen namespace, retains winboat-org as
 and remotes before mutation. Namespace overrides stay local by default; a
 shared fork pin is an explicit URL/revision change that remains reproducible.
 Dependencies still at upstream SHAs can be fetched from upstream if a new fork
-does not contain them. SSH config is generated locally; no custom host alias is
-required for another contributor.
+does not contain them. The tool leaves global Git/SSH configuration alone;
+no custom host alias is required for another contributor.

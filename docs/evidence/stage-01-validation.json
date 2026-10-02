@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T15:48:01.929333+00:00",
+  "stage": 1,
+  "lock": {
+    "sha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "devenvRevision": "fe20b5cba7ab5e93ae73f956a8d3efc50e1753f4",
+    "cliMatchesModules": true,
+    "upstreamPatched": false
+  },
+  "tools": {
+    "devenv": "devenv 2.4.1+fe20b5c (x86_64-linux)",
+    "git": "git version 2.55.0",
+    "node": "v24.20.0",
+    "python3": "Python 3.14.7",
+    "nix": "nix (Nix) 2.34.8"
+  },
+  "validation": {
+    "command": "devenv test",
+    "exitCode": 0,
+    "integrationTests": 21,
+    "nativeActivationRegressionTests": "excluded at maintainer request",
+    "syntaxAndWhitespace": "node --check, shellcheck, nixfmt and git diff --check passed"
+  },
+  "mcp": {
+    "schemaVersion": 1,
+    "launch": {
+      "command": "devenv",
+      "args": [
+        "shell",
+        "--",
+        "wb",
+        "mcp"
+      ]
+    },
+    "initialized": true,
+    "protocolVersion": "2025-11-25",
+    "toolCount": 16,
+    "statusMatchesCli": true,
+    "repositoryCount": 12
+  },
+  "workspace": {
+    "schemaVersion": 1,
+    "initialDurableJob": "op-f180171b8ebc42bb96827520e80c08e5",
+    "finalSyncOperation": "op-6230ba6266d446faabdd7e5b67f2f003",
+    "repositoryCount": 12,
+    "allHeadsMatchPins": true,
+    "allManagedTreesClean": true,
+    "qemuSubmodules": {
+      "declaredCount": 16,
+      "allUninitialized": true
+    },
+    "lookingGlassUninitialized": true,
+    "shellEntryPreservesSourceAndIndex": true,
+    "repositories": [
+      {
+        "repository": "WBFreeRDP",
+        "head": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0"
+      },
+      {
+        "repository": "clvk-helios",
+        "head": "56c626132782bf083a80a6c17f5ca763be0ff8fb"
+      },
+      {
+        "repository": "dxil-spirv",
+        "head": "f4651bd076a2613728823ec289abc121a348a48a"
+      },
+      {
+        "repository": "dxvk",
+        "head": "da42d2d289eb956305abddce9099b076d1e8a73b"
+      },
+      {
+        "repository": "electron",
+        "head": "c328b030fd3357139f66c8a3a84a4384c0136eed"
+      },
+      {
+        "repository": "helios",
+        "head": "52c02799a042ecab25b9e812db9c002ba98ddb7c"
+      },
+      {
+        "repository": "mesa-helios",
+        "head": "89bd0676a4e69740d9900fb13561b14acc4997d6"
+      },
+      {
+        "repository": "qemu-helios",
+        "head": "37e165580f5eaeb861e311bcc8530e635af0a143"
+      },
+      {
+        "repository": "venus-protocol",
+        "head": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78"
+      },
+      {
+        "repository": "virglrenderer",
+        "head": "5d0e47bd8ad9ba75a62c2e048b927c9d0dc45b05"
+      },
+      {
+        "repository": "vkd3d-proton",
+        "head": "9494617539385c6d2d9925984d55d3f9d3143d0d"
+      },
+      {
+        "repository": "winboat",
+        "head": "17563cacb82ca31efe5feb12e3968f51951f1085"
+      }
+    ]
+  },
+  "boundaries": {
+    "githubPushes": false,
+    "componentBuilds": false,
+    "windowsProvisioning": false,
+    "externalReferenceEdits": false
+  },
+  "implementationCommit": "ab2fb75c42ac3b920a39094c66de013495bcd568"
+}

@@ -1,6 +1,10 @@
 # Stage 1 — Workspace and repository control plane
 
-Status: planned. Prerequisite: Stage 0. No VM or component changes are required.
+Status: implemented; repository/MCP acceptance passed. Prerequisite: Stage 0.
+No VM or component changes were made. See [validation](../validation.md) and
+[workspace usage](../workspace.md). Interactive activation test coverage was
+excluded at the maintainer's request; native hooks use unmodified upstream
+devenv, with its Fish path-with-spaces limitation documented.
 
 ## Outcome
 
@@ -88,10 +92,11 @@ for testing wrapper semantics. Test single/all/subset selection, dependency
 closure, parent placement, selective submodules, dirty/index/conflict protection,
 fork remotes and no mutation on shell entry. Compare preserved file/index hashes.
 
-Verify native activation on directory entry, retention in managed subdirectories
-and deactivation on exit without nested shells or duplicate hooks. Exercise an
-untrusted/relocated checkout, hook diagnostics and the documented direnv path.
-Confirm agents/CI use explicit Nix execution in noninteractive shells.
+Native activation remains upstream behavior. Setup/doctor preserve existing
+configuration and delegate trust to devenv; the optional hook and direnv paths
+are documented. Per the maintainer's validation scope, do not maintain a PTY
+activation regression suite or patch devenv to satisfy one. Agents/CI use
+explicit Nix execution in noninteractive shells.
 
 Exercise ordinary Git delegation and actual successful/failed/dry-run/no-op/
 explicit-refspec pushes. Confirm a successful managed push records its remote

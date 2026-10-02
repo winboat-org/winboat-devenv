@@ -5,10 +5,10 @@ and desktop dependencies. The target is one control plane usable by maintainers,
 CI, Claude Code, Codex and other MCP clients, with reproducible source/tool pins
 and a headless Windows development VM running the Helios QEMU fork.
 
-This is the **initial scaffold**: repository inventory and seed pins, a devenv
-shell definition, agent guidance/configuration samples and implementation
-contracts. Sync, Git push interception, fork mode, builds, the Windows devbox
-and the Node control plane are implemented in later stages.
+**Stage 1 is implemented:** a locked shell, verified source pins, repository
+sync, scoped checkpoints, verified push-to-pin updates, contributor forks and a
+Node MCP control plane. Component builds and the Windows devbox follow in later
+stages.
 
 ## Start here
 
@@ -17,38 +17,35 @@ system configuration is assumed. The scaffold was initialized with devenv
 2.4.0. [devenv getting started](https://devenv.sh/getting-started/) describes
 installation and shell commands.
 
-Set up [automatic activation](docs/auto-activation.md) once for your shell. For
-Bash, load `eval "$(devenv hook bash)"` in your shell startup configuration and
-run `devenv allow` from this workspace. Entering/leaving the workspace then
-activates/deactivates its environment. Zsh, Fish and Nushell instructions and
-tracked shell fragments are included.
-
 ```sh
-devenv update                     # Generate/refresh and review devenv.lock.
 devenv shell
-wb-plan
-wb-check                         # Structural checks, allowing unresolved seeds.
-wb-pins helios                   # Includes dxil-spirv and venus-protocol.
-wb-pins winboat
-wb-check --ready                 # Requires all 12 source pins and devenv.lock.
+wb setup
+wb doctor --json
+wb repo plan --subset helios
+wb repo sync --subset helios --background --json
+wb job status --id <returned-job-id> --json
+wb repo branch --repo helios --name development
 ```
 
-Or use `devenv shell -- wb-check` without an interactive shell. Direnv-based
-editors/shells can use the tracked `.envrc` and `direnv allow`.
+Use the committed lock; `devenv update` is an explicit dependency refresh. Use
+`devenv shell -- wb ...` for noninteractive commands. Optional
+[native activation](docs/auto-activation.md) uses `wb setup --activation <shell>`;
+direnv-based editors/shells can use the tracked `.envrc` and `direnv allow`.
 Shell entry does not clone repositories, commit files, start a VM or install a
-driver. The scaffold commands are read-only.
+driver.
 
-The initial session could not fetch Nix inputs or remote Git refs. **devenv.lock
-is not generated yet**, and the shell has not been built or entered. Ten source
-revisions are seeded from current local reference metadata; WBFreeRDP and
-Electron are explicitly unresolved. Stage 1 must produce the Nix lock and verify
-source accessibility before claiming a reproducible workspace. Pure Nix checks
-can run now; see [Nix ownership](nix/README.md).
+All twelve declared objects were fetched from their canonical repositories and
+synced at their exact pins, including DXIL-SPIRV and Venus. Source reachability
+does not establish graphics/build compatibility. The locked CLI and modules use
+unmodified upstream devenv. See [validation](docs/validation.md) for evidence
+and the native Fish activation limitation for paths containing spaces.
 
 ## Implementation
 
 The [stage index](docs/stages/README.md) lists dependencies, deliverables and
-acceptance gates. Start the next session with [the Stage 1 handoff](docs/handoffs/stage-01.md).
+acceptance gates. Continue with [the Stage 2 handoff](docs/handoffs/stage-02.md).
+[Workspace usage](docs/workspace.md) covers commands, publication recovery,
+forks and MCP jobs.
 [Architecture](docs/architecture.md) defines the shared CLI/MCP, devbox and
 artifact contracts. [Repository policy](docs/repositories.md) describes subsets,
 pins and the current nested layout.

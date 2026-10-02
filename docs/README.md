@@ -5,10 +5,12 @@
 | [Architecture](architecture.md) | Workspace, command, devbox and artifact contracts |
 | [Automatic activation](auto-activation.md) | Native shell hooks and direnv/editor integration |
 | [Repositories](repositories.md) | Inventory, subsets, pins, fork and submodule policy |
+| [Workspace control plane](workspace.md) | Setup, sync, scoped publication, forks and durable MCP jobs |
 | [Stages](stages/README.md) | Sequenced implementation and acceptance gates |
-| [Stage 1 handoff](handoffs/stage-01.md) | Ready-to-use next-session prompt |
+| [Stage 1 handoff](handoffs/stage-01.md) | Original implementation prompt |
+| [Stage 2 handoff](handoffs/stage-02.md) | Next-session build implementation prompt |
 | [Reference audit](reference-audit.md) | Existing tooling and evidence to preserve |
-| [Scaffold validation](validation.md) | Completed checks and bootstrap limitations |
+| [Validation](validation.md) | Workspace acceptance evidence and remaining limitations |
 | [Personal docs](user/README.md) | Ignored machine notes |
 
 Environment setup, VM lifecycle, agent integration, shared release contracts and

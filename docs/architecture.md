@@ -1,7 +1,8 @@
 # Architecture and implementation contracts
 
-This document specifies the target system. Only the shell definition, static
-manifest and scaffold commands exist in Stage 0; the stage index tracks delivery.
+This document specifies the target system. Stage 1 implements workspace and
+repository operations and their Node MCP proxy; the stage index tracks later
+build, devbox and release delivery.
 
 ## Workspace and configuration
 

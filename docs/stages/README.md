@@ -1,13 +1,16 @@
 # Implementation stages
 
-Stage 0 is the initial scaffold. **Stage 1 is next.** The command surfaces below
-are specifications; only `wb-plan`, `wb-pins` and `wb-check` are defined today.
-The Nix input lock and live shell validation are still pending network access.
+**Stage 1 is implemented and validated for repository/MCP operations. Stage 2
+is next.** The genuine Nix lock and all twelve source pins are resolved.
+Build/devbox/release command surfaces remain specifications. See
+[validation](../validation.md) for measured checks and the upstream native Fish
+activation limitation; interactive activation tests were excluded at the
+maintainer's request.
 
 | Stage | Scope | Prerequisites | Status |
 | --- | --- | --- | --- |
-| 0 | devenv initialization, inventory/seed pins, docs and agent guidance | Empty workspace | Scaffold complete; Nix lock deferred |
-| [1](01-workspace.md) | Setup/doctor, repo sync, checkpoints, push pins, forks, initial Node MCP | 0 | Planned; next |
+| 0 | devenv initialization, inventory/seed pins, docs and agent guidance | Empty workspace | Complete |
+| [1](01-workspace.md) | Setup/doctor, repo sync, checkpoints, push pins, forks, initial Node MCP | 0 | Complete for requested repository/MCP scope; activation limitation documented |
 | [2](02-builds.md) | Per-repo Nix recipes, native/cross builds, ABI and output contracts | 1 | Planned |
 | [3](03-devbox.md) | Containerized headless Windows provisioning, shared workspace and viewer | 2 host QEMU/renderer outputs | Planned |
 | [4](04-windows-control.md) | Windows builds, Helios installation, strict inventory, devbox MCP | 2, 3 | Planned |
