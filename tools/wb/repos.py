@@ -108,6 +108,10 @@ def sync(ws, selected, containers, operation_id):
                     if subpath not in managed and (path / subpath / ".git").exists():
                         if git(path / subpath, "status", "--porcelain", "--untracked-files=all").stdout:
                             raise Failure("dirty selected third-party submodule: " + name + ":" + subpath)
+                for module in ws.repos[name]["submodules"].get("nested", []):
+                    nested = path / module["parent"] / module["path"]
+                    if (nested / ".git").exists() and git(nested, "status", "--porcelain", "--untracked-files=all").stdout:
+                        raise Failure("dirty selected nested shader submodule: " + str(nested))
                 if git(path, "rev-parse", "HEAD").stdout.strip() != target:
                     # Changing a parent with any dirty unselected child would
                     # make checkout semantics depend on Git's recursion config.
@@ -156,6 +160,11 @@ def sync(ws, selected, containers, operation_id):
                         if (subdir / ".git").exists() and git(subdir, "status", "--porcelain", "--untracked-files=all").stdout:
                             raise Failure("dirty selected third-party submodule: " + subpath)
                         git(path, "-c", "submodule.recurse=false", "submodule", "update", "--init", "--depth=1", "--", subpath)
+                    for module in repo["submodules"].get("nested", []):
+                        parent_path, subpath = path / module["parent"], module["path"]
+                        if module["parent"] not in third_party or subpath not in module_names(parent_path, "HEAD"):
+                            raise Failure("nested shader module is outside the selected gitlink contract", 2)
+                        git(parent_path, "-c", "submodule.recurse=false", "submodule", "update", "--init", "--depth=1", "--", subpath)
                 receipt["completed"].append(name)
                 ws.journal(operation_id, receipt)
             receipt["state"] = "succeeded"

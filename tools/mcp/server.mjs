@@ -25,10 +25,15 @@ const definitions = [
   ['repo_branch', 'Create a development branch in one selected checkout.', ['repo', 'branch'], { repos: selection.repos, name: string }, ['repos']],
   ['repo_reconcile', 'Complete a verified push receipt without repeating the push.', ['repo', 'reconcile'], { operation: string }, ['operation']],
   ...['status', 'cancel', 'resume'].map(action => [`job_${action}`, `Durable job ${action}.`, ['job', action], { id: string }, ['id']]),
+  ['build_list', 'List Nix-declared native, cross and devbox targets.', ['build', 'list'], {}],
+  ['build_run', 'Build an exact source closure; defaults to a durable job.', ['build'],
+    { target: string, configuration: { type: 'string', enum: ['release', 'debug'] },
+      mode: { type: 'string', enum: ['release', 'development'] }, plan: bool, background: bool }, ['target']],
+  ['build_verify', 'Verify the complete exported artifact file set and hashes.', ['build', 'verify'], { manifest: string }, ['manifest']],
 ];
 const catalog = definitions.map(([name, description, command, properties, required = []]) => ({ name, description, command,
   inputSchema: { type: 'object', properties, required, additionalProperties: false },
-  annotations: { readOnlyHint: ['workspace_status', 'repo_list', 'repo_status', 'repo_plan', 'job_status'].includes(name) },
+  annotations: { readOnlyHint: ['workspace_status', 'repo_list', 'repo_status', 'repo_plan', 'job_status', 'build_list', 'build_verify'].includes(name) },
   outputSchema: { type: 'object', properties: { schemaVersion: { type: 'integer' }, operationId: string,
     state: string, exitCode: { type: 'integer' } }, required: ['schemaVersion', 'operationId', 'state', 'exitCode'], additionalProperties: true } }));
 
@@ -56,16 +61,18 @@ function command(tool, args) {
   const flags = { subset: '--subset', activation: '--activation', shellConfig: '--shell-config', message: '--message',
     revision: '--rev', ref: '--ref', sourceUrl: '--source-url', remote: '--remote', source: '--source',
     namespace: '--namespace', name: '--name', operation: '--operation', id: '--id',
-    forceWithLease: '--force-with-lease', dryRun: '--dry-run', deferCheckpoint: '--defer-checkpoint', apply: '--apply' };
+    forceWithLease: '--force-with-lease', dryRun: '--dry-run', deferCheckpoint: '--defer-checkpoint', apply: '--apply',
+    configuration: '--configuration', mode: '--mode', plan: '--plan', manifest: '--manifest' };
   for (const [key, value] of Object.entries(args)) {
     if (key === 'background') continue;
+    if (key === 'target') { argv.splice(1, 0, value); continue; }
     if (key === 'repos' || key === 'paths') {
       for (const item of value) argv.push(key === 'repos' ? '--repo' : '--path', item);
     } else if (typeof value === 'boolean') {
       if (value) argv.push(flags[key]);
     } else argv.push(flags[key], value);
   }
-  if (['repo_sync', 'repo_push', 'repo_verify'].includes(tool.name) && args.background !== false) argv.push('--background');
+  if (['repo_sync', 'repo_push', 'repo_verify', 'build_run'].includes(tool.name) && args.background !== false && !args.plan) argv.push('--background');
   return argv;
 }
 

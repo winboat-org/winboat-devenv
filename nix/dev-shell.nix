@@ -43,6 +43,7 @@ in
     exec ${pkgs.python3}/bin/python3 ${../tests/integration.py} "$@"
   '';
   env.WB_WORKSPACE_ROOT = config.devenv.root;
+  env.WB_NIXPKGS = toString pkgs.path;
 
   scripts.wb-pins = {
     description = "List current pins for a subset and its dependencies";

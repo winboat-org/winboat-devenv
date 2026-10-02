@@ -1,38 +1,39 @@
 # Seed snapshot, 2026-10-02. These are object IDs, not claims about remote HEAD
 # or a working graphics stack. See docs/repositories.md for provenance.
 # Stage 1 resolves named development branches; remote receipts stay separate.
+# Stage 2 recipe pins are verified local objects; canonical publication is pending.
 {
   schemaVersion = 1;
   repositories = {
     helios = {
-      rev = "52c02799a042ecab25b9e812db9c002ba98ddb7c";
+      rev = "38d245a077d1aa7e121df2fab5035dcc6db9f889";
       ref = "refs/heads/master";
-      provenance = "reference-helios-head";
+      provenance = "stage-02-local-unpublished";
     };
     qemu-helios = {
-      rev = "37e165580f5eaeb861e311bcc8530e635af0a143";
+      rev = "548ec555d23db9cd6c5de656ee8b7016206a9035";
       ref = "refs/heads/helios-11.1.1";
-      provenance = "reference-helios-gitlink";
+      provenance = "stage-02-local-unpublished";
     };
     dxvk = {
-      rev = "da42d2d289eb956305abddce9099b076d1e8a73b";
+      rev = "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa";
       ref = "refs/heads/master";
-      provenance = "reference-helios-gitlink";
+      provenance = "stage-02-local-unpublished";
     };
     virglrenderer = {
-      rev = "5d0e47bd8ad9ba75a62c2e048b927c9d0dc45b05";
+      rev = "8668479d681f47ade80808c9d3fc1457540d7d58";
       ref = "refs/heads/main";
-      provenance = "reference-helios-gitlink";
+      provenance = "stage-02-local-unpublished";
     };
     mesa-helios = {
-      rev = "89bd0676a4e69740d9900fb13561b14acc4997d6";
+      rev = "8d653f8eeae01750ccad377ce68216823ea998fb";
       ref = "refs/heads/main";
-      provenance = "reference-helios-gitlink";
+      provenance = "stage-02-local-unpublished";
     };
     vkd3d-proton = {
-      rev = "9494617539385c6d2d9925984d55d3f9d3143d0d";
+      rev = "56bc6cfcf1fc36c2ce213d903d04591077abc52f";
       ref = "refs/heads/master";
-      provenance = "reference-helios-gitlink";
+      provenance = "stage-02-local-unpublished";
     };
     dxil-spirv = {
       rev = "f4651bd076a2613728823ec289abc121a348a48a";

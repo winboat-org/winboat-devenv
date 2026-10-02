@@ -11,7 +11,8 @@ import tempfile
 import time
 import unittest
 
-from wb.common import edit_pins, parse_pins
+from wb.common import Failure, edit_pins, parse_pins
+from wb import builds
 
 
 ROOT = Path(os.environ["WB_TEST_SOURCE"])
@@ -47,6 +48,13 @@ class Fixtures(unittest.TestCase):
         # All submodule objects are served by local bare repos. One unmanaged
         # dependency also tests that QEMU and LookingGlass stay uninitialized.
         third_work, self.third_url, third_sha = self.make_source("third-party")
+        shader_work, shader_url, shader_sha = self.make_source("shader-container")
+        (shader_work / ".gitmodules").write_text(f'[submodule "headers"]\n\tpath = submodules/spirv_headers\n\turl = {self.third_url}\n')
+        self.g(shader_work, "update-index", "--add", "--cacheinfo", "160000", third_sha, "submodules/spirv_headers")
+        self.g(shader_work, "add", ".gitmodules")
+        self.g(shader_work, "commit", "-m", "nested shader headers")
+        shader_sha = self.g(shader_work, "rev-parse", "HEAD").stdout.strip()
+        self.g(shader_work, "push", shader_url, "HEAD:dev")
         for name in names:
             repo = MANIFEST["repositories"][name]
             work = self.base / ("source " + name)
@@ -64,6 +72,8 @@ class Fixtures(unittest.TestCase):
             for index, path in enumerate(paths):
                 child = children.get(path)
                 url, sha = (self.urls[child], self.shas[child]) if child else (self.third_url, third_sha)
+                if name == "dxvk" and path == "subprojects/dxbc-spirv":
+                    url, sha = shader_url, shader_sha
                 modules += f'[submodule "m{index}"]\n\tpath = {path}\n\turl = {url}\n'
                 self.g(work, "update-index", "--add", "--cacheinfo", "160000", sha, path)
             if modules:
@@ -440,6 +450,14 @@ class Fixtures(unittest.TestCase):
         self.assertIn("serverInfo", rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {}, "clientInfo": {"name": "acceptance", "version": "1"}})["result"])
         tools = rpc("tools/list")["result"]["tools"]
         self.assertIn("repo_reconcile", [t["name"] for t in tools])
+        self.assertIn("build_run", [t["name"] for t in tools])
+        build_list = rpc("tools/call", {"name": "build_list", "arguments": {}})["result"]
+        self.assertEqual(build_list["structuredContent"]["result"], self.wb("build", "list"))
+        build_plan = rpc("tools/call", {"name": "build_run", "arguments": {"target": "dxvk-engine-x64", "plan": True}})["result"]
+        self.assertEqual(build_plan["structuredContent"]["result"], self.wb("build", "dxvk-engine-x64", "--plan"))
+        unavailable = rpc("tools/call", {"name": "build_run", "arguments": {"target": "dxvk-engine-x64", "background": False}})["result"]
+        self.assertTrue(unavailable["isError"])
+        self.assertEqual(unavailable["structuredContent"]["details"]["backend"], "devbox")
         response = rpc("tools/call", {"name": "repo_status", "arguments": {"repos": ["winboat"]}})["result"]
         self.assertEqual(response["structuredContent"]["result"], self.wb("repo", "status", "--repo", "winboat"))
         bad = rpc("tools/call", {"name": "repo_sync", "arguments": {"repos": "winboat"}})
@@ -473,6 +491,62 @@ class Fixtures(unittest.TestCase):
             time.sleep(0.05)
         self.assertEqual(receipt["state"], "succeeded")
         self.assertTrue(self.path("electron").exists())
+
+    def test_build_plan_is_selective_and_unavailable_backend_fails_closed(self):
+        before = self.snapshot(self.root)
+        result = self.wb("build", "venus-protocol", "--plan")
+        self.assertEqual([r["repository"] for r in result["sources"]], ["venus-protocol"])
+        self.assertFalse(self.path("electron").exists())
+        self.assertEqual(before, self.snapshot(self.root))
+        refused = self.wb("build", "helios-guest-x64", check=False)
+        self.assertEqual(refused["exitCode"], 3)
+        self.assertIn("Stage 4", refused["error"])
+
+    def test_source_snapshot_preserves_work_and_detects_dirty_and_missing_gitlinks(self):
+        self.wb("repo", "sync", "--repo", "winboat")
+        path = self.path("winboat")
+        before = self.snapshot(path)
+        exported = self.base / "export clean"
+        record = builds._export(path, exported, "release", self.shas["winboat"])
+        self.assertEqual(record["revision"], self.shas["winboat"])
+        self.assertEqual((exported / "source.txt").read_bytes(), (path / "source.txt").read_bytes())
+        self.assertEqual(before, self.snapshot(path))
+        (path / "source.txt").write_text("dirty snapshot")
+        (path / "new file").write_text("new")
+        with self.assertRaises(Failure):
+            builds._export(path, self.base / "refused", "release", self.shas["winboat"])
+        before = self.snapshot(path)
+        dirty = builds._export(path, self.base / "development", "development", self.shas["winboat"])
+        self.assertIsNotNone(dirty["diffSha256"])
+        self.assertNotEqual(record["snapshotSha256"], dirty["snapshotSha256"])
+        self.assertEqual(before, self.snapshot(path))
+        (path / "escape").symlink_to("/etc/passwd")
+        with self.assertRaises(Failure):
+            builds._export(path, self.base / "unsafe", "development")
+
+    def test_artifact_verification_rejects_tampering_and_extra_files(self):
+        artifact = self.base / "artifact"
+        files = artifact / "files"
+        files.mkdir(parents=True)
+        (files / "binary").write_bytes(b"built image")
+        (files / "source-overlay").symlink_to(".", target_is_directory=True)
+        manifest = artifact / "manifest.json"
+        manifest.write_text(json.dumps({"schemaVersion": 1, "state": "built", "artifactId": "test",
+                                        "files": builds._files(files)}))
+        self.assertEqual(builds.verify(manifest)["filesVerified"], 2)
+        (files / "binary").write_bytes(b"different image")
+        with self.assertRaises(Failure):
+            builds.verify(manifest)
+        (files / "source-overlay").unlink()
+        (files / "source-overlay").symlink_to(self.base, target_is_directory=True)
+        with self.assertRaises(Failure):
+            builds.verify(manifest)
+        (files / "binary").write_bytes(b"built image")
+        (files / "unexpected").write_bytes(b"extra")
+        (files / "source-overlay").unlink()
+        (files / "source-overlay").symlink_to(".", target_is_directory=True)
+        with self.assertRaises(Failure):
+            builds.verify(manifest)
 
 
 if __name__ == "__main__":

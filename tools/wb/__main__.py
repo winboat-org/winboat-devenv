@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 import sys
 
-from . import activation, jobs, publication, repos
+from . import activation, builds, jobs, publication, repos
 from .common import Failure, git, identity, run, valid_ref, valid_sha, write_json
 from .workspace import Workspace, discover
 
@@ -58,6 +58,13 @@ def parser():
             command.add_argument("--apply", action="store_true")
     reconcile = repo.add_parser("reconcile")
     reconcile.add_argument("--operation", required=True)
+    build = commands.add_parser("build")
+    build.add_argument("target", nargs="?", default="list")
+    build.add_argument("--plan", action="store_true")
+    build.add_argument("--configuration", choices=["release", "debug"], default="release")
+    build.add_argument("--mode", choices=["release", "development"], default="release")
+    build.add_argument("--background", action="store_true")
+    build.add_argument("--manifest")
     job = commands.add_parser("job").add_subparsers(dest="action", required=True)
     for name in ["status", "cancel", "resume", "run"]:
         job.add_parser(name).add_argument("--id", required=True)
@@ -89,6 +96,18 @@ def dispatch(ws, args, operation_id, argv):
         os.execv(os.environ["WB_NODE"], [os.environ["WB_NODE"], os.environ["WB_MCP_SERVER"]])
     if args.family == "repo" and args.action == "reconcile":
         return publication.reconcile(ws, args.operation)
+    if args.family == "build":
+        if args.target == "list":
+            return builds.catalog()
+        if args.target == "verify":
+            if not args.manifest:
+                raise Failure("build verify requires --manifest", 2)
+            return builds.verify(args.manifest)
+        if args.plan:
+            return builds.plan(ws, args.target, args.configuration, args.mode)
+        if args.background:
+            return jobs.start(ws, [v for v in argv if v != "--background"])
+        return builds.execute(ws, args.target, args.configuration, args.mode, operation_id)
     selected, containers = ws.select(args)
     if args.family == "doctor":
         tools = {name: shutil.which(name) for name in ["git", "node", "python3", "devenv", "nix", "ssh", "direnv"]}
