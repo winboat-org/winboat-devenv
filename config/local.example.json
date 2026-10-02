@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "workspace": {
+    "repositoriesRoot": "repos",
+    "repositoryOverrides": {},
+    "forkNamespace": null,
+    "gitTransport": "https"
+  },
+  "devbox": {
+    "isoPath": null,
+    "isoSha256": null,
+    "edition": "Enterprise",
+    "containerRuntime": "auto",
+    "renderNode": "auto",
+    "sshPort": "auto",
+    "rdpPort": "auto",
+    "viewer": "auto",
+    "guestUsername": "wbdev",
+    "guestComputerName": "WB-DEVBOX",
+    "guestShare": "Z:\\",
+    "guestMirror": "C:\\WinBoatDev\\src",
+    "guestBuildRoot": "C:\\WinBoatDev\\build"
+  }
+}

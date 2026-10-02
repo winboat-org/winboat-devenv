@@ -1,0 +1,38 @@
+# devenv and direnv state; devenv.lock is intentionally tracked.
+/.devenv*
+/devenv.local.nix
+/devenv.local.yaml
+/.direnv/
+/.pre-commit-config.yaml
+
+# Managed source checkouts, artifacts and local machine configuration.
+/repos/
+/.state/
+/build/
+/out/
+/result
+/result-*
+/node_modules/
+/local.json
+/local.*.json
+/.env
+/.env.*
+
+# Generated agent configuration and personal notes.
+/.codex/
+/.agents/
+/.aws/
+/.claude/settings.local.json
+/CLAUDE.local.md
+/.mcp.local.json
+/docs/user/*
+!/docs/user/README.md
+
+# Guest storage, installation media and signing material.
+*.iso
+*.qcow2
+*.vhd
+*.vhdx
+*.pfx
+*.p12
+*.key

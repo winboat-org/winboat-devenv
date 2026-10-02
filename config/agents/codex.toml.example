@@ -1,0 +1,7 @@
+# Merge into .codex/config.toml; start Codex in this workspace.
+[mcp_servers.devenv]
+command = "devenv"
+args = ["mcp"]
+
+# Stage 1 adds the Node control-plane MCP; Stage 4 adds its devbox tools.
+# Generate actual configuration after the executable is available.
