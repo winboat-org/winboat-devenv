@@ -2,7 +2,10 @@
   "schemaVersion": 1,
   "workspace": {
     "repositoriesRoot": "repos",
+    "stateRoot": ".state",
+    "outRoot": "out",
     "repositoryOverrides": {},
+    "remotes": {},
     "forkNamespace": null,
     "gitTransport": "https"
   },

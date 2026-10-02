@@ -3,5 +3,10 @@
 command = "devenv"
 args = ["mcp"]
 
-# Stage 1 adds the Node control-plane MCP; Stage 4 adds its devbox tools.
-# Generate actual configuration after the executable is available.
+[mcp_servers.winboat]
+command = "devenv"
+args = ["shell", "--", "wb", "mcp"]
+startup_timeout_sec = 120
+tool_timeout_sec = 60
+
+# Stage 4 adds devbox tools. Keep existing project and approval settings.

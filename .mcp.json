@@ -4,6 +4,11 @@
       "type": "stdio",
       "command": "devenv",
       "args": ["mcp"]
+    },
+    "winboat": {
+      "type": "stdio",
+      "command": "devenv",
+      "args": ["shell", "--", "wb", "mcp"]
     }
   }
 }
