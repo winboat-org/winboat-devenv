@@ -9,15 +9,20 @@ $ErrorActionPreference = 'Stop'
 $share = 'Z:\'
 $mirrorRoot = 'C:\WinBoatDev\src'
 $buildRoot = 'C:\WinBoatDev\build'
-# Drive letters are per logon session. Reconnect in the caller's session with
-# the protected devbox credential rather than assuming SYSTEM's Z: is visible.
-if (-not (Get-SmbMapping -LocalPath 'Z:' -ErrorAction SilentlyContinue)) {
+# SYSTEM's DOS drive link may be visible after a reboot while its SMB credentials
+# are absent in an SSH logon. Authenticate the UNC in the caller's session first.
+if (-not (Get-SmbMapping -RemotePath '\\10.0.2.2\workspace' -ErrorAction SilentlyContinue)) {
     $password = (Get-Content -Raw -LiteralPath 'C:\ProgramData\WinBoatDev\share-password').Trim()
-    New-SmbMapping -LocalPath 'Z:' -RemotePath '\\10.0.2.2\workspace' -UserName 'WORKGROUP\wbdev' -Password $password -Persistent $false | Out-Null
+    New-SmbMapping -RemotePath '\\10.0.2.2\workspace' -UserName 'WORKGROUP\wbdev' -Password $password -Persistent $false | Out-Null
 }
-if ([IO.Path]::IsPathRooted($RelativePath) -or $RelativePath.Split('\', '/') -contains '..') { throw 'Source must be relative to Z:\' }
-$source = [IO.Path]::GetFullPath((Join-Path $share $RelativePath))
-if (-not $source.StartsWith($share, [StringComparison]::OrdinalIgnoreCase)) { throw 'Source escaped the workspace share' }
+if (-not (Test-Path -LiteralPath $share -ErrorAction SilentlyContinue)) {
+    New-SmbMapping -LocalPath 'Z:' -RemotePath '\\10.0.2.2\workspace' -Persistent $false | Out-Null
+}
+# Copy from the authenticated workspace UNC, never an unrelated caller's Z:.
+$workspace = '\\10.0.2.2\workspace\'
+if ([IO.Path]::IsPathRooted($RelativePath) -or (($RelativePath -split '[\\/]') -contains '..')) { throw 'Source must be relative to Z:\' }
+$source = [IO.Path]::GetFullPath((Join-Path $workspace $RelativePath))
+if (-not $source.StartsWith($workspace, [StringComparison]::OrdinalIgnoreCase)) { throw 'Source escaped the workspace share' }
 $destination = [IO.Path]::GetFullPath((Join-Path $mirrorRoot $Name))
 if (-not $destination.StartsWith($mirrorRoot + '\', [StringComparison]::OrdinalIgnoreCase) -or $destination -eq $buildRoot) { throw 'Unsafe mirror destination' }
 foreach ($parent in @('C:\WinBoatDev', $mirrorRoot, $destination)) {

@@ -10,12 +10,21 @@ function Install-Ewdk($tool, $paths) {
         if (-not $volume.DriveLetter) { throw 'Local EWDK image has no drive letter' }
         & robocopy.exe ($volume.DriveLetter + ':\') $destination /E /COPY:DAT /DCOPY:DAT /XJ /R:2 /W:2 /NFL /NDL /NP
         if ($LASTEXITCODE -ge 8) { throw "EWDK extraction failed: $LASTEXITCODE" }
+        $receipt = @{ schemaVersion = 1; complete = $true; sourceSha256 = $tool.payloads[0].sha256; robocopyExitCode = $LASTEXITCODE }
+        $marker = Join-Path $destination '.winboat-ewdk.json'
+        $receipt | ConvertTo-Json | Set-Content -LiteralPath ($marker + '.tmp') -Encoding UTF8
+        Move-Item -LiteralPath ($marker + '.tmp') -Destination $marker -Force
     } finally { Dismount-DiskImage -ImagePath $paths[0] }
     $vs = Join-Path $destination 'Program Files\Microsoft Visual Studio\2022\BuildTools'
     [Environment]::SetEnvironmentVariable('WINBOAT_EWDK_ROOT', $destination, 'Machine')
     [Environment]::SetEnvironmentVariable('WINBOAT_VS_ROOT', $vs, 'Machine')
 }
 function Get-EwdkVersion {
+    $marker = 'C:\WinBoatDev\tools\EWDK\.winboat-ewdk.json'
+    if (-not (Test-Path -LiteralPath $marker)) { return }
+    $receipt = Get-Content -Raw -LiteralPath $marker | ConvertFrom-Json
+    $locked = (Get-Content -Raw -LiteralPath (Join-Path $root 'provision.lock.json') | ConvertFrom-Json).tools | Where-Object id -eq 'vs-build-tools'
+    if ($receipt.schemaVersion -ne 1 -or -not $receipt.complete -or $receipt.sourceSha256 -ne $locked.payloads[0].sha256) { return }
     $vs = 'C:\WinBoatDev\tools\EWDK\Program Files\Microsoft Visual Studio\2022\BuildTools'
     $compiler = Join-Path $vs 'VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\cl.exe'
     if (-not (Test-Path -LiteralPath $compiler)) { return }
@@ -36,10 +45,13 @@ function New-ToolLayout($tool, $paths) {
     New-Item -ItemType Directory -Path $layout -Force | Out-Null
     for ($i = 0; $i -lt $tool.payloads.Count; $i++) {
         $relative = $tool.payloads[$i].relativePath
-        if ([IO.Path]::IsPathRooted($relative) -or $relative.Split('\','/') -contains '..') { throw 'Unsafe installer layout path' }
+        if ([IO.Path]::IsPathRooted($relative) -or (($relative -split '[\\/]') -contains '..')) { throw 'Unsafe installer layout path' }
         $destination = Join-Path $layout $relative
         New-Item -ItemType Directory -Path (Split-Path $destination) -Force | Out-Null
         Copy-Item -LiteralPath $paths[$i] -Destination $destination -Force
+        # Publisher/CD inputs may carry ReadOnly. The private local layout must
+        # permit Rust's explicitly recorded manifest URL/checksum relocation.
+        (Get-Item -LiteralPath $destination).IsReadOnly = $false
     }
     return $layout
 }
@@ -70,19 +82,26 @@ function Install-Rust($tool, $paths) {
     $env:RUSTUP_HOME = 'C:\WinBoatDev\tools\rustup'
     $env:CARGO_HOME = 'C:\WinBoatDev\tools\cargo'
     $env:RUSTUP_INIT_SKIP_PATH_CHECK = 'yes'
+    if ((Get-EwdkVersion) -ne '17.14.5') { throw 'Rust requires the verified locked EWDK compiler' }
+    # The portable EWDK has no Visual Studio installer registration. Rustup must
+    # use that verified compiler rather than offer a mutable online VS install.
+    $env:RUSTUP_INIT_SKIP_MSVC_CHECK = 'yes'
     Native (Join-Path $layout 'rustup-init.exe') @('-y','--default-host','x86_64-pc-windows-msvc','--default-toolchain','none','--no-modify-path')
     $listener = New-Object Net.Sockets.TcpListener([Net.IPAddress]::Loopback, 0)
     $listener.Start(); $port = $listener.LocalEndpoint.Port; $listener.Stop()
     # Rustup uses HTTP distribution metadata. Serve a verified local layout on
     # loopback only, with relocated URLs and a corresponding local checksum.
-    $server = Start-Process 'C:\WinBoatDev\tools\Python\python.exe' -ArgumentList @('-B','-m','http.server', $port, '--bind','127.0.0.1','--directory', $layout) -WindowStyle Hidden -PassThru
+    # SYSTEM tasks have no console. Give Python real standard handles and retain
+    # HTTP diagnostics rather than relying on an interactive parent's streams.
+    $server = Start-Process 'C:\WinBoatDev\tools\Python\python.exe' -ArgumentList @('-B','-m','http.server', $port, '--bind','127.0.0.1','--directory', $layout) -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $layout 'server.stdout.log') -RedirectStandardError (Join-Path $layout 'server.stderr.log')
     try {
         $manifestPath = Join-Path $layout ('dist\2026-07-14\channel-rust-nightly.toml')
         $manifest = (Get-Content -Raw -LiteralPath $paths[1]).Replace('https://static.rust-lang.org', ('http://127.0.0.1:' + $port))
         [IO.File]::WriteAllText($manifestPath, $manifest, (New-Object Text.UTF8Encoding($false)))
         $hash = (Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash.ToLower()
         [IO.File]::WriteAllText(($manifestPath + '.sha256'), ($hash + '  channel-rust-nightly.toml'), (New-Object Text.UTF8Encoding($false)))
-        $env:RUSTUP_DIST_SERVER = 'http://127.0.0.1:' + $port + '/dist'
+        # Rustup appends /dist itself (the publisher default is its origin).
+        $env:RUSTUP_DIST_SERVER = 'http://127.0.0.1:' + $port
         Start-Sleep -Seconds 2
         if ($server.HasExited) { throw 'Local Rust distribution server failed to start' }
         Native (Join-Path $env:CARGO_HOME 'bin\rustup.exe') @('toolchain','install',$tool.version,'--profile','minimal','--component','rust-src','--target','i686-pc-windows-msvc','--no-self-update')
@@ -115,7 +134,8 @@ function Install-CargoHelper($tool, $paths) {
 function Get-CargoHelperVersion([string]$Name) {
     $file = Join-Path 'C:\WinBoatDev\tools\cargo\bin' ($Name + '.exe')
     if (Test-Path -LiteralPath $file) {
-        $version = & $file --version
+        [string[]]$arguments = if ($Name -eq 'cargo-make') { @('make','--version') } else { @('--version') }
+        $version = & $file @arguments
         if ($LASTEXITCODE -eq 0) { ($version -split ' ')[-1] }
     }
 }

@@ -21,11 +21,29 @@ function Save-State {
     $state.observed = (Get-Date).ToUniversalTime().ToString('o')
     $temp = $statePath + '.tmp'
     $state | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $temp -Encoding UTF8
-    Move-Item -LiteralPath $temp -Destination $statePath -Force
+    # Get-Content readers can briefly hold the destination without FILE_SHARE_DELETE.
+    # Replace atomically and retry sharing violations, preserving the old receipt.
+    for ($attempt = 0; $attempt -lt 100; $attempt++) {
+        try {
+            if ([IO.File]::Exists($statePath)) { [IO.File]::Replace($temp, $statePath, [NullString]::Value) }
+            else { [IO.File]::Move($temp, $statePath) }
+            return
+        } catch [IO.IOException] {
+            if ($attempt -eq 99) { throw }
+            Start-Sleep -Milliseconds 100
+        }
+    }
 }
 function Native([string]$File, [string[]]$Arguments) {
-    $process = Start-Process -FilePath $File -ArgumentList $Arguments -NoNewWindow -Wait -PassThru
-    if ($process.ExitCode -ne 0) { throw "$File exited with $($process.ExitCode)" }
+    $logs = Join-Path $root 'native-logs'
+    New-Item -ItemType Directory -Path $logs -Force | Out-Null
+    $id = [Guid]::NewGuid().ToString('N')
+    $stdout = Join-Path $logs ($id + '.stdout.log')
+    $stderr = Join-Path $logs ($id + '.stderr.log')
+    $state.lastNative = @{ file = $File; stdout = $stdout; stderr = $stderr }; Save-State
+    $process = Start-Process -FilePath $File -ArgumentList $Arguments -NoNewWindow -Wait -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+    $state.lastNative.exitCode = $process.ExitCode
+    if ($process.ExitCode -ne 0) { throw "$File exited with $($process.ExitCode); stderr: $stderr" }
 }
 function Copy-Payload($payload) {
     # Preserve the publisher filename (pip validates wheel filenames). The
@@ -66,6 +84,13 @@ function Configure-SSH {
 try {
     Start-Transcript -Path (Join-Path $root 'provision.log') -Append | Out-Null
     $state.retries = [int]$state.retries + 1
+    if ($state.ContainsKey('error')) {
+        $history = @()
+        if ($state.ContainsKey('failures')) { $history = @($state.failures) }
+        $state.failures = $history + @(@{ failedPhase = $state.failedPhase; message = $state.error;
+            capturedOnRetry = $state.retries; capturedAt = (Get-Date).ToUniversalTime().ToString('o') })
+        $state.Remove('error'); $state.Remove('failedPhase')
+    }
     if ($lock.schemaVersion -ne 1) { throw 'Guest lock schema mismatch' }
     # Setup's requested name is not an observation. Enforce the contract in the
     # durable startup task and record an actual reboot before installing tools.
@@ -106,13 +131,18 @@ try {
     foreach ($tool in $lock.tools) {
         if ($tool.status -ne 'locked') { continue }
         $state.phase = 'install'; $state.currentTool = $tool.id; Save-State
-        $paths = @($tool.payloads | ForEach-Object { Copy-Payload $_ })
         $probe = [ScriptBlock]::Create($tool.probe)
         $observed = & $probe
-        if (-not $observed -or [string]$observed -ne $tool.version) {
+        $previousTool = @($state.tools | Where-Object { $_.id -eq $tool.id -and $_.verified -eq $true })
+        if (-not $previousTool.Count -or -not $observed -or [string]$observed -ne $tool.version) {
+            # Reuse only tools already verified under this unchanged lock and
+            # still passing their installed probe. Recheck every execution input.
+            $paths = @($tool.payloads | ForEach-Object { Copy-Payload $_ })
             $state.phase = 'install'; Save-State
-            $installer = [ScriptBlock]::Create($tool.install)
-            & $installer $paths $root
+            if (-not $observed -or [string]$observed -ne $tool.version) {
+                $installer = [ScriptBlock]::Create($tool.install)
+                & $installer $paths $root
+            }
             $observed = & $probe
             if ([string]$observed -ne $tool.version) { throw "Installed $($tool.id) version differs: expected $($tool.version), observed $observed" }
         }
@@ -187,7 +217,11 @@ try {
     if (-not (Get-Service 'wbdev-test' -ErrorAction SilentlyContinue)) { Native 'sc.exe' @('create', 'wbdev-test', 'type=', 'kernel', 'binPath=', $fixture) }
     if ((Get-Service 'wbdev-test').Status -ne 'Running') { Native 'sc.exe' @('start', 'wbdev-test') }
     $driver = Get-CimInstance Win32_SystemDriver -Filter "Name='wbdev-test'"
-    if ($driver.State -ne 'Running' -or $driver.PathName -ne $fixture) { throw 'Signed fixture driver did not load' }
+    # CIM reports the NT object-manager prefix for a loaded kernel driver.
+    $driverPath = [string]$driver.PathName
+    if ($driverPath.StartsWith('\??\', [StringComparison]::Ordinal)) { $driverPath = $driverPath.Substring(4) }
+    if ($driver.State -ne 'Running' -or [IO.Path]::GetFullPath($driverPath) -ne $fixture) { throw 'Signed fixture driver did not load' }
+    $state.fixtureDriver = @{ name = $driver.Name; state = $driver.State; nativePath = $driver.PathName; path = $driverPath }
     if ((Get-FileHash -LiteralPath $fixture -Algorithm SHA256).Hash.ToLower() -ne $fixtureHash) { throw 'Fixture changed during load observation' }
     $state.signedDriverLoaded = $true; $state.fixtureSha256 = $fixtureHash
     $state.phase = 'verified'; Save-State

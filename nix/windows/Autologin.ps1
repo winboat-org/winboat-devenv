@@ -2,6 +2,9 @@ Set-StrictMode -Version Latest
 
 function Set-DevboxAutologin([string]$ComputerName) {
     if ($ComputerName -notmatch '^[A-Za-z0-9-]{1,15}$') { throw 'Invalid autologin computer name' }
+    # The generated account credential is also the private SMB credential.
+    # Password expiry would break unattended desktop login after 42 days.
+    Set-LocalUser -Name 'wbdev' -PasswordNeverExpires $true
     if (-not ('WinBoatDev.AutologinSecret' -as [type])) {
         # Winlogon uses the DefaultPassword LSA secret, as documented for
         # Sysinternals Autologon. Keep the password out of the Winlogon registry.
@@ -70,5 +73,5 @@ namespace WinBoatDev {
     foreach ($item in @{ DefaultUserName = 'wbdev'; DefaultDomainName = $ComputerName; AutoAdminLogon = '1' }.GetEnumerator()) {
         New-ItemProperty -LiteralPath $winlogon -Name $item.Key -Value $item.Value -PropertyType String -Force | Out-Null
     }
-    return @{ enabled = $true; username = 'wbdev'; domain = $ComputerName; passwordStorage = 'lsa-secret' }
+    return @{ enabled = $true; username = 'wbdev'; domain = $ComputerName; passwordStorage = 'lsa-secret'; passwordNeverExpires = $true }
 }
