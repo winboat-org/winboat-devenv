@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "state": "configured",
+  "observed": "2026-10-02T21:45:49.136841+00:00",
+  "configuredGuest": "stage03-complete",
+  "transport": "strict-host-key authenticated SSH",
+  "payloadSha256": "fe5d44a46f93185a2c8780dca8e31dd2c799e8de15b98d4e5cc1b9d9c55a39ac",
+  "nativeLsaStore": "passed on Windows",
+  "configuration": {
+    "username": "wbdev",
+    "domain": "WB-DEVBOX",
+    "passwordStorage": "lsa-secret",
+    "enabled": true
+  },
+  "registry": {
+    "username": "wbdev",
+    "countLimitPresent": false,
+    "domain": "WB-DEVBOX",
+    "plaintextPasswordPresent": false,
+    "enabled": "1"
+  },
+  "freshGuest": "stage03-final",
+  "postRebootInteractiveLogin": "pending",
+  "validation": {
+    "devenvTest": "passed, 25 integration and 10 devbox tests",
+    "windowsPayloadParser": "passed, six PowerShell payloads and 14 locked install/probe pairs"
+  }
+}

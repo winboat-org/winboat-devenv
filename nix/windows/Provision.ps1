@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $root = 'C:\ProgramData\WinBoatDev'
 . (Join-Path $root 'Toolchain.ps1')
+. (Join-Path $root 'Autologin.ps1')
 $statePath = Join-Path $root 'provisioning.json'
 $lockPath = Join-Path $root 'provision.lock.json'
 $lock = Get-Content -Raw -LiteralPath $lockPath | ConvertFrom-Json
@@ -54,7 +55,7 @@ function Configure-SSH {
     Copy-Item -LiteralPath (Join-Path $root 'authorized_keys') -Destination (Join-Path $sshRoot 'administrators_authorized_keys') -Force
     Native 'icacls.exe' @((Join-Path $sshRoot 'administrators_authorized_keys'), '/inheritance:r', '/grant:r', '*S-1-5-18:F', '*S-1-5-32-544:F')
     @('Port 22', 'PubkeyAuthentication yes', 'PasswordAuthentication no',
-      'HostKey __PROGRAMDATA__/ssh/ssh_host_ed25519_key', 'Match Group administrators',
+      'HostKey __PROGRAMDATA__/ssh/ssh_host_ed25519_key', 'Subsystem sftp sftp-server.exe', 'Match Group administrators',
       '    AuthorizedKeysFile __PROGRAMDATA__/ssh/administrators_authorized_keys') | Set-Content -LiteralPath (Join-Path $sshRoot 'sshd_config') -Encoding ASCII
     Set-Service sshd -StartupType Automatic
     Restart-Service sshd
@@ -69,10 +70,12 @@ try {
     # Setup's requested name is not an observation. Enforce the contract in the
     # durable startup task and record an actual reboot before installing tools.
     $state.computerName = (Get-CimInstance Win32_ComputerSystem).Name
+    $state.autologin = Set-DevboxAutologin -ComputerName $state.computerName
     if ($state.computerName -ne 'WB-DEVBOX') {
         if (-not $state.ContainsKey('identityRenameAttempts')) { $state.identityRenameAttempts = 0 }
         if ([int]$state.identityRenameAttempts -ge 2) { throw 'Computer name did not converge after identity reboots' }
         Rename-Computer -NewName 'WB-DEVBOX' -Force
+        $state.autologin = Set-DevboxAutologin -ComputerName 'WB-DEVBOX'
         $state.identityRenameAttempts = [int]$state.identityRenameAttempts + 1
         $state.phase = 'reboot-identity'; $state.rebootCount = [int]$state.rebootCount + 1; Save-State
         Restart-Computer -Force

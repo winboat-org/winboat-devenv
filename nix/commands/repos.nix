@@ -24,6 +24,7 @@ let
           "windows-payloads.nix"
           "scripts/devbox-run.py"
           "windows/Bootstrap.ps1"
+          "windows/Autologin.ps1"
           "windows/Provision.ps1"
           "windows/Toolchain.ps1"
           "windows/Mirror.ps1"

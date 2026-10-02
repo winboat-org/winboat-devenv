@@ -3,7 +3,9 @@
 This document specifies the target system. Stages 1 and 2 implement workspace,
 repository and native/cross build operations with their Node MCP proxy. The
 stage index tracks Windows execution, devbox and release delivery; [build
-usage](builds.md) records the current artifact and dispatch contracts.
+usage](builds.md) records the current artifact and dispatch contracts. Stage 3
+adds the shared devbox lifecycle and exact-closure container; complete Windows
+acceptance remains pending.
 
 ## Workspace and configuration
 
@@ -44,7 +46,8 @@ those commands, never divergent shell and MCP implementations.
 The MCP server is Node.js (TypeScript is acceptable), running over stdio by
 default. It validates typed arguments and invokes the same Nix command through
 argument arrays. MCP exposes the control plane from Stage 1 and gains devbox
-tools in Stage 4. Native OpenSSH and devenv's own MCP provide SSH/Nix support;
+lifecycle tools in Stage 3 and Windows execution/inventory tools in Stage 4.
+Native OpenSSH and devenv's own MCP provide SSH/Nix support;
 additional plugins are selected and pinned in Stage 5 based on demonstrated
 needs. Keep credentials and client-specific launch paths out of shared config.
 
@@ -91,6 +94,9 @@ the **qemu-helios** output, never a runtime fallback to the distribution QEMU.
 Start from the user's ISO with headless unattended installation, Enterprise
 preferred, a deterministic `wbdev` account and `WB-DEVBOX` computer name,
 generated local credentials/SSH keys, and the initial `virtio-vga-gl` device.
+Persist autologin for `wbdev` using the Winlogon LSA secret and update its local
+domain through hostname changes. The desktop login does not own provisioning:
+the elevated SYSTEM task survives disconnects, logouts and reboots.
 The tracked provisioning lock owns exact tools/installers and hashes. Proprietary
 media/installers remain external inputs with verifiable identity; Nix orchestrates
 their use without promising byte-identical Windows disk images.
