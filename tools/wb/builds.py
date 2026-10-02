@@ -84,7 +84,12 @@ def _export(path, destination, mode, expected=None, recursive=False):
             content = os.readlink(dest).encode() if dest.is_symlink() else dest.read_bytes()
             blob = hashlib.sha1(b"blob " + str(len(content)).encode() + b"\0" + content).hexdigest()
             if blob != oid:
-                raise Failure("source changed while exporting a release snapshot", source=str(source))
+                # Clean checkouts may deliberately use CRLF or another declared
+                # Git filter. Validate the exported bytes through that same
+                # filter, while retaining their physical content/NAR identity.
+                filtered = git(path, "hash-object", "--path=" + name, "--", str(dest)).stdout.strip() if not dest.is_symlink() else blob
+                if filtered != oid:
+                    raise Failure("source changed while exporting a release snapshot", source=str(source))
     for name in untracked:
         _copy_source(path / name, destination / name, destination)
     final_diff = git(path, "diff", "--binary", "--ignore-submodules=all", "HEAD").stdout

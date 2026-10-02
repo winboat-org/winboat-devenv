@@ -524,6 +524,20 @@ class Fixtures(unittest.TestCase):
         with self.assertRaises(Failure):
             builds._export(path, self.base / "unsafe", "development")
 
+    def test_release_snapshot_respects_git_checkout_filters(self):
+        path, _, _ = self.make_source("filtered-checkout")
+        (path / ".gitattributes").write_text("*.csv text eol=crlf\n")
+        (path / "data.csv").write_bytes(b"name,value\r\nsource,clean\r\n")
+        self.g(path, "add", ".gitattributes", "data.csv")
+        self.g(path, "commit", "-m", "declare CSV checkout normalization")
+        head = self.g(path, "rev-parse", "HEAD").stdout.strip()
+        self.assertEqual(self.g(path, "status", "--porcelain").stdout, "")
+        exported = self.base / "filtered-export"
+        record = builds._export(path, exported, "release", head)
+        self.assertEqual(record["revision"], head)
+        self.assertIsNone(record["diffSha256"])
+        self.assertEqual((exported / "data.csv").read_bytes(), (path / "data.csv").read_bytes())
+
     def test_artifact_verification_rejects_tampering_and_extra_files(self):
         artifact = self.base / "artifact"
         files = artifact / "files"
