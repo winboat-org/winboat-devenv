@@ -9,6 +9,12 @@ $ErrorActionPreference = 'Stop'
 $share = 'Z:\'
 $mirrorRoot = 'C:\WinBoatDev\src'
 $buildRoot = 'C:\WinBoatDev\build'
+# Drive letters are per logon session. Reconnect in the caller's session with
+# the protected devbox credential rather than assuming SYSTEM's Z: is visible.
+if (-not (Get-SmbMapping -LocalPath 'Z:' -ErrorAction SilentlyContinue)) {
+    $password = (Get-Content -Raw -LiteralPath 'C:\ProgramData\WinBoatDev\share-password').Trim()
+    New-SmbMapping -LocalPath 'Z:' -RemotePath '\\10.0.2.2\workspace' -UserName 'WORKGROUP\wbdev' -Password $password -Persistent $false | Out-Null
+}
 if ([IO.Path]::IsPathRooted($RelativePath) -or $RelativePath.Split('\', '/') -contains '..') { throw 'Source must be relative to Z:\' }
 $source = [IO.Path]::GetFullPath((Join-Path $share $RelativePath))
 if (-not $source.StartsWith($share, [StringComparison]::OrdinalIgnoreCase)) { throw 'Source escaped the workspace share' }

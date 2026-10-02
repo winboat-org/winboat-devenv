@@ -1,0 +1,21 @@
+{
+  "url": "https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/EWDK_ge_release_svc_prod1_26100_250904-1728.iso",
+  "size": 20002537472,
+  "sha256": "9f48251dd24ad31aac206d8256e95bda5f90a9783982c45a8aafeb9054562379",
+  "transfer": "HTTP byte ranges; assembled full file hash",
+  "contents": {
+    "vsDevCmdVersion": "17.14.5",
+    "msvcToolset": "14.44.35207",
+    "compilerFileVersion": "19.44.35209.0",
+    "compilerProductVersion": "14.44.35209.0",
+    "spectreArchitectures": [
+      "x86",
+      "x64"
+    ],
+    "completeUdfListing": true
+  },
+  "documentation": [
+    "https://learn.microsoft.com/en-us/windows-hardware/drivers/develop/using-the-enterprise-wdk",
+    "https://learn.microsoft.com/en-us/windows-hardware/drivers/other-wdk-downloads"
+  ]
+}

@@ -1,4 +1,36 @@
 # Shared offline installation operations. All inputs come from the Nix cache.
+function Install-Ewdk($tool, $paths) {
+    # The publisher's self-contained EWDK is expanded from a verified local
+    # disk image. Keep its complete layout, licenses and build environment.
+    $destination = 'C:\WinBoatDev\tools\EWDK'
+    New-Item -ItemType Directory -Path $destination -Force | Out-Null
+    $image = Mount-DiskImage -ImagePath $paths[0] -PassThru
+    try {
+        $volume = $image | Get-Volume
+        if (-not $volume.DriveLetter) { throw 'Local EWDK image has no drive letter' }
+        & robocopy.exe ($volume.DriveLetter + ':\') $destination /E /COPY:DAT /DCOPY:DAT /XJ /R:2 /W:2 /NFL /NDL /NP
+        if ($LASTEXITCODE -ge 8) { throw "EWDK extraction failed: $LASTEXITCODE" }
+    } finally { Dismount-DiskImage -ImagePath $paths[0] }
+    $vs = Join-Path $destination 'Program Files\Microsoft Visual Studio\2022\BuildTools'
+    [Environment]::SetEnvironmentVariable('WINBOAT_EWDK_ROOT', $destination, 'Machine')
+    [Environment]::SetEnvironmentVariable('WINBOAT_VS_ROOT', $vs, 'Machine')
+}
+function Get-EwdkVersion {
+    $vs = 'C:\WinBoatDev\tools\EWDK\Program Files\Microsoft Visual Studio\2022\BuildTools'
+    $compiler = Join-Path $vs 'VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\cl.exe'
+    if (-not (Test-Path -LiteralPath $compiler)) { return }
+    $versionFile = Join-Path $vs 'VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt'
+    if ((Get-Content -Raw -LiteralPath $versionFile).Trim() -ne '14.44.35207') { return }
+    if ((Get-Item -LiteralPath $compiler).VersionInfo.FileVersion -ne '19.44.35209.0') { return }
+    foreach ($file in @('Common7\Tools\VsDevCmd.bat','MSBuild\Current\Bin\MSBuild.exe',
+        'VC\Tools\MSVC\14.44.35207\lib\spectre\x64\libcmt.lib',
+        'VC\Tools\MSVC\14.44.35207\lib\spectre\x86\libcmt.lib',
+        'Licenses\BuildTools\1033\ThirdPartyNotices.txt')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $vs $file))) { return }
+    }
+    $command = Get-Content -Raw -LiteralPath (Join-Path $vs 'Common7\Tools\VsDevCmd.bat')
+    if ($command -match 'set "VSCMD_VER=([0-9.]+)"') { $Matches[1] }
+}
 function New-ToolLayout($tool, $paths) {
     $layout = Join-Path $root ('layouts\' + $tool.id)
     New-Item -ItemType Directory -Path $layout -Force | Out-Null
@@ -86,4 +118,21 @@ function Get-CargoHelperVersion([string]$Name) {
         $version = & $file --version
         if ($LASTEXITCODE -eq 0) { ($version -split ' ')[-1] }
     }
+}
+function Install-Vulkan($tool, $paths) {
+    $directory = 'C:\VulkanSDK\1.4.350.0'
+    Native $paths[0] @('--root', $directory, '--accept-licenses', '--default-answer', '--confirm-command', 'install')
+    [Environment]::SetEnvironmentVariable('VULKAN_SDK', $directory, 'Machine')
+}
+function Get-VulkanVersion {
+    $directory = 'C:\VulkanSDK\1.4.350.0'
+    foreach ($file in @('Include\vulkan\vulkan_core.h', 'Bin\glslangValidator.exe', 'Bin\spirv-as.exe', 'components.xml')) {
+        if (-not (Test-Path -LiteralPath (Join-Path $directory $file))) { return }
+    }
+    $header = Get-Content -Raw -LiteralPath (Join-Path $directory 'Include\vulkan\vulkan_core.h')
+    if ($header -notmatch '(?m)^#define VK_HEADER_VERSION 350\s*$' -or
+        $header -notmatch '#define VK_HEADER_VERSION_COMPLETE VK_MAKE_API_VERSION\(0, 1, 4, VK_HEADER_VERSION\)') { return }
+    [xml]$components = Get-Content -Raw -LiteralPath (Join-Path $directory 'components.xml')
+    $core = $components.SelectSingleNode("//Package[Name='com.lunarg.vulkan.core']")
+    if ($core -and $core.Version -eq '1.4.350.0') { [string]$core.Version }
 }

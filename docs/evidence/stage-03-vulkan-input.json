@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "file": "vulkansdk-windows-X64-1.4.350.0.exe",
+  "url": "https://sdk.lunarg.com/sdk/download/1.4.350.0/windows/vulkansdk-windows-X64-1.4.350.0.exe",
+  "size": 324012984,
+  "sha256": "855b27ba05d2d8119c5114c5d4ff870ca38f2c632b11e1bb9923b9b7e6ecfe7b",
+  "verification": "Complete transfer compared with publisher SHA-256",
+  "publisherMetadata": "https://vulkan.lunarg.com/sdk/files.json",
+  "documentation": "https://vulkan.lunarg.com/content/view/latest-sdk-version-api",
+  "nixFetch": {
+    "state": "succeeded",
+    "output": "/nix/store/ksy8ilfmkxxnhkq77wrlznizwi3vbzcy-vulkansdk-windows-X64-1.4.350.0.exe",
+    "userAgent": "Wget/1.25.0"
+  },
+  "installedInGuest": false
+}

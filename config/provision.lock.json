@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "incomplete",
+  "status": "locked",
   "reference": {
     "repository": "helios",
     "revision": "38d245a077d1aa7e121df2fab5035dcc6db9f889",
@@ -29,14 +29,27 @@
     },
     {
       "id": "vs-build-tools",
-      "version": "17.14",
-      "status": "pending",
+      "version": "17.14.5",
+      "status": "locked",
       "componentIds": [
         "Microsoft.VisualStudio.Workload.VCTools",
         "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
         "Microsoft.VisualStudio.Component.VC.14.44.17.14.x86.x64.Spectre"
       ],
-      "reason": "Pinned channel downloaded; selected VisualStudio.vsman failed its declared SHA-256 check. See stage-03-remaining-inputs evidence."
+      "msvcToolset": "14.44.35207",
+      "compilerFileVersion": "19.44.35209.0",
+      "sourceKind": "self-contained-ewdk",
+      "payloads": [
+        {
+          "file": "EWDK_ge_release_svc_prod1_26100_250904-1728.iso",
+          "url": "https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/EWDK_ge_release_svc_prod1_26100_250904-1728.iso",
+          "sha256": "9f48251dd24ad31aac206d8256e95bda5f90a9783982c45a8aafeb9054562379",
+          "size": 20002537472
+        }
+      ],
+      "install": "param($paths,$root) Install-Ewdk $tool $paths",
+      "probe": "Get-EwdkVersion",
+      "verification": "Complete publisher ISO SHA-256 measured; embedded VS banner, compiler file version, MSVC defaults and x86/x64 Spectre libraries inspected. Guest probe verifies these installed identities."
     },
     {
       "id": "windows-sdk",
@@ -4581,14 +4594,25 @@
     {
       "id": "vulkan-sdk",
       "version": "1.4.350.0",
-      "status": "pending",
+      "status": "locked",
       "componentIds": [
         "Vulkan headers",
         "Vulkan loader",
         "glslangValidator",
         "spirv-tools"
       ],
-      "reason": "Publisher checksum and installer endpoints both returned HTTP 403."
+      "payloads": [
+        {
+          "file": "vulkansdk-windows-X64-1.4.350.0.exe",
+          "url": "https://sdk.lunarg.com/sdk/download/1.4.350.0/windows/vulkansdk-windows-X64-1.4.350.0.exe",
+          "sha256": "855b27ba05d2d8119c5114c5d4ff870ca38f2c632b11e1bb9923b9b7e6ecfe7b",
+          "size": 324012984,
+          "userAgent": "Wget/1.25.0"
+        }
+      ],
+      "install": "param($paths,$root) Install-Vulkan $tool $paths",
+      "probe": "Get-VulkanVersion",
+      "verification": "Complete installer SHA-256 matches LunarG files.json; standard Wget user agent avoids publisher browser-check rejection. Offline core components only; no optional cloud downloads."
     }
   ]
 }

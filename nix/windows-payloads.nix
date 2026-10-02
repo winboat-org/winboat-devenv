@@ -27,6 +27,10 @@ let
           source = pkgs.fetchurl {
             inherit (payload) url sha256;
             name = payload.file;
+            curlOptsList = pkgs.lib.optionals (payload ? userAgent) [
+              "--user-agent"
+              payload.userAgent
+            ];
           };
         };
       }) payloads

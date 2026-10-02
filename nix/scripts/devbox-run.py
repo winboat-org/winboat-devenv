@@ -37,7 +37,7 @@ def stop(signum, frame):
 
 signal.signal(signal.SIGTERM, stop)
 signal.signal(signal.SIGINT, stop)
-for directory in ['tpm', 'samba', 'samba/private', 'samba/lock', 'samba/cache']:
+for directory in ['tpm', 'samba', 'samba/private', 'samba/lock', 'samba/cache', 'samba/ncalrpc']:
     (state / directory).mkdir(parents=True, exist_ok=True)
 
 # The workspace is read-only in both the container mount and SMB configuration.
@@ -49,6 +49,7 @@ if sha(payloads / 'provision.lock.json') != settings['provisionLockSha256']:
 config.write_text('''[global]
   server role = standalone server
   security = user
+  workgroup = WORKGROUP
   map to guest = Never
   smb ports = 445
   server min protocol = SMB2
@@ -56,6 +57,8 @@ config.write_text('''[global]
   lock directory = /state/samba/lock
   state directory = /state/samba
   cache directory = /state/samba/cache
+  pid directory = /state/samba
+  ncalrpc dir = /state/samba/ncalrpc
   log file = /state/samba/log.%m
   load printers = no
   disable spoolss = yes
@@ -80,6 +83,16 @@ subprocess.run([os.environ['WB_SMBPASSWD'], '-s', '-a', 'wbdev', '-c', str(confi
                input=password + '\n' + password + '\n', text=True, check=True)
 children.append(subprocess.Popen([os.environ['WB_SMBD'], '--foreground', '--no-process-group',
                                  '--configfile=' + str(config)]))
+for _ in range(100):
+    if children[0].poll() is not None:
+        raise RuntimeError('Authenticated SMB service exited before guest launch; inspect samba/log.smbd')
+    try:
+        with socket.create_connection(('127.0.0.1', 445), timeout=0.2):
+            break
+    except OSError:
+        time.sleep(0.1)
+else:
+    raise RuntimeError('Authenticated SMB service did not listen before guest launch')
 tpm_socket = state / 'tpm.sock'
 tpm_socket.unlink(missing_ok=True)
 children.append(subprocess.Popen([os.environ['WB_SWTPM'], 'socket', '--tpm2',

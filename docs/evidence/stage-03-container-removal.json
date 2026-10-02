@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "name": "stage03-offline",
+  "containerId": "939f707f6b95523efae84f10d6a0b07ac63cc20986e79d6d19a1fb654262172b",
+  "containerRemoved": true,
+  "diskPreserved": true,
+  "imagePreserved": "/nix/store/biffbbim863w597zi9pa4gyin4pnf8yp-winboat-devbox.tar.gz",
+  "authorization": "User requested container destruction before fresh end-to-end devbox creation."
+}

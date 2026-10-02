@@ -81,8 +81,19 @@ try {
     $pending = @($lock.tools | Where-Object status -ne 'locked' | ForEach-Object id)
     New-Item -ItemType Directory -Path 'C:\WinBoatDev\src', 'C:\WinBoatDev\build' -Force | Out-Null
     $sharePassword = (Get-Content -Raw -LiteralPath (Join-Path $root 'share-password')).Trim()
-    if (-not (Get-SmbMapping -RemotePath '\\10.0.2.2\tools' -ErrorAction SilentlyContinue)) {
-        New-SmbMapping -RemotePath '\\10.0.2.2\tools' -UserName 'wbdev' -Password $sharePassword -Persistent $true | Out-Null
+    $state.phase = 'connect-cache'; Save-State
+    for ($attempt = 0; $attempt -lt 60; $attempt++) {
+        try {
+            if (-not (Get-SmbMapping -RemotePath '\\10.0.2.2\tools' -ErrorAction SilentlyContinue)) {
+                New-SmbMapping -RemotePath '\\10.0.2.2\tools' -UserName 'WORKGROUP\wbdev' -Password $sharePassword -Persistent $false | Out-Null
+            }
+            if (Test-Path -LiteralPath '\\10.0.2.2\tools\provision.lock.json') { break }
+            throw 'Tool cache is not yet readable'
+        } catch {
+            $state.cacheConnectionAttempt = $attempt + 1; $state.cacheConnectionDiagnostic = $_.Exception.Message; Save-State
+            if ($attempt -eq 59) { throw }
+            Start-Sleep -Seconds 2
+        }
     }
     $cacheLock = '\\10.0.2.2\tools\provision.lock.json'
     if ((Get-FileHash -LiteralPath $cacheLock -Algorithm SHA256).Hash.ToLower() -ne $state.lockSha256) {
@@ -96,6 +107,7 @@ try {
         $probe = [ScriptBlock]::Create($tool.probe)
         $observed = & $probe
         if (-not $observed -or [string]$observed -ne $tool.version) {
+            $state.phase = 'install'; Save-State
             $installer = [ScriptBlock]::Create($tool.install)
             & $installer $paths $root
             $observed = & $probe
@@ -106,6 +118,18 @@ try {
         if ($tool.id -eq 'openssh') { Configure-SSH }
         Save-State
     }
+    $environment = @{ RUSTUP_HOME = 'C:\WinBoatDev\tools\rustup'; CARGO_HOME = 'C:\WinBoatDev\tools\cargo';
+        LIBCLANG_PATH = 'C:\WinBoatDev\tools\LLVM\bin' }
+    foreach ($name in $environment.Keys) {
+        [Environment]::SetEnvironmentVariable($name, $environment[$name], 'Machine')
+        [Environment]::SetEnvironmentVariable($name, $environment[$name], 'Process')
+    }
+    $binPaths = @('C:\WinBoatDev\tools\LLVM\bin', 'C:\WinBoatDev\tools\Git\cmd',
+        'C:\WinBoatDev\tools\Git\usr\bin', 'C:\WinBoatDev\tools\cargo\bin',
+        'C:\WinBoatDev\tools\Python', 'C:\WinBoatDev\tools\Python\Scripts', 'C:\WinBoatDev\tools\Ninja',
+        'C:\VulkanSDK\1.4.350.0\Bin')
+    $machinePath = [Environment]::GetEnvironmentVariable('Path','Machine').Split(';')
+    [Environment]::SetEnvironmentVariable('Path', (($machinePath + $binPaths | Select-Object -Unique) -join ';'), 'Machine')
     if ($state.ContainsKey('installerRebootPending') -and $state.installerRebootPending) {
         $state.installerRebootPending = $false
         $state.phase = 'reboot-installers'; $state.rebootCount = [int]$state.rebootCount + 1; Save-State
@@ -116,7 +140,7 @@ try {
     # neither ssh-keyscan nor accepting an unknown key establishes identity.
     Configure-SSH
     if (-not (Get-SmbMapping -LocalPath 'Z:' -ErrorAction SilentlyContinue)) {
-        New-SmbMapping -LocalPath 'Z:' -RemotePath '\\10.0.2.2\workspace' -UserName 'wbdev' -Password $sharePassword -Persistent $true | Out-Null
+        New-SmbMapping -LocalPath 'Z:' -RemotePath '\\10.0.2.2\workspace' -UserName 'WORKGROUP\wbdev' -Password $sharePassword -Persistent $false | Out-Null
     }
     $state.share = @{ drive = 'Z:\'; remote = '\\10.0.2.2\workspace'; session = 'SYSTEM'; verified = (Test-Path -LiteralPath 'Z:\README.md') }
     if (-not $state.share.verified) { throw 'Workspace SMB compatibility probe failed' }

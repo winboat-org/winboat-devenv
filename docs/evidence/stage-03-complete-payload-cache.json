@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "state": "verified",
+  "output": "/nix/store/29mlqmmhfh9yfjqmhfrjyw2dh4aqljpf-winboat-windows-payloads",
+  "lockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+  "lockedTools": 14,
+  "uniquePayloads": 546,
+  "bytes": 22891136712,
+  "sha256VerifiedPayloads": 546,
+  "acquisition": "Nix fixed-output fetchurl; verified pre-existing complete EWDK ISO seeded via nix-store --add-fixed sha256; Vulkan fetched by the Nix builder with a standard Wget user agent.",
+  "installedInGuest": false
+}
