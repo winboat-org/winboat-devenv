@@ -12,16 +12,20 @@
   "devbox": {
     "isoPath": null,
     "isoSha256": null,
-    "edition": "Enterprise",
+    "edition": null,
     "containerRuntime": "auto",
     "renderNode": "auto",
     "sshPort": "auto",
-    "rdpPort": "auto",
-    "viewer": "auto",
+    "viewer": "tigervnc",
     "guestUsername": "wbdev",
     "guestComputerName": "WB-DEVBOX",
     "guestShare": "Z:\\",
     "guestMirror": "C:\\WinBoatDev\\src",
-    "guestBuildRoot": "C:\\WinBoatDev\\build"
+    "guestBuildRoot": "C:\\WinBoatDev\\build",
+    "hostManifest": null,
+    "viewerPort": "auto",
+    "cpus": 4,
+    "memoryMiB": 8192,
+    "diskGiB": 128
   }
 }

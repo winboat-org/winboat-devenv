@@ -6,7 +6,7 @@ let
   );
   # Read each operation explicitly so devenv tracks adapter edits in its cache.
   buildOperations = pkgs.runCommand "winboat-build-operations" { } (
-    "mkdir -p $out/adapters $out/scripts\n"
+    "mkdir -p $out/adapters $out/scripts $out/windows\n"
     +
       pkgs.lib.concatMapStringsSep "\n"
         (
@@ -20,6 +20,13 @@ let
           "dispatch.nix"
           "host-smoke.nix"
           "scripts/host-smoke.py"
+          "devbox.nix"
+          "scripts/devbox-run.py"
+          "windows/Bootstrap.ps1"
+          "windows/Provision.ps1"
+          "windows/Mirror.ps1"
+          "windows/BuildFixture.ps1"
+          "windows/TestDriver.c"
           "adapters/venus-protocol.nix"
           "adapters/freerdp.nix"
           "adapters/winboat.nix"
@@ -43,6 +50,7 @@ let
           "wb/__main__.py"
           "wb/activation.py"
           "wb/builds.py"
+          "wb/devbox.py"
           "wb/common.py"
           "wb/jobs.py"
           "wb/publication.py"
@@ -61,6 +69,24 @@ let
     export WB_BUILD_TARGETS=${buildTargets}
     export WB_BUILD_EXPRESSION=${buildOperations}/build.nix
     export WB_DISPATCH_EXPRESSION=${buildOperations}/dispatch.nix
+    export WB_DEVBOX_EXPRESSION=${buildOperations}/devbox.nix
+    export WB_DEVBOX_PAYLOADS=${buildOperations}/windows
+    export WB_XORRISO=${pkgs.xorriso}/bin/xorriso
+    export WB_WIMLIB=${pkgs.wimlib}/bin/wimlib-imagex
+    export WB_7ZIP=${pkgs._7zz}/bin/7zz
+    export WB_DOCKER=${pkgs.docker-client}/bin/docker
+    export WB_PODMAN=${pkgs.podman}/bin/podman
+    export WB_CONTAINER_POLICY=${
+      pkgs.writeText "winboat-container-policy.json" (
+        builtins.toJSON {
+          default = [ { type = "reject"; } ];
+          transports.docker-archive."" = [ { type = "insecureAcceptAnything"; } ];
+        }
+      )
+    }
+    export WB_VNCVIEWER=${pkgs.tigervnc}/bin/vncviewer
+    export WB_SSH=${pkgs.openssh}/bin/ssh
+    export WB_SSH_KEYGEN=${pkgs.openssh}/bin/ssh-keygen
     export WB_NIX=${pkgs.nix}/bin/nix
     export WB_NIXPKGS=${pkgs.path}
     export WB_SYSTEM=${pkgs.stdenv.hostPlatform.system}

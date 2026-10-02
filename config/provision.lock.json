@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "status": "incomplete",
+  "reference": {
+    "repository": "helios",
+    "revision": "38d245a077d1aa7e121df2fab5035dcc6db9f889",
+    "workflow": ".github/workflows/windows-stack.yml",
+    "toolchain": "TOOLCHAIN.md"
+  },
+  "policy": "Unresolved inputs block guest provisioning. Versions alone are requirements, not verified installer identities.",
+  "tools": [
+    {
+      "id": "vs-build-tools",
+      "version": "17.14",
+      "status": "pending",
+      "componentIds": [
+        "Microsoft.VisualStudio.Workload.VCTools",
+        "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+        "Microsoft.VisualStudio.Component.VC.14.44.17.14.x86.x64.Spectre"
+      ],
+      "reason": "Pinned channel downloaded; selected VisualStudio.vsman failed its declared SHA-256 check. See stage-03-remaining-inputs evidence."
+    },
+    {
+      "id": "windows-sdk",
+      "version": "10.0.26100.0",
+      "status": "pending",
+      "componentIds": [
+        "Windows SDK",
+        "Debugging Tools for Windows"
+      ],
+      "reason": "Bootstrapper SHA-256 observed; full selected SDK/debugger package manifest/layout is not yet verified."
+    },
+    {
+      "id": "windows-wdk",
+      "version": "10.0.26100.0",
+      "status": "pending",
+      "componentIds": [
+        "Windows Driver Kit"
+      ],
+      "reason": "Bootstrapper SHA-256 observed; full selected WDK package manifest/layout is not yet verified."
+    },
+    {
+      "id": "llvm",
+      "version": "22.1.8",
+      "status": "locked",
+      "componentIds": [
+        "clang-cl",
+        "libclang",
+        "lld-link"
+      ],
+      "payloads": [
+        {
+          "file": "LLVM-22.1.8-win64.exe",
+          "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.8/LLVM-22.1.8-win64.exe",
+          "sha256": "16e5709785fef73c854646241c4a92c5cd574318d1b33c63330dd7721903e55c"
+        }
+      ],
+      "install": "param($paths,$root) Native $paths[0] @('/S', '/D=C:\\WinBoatDev\\tools\\LLVM')",
+      "probe": "if(Test-Path 'C:\\WinBoatDev\\tools\\LLVM\\bin\\clang-cl.exe') { ((& 'C:\\WinBoatDev\\tools\\LLVM\\bin\\clang-cl.exe' --version)[0] -split ' ')[2] }",
+      "verification": "publisher metadata hash; payload checked before guest execution"
+    },
+    {
+      "id": "rust",
+      "version": "nightly-2026-07-14",
+      "status": "pending",
+      "componentIds": [
+        "rust-src",
+        "x86_64-pc-windows-msvc",
+        "i686-pc-windows-msvc"
+      ],
+      "reason": "Dated nightly manifest and rustup 1.28.2 fetched and hashed; full selected Windows archive closure/offline dispatch remains pending."
+    },
+    {
+      "id": "cargo-make",
+      "version": "0.37.24",
+      "status": "pending",
+      "componentIds": [],
+      "reason": "Retain crate and complete Cargo.lock package closure."
+    },
+    {
+      "id": "rust-script",
+      "version": "0.36.0",
+      "status": "pending",
+      "componentIds": [],
+      "reason": "Retain crate and complete Cargo.lock package closure."
+    },
+    {
+      "id": "git",
+      "version": "2.56.0.windows.1",
+      "status": "locked",
+      "componentIds": [],
+      "payloads": [
+        {
+          "file": "Git-2.56.0-64-bit.exe",
+          "url": "https://github.com/git-for-windows/git/releases/download/v2.56.0.windows.1/Git-2.56.0-64-bit.exe",
+          "sha256": "bfe94e7b419b16eee9fecbd1253a98e3d4f49ba8f029630549052278ffe286a6"
+        }
+      ],
+      "install": "param($paths,$root) $p=Start-Process $paths[0] -ArgumentList @('/VERYSILENT','/NORESTART','/DIR=C:\\WinBoatDev\\tools\\Git') -Wait -PassThru; if ($p.ExitCode -ne 0) { throw 'Git installer failed' }",
+      "probe": "if(Test-Path 'C:\\WinBoatDev\\tools\\Git\\cmd\\git.exe') { (& 'C:\\WinBoatDev\\tools\\Git\\cmd\\git.exe' --version) -replace '^git version ','' }",
+      "verification": "publisher metadata hash; payload checked before guest execution"
+    },
+    {
+      "id": "openssh",
+      "version": "9.8.3.0",
+      "status": "locked",
+      "componentIds": [
+        "sshd"
+      ],
+      "payloads": [
+        {
+          "file": "OpenSSH-Win64.zip",
+          "url": "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.8.3.0p2-Preview/OpenSSH-Win64.zip",
+          "sha256": "0ca131f3a78f404dc819a6336606caec0db1663a692ccc3af1e90232706ada54"
+        }
+      ],
+      "install": "param($paths,$root) Expand-Archive -LiteralPath $paths[0] -DestinationPath 'C:\\WinBoatDev\\tools' -Force; & 'C:\\WinBoatDev\\tools\\OpenSSH-Win64\\install-sshd.ps1'",
+      "probe": "if(Test-Path 'C:\\WinBoatDev\\tools\\OpenSSH-Win64\\sshd.exe') { (Get-Item 'C:\\WinBoatDev\\tools\\OpenSSH-Win64\\sshd.exe').VersionInfo.FileVersion }",
+      "verification": "publisher metadata hash; payload checked before guest execution"
+    },
+    {
+      "id": "powershell",
+      "version": "7.6.0",
+      "status": "locked",
+      "componentIds": [],
+      "payloads": [
+        {
+          "file": "PowerShell-7.6.0-win-x64.msi",
+          "url": "https://github.com/PowerShell/PowerShell/releases/download/v7.6.0/PowerShell-7.6.0-win-x64.msi",
+          "sha256": "ce60d76319739b52b281c744144cd8e942aed9cda02483ce9bd732e140f75982"
+        }
+      ],
+      "install": "param($paths,$root) $p=Start-Process msiexec.exe -ArgumentList @('/i', ('\"'+$paths[0]+'\"'), '/qn', '/norestart') -Wait -PassThru; if ($p.ExitCode -notin @(0,3010)) { throw 'PowerShell installer failed' }",
+      "probe": "if(Test-Path 'C:\\Program Files\\PowerShell\\7\\pwsh.exe') { & 'C:\\Program Files\\PowerShell\\7\\pwsh.exe' -NoProfile -Command '$PSVersionTable.PSVersion.ToString()' }",
+      "verification": "publisher metadata hash; payload checked before guest execution"
+    },
+    {
+      "id": "python",
+      "version": "3.12.10",
+      "status": "locked",
+      "componentIds": [],
+      "payloads": [
+        {
+          "file": "python-3.12.10-amd64.exe",
+          "url": "https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe",
+          "sha256": "67b5635e80ea51072b87941312d00ec8927c4db9ba18938f7ad2d27b328b95fb"
+        }
+      ],
+      "install": "param($paths,$root) $p=Start-Process $paths[0] -ArgumentList @('/quiet','InstallAllUsers=1','TargetDir=C:\\WinBoatDev\\tools\\Python','Include_test=0','PrependPath=1') -Wait -PassThru; if ($p.ExitCode -notin @(0,3010)) { throw 'Python installer failed' }",
+      "probe": "if(Test-Path 'C:\\WinBoatDev\\tools\\Python\\python.exe') { (& 'C:\\WinBoatDev\\tools\\Python\\python.exe' --version) -replace '^Python ','' }",
+      "verification": "publisher metadata hash; payload checked before guest execution"
+    },
+    {
+      "id": "meson",
+      "version": "1.11.2",
+      "status": "locked",
+      "componentIds": [],
+      "payloads": [
+        {
+          "file": "meson-1.11.2-py3-none-any.whl",
+          "url": "https://files.pythonhosted.org/packages/1d/c5/680527bdddf039807f22041882678b7f21d3380b4cdbc46abf2f24e2db6c/meson-1.11.2-py3-none-any.whl",
+          "sha256": "7e4f6e83fec83e3eaac928e058b073c7557b282c35b6a2024cea143a39926a39"
+        }
+      ],
+      "install": "param($paths,$root) Native 'C:\\WinBoatDev\\tools\\Python\\python.exe' @('-m','pip','install','--no-index','--no-deps',$paths[0])",
+      "probe": "if(Test-Path 'C:\\WinBoatDev\\tools\\Python\\Scripts\\meson.exe') { & 'C:\\WinBoatDev\\tools\\Python\\Scripts\\meson.exe' --version }",
+      "verification": "publisher metadata hash; payload checked before guest execution"
+    },
+    {
+      "id": "ninja",
+      "version": "1.13.0",
+      "status": "locked",
+      "componentIds": [],
+      "payloads": [
+        {
+          "file": "ninja-win.zip",
+          "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.0/ninja-win.zip",
+          "sha256": "beb3c1bfcd01d352cb46586a4677b0a49a93b7bb668cfa5d0695283e1d8efb61"
+        }
+      ],
+      "install": "param($paths,$root) Expand-Archive -LiteralPath $paths[0] -DestinationPath 'C:\\WinBoatDev\\tools\\Ninja' -Force",
+      "probe": "if(Test-Path 'C:\\WinBoatDev\\tools\\Ninja\\ninja.exe') { & 'C:\\WinBoatDev\\tools\\Ninja\\ninja.exe' --version }",
+      "verification": "publisher metadata hash; payload checked before guest execution"
+    },
+    {
+      "id": "vulkan-sdk",
+      "version": "1.4.350.0",
+      "status": "pending",
+      "componentIds": [
+        "Vulkan headers",
+        "Vulkan loader",
+        "glslangValidator",
+        "spirv-tools"
+      ],
+      "reason": "Publisher checksum and installer endpoints both returned HTTP 403."
+    }
+  ]
+}

@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 import sys
 
-from . import activation, builds, jobs, publication, repos
+from . import activation, builds, devbox, jobs, publication, repos
 from .common import Failure, git, identity, run, valid_ref, valid_sha, write_json
 from .workspace import Workspace, discover
 
@@ -65,6 +65,30 @@ def parser():
     build.add_argument("--mode", choices=["release", "development"], default="release")
     build.add_argument("--background", action="store_true")
     build.add_argument("--manifest")
+    dev = commands.add_parser("devbox").add_subparsers(dest="action", required=True)
+    dev.add_parser("capabilities")
+    for name in ["media", "create", "up", "down", "restart", "status", "logs", "destroy", "guest-status", "viewer"]:
+        command = dev.add_parser(name)
+        command.add_argument("--name", default="default")
+        if name in {"media", "create"}:
+            command.add_argument("--iso", required=name == "media")
+            command.add_argument("--iso-sha256")
+            command.add_argument("--index", type=int)
+            command.add_argument("--edition")
+            command.add_argument("--locale", default="en-US")
+        if name == "create":
+            command.add_argument("--manifest")
+            command.add_argument("--start", action="store_true")
+        if name == "up":
+            command.add_argument("--rebuild-image", action="store_true")
+        if name == "down":
+            command.add_argument("--force", action="store_true")
+        if name in {"create", "up", "down", "restart", "guest-status"}:
+            command.add_argument("--background", action="store_true")
+        if name == "destroy":
+            command.add_argument("--confirm", required=True)
+        if name == "viewer":
+            command.add_argument("viewer_action", choices=["open", "close", "status"])
     job = commands.add_parser("job").add_subparsers(dest="action", required=True)
     for name in ["status", "cancel", "resume", "run"]:
         job.add_parser(name).add_argument("--id", required=True)
@@ -96,6 +120,10 @@ def dispatch(ws, args, operation_id, argv):
         os.execv(os.environ["WB_NODE"], [os.environ["WB_NODE"], os.environ["WB_MCP_SERVER"]])
     if args.family == "repo" and args.action == "reconcile":
         return publication.reconcile(ws, args.operation)
+    if args.family == "devbox":
+        if getattr(args, "background", False):
+            return jobs.start(ws, [v for v in argv if v != "--background"])
+        return devbox.dispatch(ws, args, operation_id)
     if args.family == "build":
         if args.target == "list":
             return builds.catalog()
@@ -123,6 +151,7 @@ def dispatch(ws, args, operation_id, argv):
         else:
             evidence = ws.state / "verification/sources.json"
             result["remoteVerification"] = json.loads(evidence.read_text()) if evidence.exists() else {"state": "unverified", "remedy": "wb repo verify --subset <selection>"}
+        result["devboxCapabilities"] = devbox.capabilities(ws)
         return result
     if getattr(args, "background", False):
         return jobs.start(ws, [v for v in argv if v != "--background"])

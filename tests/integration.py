@@ -451,6 +451,13 @@ class Fixtures(unittest.TestCase):
         tools = rpc("tools/list")["result"]["tools"]
         self.assertIn("repo_reconcile", [t["name"] for t in tools])
         self.assertIn("build_run", [t["name"] for t in tools])
+        self.assertIn("devbox_create", [t["name"] for t in tools])
+        self.assertIn("devbox_viewer_status", [t["name"] for t in tools])
+        bad_media = rpc("tools/call", {"name": "devbox_media", "arguments": {"iso": "example.iso", "index": 1.5}})
+        self.assertEqual(bad_media["error"]["code"], -32602)
+        missing_devbox = rpc("tools/call", {"name": "devbox_status", "arguments": {"name": "missing"}})["result"]
+        self.assertTrue(missing_devbox["isError"])
+        self.assertEqual(missing_devbox["structuredContent"]["error"], self.wb("devbox", "status", "--name", "missing", check=False)["error"])
         build_list = rpc("tools/call", {"name": "build_list", "arguments": {}})["result"]
         self.assertEqual(build_list["structuredContent"]["result"], self.wb("build", "list"))
         build_plan = rpc("tools/call", {"name": "build_run", "arguments": {"target": "dxvk-engine-x64", "plan": True}})["result"]

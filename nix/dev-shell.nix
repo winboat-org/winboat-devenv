@@ -42,6 +42,13 @@ in
     export PYTHONPATH=${../tools}
     exec ${pkgs.python3}/bin/python3 ${../tests/integration.py} "$@"
   '';
+  scripts.wb-devbox-test.exec = ''
+    export PYTHONPATH=${../tools}
+    exec ${pkgs.python3}/bin/python3 ${../tests/devbox.py} "$@"
+  '';
+  scripts.wb-windows-check.exec = ''
+    exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows"
+  '';
   env.WB_WORKSPACE_ROOT = config.devenv.root;
   env.WB_NIXPKGS = toString pkgs.path;
 
@@ -95,5 +102,7 @@ in
     wb-pins winboat | jq -e '.repositories | length == 3' >/dev/null
     wb-pins winboat-accel | jq -e '.repositories | length == 12' >/dev/null
     wb-test
+    wb-devbox-test
+    wb-windows-check
   '';
 }

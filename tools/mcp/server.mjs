@@ -30,10 +30,25 @@ const definitions = [
     { target: string, configuration: { type: 'string', enum: ['release', 'debug'] },
       mode: { type: 'string', enum: ['release', 'development'] }, plan: bool, background: bool }, ['target']],
   ['build_verify', 'Verify the complete exported artifact file set and hashes.', ['build', 'verify'], { manifest: string }, ['manifest']],
+  ['devbox_capabilities', 'Inspect KVM, render nodes, displays and usable container runtimes.', ['devbox', 'capabilities'], {}],
+  ['devbox_media', 'Hash and inspect user-supplied Windows ISO image metadata.', ['devbox', 'media'],
+    { iso: string, isoSha256: { type: 'string', pattern: '^[0-9a-f]{64}$' }, index: { type: 'integer', minimum: 1 }, edition: string, locale: string }, ['iso']],
+  ['devbox_create', 'Prepare an isolated devbox; start is explicit and execution uses shared Nix operations.', ['devbox', 'create'],
+    { name: string, iso: string, isoSha256: { type: 'string', pattern: '^[0-9a-f]{64}$' }, manifest: string,
+      index: { type: 'integer', minimum: 1 }, edition: string, locale: string, start: bool, background: bool }],
+  ...['up', 'down', 'restart', 'status', 'logs', 'guest-status'].map(action =>
+    [`devbox_${action.replace('-', '_')}`, `Devbox ${action}.`, ['devbox', action],
+      { name: string, ...(action === 'up' ? { rebuildImage: bool } : {}), ...(action === 'down' ? { force: bool } : {}),
+        ...(['up', 'down', 'restart', 'guest-status'].includes(action) ? { background: bool } : {}) }]),
+  ['devbox_destroy', 'Permanently delete a stopped owned devbox after identity confirmation.', ['devbox', 'destroy'],
+    { name: string, confirm: { type: 'string', pattern: '^[0-9a-f]{32}$' } }, ['confirm']],
+  ...['open', 'close', 'status'].map(action =>
+    [`devbox_viewer_${action}`, `Independent VNC viewer ${action}; VM lifecycle is separate.`, ['devbox', 'viewer', action], { name: string }]),
 ];
 const catalog = definitions.map(([name, description, command, properties, required = []]) => ({ name, description, command,
   inputSchema: { type: 'object', properties, required, additionalProperties: false },
-  annotations: { readOnlyHint: ['workspace_status', 'repo_list', 'repo_status', 'repo_plan', 'job_status', 'build_list', 'build_verify'].includes(name) },
+  annotations: { readOnlyHint: ['workspace_status', 'repo_list', 'repo_status', 'repo_plan', 'job_status', 'build_list', 'build_verify',
+    'devbox_status', 'devbox_logs', 'devbox_viewer_status'].includes(name) },
   outputSchema: { type: 'object', properties: { schemaVersion: { type: 'integer' }, operationId: string,
     state: string, exitCode: { type: 'integer' } }, required: ['schemaVersion', 'operationId', 'state', 'exitCode'], additionalProperties: true } }));
 
@@ -49,7 +64,9 @@ function validate(value, schema, path = 'arguments') {
     if (!Array.isArray(value) || value.length < (schema.minItems ?? 0)) throw new Error(`${path} must be a nonempty array`);
     for (const item of value) validate(item, schema.items, path);
   } else {
-    if (typeof value !== schema.type) throw new Error(`${path} must be ${schema.type}`);
+    if (schema.type === 'integer') {
+      if (!Number.isInteger(value) || value < schema.minimum) throw new Error(`${path} must be a positive integer`);
+    } else if (typeof value !== schema.type) throw new Error(`${path} must be ${schema.type}`);
     if (schema.type === 'string' && (!value.length || value.includes('\n') || value.includes('\0'))) throw new Error(`${path} is invalid`);
     if (schema.enum && !schema.enum.includes(value)) throw new Error(`${path} has an unsupported value`);
     if (schema.pattern && !new RegExp(schema.pattern).test(value)) throw new Error(`${path} has an invalid format`);
@@ -62,7 +79,9 @@ function command(tool, args) {
     revision: '--rev', ref: '--ref', sourceUrl: '--source-url', remote: '--remote', source: '--source',
     namespace: '--namespace', name: '--name', operation: '--operation', id: '--id',
     forceWithLease: '--force-with-lease', dryRun: '--dry-run', deferCheckpoint: '--defer-checkpoint', apply: '--apply',
-    configuration: '--configuration', mode: '--mode', plan: '--plan', manifest: '--manifest' };
+    configuration: '--configuration', mode: '--mode', plan: '--plan', manifest: '--manifest',
+    iso: '--iso', isoSha256: '--iso-sha256', index: '--index', edition: '--edition', locale: '--locale',
+    start: '--start', confirm: '--confirm', rebuildImage: '--rebuild-image', force: '--force' };
   for (const [key, value] of Object.entries(args)) {
     if (key === 'background') continue;
     if (key === 'target') { argv.splice(1, 0, value); continue; }
@@ -73,6 +92,7 @@ function command(tool, args) {
     } else argv.push(flags[key], value);
   }
   if (['repo_sync', 'repo_push', 'repo_verify', 'build_run'].includes(tool.name) && args.background !== false && !args.plan) argv.push('--background');
+  if (['devbox_create', 'devbox_up', 'devbox_down', 'devbox_restart', 'devbox_guest_status'].includes(tool.name) && args.background !== false) argv.push('--background');
   return argv;
 }
 
