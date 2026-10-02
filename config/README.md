@@ -1,5 +1,11 @@
 # Configuration
 
+`shell/` contains native devenv auto-activation fragments for Bash, Zsh and Fish.
+Load the applicable hook once during shell setup and allow this checkout with
+`devenv allow`. [Activation documentation](../docs/auto-activation.md) also covers
+Nushell and direnv/editor integration. These are portable templates; host startup
+files and the per-user trust database remain outside tracked configuration.
+
 `local.example.json` describes configuration Stage 1 will implement; devbox
 fields are consumed from Stage 3 onward. It is an example today: the scaffold
 does not load it. Copy it to ignored `local.json` when configuring that stage.

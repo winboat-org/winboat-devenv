@@ -3,6 +3,7 @@
 | Document | Purpose |
 | --- | --- |
 | [Architecture](architecture.md) | Workspace, command, devbox and artifact contracts |
+| [Automatic activation](auto-activation.md) | Native shell hooks and direnv/editor integration |
 | [Repositories](repositories.md) | Inventory, subsets, pins, fork and submodule policy |
 | [Stages](stages/README.md) | Sequenced implementation and acceptance gates |
 | [Stage 1 handoff](handoffs/stage-01.md) | Ready-to-use next-session prompt |

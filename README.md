@@ -17,6 +17,12 @@ system configuration is assumed. The scaffold was initialized with devenv
 2.4.0. [devenv getting started](https://devenv.sh/getting-started/) describes
 installation and shell commands.
 
+Set up [automatic activation](docs/auto-activation.md) once for your shell. For
+Bash, load `eval "$(devenv hook bash)"` in your shell startup configuration and
+run `devenv allow` from this workspace. Entering/leaving the workspace then
+activates/deactivates its environment. Zsh, Fish and Nushell instructions and
+tracked shell fragments are included.
+
 ```sh
 devenv update                     # Generate/refresh and review devenv.lock.
 devenv shell
@@ -27,8 +33,8 @@ wb-pins winboat
 wb-check --ready                 # Requires all 12 source pins and devenv.lock.
 ```
 
-Or use `devenv shell -- wb-check` without an interactive shell. Optional direnv
-activation uses the generated `.envrc` and an explicit `direnv allow`.
+Or use `devenv shell -- wb-check` without an interactive shell. Direnv-based
+editors/shells can use the tracked `.envrc` and `direnv allow`.
 Shell entry does not clone repositories, commit files, start a VM or install a
 driver. The scaffold commands are read-only.
 

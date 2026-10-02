@@ -20,7 +20,11 @@ available through a minimal Node MCP control-plane server.
 2. Implement configuration schema/precedence and discovery. `wb setup` prepares
    ignored state/config idempotently, with no implicit clone or VM start.
    `wb doctor` reports tools, pin reachability, checkout state, capabilities and
-   remedies in human/JSON output. Paths with spaces and arbitrary host usernames
+   remedies in human/JSON output. Native automatic activation is part of setup:
+   provide/diagnose Bash, Zsh, Fish and Nushell hooks, run `devenv allow` during
+   explicit activation setup, and preserve existing shell configuration. Retain
+   `.envrc` for direnv/editor users. See `docs/auto-activation.md`. Paths with
+   spaces and arbitrary host usernames
    must work. Adopt an external checkout only by explicit local configuration;
    validate ownership/remotes/layout and preserve its working/index state.
 3. Declare the repo-like tool **in Nix**, e.g. `nix/commands/repos.nix` using
@@ -83,6 +87,11 @@ network access and publishing the real organization repos are not prerequisites
 for testing wrapper semantics. Test single/all/subset selection, dependency
 closure, parent placement, selective submodules, dirty/index/conflict protection,
 fork remotes and no mutation on shell entry. Compare preserved file/index hashes.
+
+Verify native activation on directory entry, retention in managed subdirectories
+and deactivation on exit without nested shells or duplicate hooks. Exercise an
+untrusted/relocated checkout, hook diagnostics and the documented direnv path.
+Confirm agents/CI use explicit Nix execution in noninteractive shells.
 
 Exercise ordinary Git delegation and actual successful/failed/dry-run/no-op/
 explicit-refspec pushes. Confirm a successful managed push records its remote

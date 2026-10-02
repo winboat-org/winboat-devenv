@@ -7,7 +7,8 @@ Implement Stage 1 of winboat-devenv through its acceptance gates.
 
 Read AGENTS.md, README.md, docs/architecture.md, docs/repositories.md,
 docs/reference-audit.md, docs/stages/README.md and
-docs/stages/01-workspace.md. Inspect Git status and preserve unrelated work.
+docs/stages/01-workspace.md, plus docs/auto-activation.md. Inspect Git status
+and preserve unrelated work.
 
 The scaffold was initialized with devenv 2.4.0. Nix manifest validation passed,
 but input fetching and the live devenv shell were blocked by session networking.
@@ -19,6 +20,10 @@ a paired graphics pin or claim the seeds represent a validated stack.
 Implement the repo-like tool in Nix with setup/doctor, list/status/plan/sync,
 single-repo and helios/winboat/winboat-accel/all selectors, explicit checkpoints,
 pin updates, fork mode and Git push interception scoped to the Nix environment.
+Include native auto-activation setup/doctor support for Bash, Zsh, Fish and
+Nushell with per-checkout devenv allow, existing shell config preserved, and
+the tracked .envrc retained for direnv/editor users. Verify directory entry,
+subdirectory retention, exit deactivation and untrusted/relocated checkouts.
 Use the manifest's dependency closure and current nested layout. Include the
 managed DXIL-SPIRV/Venus dependencies. Never recursively sync all QEMU submodules.
 The requested Venus-in-Mesa layout is a later migration; preserve current

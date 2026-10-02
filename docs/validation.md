@@ -10,6 +10,10 @@ resolved; later stage acceptance belongs in the corresponding stage document.
 | Pure `nix/checks.nix` evaluation | Passed: 12 entries, 10 exact revisions, 2 unresolved | Structural pin/inventory validation |
 | Nix-declared scaffold scripts extracted and run with host Bash/jq | Passed | Actual selector closures 8/3/12/12, argument failures, readiness refusal, scaffold checks and plan output |
 | JSON/TOML and `.envrc` syntax | Passed | Shared configuration/sample syntax |
+| Native activation trust/probe in isolated user state | Passed | Root/nested detection, no activation outside workspace, revoke refusal and re-allow |
+| Bash native prompt-hook registration | Passed | The tracked fragment registers the installed devenv hook |
+| Fish activation fragment syntax | Passed | Fish parser accepts the tracked fragment |
+| Bash/Zsh/Fish/Nushell native hook generation | Passed | Installed devenv emits each hook; Zsh/Nushell execution remains untested |
 | Local Markdown links | Passed | Documentation targets exist |
 | Ignore policy | Passed | Personal docs/state/checkouts/media/keys ignored; lock/shared config/generic user README trackable |
 | `devenv update` | Blocked by GitHub DNS access | No Nix lock generated |

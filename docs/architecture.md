@@ -25,6 +25,13 @@ Linux build/VM support is the first acceptance target. Other platforms may use
 supported cross builds or a remote devbox but must not claim local KVM support.
 Installing prerequisites is distinct from entering the shell.
 
+Native devenv hooks activate the trusted workspace when entering its directory
+and deactivate on exit. Onboarding supports Bash, Zsh, Fish and Nushell, reports
+missing hook setup and performs `devenv allow` during explicit activation setup.
+Trust remains local to each checkout. The tracked `.envrc` supports direnv-based
+editors; use one activation mechanism per shell. Noninteractive execution invokes
+the Nix environment explicitly and does not depend on prompt hooks.
+
 ## Control plane
 
 Use one `wb` command surface for setup, repository operations, builds, devbox
