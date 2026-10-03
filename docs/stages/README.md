@@ -13,7 +13,7 @@ maintainer's request.
 | 0 | devenv initialization, inventory/seed pins, docs and agent guidance | Empty workspace | Complete |
 | [1](01-workspace.md) | Setup/doctor, repo sync, checkpoints, push pins, forks, initial Node MCP | 0 | Complete for requested repository/MCP scope; activation limitation documented |
 | [2](02-builds.md) | Per-repo Nix recipes, native/cross builds, ABI and output contracts | 1 | Native/cross acceptance passed; guest execution and full app/compiler closures pending |
-| [3](03-devbox.md) | Containerized headless Windows provisioning, shared workspace and viewer | 2 host QEMU/renderer outputs | Current-host acceptance passed; other OS user/host and proprietary GPU unvalidated |
+| [3](03-devbox.md) | Containerized headless Windows provisioning, shared workspace and viewer | 2 host QEMU/renderer outputs | Podman/NVIDIA current-host acceptance passed; alternate UID preparation passed; corrected-artifact Docker repeat needs daemon space; second account Windows boot/other host pending |
 | [4](04-windows-control.md) | Windows builds, Helios installation, strict inventory, devbox MCP | 2, 3 | Planned |
 | [5](05-agents.md) | Claude/Codex setup, SSH/Nix integrations, agent workflows | 1, 4 | Planned |
 | [6](06-ci-bundles.md) | Component CI and bundling-only root CI, installer relocation | 2, 4 | Planned |

@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "timestamp": "2026-10-03T00:38:05.900262+00:00",
   "scope": "Stage 3 current-host acceptance passed, including unmodified blank-disk creation",
+  "followUpEvidence": "stage-03-runtime-portability.json",
   "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
   "tests": {
     "devenvTest": "passed after final native payload repairs, 25 integration and 10 devbox tests",

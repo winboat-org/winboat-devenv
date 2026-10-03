@@ -95,12 +95,17 @@ live identities and retained failures; [usage](devbox.md) describes the commands
 The finalized payloads passed unmodified blank-disk creation on this host, with
 zero provisioning failures or repair uploads. The task resumed automatically
 after identity and signing reboots and reached `verified` with all 14 tools.
-Another OS user/host and proprietary GPU integration remain unvalidated.
+The [runtime follow-up](evidence/stage-03-runtime-portability.json) adds private
+NVIDIA CDI and a fresh rootless Podman/NVIDIA guest using corrected QEMU, plus
+Docker's initial full Windows checks and actual alternate-UID preparation.
+Another physical host and Windows boot under a second real host account remain
+unvalidated. The corrected-artifact Docker repeat needs more daemon-store space.
 
 | Check | Result | What it establishes |
 | --- | --- | --- |
 | Supplied ISO inspection | Passed | SHA-256 verified; actual WIM metadata selects amd64 en-US EnterpriseS LTSC 2024, image 1, build 26100 |
-| Runtime/device discovery | Passed on rootless Podman | Workspace-local VFS state, accessible KVM and selected Intel render node; Docker socket access failed during VM acceptance; subsequent pinned-client Docker access check passed, Docker VM execution and proprietary GPU integration unvalidated |
+| Runtime/device discovery | Rootless Podman and Docker passed | Earlier Intel baseline plus NVIDIA private CDI; initial fresh Docker/Intel guest verified all 14 tools, autologin, signing, mirror/build return and viewer independence |
+| Private NVIDIA CDI | Passed | Nix-pinned vendor generator, hooks and rootless Podman; fresh private spec on launch; injected files and six actual mapped NVIDIA libraries match hashes; system specs/hooks are excluded |
 | Exact container closure | Passed | Image built/imported from the manifest-selected Stage 2 output; all 431 closure NAR identities checked, licenses/symbols retained |
 | Actual host images | Passed | `/proc` executable plus seven renderer/GL module images match exact manifest paths/hashes; QMP works after reconnect |
 | Initial Windows boot | Retained failure, corrected and retried | Non-secure firmware failed requirements; secure-capable firmware passed; a nonconsecutive partition modification order failed, then corrected fresh setup advanced automatically into installation; missing OOBE locale then exposed the region prompt, corrected fresh retry passed OOBE and reached wbdev desktop unattended |
@@ -108,23 +113,39 @@ Another OS user/host and proprietary GPU integration remain unvalidated.
 | Guest network/SSH | Key authentication passed | Pinned guest host key, password authentication disabled; actual sshd executable/hash, durable inventory and SFTP artifact return observed on development |
 | Separate viewer | Two attach/close cycles and long job passed | TigerVNC 1.16.2; same QEMU/container and SYSTEM guest-task PID survived; task completed tick 12 |
 | Separate named state/ports | Passed with two concurrent VMs | Distinct container identities and four ports, both loaded fork QEMU instances; second guest retained an earlier partial tool lock and shut down cleanly |
-| `devenv test` | Passed, 25 integration plus 10 devbox tests | CLI/MCP types/parity, ownership/destroy refusal, relocated state, port collisions and creation resume preserving disk/keys |
-| Windows payload parsing | Passed, six PowerShell payloads | Also parses all 14 locked install/probe pairs; Linux parser validation only; not installed-tool, signing, mirror or Windows execution acceptance |
+| `devenv test` | Passed, 25 integration plus 17 devbox tests | CLI/MCP types/parity, runtime binding, private CDI, ownership/destroy refusal, relocated state, port collisions and creation resume preserving disk/keys |
+| Windows payload parsing | Passed, seven PowerShell payloads | Also parses all 14 locked install/probe pairs; Linux parser validation only; not installed-tool, signing, mirror or Windows execution acceptance |
 | Provision input lock | All 14 tools locked | Publisher files, complete SDK/WDK layouts, self-contained EWDK, dated Rust archives, cargo helpers and Vulkan core installer; these are not installed-version evidence |
 | Installed tools | All 14 verified | SDK/WDK kit directories 10.0.26100.0 with separate QFE bundle identities, EWDK VS 17.14.5/MSVC 14.44.35207, dated Rust/targets/rust-src, remaining locked tools including Vulkan 1.4.350.0 |
 | Test signing/driver load | Passed after actual reboot | Secure Boot false, HVCI services [0], effective BCD TESTSIGNING Yes, expected signing certificate and fixture hash, CIM driver Running with normalized NT path |
-| Mirror/local build/return | Passed | Seven source files and snapshot/diff identities checked; secret/output exclusions and unowned-destination refusal; MSVC builds/signs on C: and SFTP output SHA-256 matches |
+| Mirror/local build/return | Passed | Earlier seven-file fixture plus eight-file Docker/NVIDIA repeats; snapshot/diff identities, secret/output exclusions and unowned-destination refusal; local MSVC build/sign and matching SFTP SHA-256 |
 | Interruption/recovery | Passed at copy/install/reboot boundaries | Identity/disk/SSH keys preserved through copy interruption; partial EWDK fails probe until full extraction marker; signing reboot resumes to verified baseline |
 | Final blank-disk repeat | Passed | Owned test container/disk removed; development reached verified using finalized Nix payloads, zero failures/repair uploads, two automated reboots and post-signing wbdev desktop login |
-| Live relocation/username | Passed within measured scope | Root with spaces, alternate USER/LOGNAME and explicit external roots controlled the same VM/SSH; actual OS UID and another host remain unvalidated |
+| Live relocation/username | Passed within measured scope | Root with spaces, alternate USER/LOGNAME and explicit external roots controlled the same VM/SSH; actual kernel UID 1110 prepared/deleted isolated state with owned disk and 0600 keys; no second-account Windows boot or second host |
+| EGL/GBM shutdown | Corrected release control passed | Old Intel Mesa teardown segfault reproduced without Windows under GDB; QEMU now releases EGL before destroying GBM; 105 unit tests pass with three documented skips, corrected Intel control exits normally, NVIDIA guest clean stop/restart passed |
+| Corrected-artifact recreation | Podman/NVIDIA passed; Docker capacity-blocked | Owned test containers were destroyed before fresh creation; NVIDIA reached all 14 verified tools with two reboots; Docker image load exhausted daemon-store space and its prepared task state was removed |
 
-A runtime recheck on 2026-10-03, after the user's Docker setup, passed `version`,
-`info` and `ps` without sudo through the locked shell and Nix-pinned Docker
-client 29.8.0 against Engine 29.8.2 (`overlay2`). This establishes daemon access;
-the completed VM acceptance remains on Podman. The current ignored local
-configuration still selects Podman, and `development` was observed stopped with
-its verified provisioning record retained. Docker devbox execution remains
-unvalidated; do not change the runtime beneath that named guest.
+The Docker follow-up used pinned client 29.8.0 against Engine 29.8.2 without sudo.
+Runtime identity is now retained per guest, so Docker availability cannot orphan
+an existing Podman VM. The initial Docker/Intel guest passed provisioning and
+integration checks, then exposed an Intel Mesa shutdown crash. A diskless GDB
+reproduction established the EGL/GBM cleanup order, which is corrected in local
+QEMU commit `2544a0bb2b11992fe31d043961ed507fe581f31f` and its parent/pins.
+The new clean release manifest is
+`out/native/op-1c1559be28eb44628591806633633add/manifest.json`.
+
+The user's selected NVIDIA path owns CDI through Nix-pinned rootless Podman.
+Generator and hook GC roots, private YAML, input hashes and mapped-driver
+observations are retained. Image import scratch follows the selected state
+filesystem; an earlier `/var/tmp` exhaustion is retained. The corrected-artifact
+Docker repeat still exhausted daemon image-load space after removing the unused
+owned prior image. No host daemon storage configuration or unrelated state was
+changed to force that check through. The existing `development` guest remains
+stopped with its earlier artifact/disk retained; it has not been implicitly
+migrated. Canonical publication of local component commits remains pending.
+After the final restart, all tools and actual desktop autologin were checked
+again. The test guest then shut down cleanly with a zero container exit and was
+destroyed using its identity guard; its evidence and runtime cache are retained.
 
 The [input evidence](evidence/stage-03-provision-inputs.json) and provisioning
 lock record all 14 tools. Nix fetches every payload by its fixed SHA-256 before

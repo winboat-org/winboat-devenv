@@ -9,11 +9,15 @@ for retained identities and limits. This baseline establishes a
 development guest; Helios component installation/loaded-state acceptance belongs
 to Stage 4.
 
-The latest runtime check on 2026-10-03 confirmed Docker access without sudo:
-the Nix-pinned client 29.8.0 connects to Engine 29.8.2, and `version`, `info`
-and `ps` pass. The existing `development` guest is stopped, with its verified
-provisioning record and disk retained. Its ignored local configuration still
-selects Podman; Docker devbox execution has not been tested.
+The [runtime follow-up](../evidence/stage-03-runtime-portability.json) records
+Docker's initial full Windows checks, a fresh private-CDI Podman/NVIDIA baseline,
+alternate kernel UID 1110 preparation/deletion and the QEMU EGL/GBM shutdown fix.
+The user selected Nix-pinned rootless Podman with private CDI and no system CDI
+setup. The corrected-artifact Docker repeat is blocked by daemon image-load
+space; another physical host and second-account Windows boot remain pending.
+The original `development` guest is stopped and retained with its earlier
+artifact; it has not been migrated to the corrected host output. The fresh
+follow-up test guest was cleanly stopped and destroyed after acceptance.
 
 ```text
 Implement docs/stages/04-windows-control.md using the verified Stage 3 baseline.
@@ -31,6 +35,30 @@ same wb application. Keep component build/install execution in shared
 Nix-declared Windows payloads, with durable jobs/receipts and CLI/MCP parity.
 Stage 2's Windows dispatch plans have not executed component builds yet.
 
+NVIDIA launches generate private CDI with the locked vendor toolkit and Nix
+hook, retain both GC roots and pass only the operation's private spec directory
+to rootless Podman, with an empty Nix OCI hook directory. Do not install host
+CDI packages, edit /etc/cdi, register a Docker NVIDIA runtime or handwrite specs.
+Host KVM, user mappings, device permissions and matching kernel/userspace driver
+remain external inputs. The launcher verifies injected hashes and actual mapped
+NVIDIA images; this is host EGL startup, not Windows Helios/Vulkan acceptance.
+Runtime bindings preserve the original store/daemon identity of each guest.
+Podman import scratch follows the selected state filesystem; Docker's daemon
+needs its own image-load/store capacity. Do not prune unrelated state to retry.
+
+Use the corrected clean release manifest explicitly:
+out/native/op-1c1559be28eb44628591806633633add/manifest.json
+SHA256 e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1
+QEMU 2544a0bb2b11992fe31d043961ed507fe581f31f; parent/pins are local/unpublished.
+EGL resources must be released before GBM destruction. The old Intel artifact
+segfaulted during shutdown; the corrected release's diskless Intel control exits
+normally and 105 QEMU unit tests pass, with three documented skips. A clean
+shutdown now requires an actual zero container exit, not just an SSH/ACPI ack.
+Verified guests use authenticated SSH shutdown; timeout preserves a running VM.
+The original development VM retains the old artifact. Use a new named guest for
+the corrected artifact/private NVIDIA path until an explicit verified migration
+exists, and preserve the original disk, keys and signing identity.
+
 The exact Stage 2 host-stack manifest/closure is retained, including QEMU,
 renderer/server, seven GL module images, firmware/data, headers, symbols,
 licenses and smoke evidence. Actual /proc paths/hashes were observed. Host
@@ -41,21 +69,19 @@ Keep the Helios protocol license notice through any later migration.
 
 The user-supplied ISO was verified as amd64 en-US EnterpriseS LTSC 2024, index 1,
 build 26100, SHA-256 157d8365a517c40afeb3106fdd74d0836e1025debbc343f2080e1a8687607f51.
-Its path and machine choices are ignored local configuration. Rootless Podman
-with workspace-local VFS storage and Intel Mesa EGL worked. Docker socket access
-failed during that acceptance run; after the user's runtime setup, a subsequent
-locked-shell check confirmed Docker access without sudo using the pinned client.
-The development guest remains configured for Podman. Recheck its current status
-and resume its existing disk with `wb devbox up --name development` when needed.
-Do not switch the runtime underneath an existing named guest: runtime selection
-comes from current configuration, and Docker and Podman have separate container
-stores. Validate Docker devbox execution with separately owned state before
-claiming Docker VM acceptance. No host groups, packages, daemon, bridges or
-desktop config were changed by this work.
+Its path and machine choices are ignored local configuration. The original
+rootless Podman/Intel baseline is preserved, but its old QEMU artifact exposed
+the shutdown crash described above. Create a new named guest with the corrected
+manifest and discovered NVIDIA render node for Stage 4; do not silently migrate
+the original development guest. Runtime bindings retain each guest's original
+store/daemon identity even when current configuration changes.
+Private CDI/NVIDIA full Windows acceptance and initial Docker/Intel acceptance
+passed. The corrected Docker repeat remains capacity-blocked. Actual kernel
+UID 1110 preparation/deletion passed in an isolated controller; second-account
+Windows boot and another physical host are pending. Live relocated-root control
+also used spaces, alternate USER/LOGNAME and explicit external overrides.
 Discover current capabilities, including graphics userspace rather than only
-node permissions. Proprietary GPU/CDI, another OS UID and another host remain
-unvalidated. Live relocated-root control used spaces, alternate USER/LOGNAME
-and explicit external state/source/output overrides with the same OS UID.
+node permissions. Private launches do not change system CDI or daemon setup.
 
 All 14 tool inputs are locked and prefetched by Nix before image creation:
 546 unique payloads, 22,891,136,712 bytes. Windows copies each execution input

@@ -113,7 +113,7 @@ only that operation's private directory through Podman's `--cdi-spec-dir`, with
 an empty Nix-owned OCI hook directory. Specs in `/etc/cdi` and `/var/run/cdi` and
 distro NVIDIA hooks do not participate. Generation is full vendor discovery;
 there is no handwritten spec or filename substitution. The generated YAML,
-generator log, manifest and toolkit GC root stay under `.state/gpu/<operation>/`.
+generator log, manifest and generator/hook GC roots stay under `.state/gpu/<operation>/`.
 An explicit `--cdi-device` must match the selected render node; otherwise the
 GPU's UUID entry is selected automatically.
 

@@ -11,6 +11,12 @@ lists these exact commits. Canonical URLs stay unchanged; new commit reachabilit
 on those remotes is pending. Stage 1's canonical evidence describes the seed,
 not publication of the new recipes.
 
+The Stage 3 follow-up adds a local QEMU EGL/GBM cleanup correction, its parent
+gitlink/documentation commits and matching pins. These also remain unpublished.
+[Runtime evidence](evidence/stage-03-runtime-portability.json) records the
+corrected release artifact and separates local source coherence from canonical
+remote reachability.
+
 ## Inventory and layout
 
 All canonical URLs use `https://github.com/winboat-org/<repository>.git`.

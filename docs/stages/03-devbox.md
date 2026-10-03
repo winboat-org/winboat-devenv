@@ -1,9 +1,11 @@
 # Stage 3 — Headless Windows development container
 
-Status: current-host acceptance passed. Unmodified blank-disk creation, automatic
-desktop login, exact-closure image import, all 14 installed tools, signing
-reboot/driver load and local mirror build/hash-return checks passed. Another OS
-user/host and proprietary GPU integration remain unvalidated. See
+Status: current-host Podman acceptance passed, including private NVIDIA CDI,
+blank-disk provisioning, all 14 tools, autologin, signing/driver load and local
+mirror/build/hash return. Docker's initial full guest checks passed; its repeat
+with the corrected QEMU artifact is blocked by daemon image-store space.
+Alternate UID preparation passed; Windows boot under another host account and
+another physical host remain unvalidated. See
 [usage](../devbox.md) and [validation](../validation.md).
 Prerequisite: Stage 2's host QEMU/renderer outputs.
 

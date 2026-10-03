@@ -12,6 +12,10 @@ Component Windows MSVC/WDK builds await Stage 4. WinBoat/Electron/CLVK adapters 
 their remaining fixed dependency inputs; the Windows devbox is Stage 3. Stage 3's
 host lifecycle, unmodified blank-disk creation, all 14 installed tools,
 post-reboot autologin, signing/driver load and local mirror build checks passed.
+NVIDIA devboxes now use Nix-pinned rootless Podman with workspace-private,
+vendor-generated CDI. The host supplies its graphics driver and device access;
+the workspace supplies the toolkit and hooks. See [devbox usage](docs/devbox.md)
+and [validation](docs/validation.md) for runtime-specific checks and limits.
 
 ## Start here
 

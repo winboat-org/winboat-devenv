@@ -1,0 +1,1291 @@
+{
+  "schemaVersion": 1,
+  "timestamp": "2026-10-03T18:34:44.987416+00:00",
+  "scope": "Current-host follow-up: private NVIDIA CDI, rootless Podman recreation, Docker initial acceptance, alternate UID preparation and QEMU EGL/GBM shutdown correction",
+  "implementationCommit": "8cb2c1e",
+  "nixLockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+  "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+  "tests": {
+    "integration": 25,
+    "devbox": 17,
+    "powerShellPayloads": 7,
+    "lockedInstallProbePairs": 14,
+    "qemuUnitPassed": 105,
+    "qemuDocumentedSkips": 3
+  },
+  "hostArtifact": {
+    "manifest": "out/native/op-1c1559be28eb44628591806633633add/manifest.json",
+    "sha256": "e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1",
+    "output": "/nix/store/cq8ixr51g3k95g65v47nkvrdqdp3z07l-winboat-host-stack",
+    "mode": "release",
+    "closurePaths": 431,
+    "qemuRevision": "2544a0bb2b11992fe31d043961ed507fe581f31f"
+  },
+  "privateCdi": {
+    "generator": {
+      "command": [
+        "/nix/store/1cll4fcc4vv373v5n0ss62qiixhxp5w6-nvidia-container-toolkit-1.19.1/bin/nvidia-ctk",
+        "cdi",
+        "generate",
+        "--nvidia-cdi-hook-path",
+        "/nix/store/jwa7pv0s50d5f7x6p6v4npygaa2mkmag-nvidia-container-toolkit-1.19.1-tools/bin/nvidia-cdi-hook",
+        "--output=/media/rupansh/wdblack/winboat-stage03-docker-state/gpu/op-5df73785309045db8bdb72a934351f1c/nvidia.yaml"
+      ],
+      "version": "NVIDIA Container Toolkit CLI version 1.19.1\ncommit: refs/tags/v1.19.1",
+      "sha256": "ebe3e4023ca42518c4b0ab3c7cbef83bc4c34ce7d515b38ef102b9379e91923e",
+      "storeRoot": "/nix/store/1cll4fcc4vv373v5n0ss62qiixhxp5w6-nvidia-container-toolkit-1.19.1",
+      "hookStoreRoot": "/nix/store/jwa7pv0s50d5f7x6p6v4npygaa2mkmag-nvidia-container-toolkit-1.19.1-tools"
+    },
+    "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "specSha256": "3e6fb7af46b94275a5bb4e71667f7874516bac625cea021eedd2e27a7d89a014",
+    "inputs": [
+      {
+        "hostPath": "/usr/bin/nvidia-cuda-mps-control",
+        "containerPath": "/usr/bin/nvidia-cuda-mps-control",
+        "size": 303920,
+        "sha256": "7e91a303b67382a1377f63a4c862605a27e40ac590e91c431fe547308fb71868"
+      },
+      {
+        "hostPath": "/usr/bin/nvidia-cuda-mps-server",
+        "containerPath": "/usr/bin/nvidia-cuda-mps-server",
+        "size": 18640,
+        "sha256": "1d49ca38a96799699118331f0c76a3fd7a76cafc25dbfc0c4d904a98d4e77176"
+      },
+      {
+        "hostPath": "/usr/bin/nvidia-debugdump",
+        "containerPath": "/usr/bin/nvidia-debugdump",
+        "size": 145952,
+        "sha256": "c8754d0d58c46c0a96334d2afde97108d654af86cd1daea7074f99fc4601dc2d"
+      },
+      {
+        "hostPath": "/usr/bin/nvidia-persistenced",
+        "containerPath": "/usr/bin/nvidia-persistenced",
+        "size": 216720,
+        "sha256": "66a771660bc9305d181f3968a523fca125d99eea5903a1d8711a6c43c9df411a"
+      },
+      {
+        "hostPath": "/usr/bin/nvidia-smi",
+        "containerPath": "/usr/bin/nvidia-smi",
+        "size": 1337280,
+        "sha256": "23448637d24ac559d1eafff075cde5ec97c1e6779c55d5d3fbdfb431d5bf3657"
+      },
+      {
+        "hostPath": "/usr/lib/libEGL_nvidia.so.615.71.09",
+        "containerPath": "/usr/lib/libEGL_nvidia.so.615.71.09",
+        "size": 1198032,
+        "sha256": "55bc036537d02dd4e45d1aa117f29355d8b4f992067a8eacad18702bef18f52d"
+      },
+      {
+        "hostPath": "/usr/lib/libGLESv1_CM_nvidia.so.615.71.09",
+        "containerPath": "/usr/lib/libGLESv1_CM_nvidia.so.615.71.09",
+        "size": 63528,
+        "sha256": "947b7108ec253ec3cca89ab02dcc95e537359369e089a5f72b1490f438658bdc"
+      },
+      {
+        "hostPath": "/usr/lib/libGLESv2_nvidia.so.615.71.09",
+        "containerPath": "/usr/lib/libGLESv2_nvidia.so.615.71.09",
+        "size": 112672,
+        "sha256": "2531cc243198beb698f9e4fe6073d7b65184b566c5de09e76e62f8b80769a8ce"
+      },
+      {
+        "hostPath": "/usr/lib/libGLX_nvidia.so.615.71.09",
+        "containerPath": "/usr/lib/libGLX_nvidia.so.615.71.09",
+        "size": 1211968,
+        "sha256": "d48eb3be2b08a4b51b8b9d6f4996509b36764cc90d479aea3642f98749b632d7"
+      },
+      {
+        "hostPath": "/usr/lib/libcuda.so.615.71.09",
+        "containerPath": "/usr/lib/libcuda.so.615.71.09",
+        "size": 112475080,
+        "sha256": "85a8cc8cf00419ceb295ec62c481d05b4cdbdab10f25c5375d6d24bdbe00b4d9"
+      },
+      {
+        "hostPath": "/usr/lib/libcudadebugger.so.615.71.09",
+        "containerPath": "/usr/lib/libcudadebugger.so.615.71.09",
+        "size": 12198904,
+        "sha256": "de63fbee008abfbc8e92cbc8a5083d63d41b4982d6f13db34fd6951a1ecb6978"
+      },
+      {
+        "hostPath": "/usr/lib/libnvcuvid.so.615.71.09",
+        "containerPath": "/usr/lib/libnvcuvid.so.615.71.09",
+        "size": 27655752,
+        "sha256": "84ba1c41607c2a416f2623f138d5cbaf714bc7c9db49d3d55a7f39e60b8acec8"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-allocator.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-allocator.so.615.71.09",
+        "size": 152904,
+        "sha256": "f3f0dd5660685f1cdea351fa7f0f868379114a07efdcff3cf74ab10fe6ce6a98"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-cfg.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-cfg.so.615.71.09",
+        "size": 408072,
+        "sha256": "986a697164712f6f2a291cb2dc3c857773e9664f23b4ea08d7f36b2f73b6d62f"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-egl-gbm.so.1.1.3",
+        "containerPath": "/usr/lib/libnvidia-egl-gbm.so.1.1.3",
+        "size": 26576,
+        "sha256": "e5395d50d4dd4256bd7c41080abb4ba4a13d75ea67ec0f592881a0da05604acd"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-egl-wayland.so.1.1.23",
+        "containerPath": "/usr/lib/libnvidia-egl-wayland.so.1.1.23",
+        "size": 80640,
+        "sha256": "2896e66954bd9e2e5c7cdfa51fb2bba6c7b4d4fd9a3492e1d325d9aad9c285fe"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-egl-wayland2.so.1.0.2",
+        "containerPath": "/usr/lib/libnvidia-egl-wayland2.so.1.0.2",
+        "size": 80544,
+        "sha256": "cd1394a7b1379e4c6994b708ba7d67ec1ab89f9645239c220c63a6139564a382"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-eglcore.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-eglcore.so.615.71.09",
+        "size": 39388624,
+        "sha256": "d314812db5967416334e578e0e557310b9b9aaadfcb130526e29ea9f701e12c0"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-encode.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-encode.so.615.71.09",
+        "size": 293656,
+        "sha256": "c4f64ea14fc3864f9b80f9d543584aedfb4d3e931a55310e77f7ab5af3667f22"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-fbc.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-fbc.so.615.71.09",
+        "size": 360240,
+        "sha256": "a052d1cb1e1d3e4a6688c045280b819d403714c581a50bdc29646f284d973204"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-fmdrv.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-fmdrv.so.615.71.09",
+        "size": 437480,
+        "sha256": "da893cac0d87720447f6a6c29717863cd3f8e1cfeaabee94a060a54fc3d0f236"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-glcore.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-glcore.so.615.71.09",
+        "size": 41902312,
+        "sha256": "6cbc5efe0d29d4fc7d182643ccf321aad49af798e5143e4f7a7fe828a7f60ad0"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-glsi.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-glsi.so.615.71.09",
+        "size": 603080,
+        "sha256": "dd8eb2e8110edef25cd5017d0dbb4d5959e6d8ae8d15181d40f1554bb47b15c8"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-glvkspirv.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-glvkspirv.so.615.71.09",
+        "size": 10454384,
+        "sha256": "446ca3a13bbdd2c4d8c52dc9f564d6fee054bc6610b13b008d607ccc805dc678"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-gpucomp.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-gpucomp.so.615.71.09",
+        "size": 121568440,
+        "sha256": "f796d6f3e11390c934aeadc90ea7f346350394faa40ce7f07f4ef651dfd5687e"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-gtk3.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-gtk3.so.615.71.09",
+        "size": 1289392,
+        "sha256": "ee5ba851e3ddaebf81c3d3cd615a463510adcb38ee1283718e64fe4b058bff45"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-imex.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-imex.so.615.71.09",
+        "size": 221472,
+        "sha256": "87d6f844461cee7b398d3a4608b376279f603d0465570ebbc274e0b42c8d42a2"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-ml.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-ml.so.615.71.09",
+        "size": 2958776,
+        "sha256": "283793c0c30dc32f87c0e9fc9b5326fe764bad156e61afa3e997684c47b29a95"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-ngx.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-ngx.so.615.71.09",
+        "size": 5484832,
+        "sha256": "f046370b1fe88e5540d3dd2a3c9eea8ab4f875aa42390729e9e540168f8ab856"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-nvvm.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-nvvm.so.615.71.09",
+        "size": 78343880,
+        "sha256": "9291e7cbb9f506b4f5b4aa8d4707d713b6718af7b2c63c6af8553a38cddd34ed"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-opencl.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-opencl.so.615.71.09",
+        "size": 108101200,
+        "sha256": "799d792cc35a88496a572a3e854226aab04b689f61141b9120be2bf494f20b1e"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-opticalflow.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-opticalflow.so.615.71.09",
+        "size": 67720,
+        "sha256": "d83f1cb90c14b20ccf1becb73cce7b021f40e3698680e1c6e6884444285403e2"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-pkcs11-openssl3.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-pkcs11-openssl3.so.615.71.09",
+        "size": 14336,
+        "sha256": "8e19860c9b2502cbde7d507fcb6591ac22f35f6ca5db2dbbe144a937bc49bebd"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-pkcs11.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-pkcs11.so.615.71.09",
+        "size": 14328,
+        "sha256": "738ac0afc74fedd0a9c5b8c440de16e0845d4985d0c9570057b69a07620d0287"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-present.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-present.so.615.71.09",
+        "size": 6740840,
+        "sha256": "11c9359fdc5afaf670abfe5185b5534fcf110d98c27f256f12cc9698a1a79bd4"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-ptxjitcompiler.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-ptxjitcompiler.so.615.71.09",
+        "size": 36965944,
+        "sha256": "8e38b5cbac5075f965d04520a403c84f55ca4e07dfd970f169d71db193da0454"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-rtcore.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-rtcore.so.615.71.09",
+        "size": 36383712,
+        "sha256": "4a407cc6785c39ebc87e88e63dfd08a3750b5ee2e6f2735eabfbc0eeae218cec"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-tls.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-tls.so.615.71.09",
+        "size": 18632,
+        "sha256": "c5ef0a045283578d9cf4b97e71f3caa1434127ff0d61e4d837f8de76d3e2924a"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-vksc-core.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-vksc-core.so.615.71.09",
+        "size": 11150904,
+        "sha256": "7375c719288083566fb5ebcdd7c55bd9c182a1f4f9109e751827586d7b3958ee"
+      },
+      {
+        "hostPath": "/usr/lib/libnvidia-wayland-client.so.615.71.09",
+        "containerPath": "/usr/lib/libnvidia-wayland-client.so.615.71.09",
+        "size": 14200,
+        "sha256": "a23118f8299b5d4c0bbce02e6ab7a4716e3037610940115ee4d2b569981a601b"
+      },
+      {
+        "hostPath": "/usr/lib/libnvoptix.so.615.71.09",
+        "containerPath": "/usr/lib/libnvoptix.so.615.71.09",
+        "size": 84008408,
+        "sha256": "66f322d1a15a7619f27d6f072e223a527877ab3d80742d94516f45a29970a76c"
+      },
+      {
+        "hostPath": "/usr/share/vulkan/icd.d/nvidia_icd.json",
+        "containerPath": "/etc/vulkan/icd.d/nvidia_icd.json",
+        "size": 140,
+        "sha256": "0034b439a49d500db3d6e7f2d945667e1f3b5f46d19a0b8ac58fced1d555b6e2"
+      },
+      {
+        "hostPath": "/usr/share/vulkan/implicit_layer.d/nvidia_layers.json",
+        "containerPath": "/etc/vulkan/implicit_layer.d/nvidia_layers.json",
+        "size": 1249,
+        "sha256": "9ee88154bd4970863404e3ca9aa8665d454e283b128a06f2f9bea6cad4ea6bbb"
+      },
+      {
+        "hostPath": "/usr/lib/vdpau/libvdpau_nvidia.so.615.71.09",
+        "containerPath": "/usr/lib/vdpau/libvdpau_nvidia.so.615.71.09",
+        "size": 626064,
+        "sha256": "fcd1c4c7c00cc2e3bb247123ceb5cb83252bd08f33814f4aa15cc30c44c28051"
+      },
+      {
+        "hostPath": "/lib/firmware/nvidia/615.71.09/gsp_ga10x.bin",
+        "containerPath": "/lib/firmware/nvidia/615.71.09/gsp_ga10x.bin",
+        "size": 27043992,
+        "sha256": "c420726d2c76c55f028a59f67ebd7a906563ef807c945bb3baa9e88c36bf334b"
+      },
+      {
+        "hostPath": "/lib/firmware/nvidia/615.71.09/gsp_tu10x.bin",
+        "containerPath": "/lib/firmware/nvidia/615.71.09/gsp_tu10x.bin",
+        "size": 22897536,
+        "sha256": "78e0a2c8e4bd8a2faa1ff36137209669cdf60bd698b8f723dcf52869df82b909"
+      },
+      {
+        "hostPath": "/usr/lib/nvidia/xorg/libglxserver_nvidia.so.615.71.09",
+        "containerPath": "/usr/lib/nvidia/xorg/libglxserver_nvidia.so.615.71.09",
+        "size": 5747760,
+        "sha256": "2fdeab8671332341b24d78eaabe2bd9d9f313f76eed39b4a3c1c35e7ce27e3df"
+      },
+      {
+        "hostPath": "/usr/share/egl/egl_external_platform.d/09_nvidia_wayland2.json",
+        "containerPath": "/usr/share/egl/egl_external_platform.d/09_nvidia_wayland2.json",
+        "size": 116,
+        "sha256": "e8eaee4d33797e226fbfb05c523122cffe4d064995d9575bbdc598cc978ed3a4"
+      },
+      {
+        "hostPath": "/usr/share/egl/egl_external_platform.d/10_nvidia_wayland.json",
+        "containerPath": "/usr/share/egl/egl_external_platform.d/10_nvidia_wayland.json",
+        "size": 115,
+        "sha256": "5cccf1905a266e8e34d5ad4aad4be85390e60b1a0850a29dd9d64adc641de412"
+      },
+      {
+        "hostPath": "/usr/share/egl/egl_external_platform.d/15_nvidia_gbm.json",
+        "containerPath": "/usr/share/egl/egl_external_platform.d/15_nvidia_gbm.json",
+        "size": 111,
+        "sha256": "b22cd47d1a11a6c1324cff07f62f4695522ac41f945cfeb83fe484c6c56ff297"
+      },
+      {
+        "hostPath": "/usr/share/glvnd/egl_vendor.d/10_nvidia.json",
+        "containerPath": "/usr/share/glvnd/egl_vendor.d/10_nvidia.json",
+        "size": 107,
+        "sha256": "9e6f14afaa7523370ad96e6675d3357441ee3985e60405cb3e0ced30b2ddaf76"
+      },
+      {
+        "hostPath": "/usr/lib/xorg/modules/drivers/nvidia_drv.so",
+        "containerPath": "/usr/lib/xorg/modules/drivers/nvidia_drv.so",
+        "size": 3644208,
+        "sha256": "e6bf3eb3ebb7c9eeb2a9d344cd324e830adfd40803695f356bf42e4876dfd07b"
+      }
+    ],
+    "hooks": [
+      {
+        "path": "/nix/store/jwa7pv0s50d5f7x6p6v4npygaa2mkmag-nvidia-container-toolkit-1.19.1-tools/bin/nvidia-cdi-hook",
+        "sha256": "1beb09409ba532a785e3d06b023124d0b8c00b4abce9bb6f03d4f760bc728afb"
+      }
+    ],
+    "device": "nvidia.com/gpu=GPU-67783d6b-9414-49ec-fb12-1121c0dba0c4",
+    "runtimeArguments": [
+      "--cdi-spec-dir",
+      "/media/rupansh/wdblack/winboat-stage03-docker-state/gpu/op-5df73785309045db8bdb72a934351f1c",
+      "--hooks-dir",
+      "/nix/store/4d0ix5djms3n2jnjdc58l916cwack1rp-empty-directory"
+    ],
+    "systemSpecDirectoriesUsed": [],
+    "manualSpecEdits": false,
+    "generatedOnEveryStoppedVmLaunch": true,
+    "restartRegeneration": {
+      "beforeManifest": "/media/rupansh/wdblack/winboat-stage03-docker-state/gpu/op-744860947ccf4838a0001474d42e8a27/manifest.json",
+      "afterManifest": "/media/rupansh/wdblack/winboat-stage03-docker-state/gpu/op-5df73785309045db8bdb72a934351f1c/manifest.json",
+      "newDirectory": true,
+      "sameSpecSha256": true,
+      "generatorAndHookGcRootsVerified": true
+    },
+    "loadedDriverImages": [
+      {
+        "path": "/usr/lib/libEGL_nvidia.so.615.71.09",
+        "sha256": "55bc036537d02dd4e45d1aa117f29355d8b4f992067a8eacad18702bef18f52d"
+      },
+      {
+        "path": "/usr/lib/libnvidia-allocator.so.615.71.09",
+        "sha256": "f3f0dd5660685f1cdea351fa7f0f868379114a07efdcff3cf74ab10fe6ce6a98"
+      },
+      {
+        "path": "/usr/lib/libnvidia-egl-gbm.so.1.1.3",
+        "sha256": "e5395d50d4dd4256bd7c41080abb4ba4a13d75ea67ec0f592881a0da05604acd"
+      },
+      {
+        "path": "/usr/lib/libnvidia-eglcore.so.615.71.09",
+        "sha256": "d314812db5967416334e578e0e557310b9b9aaadfcb130526e29ea9f701e12c0"
+      },
+      {
+        "path": "/usr/lib/libnvidia-glsi.so.615.71.09",
+        "sha256": "dd8eb2e8110edef25cd5017d0dbb4d5959e6d8ae8d15181d40f1554bb47b15c8"
+      },
+      {
+        "path": "/usr/lib/libnvidia-gpucomp.so.615.71.09",
+        "sha256": "f796d6f3e11390c934aeadc90ea7f346350394faa40ce7f07f4ef651dfd5687e"
+      }
+    ],
+    "driverInputsMatch": true,
+    "hostBoundary": "Linux KVM, rootless user mappings, GPU device permissions and matching kernel/userspace NVIDIA driver remain external inputs."
+  },
+  "primaryRecreation": {
+    "name": "stage03-nvidia",
+    "identity": "51550755aa9d49628a5ccbbca3da5837",
+    "runtime": {
+      "kind": "podman",
+      "command": [
+        "/nix/store/623jzr19pdif7idq7ci168dwixx6kmhg-podman-5.8.6/bin/podman",
+        "--root",
+        "/media/rupansh/wdblack/winboat-stage03-docker-state/container/storage",
+        "--runroot",
+        "/media/rupansh/wdblack/winboat-stage03-docker-state/container/run",
+        "--storage-driver",
+        "vfs"
+      ]
+    },
+    "ports": {
+      "ssh": 56031,
+      "viewer": 46885
+    },
+    "image": {
+      "id": "a0af4c4b081ada5681a394a8f424d948acf6263e0ca86ee7ad09fe28367f7587",
+      "archiveSha256": "201e338e750f293dc60432369398b81aa5030b165af2e8a32d2522d40e7ab115",
+      "output": "/nix/store/iylf9ljycc0fbsswba0kh4rga1c61dk2-winboat-devbox.tar.gz",
+      "runtimeRoot": "/nix/store/mjvmi9610g7kvy1anh904j4qs2n74f01-winboat-devbox",
+      "derivation": "/nix/store/8lmdrm86qp5y5fsmmmffhxrybk0hsk27-winboat-devbox.tar.gz.drv",
+      "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+      "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+      "hostStack": "/nix/store/cq8ixr51g3k95g65v47nkvrdqdp3z07l-winboat-host-stack",
+      "manifestSha256": "e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1"
+    },
+    "hostImages": [
+      {
+        "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/bin/qemu-system-x86_64",
+        "sha256": "027b5ec5e847a8b0361fecc51c42f19a71f119ee6654feb79fcc88183c22636d"
+      },
+      {
+        "path": "/nix/store/0kid75j28bj7mfgaf3cnny1pis1yrzfg-helios-virglrenderer-1.3.0/lib/libvirglrenderer.so.1.11.0",
+        "sha256": "fe3eaa4bbcf497721a3bd0a92cf558bf9feaec26475b8794a442930922d52a51"
+      },
+      {
+        "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-gpu-gl.so",
+        "sha256": "bb9f024fb813a49069ee44e29046a029755e607cf59e9ec6f6acdbb9bbc4114f"
+      },
+      {
+        "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-gpu.so",
+        "sha256": "269bdaf3036773c9a632ccb0e781c8ce68f880933a94ecdbea4b3677e002efd2"
+      },
+      {
+        "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-vga-gl.so",
+        "sha256": "54ad60df269457f5651a1aa38e8d818f84c137d7b0bd8eee5ac9d56387d85d89"
+      },
+      {
+        "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-vga.so",
+        "sha256": "c0829a5a5c85321dd60e127c6f0b20fc6e2ace5e6ce4bd2a8a96b67b9de69dfa"
+      },
+      {
+        "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/ui-egl-headless.so",
+        "sha256": "5da18e27bce039c071147aebea5e0f1bdaa84c414070f4d7c051bde324aa7d1a"
+      },
+      {
+        "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/ui-opengl.so",
+        "sha256": "33c06a0c793af32018ebb4c7650a529c85e3a2cbf6f2aef4d961b21659df3592"
+      }
+    ],
+    "guest": {
+      "phase": "verified",
+      "computerName": "WB-DEVBOX",
+      "autologin": {
+        "username": "wbdev",
+        "passwordNeverExpires": true,
+        "domain": "WB-DEVBOX",
+        "passwordStorage": "lsa-secret",
+        "enabled": true
+      },
+      "rebootCount": 2,
+      "retries": 4,
+      "effectiveBcd": [
+        "",
+        "Windows Boot Loader",
+        "-------------------",
+        "identifier              {current}",
+        "device                  partition=C:",
+        "path                    \\WINDOWS\\system32\\winload.efi",
+        "description             Windows 11",
+        "locale                  en-US",
+        "inherit                 {bootloadersettings}",
+        "recoverysequence        {d7ff2167-bf95-11f1-88cb-f9a1771326bd}",
+        "displaymessageoverride  Recovery",
+        "recoveryenabled         Yes",
+        "testsigning             Yes",
+        "isolatedcontext         Yes",
+        "allowedinmemorysettings 0x15000075",
+        "osdevice                partition=C:",
+        "systemroot              \\WINDOWS",
+        "resumeobject            {d7ff2165-bf95-11f1-88cb-f9a1771326bd}",
+        "nx                      OptIn",
+        "bootmenupolicy          Standard"
+      ],
+      "secureBoot": false,
+      "hvci": [
+        0
+      ],
+      "fixtureDriver": {
+        "nativePath": "\\??\\C:\\ProgramData\\WinBoatDev\\fixture\\wbdev-test.sys",
+        "path": "C:\\ProgramData\\WinBoatDev\\fixture\\wbdev-test.sys",
+        "name": "wbdev-test",
+        "state": "Running"
+      },
+      "fixtureSha256": "594c850f06c091d4b01cb57440c44e686149a58abec7376d1a031e2b91b015d7",
+      "signedDriverLoaded": true
+    },
+    "tools": [
+      {
+        "id": "openssh",
+        "versionPin": "9.8.3.0",
+        "verified": true
+      },
+      {
+        "id": "vs-build-tools",
+        "versionPin": "17.14.5",
+        "verified": true
+      },
+      {
+        "id": "windows-sdk",
+        "versionPin": "10.1.26100.6901",
+        "verified": true
+      },
+      {
+        "id": "windows-wdk",
+        "versionPin": "10.1.26100.6584",
+        "verified": true
+      },
+      {
+        "id": "llvm",
+        "versionPin": "22.1.8",
+        "verified": true
+      },
+      {
+        "id": "git",
+        "versionPin": "2.56.0.windows.1",
+        "verified": true
+      },
+      {
+        "id": "powershell",
+        "versionPin": "7.6.0",
+        "verified": true
+      },
+      {
+        "id": "python",
+        "versionPin": "3.12.10",
+        "verified": true
+      },
+      {
+        "id": "rust",
+        "versionPin": "nightly-2026-07-14",
+        "verified": true
+      },
+      {
+        "id": "cargo-make",
+        "versionPin": "0.37.24",
+        "verified": true
+      },
+      {
+        "id": "rust-script",
+        "versionPin": "0.36.0",
+        "verified": true
+      },
+      {
+        "id": "meson",
+        "versionPin": "1.11.2",
+        "verified": true
+      },
+      {
+        "id": "ninja",
+        "versionPin": "1.13.0",
+        "verified": true
+      },
+      {
+        "id": "vulkan-sdk",
+        "versionPin": "1.4.350.0",
+        "verified": true
+      }
+    ],
+    "preparedPayloads": [
+      {
+        "file": "Autologin.ps1",
+        "sha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+        "preparedMatchesSource": true
+      },
+      {
+        "file": "Bootstrap.ps1",
+        "sha256": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+        "preparedMatchesSource": true
+      },
+      {
+        "file": "BuildFixture.ps1",
+        "sha256": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+        "preparedMatchesSource": true
+      },
+      {
+        "file": "Mirror.ps1",
+        "sha256": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+        "preparedMatchesSource": true
+      },
+      {
+        "file": "Provision.ps1",
+        "sha256": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+        "preparedMatchesSource": true
+      },
+      {
+        "file": "Shutdown.ps1",
+        "sha256": "f7ff24acc7ced181a840b4dd1ba315a3ca29ceeb2d1cfe92c04289cc17bbc011",
+        "preparedMatchesSource": true
+      },
+      {
+        "file": "TestDriver.c",
+        "sha256": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+        "preparedMatchesSource": true
+      },
+      {
+        "file": "Toolchain.ps1",
+        "sha256": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+        "preparedMatchesSource": true
+      }
+    ],
+    "preparedProvisionLockMatchesSource": true,
+    "desktopMirrorBuildReturn": {
+      "desktop": {
+        "computerName": "WB-DEVBOX",
+        "interactiveUser": "WB-DEVBOX\\wbdev",
+        "explorers": [
+          {
+            "Id": 4720,
+            "SessionId": 1
+          }
+        ],
+        "autoAdminLogon": "1",
+        "plaintextPasswordPresent": false,
+        "loginCountPresent": false,
+        "passwordExpires": null,
+        "rebootCount": 2,
+        "retries": 4,
+        "toolCount": 14,
+        "signedDriverLoaded": true
+      },
+      "mirror": {
+        "source": "\\\\10.0.2.2\\workspace\\nix\\windows",
+        "robocopyExitCode": 2,
+        "files": [
+          {
+            "path": "Autologin.ps1",
+            "sha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+            "size": 4212
+          },
+          {
+            "path": "Bootstrap.ps1",
+            "sha256": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+            "size": 1645
+          },
+          {
+            "path": "BuildFixture.ps1",
+            "sha256": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+            "size": 3279
+          },
+          {
+            "path": "Mirror.ps1",
+            "sha256": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+            "size": 4431
+          },
+          {
+            "path": "Provision.ps1",
+            "sha256": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+            "size": 16260
+          },
+          {
+            "path": "Shutdown.ps1",
+            "sha256": "f7ff24acc7ced181a840b4dd1ba315a3ca29ceeb2d1cfe92c04289cc17bbc011",
+            "size": 312
+          },
+          {
+            "path": "TestDriver.c",
+            "sha256": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+            "size": 346
+          },
+          {
+            "path": "Toolchain.ps1",
+            "sha256": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+            "size": 11282
+          }
+        ],
+        "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cargoTargetDirectory": "C:\\WinBoatDev\\build\\cargo\\stage03-proof",
+        "destination": "C:\\WinBoatDev\\src\\stage03-proof",
+        "buildRoot": "C:\\WinBoatDev\\build",
+        "name": "stage03-proof",
+        "sourceSnapshotSha256": "4674c70c826d311cc9e4535254400843ce78956c9cbcdc56919cfabcb809e79a",
+        "schemaVersion": 1,
+        "observed": "2026-10-04T01:33:10.5888523Z"
+      },
+      "builtFile": {
+        "path": "C:\\WinBoatDev\\build\\stage03-proof\\wbdev-test.sys",
+        "sha256": "825e5f0e3f9258b2aee0477255848125cf24cd3aa4336871954a550e1d2693fd",
+        "size": 2960
+      },
+      "sourceFiles": [
+        {
+          "path": "Autologin.ps1",
+          "sha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+          "size": 4212
+        },
+        {
+          "path": "Bootstrap.ps1",
+          "sha256": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+          "size": 1645
+        },
+        {
+          "path": "BuildFixture.ps1",
+          "sha256": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+          "size": 3279
+        },
+        {
+          "path": "Mirror.ps1",
+          "sha256": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+          "size": 4431
+        },
+        {
+          "path": "Provision.ps1",
+          "sha256": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+          "size": 16260
+        },
+        {
+          "path": "Shutdown.ps1",
+          "sha256": "f7ff24acc7ced181a840b4dd1ba315a3ca29ceeb2d1cfe92c04289cc17bbc011",
+          "size": 312
+        },
+        {
+          "path": "TestDriver.c",
+          "sha256": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+          "size": 346
+        },
+        {
+          "path": "Toolchain.ps1",
+          "sha256": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+          "size": 11282
+        }
+      ],
+      "returnedSha256": "825e5f0e3f9258b2aee0477255848125cf24cd3aa4336871954a550e1d2693fd",
+      "sourceSnapshotSha256": "4674c70c826d311cc9e4535254400843ce78956c9cbcdc56919cfabcb809e79a",
+      "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "viewer": {
+      "backend": "tigervnc",
+      "cycles": 2,
+      "container": {
+        "id": "d12080eec0a035636d6cd0ac8366ac8f4ad0f3a1890b4c468ed5754d7d17e8a2",
+        "state": {
+          "OciVersion": "1.2.1",
+          "Status": "running",
+          "Running": true,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 440833,
+          "ConmonPid": 440831,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-10-03T23:17:31.016181873+05:30",
+          "FinishedAt": "0001-01-01T00:00:00Z",
+          "CgroupPath": "/user.slice/user-1000.slice/user@1000.service/user.slice/libpod-d12080eec0a035636d6cd0ac8366ac8f4ad0f3a1890b4c468ed5754d7d17e8a2.scope",
+          "CheckpointedAt": "0001-01-01T00:00:00Z",
+          "RestoredAt": "0001-01-01T00:00:00Z"
+        },
+        "image": "a0af4c4b081ada5681a394a8f424d948acf6263e0ca86ee7ad09fe28367f7587"
+      },
+      "vmPidBefore": 53,
+      "vmPidsAfterCycles": [
+        53,
+        53
+      ],
+      "firstTick": {
+        "pid": 1304,
+        "user": "NT AUTHORITY\\SYSTEM",
+        "tick": 3
+      },
+      "lastTick": {
+        "pid": 1304,
+        "user": "NT AUTHORITY\\SYSTEM",
+        "tick": 8
+      },
+      "completed": {
+        "pid": 1304,
+        "user": "NT AUTHORITY\\SYSTEM",
+        "tick": 20
+      }
+    },
+    "stop": {
+      "jobId": "op-4ac07b3f070340d8be5e8477ef2c12d7",
+      "jobState": "succeeded",
+      "operation": {
+        "operationId": "op-d1cf7a1085b849bb8e061bce113e80c4",
+        "state": "stopped",
+        "exitCode": 0
+      },
+      "result": {
+        "name": "stage03-nvidia",
+        "state": "stopped",
+        "loaded": false,
+        "cleanShutdown": true,
+        "shutdown": {
+          "method": "ssh",
+          "timeoutSeconds": 120,
+          "sshExitCode": 0
+        }
+      },
+      "retainedResult": "/media/rupansh/wdblack/winboat-stage03-docker-state/jobs/op-4ac07b3f070340d8be5e8477ef2c12d7/result.json",
+      "retainedResultSha256": "d50cf867ba4a397cab7d8fb63fb5d9c7d9f99dcb35ba1280d57fa7a8fead5f47"
+    },
+    "restart": {
+      "jobId": "op-433797eefd954eaf90d503cdfd5e5dfb",
+      "jobState": "succeeded",
+      "operation": {
+        "operationId": "op-5df73785309045db8bdb72a934351f1c",
+        "state": "running",
+        "exitCode": 0
+      },
+      "result": {
+        "name": "stage03-nvidia",
+        "state": "running",
+        "loaded": true,
+        "container": {
+          "id": "0b1bab8493f820841a8b1a939831305f0b9a9eb7bc3d9ba60cfddc8b768b9dc5",
+          "state": {
+            "OciVersion": "1.2.1",
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 464915,
+            "ConmonPid": 464913,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-03T23:58:28.054850028+05:30",
+            "FinishedAt": "0001-01-01T00:00:00Z",
+            "CgroupPath": "/user.slice/user-1000.slice/user@1000.service/user.slice/libpod-0b1bab8493f820841a8b1a939831305f0b9a9eb7bc3d9ba60cfddc8b768b9dc5.scope",
+            "CheckpointedAt": "0001-01-01T00:00:00Z",
+            "RestoredAt": "0001-01-01T00:00:00Z"
+          },
+          "image": "a0af4c4b081ada5681a394a8f424d948acf6263e0ca86ee7ad09fe28367f7587"
+        },
+        "hostObservation": {
+          "state": "running",
+          "pid": 52,
+          "hostStack": "/nix/store/cq8ixr51g3k95g65v47nkvrdqdp3z07l-winboat-host-stack",
+          "loaded": true,
+          "qmp": {
+            "status": "running",
+            "running": true
+          },
+          "graphics": {
+            "provider": "nvidia-cdi",
+            "renderNode": "/dev/dri/renderD128",
+            "cdiDevice": "nvidia.com/gpu=GPU-67783d6b-9414-49ec-fb12-1121c0dba0c4",
+            "specSha256": "3e6fb7af46b94275a5bb4e71667f7874516bac625cea021eedd2e27a7d89a014",
+            "driverImages": [
+              {
+                "path": "/usr/lib/libEGL_nvidia.so.615.71.09",
+                "sha256": "55bc036537d02dd4e45d1aa117f29355d8b4f992067a8eacad18702bef18f52d"
+              },
+              {
+                "path": "/usr/lib/libnvidia-allocator.so.615.71.09",
+                "sha256": "f3f0dd5660685f1cdea351fa7f0f868379114a07efdcff3cf74ab10fe6ce6a98"
+              },
+              {
+                "path": "/usr/lib/libnvidia-egl-gbm.so.1.1.3",
+                "sha256": "e5395d50d4dd4256bd7c41080abb4ba4a13d75ea67ec0f592881a0da05604acd"
+              },
+              {
+                "path": "/usr/lib/libnvidia-eglcore.so.615.71.09",
+                "sha256": "d314812db5967416334e578e0e557310b9b9aaadfcb130526e29ea9f701e12c0"
+              },
+              {
+                "path": "/usr/lib/libnvidia-glsi.so.615.71.09",
+                "sha256": "dd8eb2e8110edef25cd5017d0dbb4d5959e6d8ae8d15181d40f1554bb47b15c8"
+              },
+              {
+                "path": "/usr/lib/libnvidia-gpucomp.so.615.71.09",
+                "sha256": "f796d6f3e11390c934aeadc90ea7f346350394faa40ce7f07f4ef651dfd5687e"
+              }
+            ],
+            "driverInputsMatch": true
+          },
+          "images": [
+            {
+              "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/bin/qemu-system-x86_64",
+              "sha256": "027b5ec5e847a8b0361fecc51c42f19a71f119ee6654feb79fcc88183c22636d"
+            },
+            {
+              "path": "/nix/store/0kid75j28bj7mfgaf3cnny1pis1yrzfg-helios-virglrenderer-1.3.0/lib/libvirglrenderer.so.1.11.0",
+              "sha256": "fe3eaa4bbcf497721a3bd0a92cf558bf9feaec26475b8794a442930922d52a51"
+            },
+            {
+              "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-gpu-gl.so",
+              "sha256": "bb9f024fb813a49069ee44e29046a029755e607cf59e9ec6f6acdbb9bbc4114f"
+            },
+            {
+              "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-gpu.so",
+              "sha256": "269bdaf3036773c9a632ccb0e781c8ce68f880933a94ecdbea4b3677e002efd2"
+            },
+            {
+              "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-vga-gl.so",
+              "sha256": "54ad60df269457f5651a1aa38e8d818f84c137d7b0bd8eee5ac9d56387d85d89"
+            },
+            {
+              "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-vga.so",
+              "sha256": "c0829a5a5c85321dd60e127c6f0b20fc6e2ace5e6ce4bd2a8a96b67b9de69dfa"
+            },
+            {
+              "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/ui-egl-headless.so",
+              "sha256": "5da18e27bce039c071147aebea5e0f1bdaa84c414070f4d7c051bde324aa7d1a"
+            },
+            {
+              "path": "/nix/store/lbnfg672088a0qv7rhwc34nylikp6kk7-qemu-helios-11.1.1/lib/qemu/ui-opengl.so",
+              "sha256": "33c06a0c793af32018ebb4c7650a529c85e3a2cbf6f2aef4d961b21659df3592"
+            }
+          ]
+        }
+      },
+      "retainedResult": "/media/rupansh/wdblack/winboat-stage03-docker-state/jobs/op-433797eefd954eaf90d503cdfd5e5dfb/result.json",
+      "retainedResultSha256": "138b9b1e5c90102a69b560ae31712c62ab4fd2336327139a892ceefc2c83e0bb"
+    },
+    "guestAfterRestart": {
+      "jobId": "op-620ca0b4442f424f83d2a4828dcc990d",
+      "jobState": "succeeded",
+      "operation": {
+        "operationId": "op-26849ba0756243188e5e382cd3ee4a55",
+        "state": "succeeded",
+        "exitCode": 0
+      },
+      "result": {
+        "phase": "verified",
+        "toolsVerified": 14
+      },
+      "retainedResult": "/media/rupansh/wdblack/winboat-stage03-docker-state/jobs/op-620ca0b4442f424f83d2a4828dcc990d/result.json",
+      "retainedResultSha256": "7ad28b26e5021010416b31bc53c61a84b37d43c871798b532fc8e8bb776cdde9"
+    }
+  },
+  "docker": {
+    "clientVersion": "29.8.0",
+    "engineVersion": "29.8.2",
+    "initialFreshGuest": {
+      "phase": "verified",
+      "toolsVerified": 14,
+      "signedDriverLoaded": true,
+      "proof": {
+        "desktop": {
+          "computerName": "WB-DEVBOX",
+          "interactiveUser": "WB-DEVBOX\\wbdev",
+          "explorers": [
+            {
+              "Id": 4812,
+              "SessionId": 1
+            }
+          ],
+          "autoAdminLogon": "1",
+          "plaintextPasswordPresent": false,
+          "loginCountPresent": false,
+          "passwordExpires": null,
+          "rebootCount": 2,
+          "retries": 3,
+          "toolCount": 14,
+          "signedDriverLoaded": true
+        },
+        "mirror": {
+          "source": "\\\\10.0.2.2\\workspace\\nix\\windows",
+          "robocopyExitCode": 2,
+          "files": [
+            {
+              "path": "Autologin.ps1",
+              "sha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+              "size": 4212
+            },
+            {
+              "path": "Bootstrap.ps1",
+              "sha256": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+              "size": 1645
+            },
+            {
+              "path": "BuildFixture.ps1",
+              "sha256": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+              "size": 3279
+            },
+            {
+              "path": "Mirror.ps1",
+              "sha256": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+              "size": 4431
+            },
+            {
+              "path": "Provision.ps1",
+              "sha256": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+              "size": 16260
+            },
+            {
+              "path": "Shutdown.ps1",
+              "sha256": "f7ff24acc7ced181a840b4dd1ba315a3ca29ceeb2d1cfe92c04289cc17bbc011",
+              "size": 312
+            },
+            {
+              "path": "TestDriver.c",
+              "sha256": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+              "size": 346
+            },
+            {
+              "path": "Toolchain.ps1",
+              "sha256": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+              "size": 11282
+            }
+          ],
+          "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "cargoTargetDirectory": "C:\\WinBoatDev\\build\\cargo\\stage03-proof",
+          "destination": "C:\\WinBoatDev\\src\\stage03-proof",
+          "buildRoot": "C:\\WinBoatDev\\build",
+          "name": "stage03-proof",
+          "sourceSnapshotSha256": "4674c70c826d311cc9e4535254400843ce78956c9cbcdc56919cfabcb809e79a",
+          "schemaVersion": 1,
+          "observed": "2026-10-03T17:10:50.9127377Z"
+        },
+        "builtFile": {
+          "path": "C:\\WinBoatDev\\build\\stage03-proof\\wbdev-test.sys",
+          "sha256": "9f89e1f20fa2edba3ea64a2974ec77fcc179937cf1a76c966cf4ea128544b86c",
+          "size": 2960
+        },
+        "sourceFiles": [
+          {
+            "path": "Autologin.ps1",
+            "sha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+            "size": 4212
+          },
+          {
+            "path": "Bootstrap.ps1",
+            "sha256": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+            "size": 1645
+          },
+          {
+            "path": "BuildFixture.ps1",
+            "sha256": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+            "size": 3279
+          },
+          {
+            "path": "Mirror.ps1",
+            "sha256": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+            "size": 4431
+          },
+          {
+            "path": "Provision.ps1",
+            "sha256": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+            "size": 16260
+          },
+          {
+            "path": "Shutdown.ps1",
+            "sha256": "f7ff24acc7ced181a840b4dd1ba315a3ca29ceeb2d1cfe92c04289cc17bbc011",
+            "size": 312
+          },
+          {
+            "path": "TestDriver.c",
+            "sha256": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+            "size": 346
+          },
+          {
+            "path": "Toolchain.ps1",
+            "sha256": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+            "size": 11282
+          }
+        ],
+        "returnedSha256": "9f89e1f20fa2edba3ea64a2974ec77fcc179937cf1a76c966cf4ea128544b86c",
+        "sourceSnapshotSha256": "4674c70c826d311cc9e4535254400843ce78956c9cbcdc56919cfabcb809e79a",
+        "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "viewer": {
+        "backend": "tigervnc",
+        "cycles": 2,
+        "container": {
+          "id": "4b8ec887fc2a312bcb5d178dd82d59ca478ee4ace4ea342c0ad574cbb4b466cc",
+          "state": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 121273,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-03T16:13:01.837695557Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+          },
+          "image": "sha256:84759ac9ce997ce52bdc56798c7baf84aa645aeb401e2adba59c1ecf1172c421"
+        },
+        "vmPidBefore": 15,
+        "vmPidsAfterCycles": [
+          15,
+          15
+        ],
+        "firstTick": {
+          "pid": 2472,
+          "user": "NT AUTHORITY\\SYSTEM",
+          "tick": 3
+        },
+        "lastTick": {
+          "pid": 2472,
+          "user": "NT AUTHORITY\\SYSTEM",
+          "tick": 7
+        },
+        "completed": {
+          "pid": 2472,
+          "user": "NT AUTHORITY\\SYSTEM",
+          "tick": 20
+        }
+      },
+      "ownership": {
+        "schemaVersion": 1,
+        "uid": 1000,
+        "entries": 75,
+        "allOwned": true,
+        "qmpSocketRemoved": true
+      }
+    },
+    "correctedArtifactRepeat": {
+      "state": "blocked",
+      "reason": "Docker daemon image load exhausted root filesystem space, including after removal of the unused owned prior image; prepared task state destroyed.",
+      "loadFailureJobIds": [
+        "op-fd65eca3a1d646199a0a415d258d3eb4",
+        "op-6ff2d61207cf40c7a39b4ffbeafeb968"
+      ]
+    },
+    "oldImageCleanup": {
+      "schemaVersion": 1,
+      "image": "sha256:84759ac9ce997ce52bdc56798c7baf84aa645aeb401e2adba59c1ecf1172c421",
+      "identity": "f067260369b14371a0714da2265de90a",
+      "containerReferences": [],
+      "state": "removed",
+      "output": "Untagged: winboat-devbox:f067260369b14371a0714da2265de90a\nDeleted: sha256:84759ac9ce997ce52bdc56798c7baf84aa645aeb401e2adba59c1ecf1172c421\nDeleted: sha256:f0b50c377c12586936cbaa29d27184ca4d2fd9e00457290e4ab46d05ded59496\nDeleted: sha256:717d2b83ce79145a83dc35545b10c30aab9cdf84e48e63811ff3b2bdf167c188\n"
+    }
+  },
+  "alternateUid": {
+    "kernelUid": 1110,
+    "scope": "Isolated controller using a consistent readonly Nix database snapshot; blank disk preparation, status and guarded deletion; no Windows boot or new host account.",
+    "ownership": {
+      "uid": 1110,
+      "diskOwner": 1110,
+      "keyMode": "0o600"
+    },
+    "wrongIdentityRefused": true,
+    "state": "passed"
+  },
+  "shutdownCorrection": {
+    "componentCommit": "2544a0bb2b11992fe31d043961ed507fe581f31f",
+    "parentCommit": "93bb6e4afbd1153d6e8b875d8fa144a8bec4d80a",
+    "before": "Intel Mesa 26.2.2: SIGSEGV in util_vma_heap_free via iris_destroy_context, eglReleaseThread, egl_cleanup; Docker exit 245, QEMU -11.",
+    "change": "Release EGL thread/display resources before destroying GBM device and closing render FD.",
+    "control": "Diskless pinned Intel EGL/QMP-quit reproduction crashed before; corrected development and clean release artifacts exited normally under GDB.",
+    "nativeLogs": [
+      ".state/stage03-intel-gdb.log",
+      ".state/stage03-intel-gdb-fixed.log",
+      ".state/stage03-intel-gdb-release.log"
+    ],
+    "priorDriver": "The preserved development guest retains the earlier host artifact; no implicit migration."
+  },
+  "retainedFailures": [
+    "NVIDIA library evidence initially tried hashing mapped character devices; fixed to hash regular driver images only.",
+    "Image import exhausted host root space; Podman import scratch now follows selected workspace state filesystem.",
+    "Canonical source verification still cannot fetch unpublished component commits; local source pins and parent gitlinks are coherent."
+  ],
+  "remaining": [
+    "Another physical host",
+    "Windows boot under a second real host account",
+    "Corrected-artifact full Docker VM repeat requires more daemon-store space",
+    "Helios guest KMD/UMD/ICD and Vulkan workload acceptance belongs to Stage 4",
+    "Canonical publication of local component and parent commits"
+  ],
+  "preservedDevelopment": {
+    "identity": "9a579891fb1244e1b3fe348f702809ff",
+    "state": "stopped",
+    "diskImageCheck": "qemu-img check passed after the retained earlier shutdown failure; no filesystem-health claim."
+  },
+  "finalCleanup": {
+    "stop": {
+      "jobId": "op-6404a3dd0e5b4f8990e63076c0cd350f",
+      "jobState": "succeeded",
+      "operationId": "op-927f44ccbb154d919dcb5533a75bed55",
+      "result": {
+        "name": "stage03-nvidia",
+        "state": "stopped",
+        "loaded": false,
+        "cleanShutdown": true,
+        "shutdown": {
+          "method": "ssh",
+          "timeoutSeconds": 120,
+          "sshExitCode": 0
+        }
+      },
+      "retainedResult": "/media/rupansh/wdblack/winboat-stage03-docker-state/jobs/op-6404a3dd0e5b4f8990e63076c0cd350f/result.json",
+      "retainedResultSha256": "081e02b61262d37e0117ab3045ba921e8aa9b1eb63b36c5888b614b5eeaa1645"
+    },
+    "destroy": {
+      "schemaVersion": 1,
+      "operationId": "op-a6b8aea1fff54ccab535f779ec148133",
+      "state": "destroyed",
+      "exitCode": 0,
+      "evidencePaths": [
+        "/media/rupansh/wdblack/winboat-stage03-docker-state/operations/op-a6b8aea1fff54ccab535f779ec148133.json"
+      ],
+      "result": {
+        "name": "stage03-nvidia",
+        "state": "destroyed"
+      }
+    },
+    "testGuestStateRemoved": true,
+    "finalPodmanContainerAbsent": true,
+    "initialDockerContainerAbsent": true,
+    "failedDockerPreparationAbsent": true,
+    "privateGenerationEvidenceAndRuntimeCacheRetained": true,
+    "preservedDevelopment": {
+      "identity": "9a579891fb1244e1b3fe348f702809ff",
+      "state": "stopped",
+      "diskRetained": true
+    }
+  },
+  "sourceCoherence": {
+    "state": "passed",
+    "scope": "All 12 local checkout heads match pins and have clean status; canonical publication remains pending.",
+    "repositories": [
+      {
+        "id": "WBFreeRDP",
+        "revision": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0"
+      },
+      {
+        "id": "clvk-helios",
+        "revision": "56c626132782bf083a80a6c17f5ca763be0ff8fb"
+      },
+      {
+        "id": "dxil-spirv",
+        "revision": "f4651bd076a2613728823ec289abc121a348a48a"
+      },
+      {
+        "id": "dxvk",
+        "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa"
+      },
+      {
+        "id": "electron",
+        "revision": "c328b030fd3357139f66c8a3a84a4384c0136eed"
+      },
+      {
+        "id": "helios",
+        "revision": "93bb6e4afbd1153d6e8b875d8fa144a8bec4d80a"
+      },
+      {
+        "id": "mesa-helios",
+        "revision": "8d653f8eeae01750ccad377ce68216823ea998fb"
+      },
+      {
+        "id": "qemu-helios",
+        "revision": "2544a0bb2b11992fe31d043961ed507fe581f31f"
+      },
+      {
+        "id": "venus-protocol",
+        "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78"
+      },
+      {
+        "id": "virglrenderer",
+        "revision": "8668479d681f47ade80808c9d3fc1457540d7d58"
+      },
+      {
+        "id": "vkd3d-proton",
+        "revision": "56bc6cfcf1fc36c2ce213d903d04591077abc52f"
+      },
+      {
+        "id": "winboat",
+        "revision": "17563cacb82ca31efe5feb12e3968f51951f1085"
+      }
+    ]
+  }
+}

@@ -191,10 +191,12 @@ def prepare(ws, operation_id, render_node=None, cdi_device=None):
     version = run([tool, '--version']).stdout.strip()
     root = os.environ['WB_NVIDIA_TOOLKIT_ROOT']
     run([os.environ['WB_NIX'], 'build', '--out-link', directory / 'toolkit', root])
+    hook_root = str(Path(hook).parent.parent)
+    run([os.environ['WB_NIX'], 'build', '--out-link', directory / 'hooks', hook_root])
     receipt = {'schemaVersion': 1, 'operationId': operation_id, 'state': 'prepared',
                'manifest': str(directory / 'manifest.json'),
                'nixLockSha256': digest(ws.root / 'devenv.lock'),
-               'generator': {'command': command, 'version': version, 'sha256': digest(tool), 'storeRoot': root},
+               'generator': {'command': command, 'version': version, 'sha256': digest(tool), 'storeRoot': root, 'hookStoreRoot': hook_root},
                'graphics': observed,
                'runtime': {'kind': 'podman', 'arguments': ['--cdi-spec-dir', str(directory)]},
                'integration': 'The launcher passes this private CDI directory directly; no system CDI setup is needed.'}
