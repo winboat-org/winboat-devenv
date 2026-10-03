@@ -131,6 +131,10 @@ try {
     foreach ($tool in $lock.tools) {
         if ($tool.status -ne 'locked') { continue }
         $state.phase = 'install'; $state.currentTool = $tool.id; Save-State
+        # Installers update Machine PATH without updating this running SYSTEM
+        # process. Refresh before the next tool: cargo helpers require the CRT
+        # bundled with locked Python, which its installer adds to Machine PATH.
+        $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine')
         $probe = [ScriptBlock]::Create($tool.probe)
         $observed = & $probe
         $previousTool = @($state.tools | Where-Object { $_.id -eq $tool.id -and $_.verified -eq $true })

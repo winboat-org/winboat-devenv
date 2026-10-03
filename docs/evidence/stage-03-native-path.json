@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "devbox": "stage03-acceptance",
+  "state": "verified-after-native-payload-repair",
+  "failure": "Running SYSTEM task retained pre-install PATH; cargo helper missed the runtime bundled with locked Python",
+  "runtime": {
+    "path": "C:\\WinBoatDev\\tools\\Python\\vcruntime140.dll",
+    "sha256": "052ad6a20d375957e82aa6a3c441ea548d89be0981516ca7eb306e063d5027f4",
+    "fileVersion": "14.42.34438.0"
+  },
+  "beforeExitCode": -1073741515,
+  "beforeStderr": {},
+  "afterVersion": "0.37.24",
+  "provisionPayloadSha256": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+  "helperPayloadSha256": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+  "afterTask": {
+    "phase": "verified",
+    "tools": 14,
+    "retries": 4,
+    "rebootCount": 2,
+    "signedDriverLoaded": true
+  }
+}

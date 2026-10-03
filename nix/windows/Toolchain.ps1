@@ -136,7 +136,8 @@ function Get-CargoHelperVersion([string]$Name) {
     if (Test-Path -LiteralPath $file) {
         [string[]]$arguments = if ($Name -eq 'cargo-make') { @('make','--version') } else { @('--version') }
         $version = & $file @arguments
-        if ($LASTEXITCODE -eq 0) { ($version -split ' ')[-1] }
+        if ($LASTEXITCODE -ne 0) { throw "$Name version probe exited with $LASTEXITCODE" }
+        ($version -split ' ')[-1]
     }
 }
 function Install-Vulkan($tool, $paths) {
