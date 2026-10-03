@@ -453,6 +453,15 @@ class Fixtures(unittest.TestCase):
         self.assertIn("build_run", [t["name"] for t in tools])
         self.assertIn("devbox_create", [t["name"] for t in tools])
         self.assertIn("devbox_viewer_status", [t["name"] for t in tools])
+        self.assertIn('devbox_cdi_prepare', [t['name'] for t in tools])
+        invalid_cdi = rpc('tools/call', {'name': 'devbox_cdi_prepare', 'arguments': {'renderNode': '/dev/dri/not-a-node'}})['result']
+        self.assertTrue(invalid_cdi['isError'])
+        self.assertEqual(invalid_cdi['structuredContent']['error'],
+                         self.wb('devbox', 'cdi', 'prepare', '--render-node', '/dev/dri/not-a-node', check=False)['error'])
+        bad_graphics = rpc('tools/call', {'name': 'devbox_create', 'arguments': {'graphicsProvider': 'unsupported'}})
+        self.assertEqual(bad_graphics['error']['code'], -32602)
+        bad_timeout = rpc('tools/call', {'name': 'devbox_down', 'arguments': {'timeout': 1}})
+        self.assertEqual(bad_timeout['error']['code'], -32602)
         bad_media = rpc("tools/call", {"name": "devbox_media", "arguments": {"iso": "example.iso", "index": 1.5}})
         self.assertEqual(bad_media["error"]["code"], -32602)
         missing_devbox = rpc("tools/call", {"name": "devbox_status", "arguments": {"name": "missing"}})["result"]

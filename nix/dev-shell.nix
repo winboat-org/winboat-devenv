@@ -44,7 +44,7 @@ in
   '';
   scripts.wb-devbox-test.exec = ''
     export PYTHONPATH=${../tools}
-    exec ${pkgs.python3}/bin/python3 ${../tests/devbox.py} "$@"
+    exec ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python3 ${../tests/devbox.py} "$@"
   '';
   scripts.wb-windows-check.exec = ''
     exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"

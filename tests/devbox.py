@@ -11,7 +11,7 @@ import unittest
 from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
-from wb import devbox
+from wb import devbox, graphics
 from wb.common import Failure, write_json
 
 
@@ -90,6 +90,32 @@ class DevboxTests(unittest.TestCase):
             with self.assertRaises(Failure):
                 devbox.inspect({"command": ["runtime"]}, record)
 
+    def test_runtime_binding_survives_config_change_and_refuses_another_daemon(self):
+        record = self.record()
+        record["runtime"] = {"kind": "docker", "command": ["retained-docker"], "daemonId": "original"}
+        self.ws.config["devbox"]["containerRuntime"] = "podman"
+        with patch.object(devbox, "bounded", return_value=subprocess.CompletedProcess([], 0, '{"ServerVersion":"29","ID":"original"}', "")) as probe:
+            self.assertEqual(devbox.runtime(self.ws, record)["kind"], "docker")
+            self.assertEqual(probe.call_args.args[0][0], "retained-docker")
+        with patch.object(devbox, "bounded", return_value=subprocess.CompletedProcess([], 0, '{"ServerVersion":"29","ID":"other"}', "")):
+            with self.assertRaises(Failure):
+                devbox.runtime(self.ws, record)
+
+    def test_legacy_runtime_discovers_owned_container_and_refuses_ambiguity(self):
+        record = self.record()
+        record["image"] = {"id": "image"}
+        candidates = [("docker", ["docker"]), ("podman", ["podman"])]
+        with patch.object(devbox, "runtime_candidates", return_value=candidates), \
+                patch.object(devbox, "bounded", return_value=subprocess.CompletedProcess([], 0, '{"ServerVersion":"29"}', "")), \
+                patch.object(devbox, "inspect", side_effect=lambda rt, record: {} if rt["kind"] == "docker" else {"State": {"Running": False}}):
+            self.assertEqual(devbox.runtime(self.ws, record)["kind"], "podman")
+        for found in [None, {"State": {"Running": True}}]:
+            with patch.object(devbox, "runtime_candidates", return_value=candidates), \
+                    patch.object(devbox, "bounded", return_value=subprocess.CompletedProcess([], 0, '{"ServerVersion":"29"}', "")), \
+                    patch.object(devbox, "inspect", return_value=found):
+                with self.assertRaises(Failure):
+                    devbox.runtime(self.ws, record)
+
     def test_destroy_confirmation_preserves_disk_and_external_paths(self):
         record = self.record()
         disk = devbox.location(self.ws, "one") / "disk.qcow2"
@@ -102,6 +128,62 @@ class DevboxTests(unittest.TestCase):
                 devbox.destroy(self.ws, "one", record["identity"], "operation")
         self.assertTrue(disk.exists())
 
+    def test_authenticated_shutdown_waits_for_completion_and_preserves_timeout(self):
+        record = self.record()
+        record['provisioning']['verified'] = True
+        directory = devbox.location(self.ws, 'one')
+        disk = directory / 'disk.qcow2'; disk.write_bytes(b'keep guest disk')
+        write_json(directory / 'devbox.json', record)
+        payloads = self.root / 'payloads'; payloads.mkdir()
+        (payloads / 'Shutdown.ps1').write_text('shutdown fixture')
+        rt = {'kind': 'docker', 'command': ['docker'], 'info': {'ID': 'original'}}
+        running = {'State': {'Running': True}}
+        stopped = {'State': {'Running': False, 'ExitCode': 0}}
+        with patch.dict(os.environ, {'WB_DEVBOX_PAYLOADS': str(payloads)}), \
+                patch.object(devbox, 'runtime', return_value=rt), \
+                patch.object(devbox, 'ssh_command', return_value=['ssh']), \
+                patch.object(devbox, 'bounded', return_value=subprocess.CompletedProcess([], 0, '', '')), \
+                patch.object(devbox, 'inspect', side_effect=[running, stopped]), \
+                patch.object(devbox, 'qmp_powerdown') as qmp:
+            result = devbox.down(self.ws, 'one', 'operation', timeout=10)
+            self.assertTrue(result['cleanShutdown'])
+            self.assertEqual(result['shutdown']['method'], 'ssh')
+            qmp.assert_not_called()
+        with patch.dict(os.environ, {'WB_DEVBOX_PAYLOADS': str(payloads)}), \
+                patch.object(devbox, 'runtime', return_value=rt), \
+                patch.object(devbox, 'ssh_command', return_value=['ssh']), \
+                patch.object(devbox, 'bounded', return_value=subprocess.CompletedProcess([], 0, '', '')), \
+                patch.object(devbox, 'inspect', return_value=running), \
+                patch.object(devbox.time, 'monotonic', side_effect=[0, 11]), \
+                patch.object(devbox, 'run') as execute:
+            with self.assertRaises(Failure) as failed:
+                devbox.down(self.ws, 'one', 'operation', timeout=10)
+            self.assertIn('preserved running', str(failed.exception))
+            execute.assert_not_called()
+        self.assertEqual(disk.read_bytes(), b'keep guest disk')
+
+    def test_cdi_preflight_detects_stale_files_and_wrong_gpu_before_launch(self):
+        driver = self.root / 'libEGL_nvidia.so.1'; driver.write_bytes(b'actual installed driver')
+        vendor = self.root / '10_nvidia.json'; vendor.write_text('{}')
+        hook = self.root / 'nvidia-cdi-hook'; hook.write_bytes(b'vendor hook')
+        spec = {'kind': 'nvidia.com/gpu', 'devices': [{'name': 'GPU-fixture', 'containerEdits': {
+            'deviceNodes': [{'path': '/dev/dri/renderD128'}]}}], 'containerEdits': {
+            'mounts': [{'hostPath': str(driver), 'containerPath': '/usr/lib/libEGL_nvidia.so.1'},
+                       {'hostPath': str(vendor), 'containerPath': '/usr/share/glvnd/egl_vendor.d/10_nvidia.json'}],
+            'hooks': [{'path': str(hook), 'args': ['create-symlinks', 'lib.so::/usr/lib/gbm/nvidia-drm_gbm.so']}]}}
+        directory = self.root / 'cdi'; write_json(directory / 'nvidia.json', spec)
+        rt = {'info': {'CDISpecDirs': [str(directory)]}}
+        with patch.object(graphics, 'node_identity', return_value={'vendor': '0x10de', 'driver': 'nvidia'}):
+            initial = graphics.plan({}, '/dev/dri/renderD128', rt)
+            self.assertEqual(initial['cdiDevice'], 'nvidia.com/gpu=GPU-fixture')
+            self.assertEqual(initial['inputs'][0]['size'], driver.stat().st_size)
+            with self.assertRaises(Failure):
+                graphics.plan({}, '/dev/dri/renderD129', rt)
+            driver.unlink()
+            with self.assertRaises(Failure) as failed:
+                graphics.plan({}, '/dev/dri/renderD128', rt)
+            self.assertIn(str(driver), failed.exception.details['missing'])
+
     def test_relocated_state_keeps_ownership_and_defined_guest_defaults(self):
         record = self.record()
         moved = self.root.parent / "relocated workspace with spaces"
@@ -111,6 +193,37 @@ class DevboxTests(unittest.TestCase):
         self.ws.config["devbox"] = {"guestUsername": "different-host-user"}
         with self.assertRaises(Failure):
             devbox.settings(self.ws)
+
+    def test_workspace_cdi_launch_ignores_system_specs_and_refuses_docker(self):
+        generated = {'graphics': {'cdiDevice': 'nvidia.com/gpu=GPU-fixture',
+                                  'spec': {'path': str(self.ws.state / 'gpu/operation/nvidia.yaml')}},
+                     'manifest': str(self.ws.state / 'gpu/operation/manifest.json')}
+        with patch.object(graphics, 'node_identity', return_value={'vendor': '0x10de', 'driver': 'nvidia'}), \
+                patch.dict(os.environ, {'WB_NVIDIA_CTK': 'pinned-generator', 'WB_NVIDIA_CDI_HOOK': 'pinned-hook',
+                                        'WB_CONTAINER_HOOKS_DIR': '/nix/store/no-hooks'}), \
+                patch.object(graphics, 'prepare', return_value=generated):
+            podman = graphics.launch_plan(self.ws, {}, '/dev/dri/renderD128', {'kind': 'podman'}, 'operation')
+            self.assertEqual(podman['runtimeArguments'], ['--cdi-spec-dir', str(self.ws.state / 'gpu/operation'),
+                                                        '--hooks-dir', '/nix/store/no-hooks'])
+            self.assertEqual(podman['runArguments'], ['--device', 'nvidia.com/gpu=GPU-fixture'])
+            rt = {'kind': 'docker', 'info': {}}
+            with self.assertRaises(Failure):
+                graphics.launch_plan(self.ws, {}, '/dev/dri/renderD128', rt, 'operation')
+
+    def test_malformed_external_cdi_is_a_typed_failure(self):
+        for spec in [{'devices': [{}]}, {'devices': None},
+                     {'containerEdits': {'mounts': [{'hostPath': '../escape', 'containerPath': '/lib'}]}}]:
+            with self.assertRaises(Failure):
+                graphics.validate_spec(spec, 'bad-spec.yaml')
+
+    def test_auto_runtime_on_nvidia_requires_private_podman(self):
+        with patch.dict(os.environ, {'WB_PODMAN': 'pinned-podman', 'WB_DOCKER': 'pinned-docker'}), \
+                patch.object(graphics, 'node_identity', return_value={'vendor': '0x10de', 'driver': 'nvidia'}):
+            candidates = devbox.runtime_candidates(self.ws, {'renderNode': '/dev/dri/renderD128'})
+            self.assertEqual([kind for kind, _ in candidates], ['podman'])
+            # Discovering existing legacy containers still probes both stores.
+            legacy = devbox.runtime_candidates(self.ws, {'renderNode': '/dev/dri/renderD128'}, all_kinds=True)
+            self.assertEqual([kind for kind, _ in legacy], ['docker', 'podman'])
 
     def test_offline_lock_rejects_path_escape_and_empty_locked_tool(self):
         path = self.root / 'config/provision.lock.json'

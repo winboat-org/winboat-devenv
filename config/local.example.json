@@ -15,6 +15,8 @@
     "edition": null,
     "containerRuntime": "auto",
     "renderNode": "auto",
+    "graphicsProvider": "auto",
+    "cdiDevice": null,
     "sshPort": "auto",
     "viewer": "tigervnc",
     "guestUsername": "wbdev",

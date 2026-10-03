@@ -9,11 +9,12 @@ import shutil
 import signal
 import socket
 import subprocess
+import tempfile
 import time
 import uuid
 import xml.etree.ElementTree as ET
 
-from . import builds
+from . import builds, graphics
 from .common import Failure, atomic_write, digest, locked, run, write_json
 
 
@@ -36,7 +37,8 @@ def settings(ws):
     config = ws.config.get("devbox", {})
     allowed = {"isoPath", "isoSha256", "edition", "containerRuntime", "runtimeCommand", "renderNode",
                "sshPort", "viewerPort", "viewer", "hostManifest", "cpus", "memoryMiB", "diskGiB",
-               "guestUsername", "guestComputerName", "guestShare", "guestMirror", "guestBuildRoot", "rdpPort"}
+               "guestUsername", "guestComputerName", "guestShare", "guestMirror", "guestBuildRoot", "rdpPort",
+               "graphicsProvider", "cdiDevice"}
     if not isinstance(config, dict) or set(config) - allowed:
         raise Failure("unknown devbox configuration field", 2)
     for key, value in {"guestUsername": "wbdev", "guestComputerName": "WB-DEVBOX", "guestShare": "Z:\\",
@@ -83,8 +85,8 @@ def load(ws, name):
     return directory, data
 
 
-def runtime_candidates(ws):
-    config = settings(ws)
+def runtime_candidates(ws, config=None, all_kinds=False):
+    config = settings(ws) if config is None else config
     choice = config.get("containerRuntime", "auto")
     if choice not in {"auto", "docker", "podman"}:
         raise Failure("containerRuntime must be auto, docker or podman", 2)
@@ -93,16 +95,39 @@ def runtime_candidates(ws):
         if (choice == "auto" or not isinstance(override, list) or not override
                 or any(not isinstance(v, str) or not v or "\n" in v or "\0" in v for v in override)):
             raise Failure("runtimeCommand requires an explicit runtime and a nonempty argument array", 2)
-        return [(choice, override)]
+        if not all_kinds:
+            return [(choice, override)]
     commands = {"docker": [os.environ["WB_DOCKER"]],
                 "podman": [os.environ["WB_PODMAN"], "--root", str(ws.state / "container/storage"),
                            "--runroot", str(ws.state / "container/run"), "--storage-driver", "vfs"]}
-    return [(key, commands[key]) for key in ([choice] if choice != "auto" else ["docker", "podman"])]
+    if override:
+        commands[choice] = override
+    order = [choice] if choice != 'auto' and not all_kinds else ['docker', 'podman']
+    if choice == 'auto' and not all_kinds and graphics.private_runtime_preferred(config):
+        order = ['podman']
+    return [(key, commands[key]) for key in order]
 
 
-def runtime(ws):
+def runtime(ws, record=None):
     diagnostics = []
-    for kind, command in runtime_candidates(ws):
+    binding = (record or {}).get("runtime")
+    config = dict(settings(ws))
+    preference = (record or {}).get("runtimePreference", {})
+    if preference:
+        config.pop("runtimeCommand", None)
+        config.update(preference)
+    config.update((record or {}).get('graphicsPreference', {}))
+    if binding:
+        if (binding.get("kind") not in {"docker", "podman"} or not isinstance(binding.get("command"), list)
+                or not binding["command"] or any(not isinstance(v, str) or not v or "\n" in v or "\0" in v for v in binding["command"])):
+            raise Failure("invalid retained devbox runtime binding", 2)
+        candidates = [(binding["kind"], binding["command"])]
+    else:
+        # Legacy images may already belong to the other runtime. Discover the
+        # owned container instead of treating an empty store as an absent VM.
+        candidates = runtime_candidates(ws, config, all_kinds=bool(record and record.get("image")))
+    available, matches = [], []
+    for kind, command in candidates:
         # Docker accepts '{{json .}}'; Podman accepts the literal 'json'.
         result = bounded(command + ["info", "--format", "{{json .}}" if kind == "docker" else "json"])
         if not result.returncode:
@@ -113,18 +138,42 @@ def runtime(ws):
                 continue
             if kind == "docker" and not info.get("ServerVersion"):
                 continue
-            return {"kind": kind, "command": command, "info": info}
+            if binding and binding.get("daemonId") and info.get("ID") != binding["daemonId"]:
+                raise Failure("devbox Docker daemon identity changed; refusing to control another store", 3)
+            found = {"kind": kind, "command": command, "info": info}
+            if binding:
+                return found
+            available.append(found)
+            if record and record.get("image") and inspect(found, record):
+                matches.append(found)
+            continue
         diagnostics.append({"runtime": kind, "error": result.stderr.strip() or result.stdout.strip()})
+    if record and record.get("image") and not binding:
+        if len(matches) == 1:
+            return matches[0]
+        raise Failure("legacy devbox runtime is ambiguous or its owned container is missing; preserve its disk and resolve the original runtime",
+                      3, matches=[item["kind"] for item in matches], runtimes=diagnostics)
+    if available:
+        return available[0]
     raise Failure("no usable container runtime; configure access to Docker or rootless Podman, or an explicit devbox.runtimeCommand",
                   3, runtimes=diagnostics)
 
 
-def capabilities(ws, probe_runtime=True):
-    config = settings(ws)
+def bind_runtime(directory, record, rt):
+    binding = {"kind": rt["kind"], "command": rt["command"]}
+    if rt["kind"] == "docker":
+        binding["daemonId"] = rt["info"].get("ID")
+    record["runtime"] = binding
+    write_json(directory / "devbox.json", record)
+
+
+def capabilities(ws, probe_runtime=True, config=None):
+    config = settings(ws) if config is None else config
     nodes = sorted(Path("/dev/dri").glob("renderD*"))
     selected = config.get("renderNode", "auto")
     observations = [{"path": str(path), "accessible": os.access(path, os.R_OK | os.W_OK),
-                     "sysfsDevice": str((Path("/sys/class/drm") / path.name / "device").resolve())}
+                     "sysfsDevice": str((Path("/sys/class/drm") / path.name / "device").resolve()),
+                     **graphics.node_identity(path)}
                     for path in nodes]
     if selected != "auto":
         path = Path(selected)
@@ -143,6 +192,11 @@ def capabilities(ws, probe_runtime=True):
         try:
             found = runtime(ws)
             result["runtime"] = {"available": True, "kind": found["kind"], "command": found["command"]}
+            if result["renderNode"]:
+                try:
+                    result["graphics"] = {"ready": True, **graphics.readiness(config, result["renderNode"], found)}
+                except Failure as exc:
+                    result["graphics"] = {"ready": False, "error": str(exc), **exc.details}
         except Failure as exc:
             result["runtime"] = {"available": False, "error": str(exc), **exc.details}
     return result
@@ -374,7 +428,13 @@ def allocate_ports(ws, directory, config):
 
 
 def create(ws, args, operation_id):
-    config = settings(ws)
+    config = dict(settings(ws))
+    if getattr(args, "runtime", None):
+        config.update(containerRuntime=args.runtime)
+        config.pop("runtimeCommand", None)
+    for key, argument in [("renderNode", "render_node"), ("graphicsProvider", "graphics_provider"), ("cdiDevice", "cdi_device")]:
+        if getattr(args, argument, None):
+            config[key] = getattr(args, argument)
     iso = args.iso or config.get("isoPath")
     if not iso:
         raise Failure("provide --iso <user-supplied Windows ISO>", 2)
@@ -391,6 +451,14 @@ def create(ws, args, operation_id):
         owner_id = owner(ws, create=True)
         if (directory / "devbox.json").exists():
             _, record = load(ws, args.name)
+            requested_runtime = getattr(args, 'runtime', None)
+            retained_runtime = record.get('runtime', {}).get('kind') or record.get('runtimePreference', {}).get('containerRuntime')
+            if requested_runtime and requested_runtime != retained_runtime:
+                raise Failure('existing devbox has another runtime selection; use a new name', 2)
+            for key, argument in [('renderNode', 'render_node'), ('graphicsProvider', 'graphics_provider'), ('cdiDevice', 'cdi_device')]:
+                requested = getattr(args, argument, None)
+                if requested and requested != record.get('graphicsPreference', {}).get(key):
+                    raise Failure('existing devbox has another graphics selection; use a new name', 2, field=key)
             if (record["media"]["sha256"] != selected["sha256"] or record["media"]["image"] != selected["image"]
                     or record["media"]["locale"] != selected["locale"]
                     or record["hostArtifact"]["manifestSha256"] != artifact["manifestSha256"]):
@@ -409,6 +477,8 @@ def create(ws, args, operation_id):
                       "media": selected, "hostArtifact": artifact, "ports": allocate_ports(ws, directory, config),
                       "cpus": cpus, "memoryMiB": memory, "diskGiB": disk_gib,
                       "created": time.time(), "operationId": operation_id, "image": None,
+                      "runtimePreference": {key: config[key] for key in ["containerRuntime", "runtimeCommand"] if key in config},
+                      "graphicsPreference": {key: config[key] for key in ["renderNode", "graphicsProvider", "cdiDevice"] if key in config},
                       "initialBootPending": True,
                       "provisioning": {"phase": "initializing", "installed": False, "verified": False,
                                        "lockSha256": provision["sha256"], "unresolvedInputs": provision["unresolved"]}}
@@ -494,12 +564,31 @@ def build_image(ws, directory, record, rt):
                "--file", os.environ["WB_DEVBOX_EXPRESSION"], "--argstr", "nixpkgsPath", os.environ["WB_NIXPKGS"],
                "--argstr", "specification", directory / "image-spec.json"]
     with (directory / "image-build.log").open("a") as log:
+        root_command = list(command)
+        root_command[root_command.index("--out-link") + 1] = directory / "container-runtime"
+        # nix build selects a --file attribute as a positional installable.
+        root_command += ["winboatRuntime"]
+        rooted = subprocess.run([str(v) for v in root_command], stdout=subprocess.PIPE, stderr=log, text=True)
+        if rooted.returncode:
+            raise Failure("Nix devbox runtime closure build failed", rooted.returncode, log=str(directory / "image-build.log"))
         result = subprocess.run([str(v) for v in command], stdout=subprocess.PIPE, stderr=log, text=True)
     if result.returncode:
         raise Failure("Nix devbox image build failed", result.returncode, log=str(directory / "image-build.log"))
     output = json.loads(result.stdout)[0]
     archive = Path(output["outputs"]["out"])
-    run(rt["command"] + ["load", *(["--signature-policy", os.environ["WB_CONTAINER_POLICY"]] if rt["kind"] == "podman" else []), "--input", archive])
+    load_command = rt["command"] + ["load", *(["--signature-policy", os.environ["WB_CONTAINER_POLICY"]] if rt["kind"] == "podman" else []), "--input", archive]
+    if rt["kind"] == "podman":
+        # containers/image stages the complete uncompressed archive in TMPDIR,
+        # independently of Podman's storage root. Keep that large temporary
+        # copy on the selected state filesystem, rather than the host /var/tmp.
+        scratch_root = ws.state / "container/import-tmp"
+        if scratch_root.resolve() != scratch_root:
+            raise Failure("image import scratch path contains a symlink", 2)
+        scratch_root.mkdir(parents=True, mode=0o700, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="devbox-", dir=scratch_root) as scratch:
+            run(load_command, env=dict(os.environ, TMPDIR=scratch))
+    else:
+        run(load_command)
     tag = "winboat-devbox:" + record["identity"]
     data = json.loads(run(rt["command"] + ["image", "inspect", tag]).stdout)[0]
     image_id = data.get("Id") or data.get("ID")
@@ -511,6 +600,7 @@ def build_image(ws, directory, record, rt):
     if labels.get("org.winboat.provision-lock-sha256") != spec["provisionLockSha256"]:
         raise Failure("imported image provisioning lock label differs", 3)
     return {"id": image_id, "archiveSha256": file_hash(archive), "output": str(archive),
+            "runtimeRoot": json.loads(rooted.stdout)[0]["outputs"]["out"],
             "derivation": output["drvPath"], "lockSha256": spec["lockSha256"],
             "provisionLockSha256": spec["provisionLockSha256"],
             "hostStack": spec["hostStack"], "manifestSha256": spec["manifestSha256"]}
@@ -519,15 +609,18 @@ def build_image(ws, directory, record, rt):
 def up(ws, name, operation_id, rebuild_image=False):
     with locked(ws.state / "locks" / ("devbox-" + name_check(name) + ".lock")):
         directory, record = load(ws, name)
-        rt = runtime(ws)
+        rt = runtime(ws, record)
+        bind_runtime(directory, record, rt)
         existing = inspect(rt, record)
         if existing and existing["State"].get("Running"):
             if rebuild_image:
                 raise Failure("stop the devbox before rebuilding its container image", 2)
             return status(ws, name, rt=rt)
-        observed = capabilities(ws, probe_runtime=False)
+        graphics_config = {**settings(ws), **record.get("graphicsPreference", {})}
+        observed = capabilities(ws, probe_runtime=False, config=graphics_config)
         if not observed["kvm"]["accessible"] or not observed["renderNode"]:
             raise Failure("KVM or a selected accessible render node is missing", 3, capabilities=observed)
+        selected_graphics = graphics.launch_plan(ws, graphics_config, observed["renderNode"], rt, operation_id)
         artifact = host_artifact(ws, record["hostArtifact"]["manifest"])
         if artifact["manifestSha256"] != record["hostArtifact"]["manifestSha256"]:
             raise Failure("selected host artifact changed after creation", 2)
@@ -541,6 +634,8 @@ def up(ws, name, operation_id, rebuild_image=False):
                 retained.parent.mkdir(exist_ok=True)
                 if not retained.exists():
                     run([os.environ["WB_NIX"], "build", "--out-link", retained, previous["output"]])
+                if previous.get("runtimeRoot"):
+                    run([os.environ["WB_NIX"], "build", "--out-link", str(retained) + "-runtime", previous["runtimeRoot"]])
             record["image"] = build_image(ws, directory, record, rt)
             write_json(directory / "devbox.json", record)
         if record["image"]["lockSha256"] != digest(ws.root / "devenv.lock"):
@@ -549,13 +644,14 @@ def up(ws, name, operation_id, rebuild_image=False):
             run(rt["command"] + ["rm", container_name(record)])
         write_json(directory / "launch.json", {"cpus": record["cpus"], "memoryMiB": record["memoryMiB"],
                    "renderNode": observed["renderNode"], "attachMedia": not record["provisioning"]["verified"],
+                   "graphics": selected_graphics,
                    "provisionLockSha256": record["provisioning"]["lockSha256"],
                    "initialBoot": record.get("initialBootPending", False),
                    "expectedImages": artifact["expectedImages"]})
         (directory / "host-observation.json").unlink(missing_ok=True)
         command = rt["command"] + ["run", "--pull=never", "--detach", "--name", container_name(record),
                   "--label", "org.winboat.owner=" + record["owner"], "--label", "org.winboat.identity=" + record["identity"],
-                  "--device", "/dev/kvm", "--device", observed["renderNode"],
+                  "--device", "/dev/kvm",
                   "--publish", f"127.0.0.1:{record['ports']['ssh']}:22",
                   "--publish", f"127.0.0.1:{record['ports']['viewer']}:5900",
                   "--mount", f"type=bind,source={directory},destination=/state",
@@ -563,6 +659,11 @@ def up(ws, name, operation_id, rebuild_image=False):
                   "--mount", f"type=bind,source={record['media']['path']},destination=/media/windows.iso,readonly",
                   record["image"]["id"]]
         private_share = directory / "empty-share"
+        if selected_graphics["provider"] == "nvidia-cdi":
+            command[-1:-1] = selected_graphics['runArguments']
+            command[:len(rt['command'])] = rt['command'] + selected_graphics.get('runtimeArguments', [])
+        else:
+            command[-1:-1] = ['--device', observed['renderNode']]
         private_share.mkdir(exist_ok=True)
         if (ws.root / "docs/user").exists():
             command[-1:-1] = ["--mount", f"type=bind,source={private_share},destination=/workspace/docs/user,readonly"]
@@ -601,7 +702,8 @@ def status(ws, name, rt=None):
               "provisioning": record["provisioning"], "desiredHostArtifact": record["hostArtifact"]["manifestSha256"],
               "hostObservation": None, "guestObservation": None, "loaded": False}
     try:
-        rt = rt or runtime(ws)
+        rt = rt or runtime(ws, record)
+        result["runtime"] = {"kind": rt["kind"], "command": rt["command"]}
         data = inspect(rt, record)
         result["state"] = "running" if data and data["State"].get("Running") else "stopped" if data else "prepared"
         if data:
@@ -619,43 +721,69 @@ def status(ws, name, rt=None):
     return result
 
 
-def down(ws, name, operation_id, force=False):
+def qmp_powerdown(directory):
+    try:
+        with socket.socket(socket.AF_UNIX) as client:
+            client.settimeout(5); client.connect(str(directory / "qmp.sock"))
+            with client.makefile("rwb") as stream:
+                stream.readline()
+                for command in ["qmp_capabilities", "system_powerdown"]:
+                    stream.write(json.dumps({"execute": command}).encode() + b"\n"); stream.flush()
+                    while True:
+                        reply = json.loads(stream.readline())
+                        if "error" in reply:
+                            raise Failure("QMP refused guest shutdown", 3, response=reply)
+                        if "return" in reply:
+                            break
+    except OSError as exc:
+        raise Failure("QMP unavailable; refusing an unclean shutdown", 3, error=str(exc)) from exc
+
+
+def down(ws, name, operation_id, force=False, timeout=120):
+    if type(timeout) is not int or not 10 <= timeout <= 600:
+        raise Failure("shutdown timeout must be from 10 to 600 seconds", 2)
     with locked(ws.state / "locks" / ("devbox-" + name_check(name) + ".lock")):
         directory, record = load(ws, name)
-        rt = runtime(ws)
+        rt = runtime(ws, record)
+        bind_runtime(directory, record, rt)
         data = inspect(rt, record)
         if data and data["State"].get("Running"):
             if force:
                 run(rt["command"] + ["stop", "--time", "15", container_name(record)])
                 ws.journal(operation_id, {"kind": "devbox-down", "state": "stopped", "name": name, "cleanShutdown": False})
                 return {"name": name, "state": "stopped", "loaded": False, "cleanShutdown": False}
-            # First request guest shutdown through QMP. Stopping a container alone
-            # terminates QEMU and is not a clean Windows shutdown.
-            qmp = directory / "qmp.sock"
-            try:
-                with socket.socket(socket.AF_UNIX) as client:
-                    client.settimeout(5); client.connect(str(qmp))
-                    with client.makefile("rwb") as stream:
-                        stream.readline()
-                        for command in ["qmp_capabilities", "system_powerdown"]:
-                            stream.write(json.dumps({"execute": command}).encode() + b"\n"); stream.flush()
-                            while True:
-                                reply = json.loads(stream.readline())
-                                if "error" in reply:
-                                    raise Failure("QMP refused guest shutdown", 3, response=reply)
-                                if "return" in reply:
-                                    break
-            except OSError as exc:
-                raise Failure("QMP unavailable; refusing an unclean shutdown", 3, error=str(exc)) from exc
-            for _ in range(300):
+            shutdown = {"method": "acpi", "timeoutSeconds": timeout}
+            # A verified guest can acknowledge an authenticated OS shutdown.
+            # ACPI remains available before SSH/provisioning is ready.
+            if record["provisioning"].get("verified"):
+                import base64
+                script = (Path(os.environ["WB_DEVBOX_PAYLOADS"]) / "Shutdown.ps1").read_text()
+                encoded = base64.b64encode(script.encode("utf-16le")).decode()
+                response = bounded(ssh_command(directory, record) + ["powershell.exe -NoProfile -EncodedCommand " + encoded], timeout=20)
+                shutdown["sshExitCode"] = response.returncode
+                if response.returncode == 0:
+                    shutdown["method"] = "ssh"
+                else:
+                    shutdown["sshError"] = response.stderr.strip() or response.stdout.strip()
+            if shutdown["method"] == "acpi":
+                qmp_powerdown(directory)
+            deadline = time.monotonic() + timeout
+            while time.monotonic() < deadline:
                 current = inspect(rt, record)
                 if not current or not current["State"].get("Running"):
                     break
-                time.sleep(0.1)
+                time.sleep(0.5)
             else:
-                raise Failure("guest did not shut down; VM preserved running", 3, name=name)
-        ws.journal(operation_id, {"kind": "devbox-down", "state": "stopped", "name": name})
-        return {"name": name, "state": "stopped", "loaded": False}
+                ws.journal(operation_id, {"kind": "devbox-down", "state": "timeout", "name": name, "shutdown": shutdown})
+                raise Failure("guest did not shut down; VM preserved running", 3, name=name, shutdown=shutdown)
+            if not current or current["State"].get("ExitCode") != 0:
+                raise Failure("container disappeared or exited abnormally during shutdown; guest disk preserved", 3,
+                              name=name, shutdown=shutdown, containerState=current.get("State") if current else None)
+            result = {"name": name, "state": "stopped", "loaded": False, "cleanShutdown": True, "shutdown": shutdown}
+        else:
+            result = {"name": name, "state": "stopped", "loaded": False, "cleanShutdown": None}
+        ws.journal(operation_id, {"kind": "devbox-down", **result})
+        return result
 
 
 def destroy(ws, name, confirmation, operation_id):
@@ -663,7 +791,7 @@ def destroy(ws, name, confirmation, operation_id):
         directory, record = load(ws, name)
         if confirmation != record["identity"]:
             raise Failure("destroy requires --confirm " + record["identity"] + "; this permanently deletes this devbox's disks and keys", 2)
-        rt = runtime(ws)
+        rt = runtime(ws, record)
         data = inspect(rt, record)
         if data and data["State"].get("Running"):
             raise Failure("stop this devbox before destroying it", 2)
@@ -750,6 +878,8 @@ def viewer(ws, name, action, operation_id):
 
 
 def dispatch(ws, args, operation_id):
+    if args.action == "cdi":
+        return graphics.prepare(ws, operation_id, args.render_node)
     if args.action == "capabilities":
         return capabilities(ws)
     if args.action == "media":
@@ -771,9 +901,9 @@ def dispatch(ws, args, operation_id):
     if args.action == "up":
         return up(ws, args.name, operation_id, args.rebuild_image)
     if args.action == "down":
-        return down(ws, args.name, operation_id, args.force)
+        return down(ws, args.name, operation_id, args.force, args.timeout)
     if args.action == "restart":
-        down(ws, args.name, operation_id)
+        down(ws, args.name, operation_id, timeout=args.timeout)
         return up(ws, args.name, operation_id)
     if args.action == "destroy":
         return destroy(ws, args.name, args.confirm, operation_id)

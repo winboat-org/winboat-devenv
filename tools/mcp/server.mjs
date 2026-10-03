@@ -31,14 +31,18 @@ const definitions = [
       mode: { type: 'string', enum: ['release', 'development'] }, plan: bool, background: bool }, ['target']],
   ['build_verify', 'Verify the complete exported artifact file set and hashes.', ['build', 'verify'], { manifest: string }, ['manifest']],
   ['devbox_capabilities', 'Inspect KVM, render nodes, displays and usable container runtimes.', ['devbox', 'capabilities'], {}],
+  ['devbox_cdi_prepare', 'Generate and validate private NVIDIA CDI using the Nix-pinned vendor toolkit for rootless Podman; never writes system configuration.', ['devbox', 'cdi', 'prepare'], { renderNode: string }],
   ['devbox_media', 'Hash and inspect user-supplied Windows ISO image metadata.', ['devbox', 'media'],
     { iso: string, isoSha256: { type: 'string', pattern: '^[0-9a-f]{64}$' }, index: { type: 'integer', minimum: 1 }, edition: string, locale: string }, ['iso']],
   ['devbox_create', 'Prepare an isolated devbox; start is explicit and execution uses shared Nix operations.', ['devbox', 'create'],
     { name: string, iso: string, isoSha256: { type: 'string', pattern: '^[0-9a-f]{64}$' }, manifest: string,
+      runtime: { type: 'string', enum: ['docker', 'podman'] },
+      renderNode: string, graphicsProvider: { type: 'string', enum: ['auto', 'mesa', 'nvidia-cdi'] }, cdiDevice: string,
       index: { type: 'integer', minimum: 1 }, edition: string, locale: string, start: bool, background: bool }],
   ...['up', 'down', 'restart', 'status', 'logs', 'guest-status'].map(action =>
     [`devbox_${action.replace('-', '_')}`, `Devbox ${action}.`, ['devbox', action],
       { name: string, ...(action === 'up' ? { rebuildImage: bool } : {}), ...(action === 'down' ? { force: bool } : {}),
+        ...(['down', 'restart'].includes(action) ? { timeout: { type: 'integer', minimum: 10, maximum: 600 } } : {}),
         ...(['up', 'down', 'restart', 'guest-status'].includes(action) ? { background: bool } : {}) }]),
   ['devbox_destroy', 'Permanently delete a stopped owned devbox after identity confirmation.', ['devbox', 'destroy'],
     { name: string, confirm: { type: 'string', pattern: '^[0-9a-f]{32}$' } }, ['confirm']],
@@ -65,7 +69,7 @@ function validate(value, schema, path = 'arguments') {
     for (const item of value) validate(item, schema.items, path);
   } else {
     if (schema.type === 'integer') {
-      if (!Number.isInteger(value) || value < schema.minimum) throw new Error(`${path} must be a positive integer`);
+      if (!Number.isInteger(value) || value < schema.minimum || value > (schema.maximum ?? Infinity)) throw new Error(`${path} is outside its integer range`);
     } else if (typeof value !== schema.type) throw new Error(`${path} must be ${schema.type}`);
     if (schema.type === 'string' && (!value.length || value.includes('\n') || value.includes('\0'))) throw new Error(`${path} is invalid`);
     if (schema.enum && !schema.enum.includes(value)) throw new Error(`${path} has an unsupported value`);
@@ -81,7 +85,8 @@ function command(tool, args) {
     forceWithLease: '--force-with-lease', dryRun: '--dry-run', deferCheckpoint: '--defer-checkpoint', apply: '--apply',
     configuration: '--configuration', mode: '--mode', plan: '--plan', manifest: '--manifest',
     iso: '--iso', isoSha256: '--iso-sha256', index: '--index', edition: '--edition', locale: '--locale',
-    start: '--start', confirm: '--confirm', rebuildImage: '--rebuild-image', force: '--force' };
+    start: '--start', confirm: '--confirm', rebuildImage: '--rebuild-image', force: '--force', runtime: '--runtime', timeout: '--timeout',
+    renderNode: '--render-node', graphicsProvider: '--graphics-provider', cdiDevice: '--cdi-device' };
   for (const [key, value] of Object.entries(args)) {
     if (key === 'background') continue;
     if (key === 'target') { argv.splice(1, 0, value); continue; }

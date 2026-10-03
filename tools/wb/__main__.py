@@ -67,6 +67,8 @@ def parser():
     build.add_argument("--manifest")
     dev = commands.add_parser("devbox").add_subparsers(dest="action", required=True)
     dev.add_parser("capabilities")
+    cdi = dev.add_parser("cdi").add_subparsers(dest="cdi_action", required=True)
+    cdi.add_parser("prepare").add_argument("--render-node")
     for name in ["media", "create", "up", "down", "restart", "status", "logs", "destroy", "guest-status", "viewer"]:
         command = dev.add_parser(name)
         command.add_argument("--name", default="default")
@@ -77,12 +79,18 @@ def parser():
             command.add_argument("--edition")
             command.add_argument("--locale", default="en-US")
         if name == "create":
+            command.add_argument("--runtime", choices=["docker", "podman"])
+            command.add_argument("--render-node")
+            command.add_argument("--graphics-provider", choices=["auto", "mesa", "nvidia-cdi"])
+            command.add_argument("--cdi-device")
             command.add_argument("--manifest")
             command.add_argument("--start", action="store_true")
         if name == "up":
             command.add_argument("--rebuild-image", action="store_true")
         if name == "down":
             command.add_argument("--force", action="store_true")
+        if name in {"down", "restart"}:
+            command.add_argument("--timeout", type=int, default=120)
         if name in {"create", "up", "down", "restart", "guest-status"}:
             command.add_argument("--background", action="store_true")
         if name == "destroy":

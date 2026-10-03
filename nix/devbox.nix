@@ -27,7 +27,7 @@ let
 in
 assert spec.schemaVersion == 1;
 assert spec.system == "x86_64-linux";
-pkgs.dockerTools.buildLayeredImage {
+(pkgs.dockerTools.buildLayeredImage {
   name = "winboat-devbox";
   tag = spec.identity;
   created = "1970-01-01T00:00:01Z";
@@ -58,4 +58,9 @@ pkgs.dockerTools.buildLayeredImage {
       "org.winboat.provision-lock-sha256" = spec.provisionLockSha256;
     };
   };
+})
+// {
+  # A compressed image does not carry live store references for the GC scanner.
+  # Keep the execution closure rooted separately, including the offline cache.
+  winboatRuntime = launch;
 }

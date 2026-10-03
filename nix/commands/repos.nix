@@ -1,5 +1,6 @@
 { pkgs, inputs }:
 let
+  python = pkgs.python3.withPackages (ps: [ ps.pyyaml ]);
   manifest = pkgs.writeText "winboat-repositories.json" (builtins.toJSON (import ../manifest.nix));
   buildTargets = pkgs.writeText "winboat-build-targets.json" (
     builtins.toJSON (import ../build-targets.nix)
@@ -29,6 +30,7 @@ let
           "windows/Toolchain.ps1"
           "windows/Mirror.ps1"
           "windows/BuildFixture.ps1"
+          "windows/Shutdown.ps1"
           "windows/TestDriver.c"
           "adapters/venus-protocol.nix"
           "adapters/freerdp.nix"
@@ -54,6 +56,7 @@ let
           "wb/activation.py"
           "wb/builds.py"
           "wb/devbox.py"
+          "wb/graphics.py"
           "wb/common.py"
           "wb/jobs.py"
           "wb/publication.py"
@@ -78,7 +81,11 @@ let
     export WB_WIMLIB=${pkgs.wimlib}/bin/wimlib-imagex
     export WB_7ZIP=${pkgs._7zz}/bin/7zz
     export WB_DOCKER=${pkgs.docker-client}/bin/docker
+    export WB_NVIDIA_CTK=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit}/bin/nvidia-ctk"}
+    export WB_NVIDIA_CDI_HOOK=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-cdi-hook"}
+    export WB_NVIDIA_TOOLKIT_ROOT=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit}"}
     export WB_PODMAN=${pkgs.podman}/bin/podman
+    export WB_CONTAINER_HOOKS_DIR=${pkgs.emptyDirectory}
     export WB_CONTAINER_POLICY=${
       pkgs.writeText "winboat-container-policy.json" (
         builtins.toJSON {
@@ -103,7 +110,7 @@ let
     pkgs.writeShellApplication {
       inherit name;
       runtimeInputs = [
-        pkgs.python3
+        python
         pkgs.nodejs
         pkgs.git
         pkgs.openssh
@@ -111,7 +118,7 @@ let
         devenv
       ];
       text = environment + ''
-        exec ${pkgs.python3}/bin/python3 -m wb ${arguments} "$@"
+        exec ${python}/bin/python3 -m wb ${arguments} "$@"
       '';
     };
 in

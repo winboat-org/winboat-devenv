@@ -71,7 +71,11 @@ def identity():
 
 
 def digest(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    value = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(4 * 1024 * 1024), b""):
+            value.update(chunk)
+    return value.hexdigest()
 
 
 # pins.nix is data, not an executable API. Reject expressions/interpolation and

@@ -4,8 +4,9 @@ This document specifies the target system. Stages 1 and 2 implement workspace,
 repository and native/cross build operations with their Node MCP proxy. The
 stage index tracks Windows execution, devbox and release delivery; [build
 usage](builds.md) records the current artifact and dispatch contracts. Stage 3
-adds the shared devbox lifecycle and exact-closure container; complete Windows
-acceptance remains pending.
+adds the shared devbox lifecycle, exact-closure container and verified Windows
+development baseline. Component Windows build/install acceptance belongs to
+Stage 4.
 
 ## Workspace and configuration
 
@@ -28,6 +29,13 @@ device permissions, a container runtime and a display socket are detected by
 Linux build/VM support is the first acceptance target. Other platforms may use
 supported cross builds or a remote devbox but must not claim local KVM support.
 Installing prerequisites is distinct from entering the shell.
+
+For proprietary NVIDIA graphics, Nix supplies rootless Podman and the vendor
+CDI generator/hooks. Each stopped-VM launch regenerates and validates a private
+workspace specification and passes only that directory to Podman. System CDI
+files and distro hooks do not participate. The host kernel driver, matching
+userspace and device permissions remain discovered external inputs. See
+[devbox usage](devbox.md) for the contract and measured acceptance scope.
 
 Native devenv hooks activate the trusted workspace when entering its directory
 and deactivate on exit. Onboarding supports Bash, Zsh, Fish and Nushell, reports

@@ -60,23 +60,84 @@ other tools and Mesa userspace. There is no distribution QEMU or mutable base ta
 The unattended answer-file/first-logon approach assessed in Dockur is implemented
 here using [Microsoft's answer-file contract](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/automate-windows-setup?view=windows-11).
 
-Image archives have retained Nix roots and recorded SHA-256/image/derivation
-identities. Podman accepts only the selected local archive through a Nix-declared
+Image archives and their uncompressed runtime closures have retained Nix roots
+and recorded SHA-256/image/derivation identities. Podman accepts only the
+selected local archive through a Nix-declared
 signature policy; default transports are rejected and VM runs use `--pull=never`.
 The container records `/proc` executable and renderer/module paths and hashes,
 compares them with the selected artifact and requires QMP readiness. Desired,
 built image, running container, observed host images and guest inventory stay
 separate. These checks establish EGL/QEMU startup, not a guest Vulkan workload.
 
-The runtime is selected by a bounded Docker/Podman capability probe. The locked
-Podman client uses workspace-local storage/run state with the VFS storage driver;
+The runtime is selected by a bounded Docker/Podman capability probe and retained
+in each devbox record. Newly available Docker access does not move an existing
+Podman VM into another store. A retained Docker daemon identity must still match.
+Use `create --runtime docker|podman` to choose the runtime for a new guest.
+The locked Podman client uses workspace-local storage/run state with the VFS storage driver;
 it needs the host's existing user-namespace/subuid/subgid support. An explicit
 `containerRuntime` and `runtimeCommand` argument array can select an already
 configured runtime. No command installs host packages or changes groups, daemon
 configuration, bridges or desktop configuration. With multiple accessible GPUs,
 choose `devbox.renderNode` explicitly from the reported nodes. Device access is
-distinct from working graphics userspace; the current image's Mesa path was
-tested on Intel, and proprietary driver/CDI integration remains unvalidated.
+distinct from working graphics userspace; the image's Mesa path was tested on
+Intel. NVIDIA uses the private CDI workflow below; its live startup evidence is
+recorded separately from the guest's graphics acceptance.
+
+Podman image import also stages its large temporary archive on the selected
+state filesystem. `--state-root` therefore relocates storage and import scratch
+together; the temporary directory is removed after import. Docker's daemon
+still needs enough space in its own image store, independently of workspace
+state and the Nix store.
+
+## Workspace-owned NVIDIA CDI
+
+NVIDIA devboxes use Nix-pinned rootless Podman. The workspace owns the container
+toolkit, generator, hooks and private specification; no distro toolkit package,
+system CDI file, package-manager refresh hook or daemon configuration is needed.
+With an NVIDIA render node selected, automatic runtime selection requires Podman.
+An explicit Docker selection remains usable for Mesa GPUs and reports a concrete
+diagnostic for NVIDIA instead of depending on host CDI setup.
+
+```sh
+# Optional inspection: normal up generates a fresh private spec automatically.
+devenv shell -- wb devbox cdi prepare --render-node /dev/dri/<reported-node> --json
+devenv shell -- wb devbox create --name nvidia-development --runtime podman \
+  --render-node /dev/dri/<reported-node> --graphics-provider nvidia-cdi \
+  --iso /path/to/windows.iso --manifest out/native/<exact-operation>/manifest.json \
+  --start --background --json
+```
+
+Each launch calls the locked vendor `nvidia-ctk cdi generate`, validates the
+selected GPU and every mount/hook source, and hashes the driver inputs. It passes
+only that operation's private directory through Podman's `--cdi-spec-dir`, with
+an empty Nix-owned OCI hook directory. Specs in `/etc/cdi` and `/var/run/cdi` and
+distro NVIDIA hooks do not participate. Generation is full vendor discovery;
+there is no handwritten spec or filename substitution. The generated YAML,
+generator log, manifest and toolkit GC root stay under `.state/gpu/<operation>/`.
+An explicit `--cdi-device` must match the selected render node; otherwise the
+GPU's UUID entry is selected automatically.
+
+The host still supplies Linux KVM, rootless user-namespace mappings, device
+permissions, a loaded NVIDIA kernel driver and its matching userspace libraries.
+Their paths and hashes are discovered rather than committed. Supported Linux
+distributions can use the same setup; the graphics driver remains an observed
+external input. After driver updates, the next stopped-VM launch regenerates the
+spec and records the new hashes. A running VM must be restarted to load new
+libraries. The container verifies the injected files and QEMU's actual loaded
+NVIDIA images against the manifest before reporting startup success. Host EGL
+startup does not establish a working Helios driver or Vulkan workload in Windows.
+
+This uses [Podman's private CDI directory option](https://docs.podman.io/en/latest/markdown/podman.1.html#cdi-spec-dir-path)
+and [NVIDIA's vendor generator](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/cdi-support.html).
+
+## Persistent state and guest lifecycle
+
+`down` asks a verified guest to shut down over its authenticated SSH connection,
+then waits for the container to exit successfully. ACPI is the fallback before
+SSH is available. The default wait is 120 seconds; `--timeout` accepts 10–600.
+A timeout preserves the running VM and reports failure. `--force` remains an
+explicit unclean stop. Docker's QMP socket and generated service state return to
+the host state owner's UID/GID so lifecycle and guarded deletion remain usable.
 
 Each named devbox has its own generated ownership identity, disk, secure-capable
 Nix firmware with unenrolled Secure Boot keys, persistent NVRAM/TPM, credentials, SSH keys, host key and loopback SSH/VNC
@@ -131,9 +192,7 @@ local SDL frontend is tied to QEMU's process lifetime and is not advertised as
 hot attachable. A separate SDL client/transport remains future work. Headless
 hosts can operate the VM without opening a viewer.
 
-`down` requests ACPI shutdown through QMP and preserves a VM that does not shut
-down in time. `down --force` explicitly terminates it and records an unclean
-shutdown. `restart` uses the clean path. To select updated container supervision
+`restart` uses the clean shutdown path described above. To select updated container supervision
 code, first stop the guest and run `up --rebuild-image`; prior image archives are
 retained, and rebuilding a running VM is refused. Existing devboxes retain their
 prepared Windows payload/lock; changing the repository lock does not silently

@@ -1,4 +1,5 @@
 """Nix-owned container entry point. Persistent state belongs to one devbox."""
+import atexit
 import hashlib
 import json
 import os
@@ -24,9 +25,31 @@ def save(path, data):
 
 
 state = Path('/state')
+state_owner = state.stat()
 settings = json.loads((state / 'launch.json').read_text())
 stack = Path(os.environ['WB_STACK'])
 children = []
+
+
+def return_state_ownership():
+    # Docker runs Samba as root. Its private directories must remain removable
+    # by the owner of this one bind-mounted state tree after the container exits.
+    # Never follow a link or traverse another mount/source tree.
+    if os.geteuid() != 0 or state_owner.st_uid == 0:
+        return
+    paths = [state / name for name in ['qmp.sock', 'tpm.sock', 'host-observation.json',
+                                      'host-observation.tmp', 'qemu.log', 'serial.log']]
+    for name in ['samba', 'tpm']:
+        directory = state / name
+        if directory.is_symlink():
+            raise RuntimeError('Private service state cannot be a symlink')
+        if directory.exists():
+            paths.append(directory)
+            for root, directories, files in os.walk(directory, followlinks=False):
+                paths.extend(Path(root) / entry for entry in directories + files)
+    for path in paths:
+        if path.exists() or path.is_symlink():
+            os.chown(path, state_owner.st_uid, state_owner.st_gid, follow_symlinks=False)
 
 
 def stop(signum, frame):
@@ -35,8 +58,20 @@ def stop(signum, frame):
             child.terminate()
 
 
+def cleanup():
+    stop(None, None)
+    for child in children:
+        try:
+            child.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            child.kill(); child.wait()
+    return_state_ownership()
+
+
 signal.signal(signal.SIGTERM, stop)
 signal.signal(signal.SIGINT, stop)
+atexit.register(cleanup)
+return_state_ownership()
 for directory in ['tpm', 'samba', 'samba/private', 'samba/lock', 'samba/cache', 'samba/ncalrpc']:
     (state / directory).mkdir(parents=True, exist_ok=True)
 
@@ -133,10 +168,21 @@ if settings['attachMedia']:
                 '-drive', 'if=none,id=answer,media=cdrom,readonly=on,file=/state/answer.iso',
                 '-device', 'ide-cd,drive=answer,bus=ahci.2']
 environment = dict(os.environ, QEMU_MODULE_DIR=str(stack / 'lib/qemu'))
-environment.setdefault('LIBGL_DRIVERS_PATH', os.environ['WB_MESA'] + '/lib/dri')
-environment.setdefault('GBM_BACKENDS_PATH', os.environ['WB_MESA'] + '/lib/gbm')
-environment.setdefault('__EGL_VENDOR_LIBRARY_FILENAMES', ':'.join(str(path) for path in Path(os.environ['WB_MESA']).glob('share/glvnd/egl_vendor.d/*.json')))
-environment.setdefault('VK_DRIVER_FILES', ':'.join(str(path) for path in Path(os.environ['WB_MESA']).glob('share/vulkan/icd.d/*.json')))
+graphics = settings.get('graphics', {'provider': 'mesa'})
+if graphics['provider'] == 'nvidia-cdi':
+    for item in graphics['inputs']:
+        if sha(item['containerPath']) != item['sha256']:
+            raise RuntimeError('Injected NVIDIA CDI file differs from verified host input: ' + item['containerPath'])
+    environment['LD_LIBRARY_PATH'] = ':'.join(graphics['libraryDirectories'])
+    environment['GBM_BACKENDS_PATH'] = ':'.join(graphics['gbmBackendDirectories'])
+    environment['GBM_BACKEND'] = 'nvidia-drm'
+    environment['__EGL_VENDOR_LIBRARY_FILENAMES'] = ':'.join(graphics['eglVendorFiles'])
+    environment['VK_DRIVER_FILES'] = ':'.join(graphics['vulkanIcdFiles'])
+else:
+    environment.setdefault('LIBGL_DRIVERS_PATH', os.environ['WB_MESA'] + '/lib/dri')
+    environment.setdefault('GBM_BACKENDS_PATH', os.environ['WB_MESA'] + '/lib/gbm')
+    environment.setdefault('__EGL_VENDOR_LIBRARY_FILENAMES', ':'.join(str(path) for path in Path(os.environ['WB_MESA']).glob('share/glvnd/egl_vendor.d/*.json')))
+    environment.setdefault('VK_DRIVER_FILES', ':'.join(str(path) for path in Path(os.environ['WB_MESA']).glob('share/vulkan/icd.d/*.json')))
 with (state / 'qemu.log').open('a') as log:
     vm = subprocess.Popen(command, env=environment, stdout=log, stderr=log)
     children.append(vm)
@@ -147,6 +193,9 @@ with (state / 'qemu.log').open('a') as log:
             if vm.poll() is not None:
                 raise RuntimeError('QEMU exited: inspect qemu.log')
             if qmp.exists():
+                if os.geteuid() == 0:
+                    os.chown(qmp, state_owner.st_uid, state_owner.st_gid)
+                    qmp.chmod(0o600)
                 with socket.socket(socket.AF_UNIX) as client:
                     client.connect(str(qmp))
                     stream = client.makefile('rwb')
@@ -200,6 +249,24 @@ with (state / 'qemu.log').open('a') as log:
         images += [{'path': path, 'sha256': sha(path)} for path in selected]
         if any(expected.get(item['path']) != item['sha256'] for item in images):
             raise RuntimeError('Loaded executable/renderer/modules differ from the artifact manifest')
+        graphics_observation = {'provider': graphics['provider'], 'renderNode': settings['renderNode']}
+        if graphics['provider'] == 'nvidia-cdi':
+            # External driver provenance is observed independently of the
+            # immutable Nix QEMU/renderer output. No requested version is assumed.
+            all_mapped = sorted({line.split()[-1] for line in (Path('/proc') / str(vm.pid) / 'maps').read_text().splitlines()
+                                 if len(line.split()) >= 6 and line.split()[-1].startswith('/')})
+            # NVIDIA also mmaps /dev/nvidia* character devices. Only mapped
+            # regular library files are executable driver-image evidence.
+            driver_images = [{'path': path, 'sha256': sha(path)} for path in all_mapped
+                             if 'nvidia' in Path(path).name and Path(path).is_file()]
+            driver_expected = {str(Path(item['containerPath']).resolve()): item['sha256'] for item in graphics['inputs']}
+            if not any('libEGL_nvidia' in item['path'] for item in driver_images):
+                raise RuntimeError('QEMU has not loaded NVIDIA EGL')
+            if any(driver_expected.get(str(Path(item['path']).resolve())) != item['sha256'] for item in driver_images):
+                raise RuntimeError('Loaded NVIDIA images differ from verified CDI inputs')
+            graphics_observation.update(cdiDevice=graphics['cdiDevice'], specSha256=graphics['spec']['sha256'],
+                                        driverImages=driver_images, driverInputsMatch=True)
+        identity['graphics'] = graphics_observation
         identity.update(state='running', loaded=True, images=images)
         save(state / 'host-observation.json', identity)
         code = vm.wait()
@@ -209,10 +276,5 @@ with (state / 'qemu.log').open('a') as log:
         code = 1
     finally:
         save(state / 'host-observation.json', identity)
-        stop(None, None)
-        for child in children:
-            try:
-                child.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                child.kill(); child.wait()
+        cleanup()
     raise SystemExit(code)
