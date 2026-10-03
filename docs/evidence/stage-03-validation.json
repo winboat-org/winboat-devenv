@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "timestamp": "2026-10-03T00:38:05.900262+00:00",
+  "scope": "Stage 3 current-host acceptance passed, including unmodified blank-disk creation",
+  "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+  "tests": {
+    "devenvTest": "passed after final native payload repairs, 25 integration and 10 devbox tests",
+    "integrationTests": 25,
+    "devboxBoundaryTests": 10,
+    "windowsPayloadParsing": "passed after final repairs, six PowerShell files and all 14 locked install/probe pairs",
+    "mcpAdvertisedTools": 32,
+    "integerIndexProxy": "passed with index 1, CLI missing-media code 2; fractional index rejected in integration test",
+    "transientShellEntry": "A concurrent devenv entry reported a missing .devenv/load-exports during cleanup; later serialized shell entries and syntax checks passed."
+  },
+  "runtime": {
+    "kind": "rootless-podman",
+    "version": "5.8.6",
+    "storage": "workspace-local-vfs",
+    "docker": "socket permission denied; no host configuration changed",
+    "gpu": "Intel Mesa EGL; proprietary GPU integration unvalidated"
+  },
+  "iso": {
+    "sha256": "157d8365a517c40afeb3106fdd74d0836e1025debbc343f2080e1a8687607f51",
+    "edition": "EnterpriseS",
+    "index": 1,
+    "architecture": "amd64",
+    "locale": "en-US",
+    "build": "26100"
+  },
+  "hostArtifact": {
+    "manifest": "out/native/op-b7503c95e1ce4032b9114f59d6c958f3/manifest.json",
+    "sha256": "02ae3e7a900c01899e9a948d0b8cab2456e9aae26eb2b3837d2d36412dca6e19",
+    "closurePaths": 431
+  },
+  "jobs": {
+    "hostStartup": {
+      "id": "op-593999be5c4c4cba964be9d83a1e3d05",
+      "state": "succeeded"
+    },
+    "reconnectedQmp": {
+      "id": "op-00a4221b8304493691f1a92c029915f8",
+      "state": "succeeded"
+    },
+    "initialBoot": {
+      "id": "op-3fc8e56b99464e478983ce7ca59075a6",
+      "state": "succeeded"
+    },
+    "secureFirmware": {
+      "id": "op-f661254e3426426daccc08e4a396e6d2",
+      "state": "succeeded"
+    },
+    "diskOrderRetry": {
+      "id": "op-3deb5f6f37a24546bab6e7e49c9ba6ec",
+      "state": "succeeded"
+    },
+    "oobeLocaleRetry": {
+      "id": "op-1da8ccbc58694284bb3f80cdae692d94",
+      "state": "succeeded"
+    },
+    "cleanShutdown": {
+      "id": "op-0343a1269e594ba593d7615d1ae9f1b1",
+      "state": "succeeded"
+    },
+    "identityRetry": {
+      "id": "op-26bbb83a6359422e9675c27376e6dad0",
+      "state": "succeeded"
+    },
+    "oobeCleanShutdown": {
+      "id": "op-d3561a9e514f4168b6e9cd7ed02189d6",
+      "state": "succeeded"
+    }
+  },
+  "observedHostImages": [
+    {
+      "path": "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/bin/qemu-system-x86_64",
+      "sha256": "2e5b1ea9eeb4cd67ac5c02a3913da2166bc254e2bfcd334e35084593e3292f03"
+    },
+    {
+      "path": "/nix/store/0kid75j28bj7mfgaf3cnny1pis1yrzfg-helios-virglrenderer-1.3.0/lib/libvirglrenderer.so.1.11.0",
+      "sha256": "fe3eaa4bbcf497721a3bd0a92cf558bf9feaec26475b8794a442930922d52a51"
+    },
+    {
+      "path": "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-gpu-gl.so",
+      "sha256": "4561a01b4d130ef768906a971a59f935a93de7480ed8b5f543eee36f21e443d3"
+    },
+    {
+      "path": "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-gpu.so",
+      "sha256": "45a9bd785ef3f2b391ec5668eb8c2f52017eb859566ea4ab9aa7a1f5a78a4211"
+    },
+    {
+      "path": "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-vga-gl.so",
+      "sha256": "30f8af55617690ca86e9896e2d0f960f3f42535958577ac519ad12706f6810cc"
+    },
+    {
+      "path": "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/lib/qemu/hw-display-virtio-vga.so",
+      "sha256": "06d9b4548eefa6398b991375e4f8bdf4f7050b3cde8875fa61ee8d467496f354"
+    },
+    {
+      "path": "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/lib/qemu/ui-egl-headless.so",
+      "sha256": "f313a93d3df8361050ca2a2923d5878616476acde1ee74a3d118a9c54f5c42c8"
+    },
+    {
+      "path": "/nix/store/p7lh1gdg5v45klrv5yhl9jynac0fg2jd-qemu-helios-11.1.1/lib/qemu/ui-opengl.so",
+      "sha256": "25696a43d52420147a784ae869142e538ad7910149ee975945e0db4e585afaa4"
+    }
+  ],
+  "secureFirmwareImage": {
+    "id": "ecae15b11c54bb33b74aed22f43489d2cf8412a4676574f6e77b576505347cf4",
+    "archiveSha256": "2c6c9e4fac27add85e3d2e750e4551550f364fb33f4ff759fdddd30ab97447ec",
+    "output": "/nix/store/i2f2xqb8cngvr577mnmfkx1rpayi2wby-winboat-devbox.tar.gz",
+    "derivation": "/nix/store/3hmhrvwz9ycvscv8lpj703jw59g90dkx-winboat-devbox.tar.gz.drv",
+    "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "hostStack": "/nix/store/6hijgp1wvqyq7vp5j46q8lih7kz672h6-winboat-host-stack",
+    "manifestSha256": "02ae3e7a900c01899e9a948d0b8cab2456e9aae26eb2b3837d2d36412dca6e19"
+  },
+  "portsDisjointAtCreation": true,
+  "viewer": {
+    "backend": "TigerVNC 1.16.2",
+    "cycles": 2,
+    "rfbNegotiation": "3.8, None security, loopback-only host publication",
+    "longGuestJobSurvival": "passed, same PID through two viewer cycles; complete tick 12, stage-03-viewer-job.json",
+    "evidence": "stage-03-viewer-job.json"
+  },
+  "windows": {
+    "nonSecureFirmware": "Setup rejected system requirements",
+    "secureCapableFirmware": "Passed requirement gate; partition modification Order gap caused 0x8007000d, corrected fresh guest reached installation and OOBE",
+    "installed": true,
+    "verified": true,
+    "sshAuthentication": "passed on development, pinned host key/client key; observed actual sshd image hash/version",
+    "signedDriverLoad": "passed after actual signing reboot; valid signature/certificate, inventory/file hash match and CIM Running",
+    "mirrorAndLocalBuild": "passed on development, guarded local mirror/MSVC signing and SFTP hash return",
+    "downloadInstallRebootResume": "copy/install interruptions passed on earlier owned guests; final guest automatically resumed after two reboots, zero failures",
+    "oobeLocale": "Explicit oobeSystem locale; fresh stage03-oobe passed OOBE and logged in as wbdev without interactive installation",
+    "osInstalledToOobe": true,
+    "installedMeaning": "complete development baseline, distinct from OS reaching OOBE",
+    "osInstalledUnattended": true,
+    "network": "QMP usernet observed guest 10.0.2.15 established outbound HTTP/HTTPS and DNS",
+    "diagnosticScope": "Read-only setup/OOBE captures established unattended desktop before subsequent manual diagnostic console interaction",
+    "identityFailure": {
+      "computerName": "W-",
+      "observedBy": "elevated diagnostic console hostname and Format-Hex (57 2D)",
+      "phase": "failed",
+      "error": "Guest identity or lock schema mismatch",
+      "installedToolCount": 0
+    },
+    "identityRetry": "WB-DEVBOX and post-identity/post-signing wbdev interactive desktop verified",
+    "baselineEvidence": "stage-03-windows-acceptance.json"
+  },
+  "provisioningLock": {
+    "sha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+    "locked": [
+      "openssh",
+      "vs-build-tools",
+      "windows-sdk",
+      "windows-wdk",
+      "llvm",
+      "git",
+      "powershell",
+      "python",
+      "rust",
+      "cargo-make",
+      "rust-script",
+      "meson",
+      "ninja",
+      "vulkan-sdk"
+    ],
+    "pending": [],
+    "payloadCacheEvidence": "stage-03-complete-payload-cache.json"
+  },
+  "retainedFailures": [
+    "initial UDF read through xorriso corrected with locked 7-Zip",
+    "image fake NSS immutable passwd append corrected with declared NSS override",
+    "Podman local archive policy supplied and command flag corrected",
+    "Mesa GBM backend directory declared explicitly",
+    "QMP stream lifetime corrected and reconnection exercised",
+    "Windows non-secure firmware requirement failure",
+    "VS catalog SHA-256 mismatch",
+    "LunarG checksum/installer HTTP 403",
+    "unattended disk modification Order 1,3 rejected with 0x8007000d; corrected to consecutive 1,2 for partitions 1,3",
+    "first-run region prompt exposed missing oobeSystem International-Core locale; added and fresh retry",
+    "Setup-produced computer name W- disagreed with WB-DEVBOX; task failed before installing tools; durable identity correction and fresh retry added",
+    "SYSTEM native GUI installer LASTEXITCODE was unset; switched to Start-Process Wait/PassThru exit code",
+    "pip rejected hash-prefixed wheel filename; copied payloads into hash directories preserving publisher filename",
+    "minimal Samba container lacked ncalrpc runtime directory; declared state paths and required listening service before QEMU",
+    "SMB unqualified wbdev failed with error 1312; explicit WORKGROUP\\wbdev authenticated in diagnostic compatibility probe",
+    "Windows PowerShell 5.1 ambiguous String.Split overload; regex path segmentation applied",
+    "CD ReadOnly attribute retained in private layouts; cleared before Rust manifest relocation",
+    "PowerShell state reader held destination without delete-sharing; atomic File.Replace with bounded sharing retry verified by exact reproduced failure",
+    "SYSTEM Python HTTP server needed redirected standard handles; native diagnostic logs added",
+    "Rust distribution origin incorrectly included /dist, causing /dist/dist 404; corrected and installed dated compiler/targets/rust-src",
+    "cargo-make version probe requires make subcommand; single-item PowerShell argument array forced to string[] for rust-script",
+    "matched WDK shared ntdef.h includes ctype.h; added matched UCRT includes to local fixture build",
+    "protected ProgramData parent is hidden; fixture reparse guard uses Get-Item -Force",
+    "CIM loaded kernel driver path has NT object-manager prefix; normalize prefix and retain native and resolved paths",
+    "SYSTEM Z: link visible after reboot without SSH-session SMB credentials; authenticate exact workspace UNC in mirror caller",
+    "verified guest ACPI shutdown timed out and was preserved; forced stop and guarded task-owned destroy recorded",
+    "Unmodified first-repeat cargo helper lacked CRT due to stale SYSTEM-process PATH; native DLL-missing exit reproduced, machine PATH refresh added before subsequent tools; final cold creation passed"
+  ],
+  "implementationCommit": "20ae009",
+  "namedState": {
+    "stage03": {
+      "identity": "ebd821fe845b485d8515545227cdef80",
+      "ports": {
+        "ssh": 33179,
+        "viewer": 41725
+      },
+      "provisioningPhase": "booting",
+      "hostState": "historical stopped"
+    },
+    "stage03-complete": {
+      "identity": "4c6923aacf28423da202d7c9305c6c6d",
+      "ports": {
+        "ssh": 42865,
+        "viewer": 54655
+      },
+      "provisioningPhase": "copy-payload",
+      "hostState": "container removed, diagnostic disk preserved"
+    },
+    "stage03-fixed": {
+      "identity": "38bf0f549bb6480496b3ac9874a337ab",
+      "ports": {
+        "ssh": 57341,
+        "viewer": 45849
+      },
+      "provisioningPhase": "booting",
+      "hostState": "historical stopped"
+    },
+    "stage03-identity": {
+      "identity": "5a235d55e69044da9e02dba5ae880dd7",
+      "ports": {
+        "ssh": 54065,
+        "viewer": 50871
+      },
+      "provisioningPhase": "booting",
+      "hostState": "historical stopped"
+    },
+    "stage03-live": {
+      "identity": "5f213124feb04bba81bf346749661cb2",
+      "ports": {
+        "ssh": 56433,
+        "viewer": 36469
+      },
+      "provisioningPhase": "booting",
+      "hostState": "historical stopped"
+    },
+    "stage03-native": {
+      "identity": "3ba2c1328c37488d8cd69cf9d78bba36",
+      "ports": {
+        "ssh": 56825,
+        "viewer": 47755
+      },
+      "provisioningPhase": "booting",
+      "hostState": "historical stopped"
+    },
+    "stage03-offline": {
+      "identity": "e773555c35f34501bfabd3a0e4b27056",
+      "ports": {
+        "ssh": 39239,
+        "viewer": 52765
+      },
+      "provisioningPhase": "booting",
+      "hostState": "container removed, diagnostic disk preserved"
+    },
+    "stage03-oobe": {
+      "identity": "12812887a4a740d1a56f6143aba82c64",
+      "ports": {
+        "ssh": 43313,
+        "viewer": 43159
+      },
+      "provisioningPhase": "booting",
+      "hostState": "historical stopped"
+    },
+    "stage03-setup": {
+      "identity": "263d046ae3584543807f2a1b1db8bb67",
+      "ports": {
+        "ssh": 46543,
+        "viewer": 37063
+      },
+      "provisioningPhase": "booting",
+      "hostState": "historical stopped"
+    },
+    "development": {
+      "identity": "9a579891fb1244e1b3fe348f702809ff",
+      "ports": {
+        "ssh": 49897,
+        "viewer": 40733
+      },
+      "hostState": "running",
+      "loaded": true,
+      "provisioningPhase": "verified"
+    }
+  },
+  "latestImage": {
+    "id": "b0981b821da8ca968c979b988189fb124561116451375394e27e9f21b8c9b596",
+    "archiveSha256": "5333903aded47ad83f2f7adcfd87b8ea52af6738f84793b9118d1f3ae4852674",
+    "output": "/nix/store/15isszssps5pb73qv1ms0in8f60wlqp1-winboat-devbox.tar.gz",
+    "derivation": "/nix/store/2gjkdpfc7a3z08v7h5c48rfgd57wya75-winboat-devbox.tar.gz.drv",
+    "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+    "hostStack": "/nix/store/6hijgp1wvqyq7vp5j46q8lih7kz672h6-winboat-host-stack",
+    "manifestSha256": "02ae3e7a900c01899e9a948d0b8cab2456e9aae26eb2b3837d2d36412dca6e19"
+  },
+  "nativeRetry": {
+    "devbox": "stage03-native",
+    "observedComputerName": "WB-DEVBOX",
+    "retries": 2,
+    "rebootCount": 1,
+    "failedTool": "meson",
+    "error": "Python installer command exited 1; hash-prefixed wheel filename diagnosed and fixed",
+    "captureSha256": "89a4ffbcb9bab717a8c6b62a4648558e331d9ab7c681e2bdf510b791b8412617",
+    "scope": "Post-unattended-install diagnostic console; not a complete baseline or SSH acceptance"
+  },
+  "freshCreation": {
+    "name": "stage03-complete",
+    "jobId": "op-92badc4c63fc46c8b7b09b19a6450861",
+    "state": "historical container removed, diagnostic disk preserved",
+    "blankDisk": true,
+    "preparedPayloadsMatchRepository": true,
+    "priorContainerRemoval": "stage-03-container-removal.json",
+    "guestAcceptance": "pending"
+  },
+  "autologinEvidence": "stage-03-autologin.json",
+  "finalCreation": {
+    "name": "stage03-final",
+    "jobId": "op-fbbfb941a4f14734b5a62ed9f4a4003f",
+    "state": "repaired baseline verified, task-owned guest destroyed",
+    "containerRemovalEvidence": "stage-03-final-container-removal.json",
+    "guestAcceptance": "verified after hash-checked shared payload repairs; task-owned guest subsequently destroyed",
+    "destroyEvidence": "stage-03-clean-e2e.json"
+  },
+  "unmodifiedCreation": {
+    "name": "development",
+    "jobId": "op-1eacd1972e4748f684b4a18b296f5e0a",
+    "state": "verified",
+    "evidence": "stage-03-clean-e2e.json",
+    "identity": "9a579891fb1244e1b3fe348f702809ff",
+    "ports": {
+      "ssh": 49897,
+      "viewer": 40733
+    },
+    "loaded": true,
+    "preparedPayloadsMatchRepository": true,
+    "repairUploads": 0
+  },
+  "isolationEvidence": "stage-03-isolation.json",
+  "relocationEvidence": "stage-03-relocation.json",
+  "mirrorEvidence": "stage-03-mirror-build.json",
+  "nativePathEvidence": "stage-03-native-path.json"
+}

@@ -1,13 +1,18 @@
 # Stage 3 — Headless Windows development container
 
-Status: planned. Prerequisite: Stage 2's host QEMU/renderer outputs.
+Status: current-host acceptance passed. Unmodified blank-disk creation, automatic
+desktop login, exact-closure image import, all 14 installed tools, signing
+reboot/driver load and local mirror build/hash-return checks passed. Another OS
+user/host and proprietary GPU integration remain unvalidated. See
+[usage](../devbox.md) and [validation](../validation.md).
+Prerequisite: Stage 2's host QEMU/renderer outputs.
 
 ## Outcome
 
 One command provisions a headless Windows VM in a pinned container from the
 user's ISO. It has deterministic guest identity, the locked development tools,
-test signing, SSH, the workspace share/local mirror, recoverable provisioning
-and an optional attachable viewer.
+test signing, SSH, the workspace share/local mirror, recoverable provisioning,
+automatic desktop login and an optional attachable viewer.
 
 ## Implementation
 
@@ -24,6 +29,10 @@ and an optional attachable viewer.
    keys and credentials. Use the initial **virtio-vga-gl** device, persistent
    disk/NVRAM/TPM state, Nix-supplied firmware and headless display/networking.
    Windows media/images remain ignored local inputs.
+   Persist automatic `wbdev` login across later identity/signing reboots using
+   the Winlogon LSA secret, remove the initial count limit/plaintext registry
+   password and prevent generated account password expiry. Verify the actual
+   interactive user/session after reboot; provisioning belongs to SYSTEM.
 3. Track provisioning phases, durable task IDs, retries, reboot count and
    failure evidence. Interrupt/reconnect must resume the known phase; never
    overwrite an existing guest disk on retry. Implement `create`, `up`, `down`,
@@ -67,8 +76,9 @@ and an optional attachable viewer.
 ## Acceptance
 
 With supplied media, create a fresh guest without interactive installation.
-Verify guest identity, SSH key authentication, installed SDK/WDK/compiler/tool
-versions, effective test signing after reboot, signed-driver load and fork QEMU
+Verify guest identity, post-reboot desktop autologin, SSH key authentication,
+installed SDK/WDK/compiler/tool versions, effective test signing after reboot,
+signed-driver load and fork QEMU
 identity. A missing ISO leaves this live gate pending rather than accepted.
 
 Mirror a small workspace fixture, build on local Windows disk, return a

@@ -7,10 +7,12 @@
 | [Repositories](repositories.md) | Inventory, subsets, pins, fork and submodule policy |
 | [Workspace control plane](workspace.md) | Setup, sync, scoped publication, forks and durable MCP jobs |
 | [Builds](builds.md) | Native/cross targets, Windows dispatch and immutable artifact contracts |
+| [Devbox](devbox.md) | Persistent container/VM lifecycle, media, image identities, provisioning and viewer |
 | [Stages](stages/README.md) | Sequenced implementation and acceptance gates |
 | [Stage 1 handoff](handoffs/stage-01.md) | Original implementation prompt |
 | [Stage 2 handoff](handoffs/stage-02.md) | Original build implementation prompt |
 | [Stage 3 handoff](handoffs/stage-03.md) | Next-session devbox implementation prompt |
+| [Stage 4 handoff](handoffs/stage-04.md) | Windows component builds, durable installation and loaded inventory |
 | [Reference audit](reference-audit.md) | Existing tooling and evidence to preserve |
 | [Validation](validation.md) | Workspace acceptance evidence and remaining limitations |
 | [Personal docs](user/README.md) | Ignored machine notes |

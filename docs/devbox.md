@@ -1,8 +1,8 @@
 # Windows devbox
 
 Stage 3 supplies the shared CLI/MCP lifecycle, a Nix-built container image and
-Windows provisioning payloads. Host container/QEMU acceptance is measured;
-complete unattended Windows/tool/signing/mirror acceptance remains pending.
+Windows provisioning payloads. Current-host blank-disk creation, automatic desktop
+login and container/QEMU/tool/signing/mirror checks passed.
 Consult [validation](validation.md) and the [provisioning lock](../config/provision.lock.json)
 before treating a guest as ready for Stage 4.
 
@@ -12,7 +12,9 @@ Rust distribution and targets, cargo helpers, Git, OpenSSH, PowerShell, Python,
 Meson, Ninja and the Vulkan core installer. It exposes these immutable files
 through an authenticated read-only tools share. The Windows SYSTEM task copies
 each input to local disk, rechecks its hash, installs it and probes its actual
-version. No guest tool acquisition is deferred to winget or a mutable channel.
+version. The running task refreshes the machine `PATH` before each next tool,
+so newly installed dependencies are available in the same provisioning run.
+No guest tool acquisition is deferred to winget or a mutable channel.
 
 The EWDK is expanded in full at `C:\WinBoatDev\tools\EWDK`, including its
 licenses and build environment. `WINBOAT_EWDK_ROOT` and `WINBOAT_VS_ROOT` identify
@@ -85,12 +87,17 @@ boot and automatic boot-key delivery; later starts use the persistent disk.
 Windows phase/retry/reboot state lives under `%ProgramData%\WinBoatDev\` and a
 SYSTEM scheduled task continues across logouts/reboots. It checks the actual
 CIM computer name and corrects/reboots a Setup identity mismatch with bounded
-retries before installing tools. Live interruption at
-download/install/reboot boundaries is still an acceptance gate.
+retries before installing tools. Live cache-copy and EWDK install interruptions
+preserved identity/keys and resumed; the signing reboot reached a running signed
+driver. An EWDK completion marker is written only after full extraction, so a
+partial compiler tree cannot pass its probe. Native process logs and earlier
+failure records are retained; state replacement retries concurrent reader locks.
 The `wbdev` desktop logs in automatically after each boot, including identity
 and signing reboots. Bootstrap stores its generated password in the Windows LSA
 secret used by Winlogon, removes the initial login-count limit and plaintext
 Winlogon password, and updates the login domain when the computer is renamed.
+The generated local account password does not expire, so automatic login and
+its private SMB credential remain usable across later boots.
 Provisioning still runs in its durable SYSTEM task independently of the desktop.
 Hybrid shutdown is disabled so startup-task recovery gets a full boot. Cache
 connection attempts are bounded while the guest network starts. SMB credentials
@@ -111,8 +118,11 @@ mount. The Windows mirror helper guards source/destination boundaries and its
 ownership marker, excludes secrets/output/junction paths, limits robocopy retries,
 accepts statuses 0–7 and verifies each returned file against its shared source.
 Source snapshot/diff identities and local Cargo/build roots are retained in its
-receipt. Live SMB/mirror/local-build/hash-return checks remain pending; Stage 4
-must bind source identities and execute builds in durable elevated tasks.
+receipt. The mirror authenticates the workspace UNC in the caller's logon session;
+SYSTEM's visible `Z:` link alone does not provide SSH-session credentials. The
+live fixture was mirrored, compiled/signed on local Windows disk and returned by
+SFTP with matching hashes. Stage 4 must bind component source identities and
+execute component builds in durable elevated tasks.
 
 The attachable fallback is the locked **TigerVNC** client against QEMU's VNC
 transport and EGL headless backend. It is a separate process. Closing it leaves

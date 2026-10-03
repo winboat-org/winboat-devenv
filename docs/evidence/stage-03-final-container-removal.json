@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "name": "stage03-complete",
+  "identity": "4c6923aacf28423da202d7c9305c6c6d",
+  "containerId": "b6c39bb717c0b0059d49645d54fcf8dc98b3903a4f0d6b5e8cacb8db187c854b",
+  "containerRemoved": true,
+  "diskPreserved": true,
+  "observed": "2026-10-02T21:44:41.301128+00:00",
+  "cleanShutdownJobId": "op-6e1eecc14500414db7e1890e4951343f",
+  "cleanShutdown": "timed out; VM preserved running",
+  "forcedShutdownJobId": "op-aaa5b0a171e0499eb66e953bb28b8b9f",
+  "purpose": "Fresh creation using final autologin and complete-layout resume payloads",
+  "freshCreation": {
+    "name": "stage03-final",
+    "jobId": "op-fbbfb941a4f14734b5a62ed9f4a4003f",
+    "state": "succeeded",
+    "blankDisk": true,
+    "guestAcceptance": "pending"
+  }
+}

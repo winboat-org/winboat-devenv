@@ -39,8 +39,8 @@ Interactive entry/exit behavior across all shells is not claimed as validated.
 Source reachability and clean synchronization establish a reproducible source
 snapshot, not component/build/graphics compatibility. Stage 1 compiled no component,
 provisioned no Windows guest, and attempted no organization push or GitHub fork
-creation. Those remain outside Stage 1. The next work is the
-[Stage 3 handoff](handoffs/stage-03.md), following the Stage 2 checks below.
+creation. Those remain outside Stage 1. The implementation stages and their
+distinct acceptance scopes are recorded below.
 
 ## Stage 2 native/cross builds
 
@@ -85,3 +85,74 @@ shader fetch was DXVK's declared nested SPIR-V header gitlink. Six new recipe
 commits and matching parent/pins are local-only; exact checks use ignored local
 remote overrides. Canonical reachability remains pending publication. Component
 CI, release bundles and guest installs were not attempted.
+
+
+## Stage 3 devbox, current-host acceptance passed
+
+The shared CLI/MCP lifecycle, Nix-built exact-closure image and Windows payloads
+are implemented. [Stage 3 evidence](evidence/stage-03-validation.json) records
+live identities and retained failures; [usage](devbox.md) describes the commands.
+The finalized payloads passed unmodified blank-disk creation on this host, with
+zero provisioning failures or repair uploads. The task resumed automatically
+after identity and signing reboots and reached `verified` with all 14 tools.
+Another OS user/host and proprietary GPU integration remain unvalidated.
+
+| Check | Result | What it establishes |
+| --- | --- | --- |
+| Supplied ISO inspection | Passed | SHA-256 verified; actual WIM metadata selects amd64 en-US EnterpriseS LTSC 2024, image 1, build 26100 |
+| Runtime/device discovery | Passed on rootless Podman | Workspace-local VFS state, accessible KVM and selected Intel render node; Docker socket access failed, proprietary GPU integration unvalidated |
+| Exact container closure | Passed | Image built/imported from the manifest-selected Stage 2 output; all 431 closure NAR identities checked, licenses/symbols retained |
+| Actual host images | Passed | `/proc` executable plus seven renderer/GL module images match exact manifest paths/hashes; QMP works after reconnect |
+| Initial Windows boot | Retained failure, corrected and retried | Non-secure firmware failed requirements; secure-capable firmware passed; a nonconsecutive partition modification order failed, then corrected fresh setup advanced automatically into installation; missing OOBE locale then exposed the region prompt, corrected fresh retry passed OOBE and reached wbdev desktop unattended |
+| Guest identity/autologin | Passed after identity and signing reboots | Actual CIM name WB-DEVBOX; interactive wbdev session/explorer; LSA secret, no plaintext Winlogon password or count limit; account password does not expire |
+| Guest network/SSH | Key authentication passed | Pinned guest host key, password authentication disabled; actual sshd executable/hash, durable inventory and SFTP artifact return observed on development |
+| Separate viewer | Two attach/close cycles and long job passed | TigerVNC 1.16.2; same QEMU/container and SYSTEM guest-task PID survived; task completed tick 12 |
+| Separate named state/ports | Passed with two concurrent VMs | Distinct container identities and four ports, both loaded fork QEMU instances; second guest retained an earlier partial tool lock and shut down cleanly |
+| `devenv test` | Passed, 25 integration plus 10 devbox tests | CLI/MCP types/parity, ownership/destroy refusal, relocated state, port collisions and creation resume preserving disk/keys |
+| Windows payload parsing | Passed, six PowerShell payloads | Also parses all 14 locked install/probe pairs; Linux parser validation only; not installed-tool, signing, mirror or Windows execution acceptance |
+| Provision input lock | All 14 tools locked | Publisher files, complete SDK/WDK layouts, self-contained EWDK, dated Rust archives, cargo helpers and Vulkan core installer; these are not installed-version evidence |
+| Installed tools | All 14 verified | SDK/WDK kit directories 10.0.26100.0 with separate QFE bundle identities, EWDK VS 17.14.5/MSVC 14.44.35207, dated Rust/targets/rust-src, remaining locked tools including Vulkan 1.4.350.0 |
+| Test signing/driver load | Passed after actual reboot | Secure Boot false, HVCI services [0], effective BCD TESTSIGNING Yes, expected signing certificate and fixture hash, CIM driver Running with normalized NT path |
+| Mirror/local build/return | Passed | Seven source files and snapshot/diff identities checked; secret/output exclusions and unowned-destination refusal; MSVC builds/signs on C: and SFTP output SHA-256 matches |
+| Interruption/recovery | Passed at copy/install/reboot boundaries | Identity/disk/SSH keys preserved through copy interruption; partial EWDK fails probe until full extraction marker; signing reboot resumes to verified baseline |
+| Final blank-disk repeat | Passed | Owned test container/disk removed; development reached verified using finalized Nix payloads, zero failures/repair uploads, two automated reboots and post-signing wbdev desktop login |
+| Live relocation/username | Passed within measured scope | Root with spaces, alternate USER/LOGNAME and explicit external roots controlled the same VM/SSH; actual OS UID and another host remain unvalidated |
+
+The [input evidence](evidence/stage-03-provision-inputs.json) and provisioning
+lock record all 14 tools. Nix fetches every payload by its fixed SHA-256 before
+building the image; Windows copies and rechecks the local cache before install.
+Complete SDK/WDK external layouts were checked against their embedded publisher
+hashes. The [EWDK ISO](evidence/stage-03-ewdk-input.json) supplies VS 2022/MSVC
+and x86/x64 Spectre libraries with its complete license/layout. The
+[Vulkan installer](evidence/stage-03-vulkan-input.json) matches LunarG's published
+checksum and passed a Nix fetch with a standard Wget user agent. Only its offline
+core is requested. Rust uses its dated distribution archives through a guest
+loopback server; cargo helpers use pinned publisher binaries with licenses.
+
+[Earlier acquisition evidence](evidence/stage-03-remaining-inputs.json) retains
+the refused VS catalog hash mismatch and original LunarG HTTP 403 responses.
+Those acquisition failures are resolved by the verified inputs above. A complete
+input lock is separate from [observed installation and driver load](evidence/stage-03-windows-acceptance.json).
+
+[Autologin](evidence/stage-03-autologin.json), [mirror/build](evidence/stage-03-mirror-build.json),
+[copy recovery](evidence/stage-03-copy-resume.json), [install recovery](evidence/stage-03-install-resume.json),
+[state sharing race](evidence/stage-03-state-race.json), [relocation](evidence/stage-03-relocation.json)
+and [concurrent isolation](evidence/stage-03-isolation.json) retain measured receipts.
+The [final recreation](evidence/stage-03-clean-e2e.json) records the bounded ACPI
+shutdown timeout, forced stop and guarded deletion of only the task-owned guest.
+That failure was preserved rather than reported as a clean shutdown. The earlier
+copy-interruption guest and the second concurrent guest did shut down cleanly.
+The first unmodified repeat exposed a stale SYSTEM-task `PATH`: the cargo helper
+could not load Python's bundled C runtime. [The native reproduction](evidence/stage-03-native-path.json)
+records loader exit -1073741515 and a passing version probe after refreshing the
+machine path. The shared payload refreshes it before each next tool; the final
+blank-disk guest passed first-install cargo helper probes with that correction.
+
+Guest media, disks, credentials, payload snapshots, private machine settings and
+failure logs remain ignored. Existing devboxes retain their prepared lock;
+repository lock edits do not silently migrate a guest. Test devboxes and external
+reference VMs were kept separate; only the explicitly recreated test guest's
+generated disk was removed. No host package/group/daemon/bridge changes,
+managed-source changes, component/installer CI, migration removals or pushes
+were performed. [The Stage 4 handoff](handoffs/stage-04.md) records the measured
+baseline and the remaining component-build and fresh-host limits.

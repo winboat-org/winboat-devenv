@@ -6,8 +6,12 @@ subsets and selected submodules. `pins.nix` owns source object IDs and provenanc
 
 `dev-shell.nix` declares the locked tools, shell-scoped Git wrapper and validation
 commands. `commands/repos.nix` packages the shared Python `wb` operations and
-absolute Git/Node/devenv executables. The Node stdio proxy invokes that same
-application. `wb-pins` reads current pin data through `wb repo list`; the static
+absolute Git/Node/devenv executables. `devbox.nix` imports the exact Stage 2
+closure into a container; `scripts/devbox-run.py` owns its runtime entry point
+and `windows/` owns provisioning/mirror/signing payloads. The Node stdio proxy
+invokes that same application. Windows autologin, offline install/probe operations, state recovery
+and local fixture builds are shared payloads rather than MCP implementations.
+`wb-pins` reads current pin data through `wb repo list`; the static
 manifest supplies canonical inventory and dependency edges. Stage 2 adds component
 adapters and outputs; Stage 3 adds the devbox module. Avoid placeholder build
 derivations that report success without an artifact.

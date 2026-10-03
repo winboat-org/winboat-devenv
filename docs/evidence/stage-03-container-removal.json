@@ -5,5 +5,13 @@
   "containerRemoved": true,
   "diskPreserved": true,
   "imagePreserved": "/nix/store/biffbbim863w597zi9pa4gyin4pnf8yp-winboat-devbox.tar.gz",
-  "authorization": "User requested container destruction before fresh end-to-end devbox creation."
+  "authorization": "User requested container destruction before fresh end-to-end devbox creation.",
+  "freshCreation": {
+    "jobId": "op-92badc4c63fc46c8b7b09b19a6450861",
+    "state": "succeeded",
+    "name": "stage03-complete",
+    "containerId": "ed1b4a5a424b07b5f316e870a6b90f3a6a9c1faa3b59846e3959cf44a79b20c5",
+    "imageId": "b0981b821da8ca968c979b988189fb124561116451375394e27e9f21b8c9b596",
+    "guestAcceptance": "pending"
+  }
 }

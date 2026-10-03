@@ -5,11 +5,13 @@ and desktop dependencies. The target is one control plane usable by maintainers,
 CI, Claude Code, Codex and other MCP clients, with reproducible source/tool pins
 and a headless Windows development VM running the Helios QEMU fork.
 
-**Stages 1 and 2 are implemented for their native/cross acceptance scope:**
+**Stages 1–3 passed their measured native/cross and current-host devbox checks:**
 repository/MCP operations, six composable component recipes, isolated native
 graphics builds, a Windows DLL cross-build and immutable artifact manifests.
-Windows MSVC/WDK execution awaits Stage 4. WinBoat/Electron/CLVK adapters expose
-their remaining fixed dependency inputs; the Windows devbox is Stage 3.
+Component Windows MSVC/WDK builds await Stage 4. WinBoat/Electron/CLVK adapters expose
+their remaining fixed dependency inputs; the Windows devbox is Stage 3. Stage 3's
+host lifecycle, unmodified blank-disk creation, all 14 installed tools,
+post-reboot autologin, signing/driver load and local mirror build checks passed.
 
 ## Start here
 
@@ -45,11 +47,13 @@ build checks and the native Fish activation limitation for paths with spaces.
 ## Implementation
 
 The [stage index](docs/stages/README.md) lists dependencies, deliverables and
-acceptance gates. Continue with [the Stage 3 handoff](docs/handoffs/stage-03.md).
+acceptance gates. Continue with [the Stage 4 handoff](docs/handoffs/stage-04.md).
 [Workspace usage](docs/workspace.md) covers commands, publication recovery,
 forks and MCP jobs.
 [Build usage](docs/builds.md) covers target selection, source modes, guest
 dispatch plans and artifact/closure verification.
+[Devbox usage](docs/devbox.md) covers exact artifact selection, persistent state,
+the attachable VNC viewer, automatic desktop login and offline toolchain.
 [Architecture](docs/architecture.md) defines the shared CLI/MCP, devbox and
 artifact contracts. [Repository policy](docs/repositories.md) describes subsets,
 pins and the current nested layout.

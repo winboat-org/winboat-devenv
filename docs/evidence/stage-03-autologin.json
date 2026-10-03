@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "state": "configured",
-  "observed": "2026-10-02T21:45:49.136841+00:00",
+  "state": "verified-after-reboot",
+  "observed": "2026-10-02T21:52:45.321724+00:00",
   "configuredGuest": "stage03-complete",
   "transport": "strict-host-key authenticated SSH",
   "payloadSha256": "fe5d44a46f93185a2c8780dca8e31dd2c799e8de15b98d4e5cc1b9d9c55a39ac",
@@ -20,9 +20,99 @@
     "enabled": "1"
   },
   "freshGuest": "stage03-final",
-  "postRebootInteractiveLogin": "pending",
+  "postRebootInteractiveLogin": {
+    "registry": {
+      "username": "wbdev",
+      "countLimitPresent": false,
+      "domain": "WB-DEVBOX",
+      "plaintextPasswordPresent": false,
+      "enabled": "1"
+    },
+    "computerName": "WB-DEVBOX",
+    "explorer": [
+      {
+        "Id": 4820,
+        "SessionId": 1
+      }
+    ],
+    "interactiveUser": "WB-DEVBOX\\wbdev",
+    "bootTime": "2026-10-02T21:52:04.5000000Z"
+  },
   "validation": {
     "devenvTest": "passed, 25 integration and 10 devbox tests",
     "windowsPayloadParser": "passed, six PowerShell payloads and 14 locked install/probe pairs"
-  }
+  },
+  "freshCreationJobId": "op-fbbfb941a4f14734b5a62ed9f4a4003f",
+  "freshGuestPayloadSha256": "fe5d44a46f93185a2c8780dca8e31dd2c799e8de15b98d4e5cc1b9d9c55a39ac",
+  "passwordExpiryCorrection": {
+    "configuration": {
+      "username": "wbdev",
+      "passwordNeverExpires": true,
+      "domain": "WB-DEVBOX",
+      "passwordStorage": "lsa-secret",
+      "enabled": true
+    },
+    "beforeSha256": "fe5d44a46f93185a2c8780dca8e31dd2c799e8de15b98d4e5cc1b9d9c55a39ac",
+    "afterSha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+    "account": {
+      "Name": "wbdev",
+      "Enabled": true,
+      "PasswordExpires": null
+    }
+  },
+  "latestPayloadSha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+  "postSigningReboot": {
+    "account": [
+      {
+        "Name": "wbdev",
+        "Enabled": true,
+        "PasswordExpires": null
+      }
+    ],
+    "payloadSha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+    "explorer": [
+      {
+        "Id": 4940,
+        "SessionId": 1
+      }
+    ],
+    "registry": {
+      "username": "wbdev",
+      "countLimitPresent": false,
+      "domain": "WB-DEVBOX",
+      "plaintextPasswordPresent": false,
+      "enabled": "1"
+    },
+    "interactiveUser": "WB-DEVBOX\\wbdev",
+    "computerName": "WB-DEVBOX",
+    "bootTime": "2026-10-02T23:14:13.5000000Z"
+  },
+  "finalFreshGuest": "development",
+  "finalFreshCreationJobId": "op-1eacd1972e4748f684b4a18b296f5e0a",
+  "finalFreshPostSigningReboot": {
+    "account": [
+      {
+        "Name": "wbdev",
+        "Enabled": true,
+        "PasswordExpires": null
+      }
+    ],
+    "explorer": [
+      {
+        "Id": 5088,
+        "SessionId": 1
+      }
+    ],
+    "registry": {
+      "username": "wbdev",
+      "countLimitPresent": false,
+      "domain": "WB-DEVBOX",
+      "plaintextPasswordPresent": false,
+      "enabled": "1"
+    },
+    "interactiveUser": "WB-DEVBOX\\wbdev",
+    "computerName": "WB-DEVBOX",
+    "bootTime": "2026-10-03T00:33:39.5000000Z"
+  },
+  "finalFreshPayloadSha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24"
 }

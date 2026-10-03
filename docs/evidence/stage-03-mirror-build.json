@@ -1,0 +1,129 @@
+{
+  "mirror": {
+    "source": "\\\\10.0.2.2\\workspace\\nix\\windows",
+    "robocopyExitCode": 1,
+    "files": [
+      {
+        "path": "Autologin.ps1",
+        "sha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+        "size": 4212
+      },
+      {
+        "path": "Bootstrap.ps1",
+        "sha256": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+        "size": 1645
+      },
+      {
+        "path": "BuildFixture.ps1",
+        "sha256": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+        "size": 3279
+      },
+      {
+        "path": "Mirror.ps1",
+        "sha256": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+        "size": 4431
+      },
+      {
+        "path": "Provision.ps1",
+        "sha256": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+        "size": 16260
+      },
+      {
+        "path": "TestDriver.c",
+        "sha256": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+        "size": 346
+      },
+      {
+        "path": "Toolchain.ps1",
+        "sha256": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+        "size": 11282
+      }
+    ],
+    "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cargoTargetDirectory": "C:\\WinBoatDev\\build\\cargo\\stage03-mirror",
+    "destination": "C:\\WinBoatDev\\src\\stage03-mirror",
+    "buildRoot": "C:\\WinBoatDev\\build",
+    "name": "stage03-mirror",
+    "sourceSnapshotSha256": "f0b1d5ba7a8a9b7f83e27fd70798e691782e39b3c20a34b97e3d694ac0333780",
+    "schemaVersion": 1,
+    "observed": "2026-10-03T00:35:55.8319633Z"
+  },
+  "exclusions": {
+    "Z:\\.git": true,
+    "Z:\\.state": true,
+    "C:\\WinBoatDev\\src\\stage03-mirror\\build": true,
+    "Z:\\local.json": true,
+    "Z:\\nix\\windows\\stage03-acceptance.key": true,
+    "C:\\WinBoatDev\\src\\stage03-mirror\\stage03-acceptance.key": true,
+    "Z:\\docs\\user\\README.md": true,
+    "Z:\\nix\\windows\\build": true
+  },
+  "unownedGuard": {
+    "refused": true,
+    "originalFilePreserved": true
+  },
+  "schemaVersion": 1,
+  "devbox": "development",
+  "sourceIdentity": {
+    "revision": "20ae0098f0a0f63042f8877c74875ab969807266",
+    "snapshotSha256": "f0b1d5ba7a8a9b7f83e27fd70798e691782e39b3c20a34b97e3d694ac0333780",
+    "diffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "files": [
+      {
+        "path": "Autologin.ps1",
+        "sha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+        "size": 4212
+      },
+      {
+        "path": "Bootstrap.ps1",
+        "sha256": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+        "size": 1645
+      },
+      {
+        "path": "BuildFixture.ps1",
+        "sha256": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+        "size": 3279
+      },
+      {
+        "path": "Mirror.ps1",
+        "sha256": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+        "size": 4431
+      },
+      {
+        "path": "Provision.ps1",
+        "sha256": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+        "size": 16260
+      },
+      {
+        "path": "TestDriver.c",
+        "sha256": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+        "size": 346
+      },
+      {
+        "path": "Toolchain.ps1",
+        "sha256": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+        "size": 11282
+      }
+    ]
+  },
+  "hostVerifiedMirroredHashes": true,
+  "localBuild": {
+    "source": "C:\\WinBoatDev\\src\\stage03-mirror\\TestDriver.c",
+    "certificateThumbprint": "71422C95E7614E11B25619561BC031482D50FF77",
+    "size": 2960,
+    "signerThumbprint": "71422C95E7614E11B25619561BC031482D50FF77",
+    "output": "C:\\WinBoatDev\\build\\stage03-mirror\\wbdev-test.sys",
+    "sha256": "92398d2be7c53909468a57f3b025c05a67f4292cd1c405a797da961442147bc5",
+    "signatureStatus": "Valid",
+    "sourceSha256": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+    "schemaVersion": 1
+  },
+  "returnedArtifact": {
+    "path": "out/stage03-acceptance/wbdev-test.sys",
+    "sha256": "92398d2be7c53909468a57f3b025c05a67f4292cd1c405a797da961442147bc5",
+    "size": 2960,
+    "matchesGuest": true,
+    "transport": "SFTP, pinned host key and generated client key"
+  },
+  "state": "verified"
+}

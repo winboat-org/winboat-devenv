@@ -1,0 +1,601 @@
+{
+  "schemaVersion": 1,
+  "name": "stage03-final",
+  "identity": "f03023223352493dab795ca834a3d798",
+  "containerId": "d5e28cf082a9378e66a23b47fc763e9b71d32459a5bea8522f84adec48387b80",
+  "cleanStopJobId": "op-9f18251ba16b4dce9b0dc8663bc0a99d",
+  "cleanStopState": "failed, bounded ACPI shutdown timeout preserved VM",
+  "forcedStopJobId": "op-8ff9061dc9bd4485a4e25b59639468ee",
+  "forcedStopState": "succeeded, unclean shutdown recorded",
+  "destroyOperationId": "op-d1ea7c39d47744118e93ea3930267f0b",
+  "containerRemoved": true,
+  "taskGeneratedDiskRemoved": true,
+  "diagnosticRecordsRetained": true,
+  "unrelatedGuestDisksPreserved": true,
+  "purpose": "Unmodified blank-disk E2E run after native payload fixes",
+  "priorBaselineEvidence": "stage-03-windows-acceptance.json",
+  "freshCreation": {
+    "name": "stage03-acceptance",
+    "jobId": "op-22f5a1d5088e44f8a5e7fe4c7e55a0c9",
+    "sourceRevision": "5c66ce45c7c464378b8e3fe5d17f966b621800ec",
+    "blankDisk": true,
+    "guestAcceptance": "first attempt failed at cargo-make due to stale installer PATH; shared payload correction resumed to verified",
+    "identity": "fda5fd3e5252455188cfc31f28fafdac",
+    "ports": {
+      "ssh": 43677,
+      "viewer": 36595
+    },
+    "preparedPayloadsMatchRepository": true,
+    "payloadSha256": {
+      "Bootstrap.ps1": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+      "Mirror.ps1": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+      "Provision.ps1": "c5040a26ac6b74354ae0f836a7d6531a8070930093edae4dbbc59ce3127489f2",
+      "TestDriver.c": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+      "BuildFixture.ps1": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+      "Toolchain.ps1": "300442071888987d4ead02064be2283f2368740fc9743a248b3b1d6018fbbdb2",
+      "Autologin.ps1": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24"
+    },
+    "nixLockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+    "state": "host-started",
+    "image": {
+      "id": "b0981b821da8ca968c979b988189fb124561116451375394e27e9f21b8c9b596",
+      "archiveSha256": "9364ae57aad151b0194b0d412c03a319f95112162c8c59bef0ff2eaa53bed89c",
+      "output": "/nix/store/cwwqhs9x8ghwvaqr2yjig81ikz80i4fc-winboat-devbox.tar.gz",
+      "derivation": "/nix/store/j9isbsqkzygjn0vz8j3l10cm4p9dhi63-winboat-devbox.tar.gz.drv",
+      "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+      "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+      "hostStack": "/nix/store/6hijgp1wvqyq7vp5j46q8lih7kz672h6-winboat-host-stack",
+      "manifestSha256": "02ae3e7a900c01899e9a948d0b8cab2456e9aae26eb2b3837d2d36412dca6e19"
+    },
+    "loaded": true,
+    "containerId": "433a70e366a432764c9d811deb9b4759d75da8b8692cd87c44ab96ee596b1c84",
+    "unattendedDesktopCapture": {
+      "path": "out/stage03-acceptance/fresh-unattended-desktop.png",
+      "sha256": "9adfa16d63d33aec85924cadcee42d4e06dedb3907c0bfcfa53f2c00e148fdf3",
+      "observed": "2026-10-02T23:34:29.230643+00:00",
+      "interactiveInputUsed": false
+    },
+    "postIdentityRebootAutologin": {
+      "account": [
+        {
+          "Name": "wbdev",
+          "Enabled": true,
+          "PasswordExpires": null
+        }
+      ],
+      "payloadSha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+      "explorer": [
+        {
+          "Id": 4728,
+          "SessionId": 1
+        }
+      ],
+      "registry": {
+        "username": "wbdev",
+        "countLimitPresent": false,
+        "domain": "WB-DEVBOX",
+        "plaintextPasswordPresent": false,
+        "enabled": "1"
+      },
+      "interactiveUser": "WB-DEVBOX\\wbdev",
+      "computerName": "WB-DEVBOX",
+      "bootTime": "2026-10-02T23:32:15.5000000Z"
+    },
+    "repairEvidence": "stage-03-native-path.json",
+    "patchedObservation": {
+      "phase": "verified",
+      "signingRequestedAtBoot": "2026-10-02T23:32:15.5000000Z",
+      "lockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+      "ewdkCompletion": {
+        "complete": true,
+        "robocopyExitCode": 1,
+        "schemaVersion": 1,
+        "sourceSha256": "9f48251dd24ad31aac206d8256e95bda5f90a9783982c45a8aafeb9054562379"
+      },
+      "ssh": {
+        "fileVersion": "9.8.3.0",
+        "pid": 6476,
+        "sha256": "b3962bfec8c0c74d7423a5cc6ec0551c6ccf426142bd601932d01b034adc3fe1",
+        "executable": "C:\\WinBoatDev\\tools\\OpenSSH-Win64\\sshd.exe",
+        "state": "Running"
+      },
+      "fixture": {
+        "certificateThumbprint": "2BA8A8DE9C93CCB0CD561EE74AEA66B6468B80FB",
+        "path": "C:\\ProgramData\\WinBoatDev\\fixture\\wbdev-test.sys",
+        "signerThumbprint": "2BA8A8DE9C93CCB0CD561EE74AEA66B6468B80FB",
+        "started": true,
+        "state": "Running",
+        "sha256": "93dfac66cd29193c0b9dc441ea01f836f3dc122f85a4b005277a53d73d2ad4c4",
+        "signatureStatus": "Valid",
+        "inventorySha256": "93dfac66cd29193c0b9dc441ea01f836f3dc122f85a4b005277a53d73d2ad4c4",
+        "nativePath": "\\??\\C:\\ProgramData\\WinBoatDev\\fixture\\wbdev-test.sys"
+      },
+      "failures": {
+        "message": "Installed cargo-make version differs: expected 0.37.24, observed ",
+        "capturedOnRetry": 3,
+        "failedPhase": "install",
+        "capturedAt": "2026-10-03T00:00:18.3301560Z"
+      },
+      "hvci": [
+        0
+      ],
+      "secureBoot": false,
+      "retries": 4,
+      "tools": [
+        {
+          "id": "openssh",
+          "version": "9.8.3.0",
+          "verified": true,
+          "componentIds": [
+            "sshd"
+          ]
+        },
+        {
+          "id": "vs-build-tools",
+          "version": "17.14.5",
+          "verified": true,
+          "componentIds": [
+            "Microsoft.VisualStudio.Workload.VCTools",
+            "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+            "Microsoft.VisualStudio.Component.VC.14.44.17.14.x86.x64.Spectre"
+          ]
+        },
+        {
+          "id": "windows-sdk",
+          "version": "10.1.26100.6901",
+          "verified": true,
+          "componentIds": [
+            "OptionId.DesktopCPPx86",
+            "OptionId.DesktopCPPx64",
+            "OptionId.SigningTools",
+            "OptionId.WindowsDesktopDebuggers"
+          ]
+        },
+        {
+          "id": "windows-wdk",
+          "version": "10.1.26100.6584",
+          "verified": true,
+          "componentIds": [
+            "OptionId.WindowsDriverKitComplete"
+          ]
+        },
+        {
+          "id": "llvm",
+          "version": "22.1.8",
+          "verified": true,
+          "componentIds": [
+            "clang-cl",
+            "libclang",
+            "lld-link"
+          ]
+        },
+        {
+          "id": "git",
+          "version": "2.56.0.windows.1",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "powershell",
+          "version": "7.6.0",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "python",
+          "version": "3.12.10",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "rust",
+          "version": "nightly-2026-07-14",
+          "verified": true,
+          "componentIds": [
+            "rust-src",
+            "x86_64-pc-windows-msvc",
+            "i686-pc-windows-msvc"
+          ]
+        },
+        {
+          "id": "cargo-make",
+          "version": "0.37.24",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "rust-script",
+          "version": "0.36.0",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "meson",
+          "version": "1.11.2",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "ninja",
+          "version": "1.13.0",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "vulkan-sdk",
+          "version": "1.4.350.0",
+          "verified": true,
+          "componentIds": [
+            "Vulkan headers",
+            "Vulkan loader",
+            "glslangValidator",
+            "spirv-tools"
+          ]
+        }
+      ],
+      "rebootCount": 2,
+      "effectiveBcd": [
+        "",
+        "Windows Boot Loader",
+        "-------------------",
+        "identifier              {current}",
+        "device                  partition=C:",
+        "path                    \\WINDOWS\\system32\\winload.efi",
+        "description             Windows 11",
+        "locale                  en-US",
+        "inherit                 {bootloadersettings}",
+        "recoverysequence        {091b3120-befc-11f1-aef7-9f6902fbf496}",
+        "displaymessageoverride  Recovery",
+        "recoveryenabled         Yes",
+        "testsigning             Yes",
+        "isolatedcontext         Yes",
+        "allowedinmemorysettings 0x15000075",
+        "osdevice                partition=C:",
+        "systemroot              \\WINDOWS",
+        "resumeobject            {091b311e-befc-11f1-aef7-9f6902fbf496}",
+        "nx                      OptIn",
+        "bootmenupolicy          Standard"
+      ],
+      "schemaVersion": 1,
+      "autologin": {
+        "account": [
+          {
+            "Name": "wbdev",
+            "Enabled": true,
+            "PasswordExpires": null
+          }
+        ],
+        "explorer": [
+          {
+            "Id": 4716,
+            "SessionId": 1
+          }
+        ],
+        "registry": {
+          "username": "wbdev",
+          "countLimitPresent": false,
+          "domain": "WB-DEVBOX",
+          "plaintextPasswordPresent": false,
+          "enabled": "1"
+        },
+        "interactiveUser": "WB-DEVBOX\\wbdev",
+        "computerName": "WB-DEVBOX",
+        "bootTime": "2026-10-03T00:01:08.5000000Z"
+      },
+      "signedDriverLoaded": true,
+      "share": {
+        "drive": "Z:\\",
+        "verified": true,
+        "session": "SYSTEM",
+        "remote": "\\\\10.0.2.2\\workspace"
+      },
+      "payloadSha256": {
+        "Mirror.ps1": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+        "BuildFixture.ps1": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+        "TestDriver.c": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+        "Provision.ps1": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+        "Autologin.ps1": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+        "Toolchain.ps1": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262"
+      },
+      "rustDistribution": {
+        "localManifestSha256": "6977b67846727fed28f2be1fb42ddf59a9f71752ca4ee50208e8e8d0a6d4fcbd",
+        "sourceManifestSha256": "568e13b2561803b95d44ff6fa1c81bd18ddcf0fbdc45c1e2a4a02b9515eaf716",
+        "offline": true
+      },
+      "observed": "2026-10-03T00:04:05.6902169Z"
+    },
+    "disposal": {
+      "stopJobId": "op-b8bc88d749e54b5a840e7d03418a92e2",
+      "cleanShutdown": false,
+      "destroyOperationId": "op-86ea3ce3914d4a39abe6d5499cb332b5",
+      "containerRemoved": true,
+      "taskGeneratedDiskRemoved": true,
+      "diagnosticRecordsRetained": true
+    }
+  },
+  "finalCreation": {
+    "name": "development",
+    "jobId": "op-1eacd1972e4748f684b4a18b296f5e0a",
+    "sourceRevision": "20ae0098f0a0f63042f8877c74875ab969807266",
+    "blankDisk": true,
+    "guestAcceptance": "verified",
+    "repairUploads": 0,
+    "identity": "9a579891fb1244e1b3fe348f702809ff",
+    "ports": {
+      "ssh": 49897,
+      "viewer": 40733
+    },
+    "payloadSha256": {
+      "Bootstrap.ps1": "b40b21a1edbe08d3968dd6bdb9e7c7e06f622b880bd932783c345848ec3337bf",
+      "Mirror.ps1": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+      "Provision.ps1": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+      "TestDriver.c": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+      "BuildFixture.ps1": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+      "Toolchain.ps1": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262",
+      "Autologin.ps1": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24"
+    },
+    "preparedPayloadsMatchRepository": true,
+    "nixLockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+    "state": "verified",
+    "image": {
+      "id": "b0981b821da8ca968c979b988189fb124561116451375394e27e9f21b8c9b596",
+      "archiveSha256": "5333903aded47ad83f2f7adcfd87b8ea52af6738f84793b9118d1f3ae4852674",
+      "output": "/nix/store/15isszssps5pb73qv1ms0in8f60wlqp1-winboat-devbox.tar.gz",
+      "derivation": "/nix/store/2gjkdpfc7a3z08v7h5c48rfgd57wya75-winboat-devbox.tar.gz.drv",
+      "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+      "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+      "hostStack": "/nix/store/6hijgp1wvqyq7vp5j46q8lih7kz672h6-winboat-host-stack",
+      "manifestSha256": "02ae3e7a900c01899e9a948d0b8cab2456e9aae26eb2b3837d2d36412dca6e19"
+    },
+    "loaded": true,
+    "containerId": "b2fc7667cbca18d1996cab9502b2f0d4386785d690b66513e9220e979e61aa24",
+    "postIdentityRebootAutologin": {
+      "account": [
+        {
+          "Name": "wbdev",
+          "Enabled": true,
+          "PasswordExpires": null
+        }
+      ],
+      "payloadSha256": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+      "explorer": [
+        {
+          "Id": 4864,
+          "SessionId": 1
+        }
+      ],
+      "registry": {
+        "username": "wbdev",
+        "countLimitPresent": false,
+        "domain": "WB-DEVBOX",
+        "plaintextPasswordPresent": false,
+        "enabled": "1"
+      },
+      "interactiveUser": "WB-DEVBOX\\wbdev",
+      "computerName": "WB-DEVBOX",
+      "bootTime": "2026-10-03T00:14:11.5000000Z"
+    },
+    "manualInstallationInput": false,
+    "observation": {
+      "phase": "verified",
+      "signingRequestedAtBoot": "2026-10-03T00:14:11.5000000Z",
+      "lockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+      "ewdkCompletion": {
+        "complete": true,
+        "robocopyExitCode": 1,
+        "schemaVersion": 1,
+        "sourceSha256": "9f48251dd24ad31aac206d8256e95bda5f90a9783982c45a8aafeb9054562379"
+      },
+      "ssh": {
+        "fileVersion": "9.8.3.0",
+        "pid": 3604,
+        "sha256": "b3962bfec8c0c74d7423a5cc6ec0551c6ccf426142bd601932d01b034adc3fe1",
+        "executable": "C:\\WinBoatDev\\tools\\OpenSSH-Win64\\sshd.exe",
+        "state": "Running"
+      },
+      "fixture": {
+        "certificateThumbprint": "71422C95E7614E11B25619561BC031482D50FF77",
+        "path": "C:\\ProgramData\\WinBoatDev\\fixture\\wbdev-test.sys",
+        "signerThumbprint": "71422C95E7614E11B25619561BC031482D50FF77",
+        "started": true,
+        "state": "Running",
+        "sha256": "4039d6e112e32b32feedefd08a793397caa20e9e14f3144fe1f49be984772489",
+        "signatureStatus": "Valid",
+        "inventorySha256": "4039d6e112e32b32feedefd08a793397caa20e9e14f3144fe1f49be984772489",
+        "nativePath": "\\??\\C:\\ProgramData\\WinBoatDev\\fixture\\wbdev-test.sys"
+      },
+      "failures": [],
+      "hvci": [
+        0
+      ],
+      "secureBoot": false,
+      "retries": 3,
+      "tools": [
+        {
+          "id": "openssh",
+          "version": "9.8.3.0",
+          "verified": true,
+          "componentIds": [
+            "sshd"
+          ]
+        },
+        {
+          "id": "vs-build-tools",
+          "version": "17.14.5",
+          "verified": true,
+          "componentIds": [
+            "Microsoft.VisualStudio.Workload.VCTools",
+            "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+            "Microsoft.VisualStudio.Component.VC.14.44.17.14.x86.x64.Spectre"
+          ]
+        },
+        {
+          "id": "windows-sdk",
+          "version": "10.1.26100.6901",
+          "verified": true,
+          "componentIds": [
+            "OptionId.DesktopCPPx86",
+            "OptionId.DesktopCPPx64",
+            "OptionId.SigningTools",
+            "OptionId.WindowsDesktopDebuggers"
+          ]
+        },
+        {
+          "id": "windows-wdk",
+          "version": "10.1.26100.6584",
+          "verified": true,
+          "componentIds": [
+            "OptionId.WindowsDriverKitComplete"
+          ]
+        },
+        {
+          "id": "llvm",
+          "version": "22.1.8",
+          "verified": true,
+          "componentIds": [
+            "clang-cl",
+            "libclang",
+            "lld-link"
+          ]
+        },
+        {
+          "id": "git",
+          "version": "2.56.0.windows.1",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "powershell",
+          "version": "7.6.0",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "python",
+          "version": "3.12.10",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "rust",
+          "version": "nightly-2026-07-14",
+          "verified": true,
+          "componentIds": [
+            "rust-src",
+            "x86_64-pc-windows-msvc",
+            "i686-pc-windows-msvc"
+          ]
+        },
+        {
+          "id": "cargo-make",
+          "version": "0.37.24",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "rust-script",
+          "version": "0.36.0",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "meson",
+          "version": "1.11.2",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "ninja",
+          "version": "1.13.0",
+          "verified": true,
+          "componentIds": []
+        },
+        {
+          "id": "vulkan-sdk",
+          "version": "1.4.350.0",
+          "verified": true,
+          "componentIds": [
+            "Vulkan headers",
+            "Vulkan loader",
+            "glslangValidator",
+            "spirv-tools"
+          ]
+        }
+      ],
+      "rebootCount": 2,
+      "effectiveBcd": [
+        "",
+        "Windows Boot Loader",
+        "-------------------",
+        "identifier              {current}",
+        "device                  partition=C:",
+        "path                    \\WINDOWS\\system32\\winload.efi",
+        "description             Windows 11",
+        "locale                  en-US",
+        "inherit                 {bootloadersettings}",
+        "recoverysequence        {e2ed1623-bf01-11f1-a7ca-f0952981e76e}",
+        "displaymessageoverride  Recovery",
+        "recoveryenabled         Yes",
+        "testsigning             Yes",
+        "isolatedcontext         Yes",
+        "allowedinmemorysettings 0x15000075",
+        "osdevice                partition=C:",
+        "systemroot              \\WINDOWS",
+        "resumeobject            {e2ed1621-bf01-11f1-a7ca-f0952981e76e}",
+        "nx                      OptIn",
+        "bootmenupolicy          Standard"
+      ],
+      "schemaVersion": 1,
+      "autologin": {
+        "account": [
+          {
+            "Name": "wbdev",
+            "Enabled": true,
+            "PasswordExpires": null
+          }
+        ],
+        "explorer": [
+          {
+            "Id": 5088,
+            "SessionId": 1
+          }
+        ],
+        "registry": {
+          "username": "wbdev",
+          "countLimitPresent": false,
+          "domain": "WB-DEVBOX",
+          "plaintextPasswordPresent": false,
+          "enabled": "1"
+        },
+        "interactiveUser": "WB-DEVBOX\\wbdev",
+        "computerName": "WB-DEVBOX",
+        "bootTime": "2026-10-03T00:33:39.5000000Z"
+      },
+      "signedDriverLoaded": true,
+      "share": {
+        "drive": "Z:\\",
+        "verified": true,
+        "session": "SYSTEM",
+        "remote": "\\\\10.0.2.2\\workspace"
+      },
+      "payloadSha256": {
+        "Mirror.ps1": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+        "BuildFixture.ps1": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+        "TestDriver.c": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+        "Provision.ps1": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+        "Autologin.ps1": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+        "Toolchain.ps1": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262"
+      },
+      "rustDistribution": {
+        "localManifestSha256": "a812d993c4afa0979c62f7fa1045d3cf9be42943cca15eb727aca309d19217f4",
+        "sourceManifestSha256": "568e13b2561803b95d44ff6fa1c81bd18ddcf0fbdc45c1e2a4a02b9515eaf716",
+        "offline": true
+      },
+      "observed": "2026-10-03T00:35:26.8566875Z"
+    },
+    "localMirrorBuildAndHashReturn": "verified",
+    "mirrorEvidence": "stage-03-mirror-build.json"
+  }
+}

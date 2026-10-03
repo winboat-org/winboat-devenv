@@ -1,0 +1,271 @@
+{
+  "phase": "verified",
+  "signingRequestedAtBoot": "2026-10-03T00:14:11.5000000Z",
+  "lockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+  "ewdkCompletion": {
+    "complete": true,
+    "robocopyExitCode": 1,
+    "schemaVersion": 1,
+    "sourceSha256": "9f48251dd24ad31aac206d8256e95bda5f90a9783982c45a8aafeb9054562379"
+  },
+  "ssh": {
+    "fileVersion": "9.8.3.0",
+    "pid": 3604,
+    "sha256": "b3962bfec8c0c74d7423a5cc6ec0551c6ccf426142bd601932d01b034adc3fe1",
+    "executable": "C:\\WinBoatDev\\tools\\OpenSSH-Win64\\sshd.exe",
+    "state": "Running"
+  },
+  "fixture": {
+    "certificateThumbprint": "71422C95E7614E11B25619561BC031482D50FF77",
+    "path": "C:\\ProgramData\\WinBoatDev\\fixture\\wbdev-test.sys",
+    "signerThumbprint": "71422C95E7614E11B25619561BC031482D50FF77",
+    "started": true,
+    "state": "Running",
+    "sha256": "4039d6e112e32b32feedefd08a793397caa20e9e14f3144fe1f49be984772489",
+    "signatureStatus": "Valid",
+    "inventorySha256": "4039d6e112e32b32feedefd08a793397caa20e9e14f3144fe1f49be984772489",
+    "nativePath": "\\??\\C:\\ProgramData\\WinBoatDev\\fixture\\wbdev-test.sys"
+  },
+  "failures": [],
+  "hvci": [
+    0
+  ],
+  "secureBoot": false,
+  "retries": 3,
+  "tools": [
+    {
+      "id": "openssh",
+      "version": "9.8.3.0",
+      "verified": true,
+      "componentIds": [
+        "sshd"
+      ]
+    },
+    {
+      "id": "vs-build-tools",
+      "version": "17.14.5",
+      "verified": true,
+      "componentIds": [
+        "Microsoft.VisualStudio.Workload.VCTools",
+        "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+        "Microsoft.VisualStudio.Component.VC.14.44.17.14.x86.x64.Spectre"
+      ]
+    },
+    {
+      "id": "windows-sdk",
+      "version": "10.1.26100.6901",
+      "verified": true,
+      "componentIds": [
+        "OptionId.DesktopCPPx86",
+        "OptionId.DesktopCPPx64",
+        "OptionId.SigningTools",
+        "OptionId.WindowsDesktopDebuggers"
+      ]
+    },
+    {
+      "id": "windows-wdk",
+      "version": "10.1.26100.6584",
+      "verified": true,
+      "componentIds": [
+        "OptionId.WindowsDriverKitComplete"
+      ]
+    },
+    {
+      "id": "llvm",
+      "version": "22.1.8",
+      "verified": true,
+      "componentIds": [
+        "clang-cl",
+        "libclang",
+        "lld-link"
+      ]
+    },
+    {
+      "id": "git",
+      "version": "2.56.0.windows.1",
+      "verified": true,
+      "componentIds": []
+    },
+    {
+      "id": "powershell",
+      "version": "7.6.0",
+      "verified": true,
+      "componentIds": []
+    },
+    {
+      "id": "python",
+      "version": "3.12.10",
+      "verified": true,
+      "componentIds": []
+    },
+    {
+      "id": "rust",
+      "version": "nightly-2026-07-14",
+      "verified": true,
+      "componentIds": [
+        "rust-src",
+        "x86_64-pc-windows-msvc",
+        "i686-pc-windows-msvc"
+      ]
+    },
+    {
+      "id": "cargo-make",
+      "version": "0.37.24",
+      "verified": true,
+      "componentIds": []
+    },
+    {
+      "id": "rust-script",
+      "version": "0.36.0",
+      "verified": true,
+      "componentIds": []
+    },
+    {
+      "id": "meson",
+      "version": "1.11.2",
+      "verified": true,
+      "componentIds": []
+    },
+    {
+      "id": "ninja",
+      "version": "1.13.0",
+      "verified": true,
+      "componentIds": []
+    },
+    {
+      "id": "vulkan-sdk",
+      "version": "1.4.350.0",
+      "verified": true,
+      "componentIds": [
+        "Vulkan headers",
+        "Vulkan loader",
+        "glslangValidator",
+        "spirv-tools"
+      ]
+    }
+  ],
+  "rebootCount": 2,
+  "effectiveBcd": [
+    "",
+    "Windows Boot Loader",
+    "-------------------",
+    "identifier              {current}",
+    "device                  partition=C:",
+    "path                    \\WINDOWS\\system32\\winload.efi",
+    "description             Windows 11",
+    "locale                  en-US",
+    "inherit                 {bootloadersettings}",
+    "recoverysequence        {e2ed1623-bf01-11f1-a7ca-f0952981e76e}",
+    "displaymessageoverride  Recovery",
+    "recoveryenabled         Yes",
+    "testsigning             Yes",
+    "isolatedcontext         Yes",
+    "allowedinmemorysettings 0x15000075",
+    "osdevice                partition=C:",
+    "systemroot              \\WINDOWS",
+    "resumeobject            {e2ed1621-bf01-11f1-a7ca-f0952981e76e}",
+    "nx                      OptIn",
+    "bootmenupolicy          Standard"
+  ],
+  "schemaVersion": 1,
+  "autologin": {
+    "account": [
+      {
+        "Name": "wbdev",
+        "Enabled": true,
+        "PasswordExpires": null
+      }
+    ],
+    "explorer": [
+      {
+        "Id": 5088,
+        "SessionId": 1
+      }
+    ],
+    "registry": {
+      "username": "wbdev",
+      "countLimitPresent": false,
+      "domain": "WB-DEVBOX",
+      "plaintextPasswordPresent": false,
+      "enabled": "1"
+    },
+    "interactiveUser": "WB-DEVBOX\\wbdev",
+    "computerName": "WB-DEVBOX",
+    "bootTime": "2026-10-03T00:33:39.5000000Z"
+  },
+  "signedDriverLoaded": true,
+  "share": {
+    "drive": "Z:\\",
+    "verified": true,
+    "session": "SYSTEM",
+    "remote": "\\\\10.0.2.2\\workspace"
+  },
+  "payloadSha256": {
+    "Mirror.ps1": "98f11d91b2c2677f521fee74ea69959848306870b173afca450d450439e72cc8",
+    "BuildFixture.ps1": "3d3f4a7bb822d59bffdec6fe6f8a5d54880b750e227e4a81dd28e5a907a0d6a1",
+    "TestDriver.c": "e8ffe5ab1cad2a134b2d865b4a2fd2295d52a8395ac0a152c26b435ca26ccc48",
+    "Provision.ps1": "6a89d48f1b535e230e8a1ce01fad86cedc7dbb9ed5439fa6e309ad74d6a1671f",
+    "Autologin.ps1": "44acb906526e195906efc53d1389d1e98ebca2e4e43a0a076de6c51604464e24",
+    "Toolchain.ps1": "2f61fb354aa22a2ad628a30bb558354512bf9005df23158d2cfa089dbf88a262"
+  },
+  "rustDistribution": {
+    "localManifestSha256": "a812d993c4afa0979c62f7fa1045d3cf9be42943cca15eb727aca309d19217f4",
+    "sourceManifestSha256": "568e13b2561803b95d44ff6fa1c81bd18ddcf0fbdc45c1e2a4a02b9515eaf716",
+    "offline": true
+  },
+  "observed": "2026-10-03T00:35:26.8566875Z",
+  "devbox": "development",
+  "state": "verified-unmodified-fresh-creation",
+  "creationJobId": "op-1eacd1972e4748f684b4a18b296f5e0a",
+  "sourceRevision": "20ae0098f0a0f63042f8877c74875ab969807266",
+  "repairUploads": 0,
+  "priorRepairedBaseline": {
+    "devbox": "stage03-final",
+    "state": "verified-after-repaired-payloads",
+    "retries": 13,
+    "failures": [
+      {
+        "message": "C:\\WinBoatDev\\tools\\cargo\\bin\\rustup.exe exited with 1",
+        "capturedOnRetry": 5,
+        "failedPhase": "install",
+        "capturedAt": "2026-10-02T22:50:08.9985508Z"
+      },
+      {
+        "message": "Method invocation failed because [System.Management.Automation.PSObject] does not contain a method named 'op_Addition'.",
+        "capturedOnRetry": 7,
+        "failedPhase": "failed",
+        "capturedAt": "2026-10-02T22:53:51.7279025Z"
+      },
+      {
+        "message": "C:\\WinBoatDev\\tools\\cargo\\bin\\rustup.exe exited with 1; stderr: C:\\ProgramData\\WinBoatDev\\native-logs\\17ca471c258b405ab95d408536c60e1a.stderr.log",
+        "capturedOnRetry": 8,
+        "failedPhase": "install",
+        "capturedAt": "2026-10-02T22:59:40.8559495Z"
+      },
+      {
+        "message": "Installed cargo-make version differs: expected 0.37.24, observed ",
+        "capturedOnRetry": 9,
+        "failedPhase": "install",
+        "capturedAt": "2026-10-02T23:11:34.0289584Z"
+      },
+      {
+        "message": "Installed rust-script version differs: expected 0.36.0, observed ",
+        "capturedOnRetry": 10,
+        "failedPhase": "install",
+        "capturedAt": "2026-10-02T23:13:21.7479789Z"
+      },
+      {
+        "message": "Could not find item C:\\ProgramData.",
+        "capturedOnRetry": 12,
+        "failedPhase": "signing-fixture",
+        "capturedAt": "2026-10-02T23:16:17.4120249Z"
+      },
+      {
+        "message": "Signed fixture driver did not load",
+        "capturedOnRetry": 13,
+        "failedPhase": "signing-fixture",
+        "capturedAt": "2026-10-02T23:18:31.1047230Z"
+      }
+    ]
+  }
+}

@@ -95,7 +95,9 @@ Start from the user's ISO with headless unattended installation, Enterprise
 preferred, a deterministic `wbdev` account and `WB-DEVBOX` computer name,
 generated local credentials/SSH keys, and the initial `virtio-vga-gl` device.
 Persist autologin for `wbdev` using the Winlogon LSA secret and update its local
-domain through hostname changes. The desktop login does not own provisioning:
+domain through hostname changes. Its generated local account password does not
+expire. Verify the actual interactive login after reboots. The desktop login does
+not own provisioning:
 the elevated SYSTEM task survives disconnects, logouts and reboots.
 The tracked provisioning lock owns exact tools/installers and hashes. Proprietary
 media/installers remain external inputs with verifiable identity; Nix orchestrates
