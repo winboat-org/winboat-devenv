@@ -9,6 +9,12 @@ for retained identities and limits. This baseline establishes a
 development guest; Helios component installation/loaded-state acceptance belongs
 to Stage 4.
 
+The latest runtime check on 2026-10-03 confirmed Docker access without sudo:
+the Nix-pinned client 29.8.0 connects to Engine 29.8.2, and `version`, `info`
+and `ps` pass. The existing `development` guest is stopped, with its verified
+provisioning record and disk retained. Its ignored local configuration still
+selects Podman; Docker devbox execution has not been tested.
+
 ```text
 Implement docs/stages/04-windows-control.md using the verified Stage 3 baseline.
 Read AGENTS.md, README.md, architecture/repositories/workspace/
@@ -37,7 +43,15 @@ The user-supplied ISO was verified as amd64 en-US EnterpriseS LTSC 2024, index 1
 build 26100, SHA-256 157d8365a517c40afeb3106fdd74d0836e1025debbc343f2080e1a8687607f51.
 Its path and machine choices are ignored local configuration. Rootless Podman
 with workspace-local VFS storage and Intel Mesa EGL worked. Docker socket access
-failed; no host groups, packages, daemon, bridges or desktop config changed.
+failed during that acceptance run; after the user's runtime setup, a subsequent
+locked-shell check confirmed Docker access without sudo using the pinned client.
+The development guest remains configured for Podman. Recheck its current status
+and resume its existing disk with `wb devbox up --name development` when needed.
+Do not switch the runtime underneath an existing named guest: runtime selection
+comes from current configuration, and Docker and Podman have separate container
+stores. Validate Docker devbox execution with separately owned state before
+claiming Docker VM acceptance. No host groups, packages, daemon, bridges or
+desktop config were changed by this work.
 Discover current capabilities, including graphics userspace rather than only
 node permissions. Proprietary GPU/CDI, another OS UID and another host remain
 unvalidated. Live relocated-root control used spaces, alternate USER/LOGNAME

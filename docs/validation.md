@@ -100,7 +100,7 @@ Another OS user/host and proprietary GPU integration remain unvalidated.
 | Check | Result | What it establishes |
 | --- | --- | --- |
 | Supplied ISO inspection | Passed | SHA-256 verified; actual WIM metadata selects amd64 en-US EnterpriseS LTSC 2024, image 1, build 26100 |
-| Runtime/device discovery | Passed on rootless Podman | Workspace-local VFS state, accessible KVM and selected Intel render node; Docker socket access failed, proprietary GPU integration unvalidated |
+| Runtime/device discovery | Passed on rootless Podman | Workspace-local VFS state, accessible KVM and selected Intel render node; Docker socket access failed during VM acceptance; subsequent pinned-client Docker access check passed, Docker VM execution and proprietary GPU integration unvalidated |
 | Exact container closure | Passed | Image built/imported from the manifest-selected Stage 2 output; all 431 closure NAR identities checked, licenses/symbols retained |
 | Actual host images | Passed | `/proc` executable plus seven renderer/GL module images match exact manifest paths/hashes; QMP works after reconnect |
 | Initial Windows boot | Retained failure, corrected and retried | Non-secure firmware failed requirements; secure-capable firmware passed; a nonconsecutive partition modification order failed, then corrected fresh setup advanced automatically into installation; missing OOBE locale then exposed the region prompt, corrected fresh retry passed OOBE and reached wbdev desktop unattended |
@@ -117,6 +117,14 @@ Another OS user/host and proprietary GPU integration remain unvalidated.
 | Interruption/recovery | Passed at copy/install/reboot boundaries | Identity/disk/SSH keys preserved through copy interruption; partial EWDK fails probe until full extraction marker; signing reboot resumes to verified baseline |
 | Final blank-disk repeat | Passed | Owned test container/disk removed; development reached verified using finalized Nix payloads, zero failures/repair uploads, two automated reboots and post-signing wbdev desktop login |
 | Live relocation/username | Passed within measured scope | Root with spaces, alternate USER/LOGNAME and explicit external roots controlled the same VM/SSH; actual OS UID and another host remain unvalidated |
+
+A runtime recheck on 2026-10-03, after the user's Docker setup, passed `version`,
+`info` and `ps` without sudo through the locked shell and Nix-pinned Docker
+client 29.8.0 against Engine 29.8.2 (`overlay2`). This establishes daemon access;
+the completed VM acceptance remains on Podman. The current ignored local
+configuration still selects Podman, and `development` was observed stopped with
+its verified provisioning record retained. Docker devbox execution remains
+unvalidated; do not change the runtime beneath that named guest.
 
 The [input evidence](evidence/stage-03-provision-inputs.json) and provisioning
 lock record all 14 tools. Nix fetches every payload by its fixed SHA-256 before
