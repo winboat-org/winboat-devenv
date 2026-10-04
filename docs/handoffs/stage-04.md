@@ -5,8 +5,10 @@ Stage 4 is now in progress. Start continuation with
 [control checkpoint evidence](../evidence/stage-04-control.json): shared tasks,
 verified transfer/mirrors, real DXVK x64/x86, mapped-image fixtures and install
 recovery passed. Native KMD, all four UMD variants and Mesa's x64/x86 ICDs have
-also built; CLVK, clean pinned stack repeats, full installation, kernel
-identity and interactive graphics acceptance remain required. The original
+also built. CLVK and its loaders/smoke binaries now passed native architecture
+and static CRT checks, with all 171 PDBs and notices returned. Package composition,
+clean pinned stack repeats, full installation, kernel identity and interactive
+graphics acceptance remain required. The original
 handoff below still defines the baseline and preservation boundaries. Current
 guest/state selections and retained failure receipts are in ignored local notes.
 The [native checkpoint](../evidence/stage-04-native.json) additionally records

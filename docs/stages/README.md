@@ -3,7 +3,8 @@
 **Stage 2 native/cross and Stage 3 current-host acceptance passed.**
 The genuine Nix lock is unchanged. Six recipe commits and matching parent/child
 pins are local only; canonical publication is pending. Stage 4 DXVK/vkd3d x64/x86
-Windows execution passed; full KMD/UMD/Mesa/CLVK acceptance and
+Windows execution and native KMD/UMD/Mesa/CLVK builds passed; clean pinned stack
+build/install/loaded-state acceptance and
 WinBoat/Electron dependency closure completion remain pending. Native UMD x86
 and the baseline fixture's resident kernel-code comparison passed. See
 [validation](../validation.md) for measured checks and the upstream native Fish

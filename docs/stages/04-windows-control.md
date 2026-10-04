@@ -5,8 +5,11 @@ transaction and registry operations passed live CLI/MCP checks, including an
 eight-minute SYSTEM job, x64/x86 mapped-DLL replacement detection and reboot
 recovery. DXVK and vkd3d x64 built through CLI and x86 through MCP. Native Helios
 KMD with all four UMD variants, Mesa ICDs in both architectures, standalone UMD
-x86 and the baseline fixture's resident kernel-code comparison passed. Complete component and
-loaded-stack acceptance remains pending. See [control usage](../windows-control.md)
+x86 and the baseline fixture's resident kernel-code comparison passed. CLVK,
+both Vulkan loaders, OpenCL loader and fourteen smoke binaries also passed native
+build, architecture and static CRT checks; all symbols and notices were retained.
+Clean pinned stack builds, installation and loaded-stack acceptance remain
+pending. See [control usage](../windows-control.md)
 and [measured evidence](../evidence/stage-04-control.json), with the
 [native checkpoint](../evidence/stage-04-native.json).
 Prerequisites: Stages 2 and 3.

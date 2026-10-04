@@ -9,8 +9,9 @@ and a headless Windows development VM running the Helios QEMU fork.
 repository/MCP operations, six composable component recipes, isolated native
 graphics builds, a Windows DLL cross-build and immutable artifact manifests.
 Stage 4 is in progress: real DXVK/vkd3d x64/x86 MSVC builds, shared CLI/MCP Windows
-tasks and transaction recovery have passed on a fresh guest. Full KMD/UMD,
-Mesa/CLVK installation and loaded-stack acceptance remain pending. See the
+tasks and transaction recovery have passed on a fresh guest. Native KMD/UMD,
+Mesa and CLVK builds passed; clean pinned stack repeats, installation and
+loaded-stack acceptance remain pending. See the
 [Windows evidence](docs/evidence/stage-04-control.json) and
 [native checkpoint](docs/evidence/stage-04-native.json). UMD x86 and the baseline
 fixture's resident kernel-code comparison passed. Helios/Mesa/CLVK candidates

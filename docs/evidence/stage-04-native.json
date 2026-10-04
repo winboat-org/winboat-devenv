@@ -453,6 +453,181 @@
         "Development source snapshot predates local Mesa recipe commit 4aa49189a28ab25e83012d093e5c7b38185304a5.",
         "Guest build passed; initial host collection refused an empty .NET directory entry. Corrected collection verified every file without recompiling."
       ]
+    },
+    {
+      "target": "clvk-helios",
+      "manifest": "out/guest/op-1d46df326679468f8112e4b950316edb/manifest.json",
+      "manifestSha256": "7752a402d12daa91c03997ce0f3ad973b86d6cd10e19878bce0b8bcabcf47ca8",
+      "operationId": "op-1d46df326679468f8112e4b950316edb",
+      "guest": {
+        "name": "stage04-acceptance-nvidia",
+        "identity": "0cc110b3acc843639a93f8fd6d41e193"
+      },
+      "mode": "development",
+      "configuration": "release",
+      "files": 4589,
+      "fileBytes": 8095019782,
+      "licenses": 4368,
+      "pdbFiles": 171,
+      "images": [
+        {
+          "staticCrtVerified": true,
+          "path": "package/clvk.dll",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/vulkan-1.dll",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/OpenCL.dll",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/x86/vulkan-1.dll",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/vulkan-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/vulkan-wsi-probe.exe",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/d3d11-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/d3d12-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/d3d12-clear.exe",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/opengl-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/opencl-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/opencl-gl-sharing-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/x86/vulkan-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/x86/vulkan-wsi-probe.exe",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/x86/d3d11-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/x86/d3d12-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/x86/d3d12-clear.exe",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/smoke/x86/opengl-smoke.exe",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        }
+      ],
+      "sources": {
+        "clvk-helios": {
+          "revision": "56c626132782bf083a80a6c17f5ca763be0ff8fb",
+          "diffSha256": "2cfc9494496bea878795a54b633304398a2171aa6596f024f627ff2d387a8a0e",
+          "snapshotSha256": "9fdb179bbdabc7e9a621864a446d33709031679fa22ab822a37ed429186d068b",
+          "narHash": "sha256-WjXPdfMQ+V6Xkc3slxZDSxtUekSFnVi4M9xjlP3ggHA=",
+          "untracked": [
+            "nix/Build-Guest.ps1",
+            "nix/README.md",
+            "nix/clspv-build-directory.patch",
+            "nix/default.nix",
+            "nix/windows-inputs.nix"
+          ]
+        },
+        "helios": {
+          "revision": "9dcf346aa07caa230d1a0420645805d168282a78",
+          "diffSha256": null,
+          "snapshotSha256": "1e4c8c8dc8e29e7479b8547e61cb73f8d43f1994bc954553ca9cb1800ad95658",
+          "narHash": "sha256-9XOqu0P1VohJMTvvkWOJVpSU1QXUCPj46Z8OoXaZOBg=",
+          "untracked": []
+        }
+      },
+      "installed": false,
+      "loaded": false,
+      "notes": [
+        "All 3844 main steps, both Vulkan loaders, OpenCL loader and 14 smoke binaries passed, including all declared architecture/static CRT checks.",
+        "Paired job-source patch shortens the LLVM build root and updates the translator LLVMConfig.cmake lookup. The earlier failing JSONEntitySummaryEncoding.cpp.obj compiled successfully at step 2388.",
+        "All 171 PDBs and original notices are retained; the verified artifact contains 8095019782 bytes.",
+        "CMake optional SPIRV-Tools package lookup and unused loader CXX compiler warnings are retained.",
+        "Development snapshot has five untracked recipe files; clean pinned CLI/MCP stack and runtime acceptance remain required."
+      ]
     }
   ],
   "kernelFixture": {
@@ -483,7 +658,7 @@
   "limits": [
     "UMD x86 is a development source snapshot, with fresh bindgen layout assertions enabled and existing compiler/cached-binding warnings retained.",
     "Kernel evidence concerns the Stage 3 independent signing fixture. Helios loaded identity is not established.",
-    "CLVK native acceptance, clean CLI/MCP stack repeats, full installation and loaded identities remain pending.",
+    "CLVK candidate native checks passed; clean CLI/MCP stack repeats, full installation and loaded identities remain pending.",
     "All checkpoints and pins remain local and unpublished."
   ],
   "inputFixtures": {
