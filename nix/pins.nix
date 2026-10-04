@@ -6,7 +6,7 @@
   schemaVersion = 1;
   repositories = {
     helios = {
-      rev = "b84ed182ba68974cb495b53bad74200409d6367f";
+      rev = "9dcf346aa07caa230d1a0420645805d168282a78";
       ref = "refs/heads/master";
       provenance = "explicit-verified-pin";
     };
