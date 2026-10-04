@@ -12,7 +12,7 @@ $previous = if (Test-Path $registryPath) {Read-ControlJson $registryPath} else {
 $entries = [Collections.Generic.List[object]]::new()
 $observationErrors=[Collections.Generic.List[object]]::new()
 $transactions=@(Get-ChildItem (Join-Path $root 'transactions') -Filter 'transaction.json' -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {Read-ControlJson $_.FullName})
-function Add-ObservedFile([string]$Path, [string]$Role, [string]$Architecture='unknown', [string]$ExpectedHash='', $Provenance=$null) {
+function Add-ObservedFile([string]$Path, [string]$Role, [string]$Architecture='unknown', [string]$ExpectedHash='', $Provenance=$null, [switch]$DataFile) {
     $desired=if($ExpectedHash){@{sha256=$ExpectedHash.ToLower()}}else{$null}
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
         if($ExpectedHash) {$entries.Add(@{role=$Role;path=$Path;sha256=$null;desired=$desired;built=$null;staged=$null;installed='drift';reason='missing';loaded=@();provenance=$Provenance})}
@@ -22,7 +22,7 @@ function Add-ObservedFile([string]$Path, [string]$Role, [string]$Architecture='u
     $hash = (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLower()
     $state = if ($ExpectedHash) {if($hash -eq $ExpectedHash.ToLower()) {'verified'} else {'drift'}} else {'unknown'}
     $actualArchitecture='unknown'
-    if($file.Extension -in @('.dll','.sys','.exe')) {
+    if(-not $DataFile -and $file.Extension -in @('.dll','.sys','.exe')) {
         $stream=[IO.File]::Open($file.FullName,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::ReadWrite)
         $reader=[IO.BinaryReader]::new($stream)
         try {
@@ -42,7 +42,9 @@ function Add-ObservedFile([string]$Path, [string]$Role, [string]$Architecture='u
 foreach($transaction in $transactions) {
     if($transaction.state -eq 'rolled-back') {continue}
     $provenance=@{operationId=$transaction.operationId;manifestSha256=$transaction.manifestSha256;kind='fixture-transaction';source=$null}
-    foreach($file in $transaction.changed) {Add-ObservedFile $file.path 'install-fixture' 'unknown' $file.sha256 $provenance}
+    # Installation fixtures contain deliberate text markers named fixture.dll.
+    # Their installed identity is the manifested hash, without a PE claim.
+    foreach($file in $transaction.changed) {Add-ObservedFile $file.path 'install-fixture' 'unknown' $file.sha256 $provenance -DataFile}
     if($transaction.PSObject.Properties['expectedRegistration']) {
         $expected=$transaction.expectedRegistration
         $current=if(Test-Path $expected.key) {(Get-Item $expected.key).GetValue($expected.name,$null)} else {$null}

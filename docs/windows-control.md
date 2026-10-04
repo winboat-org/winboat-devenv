@@ -179,6 +179,10 @@ a one-time `--failure-after-copy` injection, explicit resume and `--rollback
 <transaction-id>`, restoring the prior fixture file/registration. Helios rollback
 requires its original package/restore protocol; the controller refuses to call
 retained snapshots a complete rollback.
+Fixture markers are data even though their contract names them `fixture.dll`;
+reconciliation verifies their manifested hashes without claiming a PE image or
+architecture. Actual stack binaries still require valid PE headers and the
+expected architecture.
 
 Registry reconciliation discovers provisioning, PnP/Driver Store, both Khronos
 registry views, UMD/OpenGL registrations, x64/x86 loaders, certificates, runtime
