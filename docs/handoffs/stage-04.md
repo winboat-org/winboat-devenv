@@ -1,5 +1,13 @@
 # Stage 4 handoff
 
+Build policy: cross-compile Windows dependencies on the host wherever possible;
+use the devbox for builds only after documenting a concrete cross-compilation
+limitation. This restores the original scaffold request. An MSVC ABI requirement
+alone is not such a limitation. Native candidate evidence below remains valid
+for those artifacts, but does not establish that cross-compilation is impossible.
+The corrected no-symbol native CLVK retry was cancelled before compilation at
+the user's direction; host cross backend and symbol-policy validation are pending.
+
 Stage 4 is now in progress. Start continuation with
 [Windows control](../windows-control.md) and the
 [control checkpoint evidence](../evidence/stage-04-control.json): shared tasks,
@@ -9,7 +17,7 @@ also built. CLVK and its loaders/smoke binaries now passed native architecture
 and static CRT checks, with all 171 PDBs and notices returned. The first development
 package also composed and exported successfully. The replacement recipe disables
 LLVM/Clang debug information, keeps runtime PDBs in component artifacts and omits
-them from the install bundle. Its native rebuild and composition checks remain
+them from the install bundle. Its cross build and composition checks remain
 pending, followed by clean pinned stack repeats, full installation, kernel
 identity and interactive graphics acceptance. The original
 handoff below still defines the baseline and preservation boundaries. Current

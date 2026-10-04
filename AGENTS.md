@@ -27,6 +27,12 @@ environment contracts, independent of the host. Declare execution in Nix,
 including Windows payload dispatch. The Node MCP is a typed command proxy;
 keep build/install logic in shared Nix-declared operations.
 
+Cross-compile Windows dependencies on the host wherever possible. Use the
+Windows devbox for a build only when a concrete toolchain or component limitation
+prevents cross-compilation; record that limitation. An MSVC ABI or static CRT
+requirement alone does not require a Windows build host. Installation, signing
+and loaded-state/runtime checks still use the Windows devbox as required.
+
 Distinguish desired, built, installed and loaded versions. Windows builds use a
 local disk mirror and local `CARGO_TARGET_DIR`. Desktop probes require an
 interactive session; installs use durable elevated tasks. A copy or reboot is

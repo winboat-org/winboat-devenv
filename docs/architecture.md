@@ -84,9 +84,12 @@ diff digest; a dirty build must never be described as only a clean commit.
 Each of helios, qemu-helios, dxvk, virglrenderer, mesa-helios and vkd3d-proton gets
 its own `devenv.nix`/`nix/` entry points. Root adapters compose their outputs.
 WinBoat, WBFreeRDP, Electron, CLVK and common packaging recipes stay here.
-Build natively or cross-compile where ABI/SDK constraints permit; Windows MSVC/
-WDK targets dispatch to the devbox. Never force a MinGW build where an MSVC ABI
-library must link into the native Rust UMD. Preserve static CRT compatibility,
+Build host outputs natively and cross-compile Windows dependencies wherever
+possible. Use a Windows build host only after documenting a concrete unsupported
+toolchain or component requirement. MSVC ABI targets can use host Clang with the
+locked Windows SDK/CRT; the ABI requirement alone does not justify devbox
+compilation. Never force a MinGW build where an MSVC ABI library must link into
+the native Rust UMD. Preserve static CRT compatibility,
 x64/x86 variants and paired protocol-generated headers.
 
 An artifact manifest identifies component, source repo/commit/diff digest,

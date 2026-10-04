@@ -16,8 +16,10 @@ Prerequisites: Stages 2 and 3.
 
 ## Outcome
 
-Nix commands build/install the Helios stack through the Windows devbox. The Node
-MCP proxies those same operations, and a strict registry reports the exact
+Nix commands cross-compile Windows dependencies on the host wherever possible,
+using the devbox only for build steps with documented cross-compilation limits
+and for Windows installation/runtime checks. The Node MCP proxies those same
+operations, and a strict registry reports the exact
 requested, installed and loaded identities with recoverable transaction state.
 
 ## Implementation
@@ -31,11 +33,14 @@ refuse session 0 and run as the interactive account. Resolve guest tools from
 the provisioning inventory; MSYS2 Git must not shadow native Windows Git.
 
 Complete the Windows backends for KMD SYS/INF/CAT/test signing, UMD11/UMD12,
-native DXVK/vkd3d engines, Mesa ICDs, CLVK and loaders, including required x64/x86
+MSVC-ABI DXVK/vkd3d engines, Mesa ICDs, CLVK and loaders, including required x64/x86
 variants. Confirm matched SDK/WDK, bindgen layout tests, LLVM/libclang and static
 CRT consistency. Keep KMD resource/INF/package versions coherent. Every build
 uses a verified local source mirror and returns a complete artifact manifest;
 an SSH disconnect must not kill an eight-minute build or hide its failure.
+Attempt host cross-compilation before selecting a devbox build. Preserve the
+required ABI/CRT with the cross toolchain; document any actual blocker rather
+than treating a Windows target as requiring a Windows build host.
 
 Expose `wb devbox run --purpose ...`, `mirror`, `build`, `install`, `registry
 show/verify/reconcile`, job operations and equivalent typed MCP tools. MCP tool
