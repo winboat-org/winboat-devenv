@@ -75,8 +75,8 @@ class Acceptance:
         while True:
             response = (self.tool('job_status', {'id': identifier}) if via_mcp else
                         self.cli('host-job-status', 'job', 'status', '--id', identifier))
-            assert response['exitCode'] == 0, response
-            job = response['result']
+            job = response.get('result')
+            assert job and job.get('jobId') == identifier, response
             if job['state'] not in {'queued', 'running'}:
                 assert job['state'] in {'succeeded', 'failed'}, job
                 operation = job.get('operation')
@@ -84,6 +84,7 @@ class Acceptance:
                 # preserves the real native code and original transaction ID.
                 assert operation and operation['exitCode'] in allowed, job
                 return operation
+            assert response['exitCode'] == 0, response
             time.sleep(20)
 
     def full_stack(self):

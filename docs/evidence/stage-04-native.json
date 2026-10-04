@@ -532,5 +532,26 @@
       "schemaVersion": 1,
       "changedBackupRefused": true
     }
+  },
+  "hostCompletionFixture": {
+    "suiteId": "92fad00cb1464c7097a74f3e677b7156",
+    "state": "passed",
+    "checks": [
+      {
+        "surface": "cli",
+        "hostJobId": "op-4bdbae13daf64d1d814d391e8a9a354f",
+        "transactionId": "op-f96e81280d0a4bd8ad26a21fa3581169",
+        "nativeExitCode": 3010,
+        "hostProcessExitCode": 194
+      },
+      {
+        "surface": "mcp",
+        "hostJobId": "op-f05bcecf7f954203a6c74f9e9377d0ea",
+        "transactionId": "op-05ab0bae99604ecba56324a8f2a8ec20",
+        "nativeExitCode": 3010,
+        "hostProcessExitCode": 194
+      }
+    ],
+    "fullComponentAcceptance": false
   }
 }
