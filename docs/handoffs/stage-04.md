@@ -1,5 +1,14 @@
 # Stage 4 handoff
 
+Stage 4 is now in progress. Start continuation with
+[Windows control](../windows-control.md) and the
+[control checkpoint evidence](../evidence/stage-04-control.json): shared tasks,
+verified transfer/mirrors, real DXVK x64/x86, mapped-image fixtures and install
+recovery passed. Complete KMD/UMD/Mesa/CLVK builds, full installation, kernel
+identity and interactive graphics acceptance remain required. The original
+handoff below still defines the baseline and preservation boundaries. Current
+guest/state selections and retained failure receipts are in ignored local notes.
+
 The current-host Windows baseline passed all 14 installed-tool probes, the
 signing reboot/driver load, autologin, local mirror/build/hash return and recovery
 checks. The final unmodified blank-disk repeat passed with zero failures or

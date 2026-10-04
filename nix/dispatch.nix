@@ -29,7 +29,10 @@ let
 in
 selected
 // {
-  backendAvailable = false;
+  backendAvailable = builtins.elem spec.target [
+    "dxvk-engine-x64"
+    "dxvk-engine-x86"
+  ];
 }
 // pkgs.lib.optionalAttrs (selected.backend == "devbox") {
   sourceMirrorRoot = "C:\\WinBoatDev\\src";

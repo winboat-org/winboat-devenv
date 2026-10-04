@@ -185,3 +185,31 @@ generated disk was removed. No host package/group/daemon/bridge changes,
 managed-source changes, component/installer CI, migration removals or pushes
 were performed. [The Stage 4 handoff](handoffs/stage-04.md) records the measured
 baseline and the remaining component-build and fresh-host limits.
+
+## Stage 4 control checkpoint
+
+[Stage 4 evidence](evidence/stage-04-control.json) records the fresh named guest
+using the corrected host manifest and unchanged provisioning/Nix locks. Shared
+CLI/MCP checks passed for an eight-minute SYSTEM task after client disconnect,
+literal argument arrays, interactive wbdev execution and session-0 refusal,
+native exit codes 42/3010, cancellation/resume, tampered-script refusal,
+injected install failure/recovery, manual file/registration drift and rollback.
+A restart-required fixture retained code 3010 across disconnect and resumed
+only after an observed changed boot, then rolled back.
+
+Clean-pinned DXVK x64 built through CLI and x86 through MCP. Returned manifests
+verify all file hashes and retain licenses. The x86 build measured architecture,
+static CRT and embedded CodeView symbols in all eight archives; its static
+archives generated no separate PDB. The earlier x64 build predates those image
+inspection fields. Independent native DLL/PDB fixtures built for x64 and x86;
+actual loaded code matched, became stale after replacing the disk file, and
+matched again after unloading/reloading in both process architectures.
+
+The local suite passes 46 tests plus PowerShell parsing, mapped-image C#
+compilation and literal argument binding. Live tests are opt-in and excluded
+from ordinary CI. Earlier failures are retained, including an x86 shader tool
+loading a 32-bit CRT into its 64-bit process and a receipt reader sharing race;
+corrected runs passed. Full KMD/UMD/Mesa/CLVK build/install, kernel loaded-image
+identity and interactive graphics smoke remain pending. Registry verification
+returns code 76 for that incomplete gate. No stage approval or publication is
+claimed; the original development VM and external source trees are preserved.

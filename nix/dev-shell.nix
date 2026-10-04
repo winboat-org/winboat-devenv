@@ -46,6 +46,15 @@ in
     export PYTHONPATH=${../tools}
     exec ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python3 ${../tests/devbox.py} "$@"
   '';
+  scripts.wb-windows-test.exec = ''
+    export PYTHONPATH=${../tools}
+    exec ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python3 ${../tests/windows.py}
+  '';
+  scripts.wb-windows-live.exec = ''
+    ${commands.environment}
+    export WB_LIVE_COMMAND=${commands.wb}/bin/wb
+    exec ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python3 ${../tests/windows-live.py} "$@"
+  '';
   scripts.wb-windows-check.exec = ''
     exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
   '';
@@ -103,6 +112,7 @@ in
     wb-pins winboat-accel | jq -e '.repositories | length == 12' >/dev/null
     wb-test
     wb-devbox-test
+    wb-windows-test
     wb-windows-check
   '';
 }

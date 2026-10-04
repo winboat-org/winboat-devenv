@@ -878,6 +878,9 @@ def viewer(ws, name, action, operation_id):
 
 
 def dispatch(ws, args, operation_id):
+    if args.action in {"run", "job", "mirror", "registry", "install", "build"}:
+        from . import windows
+        return windows.dispatch(ws, args, operation_id)
     if args.action == "cdi":
         return graphics.prepare(ws, operation_id, args.render_node)
     if args.action == "capabilities":

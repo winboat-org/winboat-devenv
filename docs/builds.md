@@ -49,8 +49,9 @@ The engine archive names and compatibility headers follow the component's
 current UMD link inputs. Guest plans retain LLVM 22.1.8, MSVC v143, matched
 SDK/WDK 10.0.26100.0, bindgen 0.72 and Rust nightly-2026-07-14 requirements.
 They specify the local `C:\WinBoatDev\src` mirror, `C:\WinBoatDev\build`, local
-Cargo outputs and durable elevated `build` tasks. Execution fails with code 3
-until Stage 4 supplies the backend. No guest install or loaded-state evidence
+Cargo outputs and durable elevated `build` tasks. Stage 4's DXVK controller binds
+and executes those commands in a named guest; other incomplete contracts still
+fail with code 3. See [Windows control](windows-control.md). No guest install or loaded-state evidence
 is produced by these plans. Meson/Ninja command templates use named tokens
 for mirrored source/build/native-file paths; Stage 4 must bind them before
 execution, rather than send host Nix paths directly to Windows.

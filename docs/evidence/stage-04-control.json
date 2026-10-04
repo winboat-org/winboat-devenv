@@ -1,0 +1,372 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-04T01:59:41.767065+00:00",
+  "stage": 4,
+  "state": "in-progress",
+  "fullComponentAcceptance": false,
+  "locks": {
+    "devenv.lock": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "config/provision.lock.json": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408"
+  },
+  "guest": {
+    "name": "stage04-live",
+    "identity": "2a008755320c4385bacc6f480a769fa3",
+    "runtime": "rootless-podman-private-nvidia-cdi",
+    "originalDevelopmentGuest": "preserved stopped with its original artifact"
+  },
+  "hostManifest": {
+    "path": "out/native/op-1c1559be28eb44628591806633633add/manifest.json",
+    "sha256": "e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1"
+  },
+  "suites": [
+    {
+      "id": "e82db6557a664838aeac4854471613a3",
+      "state": "passed",
+      "durationSeconds": 480,
+      "eightMinuteDurability": true,
+      "summary": {
+        "path": "windows-acceptance/e82db6557a664838aeac4854471613a3/summary.json",
+        "sha256": "97c7308395df5a82219d967f51849264a1e215368c6b3ee7b569080cb03b305c"
+      },
+      "receipts": {
+        "path": "windows-acceptance/e82db6557a664838aeac4854471613a3/receipts.json",
+        "sha256": "06aaa3d2fe61692625e62826f872ec1a041a553ad69e1585445e2d1d92687165"
+      },
+      "results": [
+        {
+          "label": "durable-start",
+          "operationId": "op-848e619f4e604f7898ee63ec99c6c3ad",
+          "state": "queued",
+          "exitCode": 0
+        },
+        {
+          "label": "session-zero-refusal",
+          "operationId": "op-c3523e7797954ca0abcbfb9034e9f7b9",
+          "state": "failed",
+          "exitCode": 87
+        },
+        {
+          "label": "devbox_run",
+          "operationId": "op-3bfdee9c831946359fec84c4d729885b",
+          "state": "queued",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_run",
+          "operationId": "op-93e27950b7cc435f83202fd6af3f5177",
+          "state": "queued",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_run",
+          "operationId": "op-6846c049192b4f349f40e88b8890ea68",
+          "state": "queued",
+          "exitCode": 0
+        },
+        {
+          "label": "cancel-start",
+          "operationId": "op-aac1cdb6a9654d7fa23534bb126e59a3",
+          "state": "queued",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_job_cancel",
+          "operationId": "op-0982c40808f145a88fbbd7b857ca3cf2",
+          "state": "cancelled",
+          "exitCode": 130
+        },
+        {
+          "label": "devbox_job_resume",
+          "operationId": "op-96f039112fbe4d1b9eac1aed5cebeecf",
+          "state": "queued",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_run",
+          "operationId": "op-0b47c5b99ad44d6eb32f5d91e789933c",
+          "state": "queued",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_job_resume",
+          "operationId": "op-d17492386a954b0cb4d9a6054a40adea",
+          "state": "failed",
+          "exitCode": 1
+        },
+        {
+          "label": "injected-install-failure",
+          "operationId": "op-cf1d6865a29741c2b15a6b75f79b91ec",
+          "state": "failed",
+          "exitCode": 1
+        },
+        {
+          "label": "devbox_install",
+          "operationId": "op-3b90126376f6416aa05016d8e737ae48",
+          "state": "succeeded",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_registry_reconcile",
+          "operationId": "op-c9218d72fa7245478e3e24a1a5365cbc",
+          "state": "observed",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_run",
+          "operationId": "op-3e267ed1d0374ba19abf2427514f09cf",
+          "state": "queued",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_registry_reconcile",
+          "operationId": "op-92d149e604a5461f9b3762eefc602778",
+          "state": "drift",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_install",
+          "operationId": "op-302948e7714741afa8f5e101138323ab",
+          "state": "succeeded",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "id": "5d44fb4bf64b4cdfac473d1ad9adf29d",
+      "state": "passed",
+      "durationSeconds": 12,
+      "eightMinuteDurability": false,
+      "summary": {
+        "path": "windows-acceptance/5d44fb4bf64b4cdfac473d1ad9adf29d/summary.json",
+        "sha256": "f0728b3fb07b6758f56b561ff16cc9c948974a99d1a8975c402366016fd3bfbc"
+      },
+      "receipts": {
+        "path": "windows-acceptance/5d44fb4bf64b4cdfac473d1ad9adf29d/receipts.json",
+        "sha256": "3cfbfc7a1f595d761b68f9e99d995405da0ec054473c16c58d72bde6bb445c13"
+      },
+      "results": [
+        {
+          "label": "devbox_build",
+          "operationId": "op-f67357b2720c4203ab2ccac17e7b3741",
+          "state": "succeeded",
+          "exitCode": 0
+        },
+        {
+          "label": "build_verify",
+          "operationId": "op-6d180286580f4146a806314a725391ea",
+          "state": "verified",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_install",
+          "operationId": "op-e20975adc70b42a28243e06e3f079705",
+          "state": "reboot-required",
+          "exitCode": 3010
+        },
+        {
+          "label": "required-restart",
+          "operationId": "op-4bd00aa78ffe455b92081ec493406892",
+          "state": "running",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_install",
+          "operationId": "op-37faa60c928542448afd19ddb0692e7f",
+          "state": "succeeded",
+          "exitCode": 0
+        },
+        {
+          "label": "devbox_install",
+          "operationId": "op-76e650e3567f46ffba40cc468c33bea4",
+          "state": "succeeded",
+          "exitCode": 0
+        }
+      ]
+    }
+  ],
+  "componentBuilds": [
+    {
+      "artifactId": "op-25d107a66f0944c69a19aba3fee117af",
+      "interface": "CLI",
+      "target": "dxvk-engine-x64",
+      "manifest": "out/guest/op-25d107a66f0944c69a19aba3fee117af/manifest.json",
+      "manifestSha256": "027b1377d983c1654e1a726543f37ec2c9ea31a6b5f0122749acb6eb3a35d618",
+      "files": 28,
+      "licenseNotices": 19,
+      "separatePdbs": 0,
+      "embeddedCodeViewArchives": 0,
+      "images": [],
+      "imageVerification": "unavailable-in-earlier-operation",
+      "sources": {
+        "dxvk": {
+          "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+          "diffSha256": null,
+          "snapshotSha256": "2b0be8f7ed2a33b6b46e6e01f89c348ee22b6490e828530717958054032f243c",
+          "narHash": "sha256-uCtFWNqLnH0jVBYLIBvGXVD7ekc3N9UOxDGIoSYDets="
+        },
+        "helios": {
+          "revision": "93bb6e4afbd1153d6e8b875d8fa144a8bec4d80a",
+          "diffSha256": null,
+          "snapshotSha256": "9d7d7a3da5158856e50f737317bd62f556b84c9630864a3c328433990b569cd9",
+          "narHash": "sha256-5Yt08Ou1SgGAqwLThzla2jIkCYj+UBsSHrporwHpdKA="
+        }
+      },
+      "installed": false,
+      "loaded": false
+    },
+    {
+      "artifactId": "op-f67357b2720c4203ab2ccac17e7b3741",
+      "interface": "MCP",
+      "target": "dxvk-engine-x86",
+      "manifest": "out/guest/op-f67357b2720c4203ab2ccac17e7b3741/manifest.json",
+      "manifestSha256": "3e64351344d9356cef92b76ec3e2907705a4b16f844bcc7fe2a2b4f19c501d5e",
+      "files": 29,
+      "licenseNotices": 19,
+      "separatePdbs": 0,
+      "embeddedCodeViewArchives": 8,
+      "images": [
+        {
+          "staticCrtVerified": true,
+          "path": "src/dxvk/libdxvk.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "src/d3d11/libhelios_d3d11_static.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "subprojects/dxbc-spirv/libdxbc_spv.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "subprojects/libdisplay-info/libdisplay-info.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "src/spirv/libspirv.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "src/util/libutil.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "src/wsi/libwsi.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "src/vulkan/libvkcommon.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        }
+      ],
+      "imageVerification": "architecture-and-crt-inspected",
+      "sources": {
+        "dxvk": {
+          "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+          "diffSha256": null,
+          "snapshotSha256": "2b0be8f7ed2a33b6b46e6e01f89c348ee22b6490e828530717958054032f243c",
+          "narHash": "sha256-uCtFWNqLnH0jVBYLIBvGXVD7ekc3N9UOxDGIoSYDets="
+        },
+        "helios": {
+          "revision": "93bb6e4afbd1153d6e8b875d8fa144a8bec4d80a",
+          "diffSha256": null,
+          "snapshotSha256": "9d7d7a3da5158856e50f737317bd62f556b84c9630864a3c328433990b569cd9",
+          "narHash": "sha256-5Yt08Ou1SgGAqwLThzla2jIkCYj+UBsSHrporwHpdKA="
+        }
+      },
+      "installed": false,
+      "loaded": false
+    }
+  ],
+  "nativeFixtures": {
+    "state": "passed for both x64 and x86",
+    "buildJob": "op-62b0aaf2271142c1806674c07cb07f83",
+    "loadedJob": "op-7104ff4ffb844f0c8fce6a7e527be5b1",
+    "checks": [
+      "hash-verified DLL/PDB return",
+      "mapped-code-matches before replacement",
+      "stale-mapped-image after replacement",
+      "mapped-code-matches after unload/reload"
+    ],
+    "receipts": {
+      "path": "windows-acceptance/2a232e2d287b47a6a0fd345d668142a3/receipts.json",
+      "sha256": "27c8552a06ffb5098a3a2609c934eba1694bc0a7b0f3ac39680805fa5a547a95"
+    },
+    "suiteLimit": "Native fixture subset passed; this earlier suite later failed the initial x86 DXVK shader process. Its corrected component repeat passed separately."
+  },
+  "hostChecks": {
+    "state": "passed",
+    "testCount": 46,
+    "counts": {
+      "workspace": 25,
+      "devbox": 17,
+      "windowsBoundaries": 4
+    },
+    "additional": [
+      "PowerShell payload syntax",
+      "mapped-image verifier C# compile",
+      "literal script argument binding"
+    ],
+    "log": {
+      "path": "checkpoint-tests.log",
+      "sha256": "6f12653c8f638830fdb882ff81130658faf4d1b288c5a632c03e10aecd25ea24"
+    }
+  },
+  "registry": {
+    "reconcileState": "observed",
+    "reconcile": {
+      "path": "registry-current.json",
+      "sha256": "2fb406d08198141696a8c7d56b09828c02e93bab14e671bb7019464715e432bf"
+    },
+    "installedVerified": false,
+    "loadedVerified": false,
+    "verificationExitCode": 76,
+    "pending": "Complete selected stack and loaded kernel identity are not established.",
+    "verifyReceipt": {
+      "path": "registry-verify-current.json",
+      "sha256": "2b6f2231b68ab49923cf52a6bc396d0e90a115ea0e5949db89bf391467d22342"
+    }
+  },
+  "retainedFailures": [
+    "Windows SFTP drive path syntax",
+    "PowerShell 5.1 File.Replace null binding and sharing races",
+    "array splatting failed named payload arguments",
+    "interactive desktop ACL",
+    "EWDK kernel-only LIB missing user-mode SDK libraries",
+    "x86 PATH exposed a 32-bit CRT to 64-bit glslang",
+    "registry empty-key property handling"
+  ],
+  "pending": [
+    "vkd3d exact archive and prerequisite closure",
+    "KMD SYS/INF/CAT/test signing and bindgen layout tests",
+    "UMD11/UMD12 x64/x86 Rust dependency closure and builds",
+    "Mesa ICD x64/x86 build closure",
+    "CLVK/clspv/OpenCL loader build closure",
+    "complete CLI and MCP package installation",
+    "observable kernel loaded identity and protocol pairing",
+    "interactive graphics smoke on the installed selected stack"
+  ]
+}

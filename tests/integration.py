@@ -454,6 +454,15 @@ class Fixtures(unittest.TestCase):
         self.assertIn("devbox_create", [t["name"] for t in tools])
         self.assertIn("devbox_viewer_status", [t["name"] for t in tools])
         self.assertIn('devbox_cdi_prepare', [t['name'] for t in tools])
+        for name in ['devbox_run', 'devbox_mirror', 'devbox_install', 'devbox_build', 'devbox_job_status', 'devbox_registry_reconcile']:
+            self.assertIn(name, [t['name'] for t in tools])
+        bad_purpose = rpc('tools/call', {'name': 'devbox_run', 'arguments': {'purpose': 'console', 'script': 'fixture.ps1'}})
+        self.assertEqual(bad_purpose['error']['code'], -32602)
+        missing_script = rpc('tools/call', {'name': 'devbox_run', 'arguments': {'purpose': 'desktop'}})
+        self.assertEqual(missing_script['error']['code'], -32602)
+        missing_target = rpc('tools/call', {'name': 'devbox_build', 'arguments': {'target': 'unknown-target', 'background': False}})['result']
+        self.assertTrue(missing_target['isError'])
+        self.assertEqual(missing_target['structuredContent']['error'], self.wb('devbox', 'build', '--target', 'unknown-target', check=False)['error'])
         invalid_cdi = rpc('tools/call', {'name': 'devbox_cdi_prepare', 'arguments': {'renderNode': '/dev/dri/not-a-node'}})['result']
         self.assertTrue(invalid_cdi['isError'])
         self.assertEqual(invalid_cdi['structuredContent']['error'],

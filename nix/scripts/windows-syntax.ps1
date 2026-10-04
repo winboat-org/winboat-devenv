@@ -7,6 +7,21 @@ Get-ChildItem -LiteralPath $Directory -Filter '*.ps1' | ForEach-Object {
     if ($errors.Count) { $errors | Format-List; $failed = $true } else { Write-Host "Parsed $($_.Name)" }
 }
 if ($failed) { exit 1 }
+if (Test-Path (Join-Path $Directory 'LoadedIdentity.cs')) {
+    Add-Type -Path (Join-Path $Directory 'LoadedIdentity.cs')
+    Write-Host 'Compiled mapped-image verifier'
+}
+if (Test-Path (Join-Path $Directory 'Control.ps1')) {
+    . (Join-Path $Directory 'Control.ps1')
+    $fixture = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString('N') + '.ps1')
+    try {
+        [IO.File]::WriteAllText($fixture, 'param([string]$Value,[int]$Seconds,[switch]$Flag) @{value=$Value;seconds=$Seconds;flag=$Flag.IsPresent}|ConvertTo-Json -Compress')
+        $value = "literal ' quotes & `$dollar`nsecond line"
+        $actual = Invoke-ControlPayload $fixture @('-Value',$value,'-Seconds','480','-Flag') | ConvertFrom-Json
+        if ($actual.value -cne $value -or $actual.seconds -ne 480 -or -not $actual.flag) { throw 'Encoded payload argument binding changed data' }
+        Write-Host 'Verified literal script argument binding'
+    } finally { Remove-Item -LiteralPath $fixture -Force }
+}
 
 $lock = Get-Content -Raw -LiteralPath $ProvisionLock | ConvertFrom-Json
 foreach ($tool in $lock.tools) {

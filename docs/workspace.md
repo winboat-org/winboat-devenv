@@ -179,4 +179,6 @@ diffs, native/guest roots and retained Nix closures. MCP adds `build_list`,
 `build_run` and `build_verify` (19 tools total). Build runs default to durable
 background jobs over MCP; CLI uses `--background`. Plans evaluate shared Nix
 contracts and do not execute compilers or initialize unselected sources.
-Windows MSVC/WDK targets fail with code 3 until Stage 4 supplies the backend.
+Stage 4 adds [Windows control](windows-control.md). The DXVK engine backend
+dispatches to a named verified guest; other incomplete Windows component
+contracts still fail with code 3. Full stack execution remains pending.

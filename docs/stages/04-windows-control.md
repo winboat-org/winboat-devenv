@@ -1,6 +1,12 @@
 # Stage 4 — Windows builds, installation and devbox MCP
 
-Status: planned. Prerequisites: Stages 2 and 3.
+Status: in progress. Shared task/transfer, source snapshot, DXVK dispatch,
+transaction and registry operations passed live CLI/MCP checks, including an
+eight-minute SYSTEM job, x64/x86 mapped-DLL replacement detection and reboot
+recovery. DXVK x64 built through CLI and x86 through MCP. Complete component and
+loaded-stack acceptance remains pending. See [control usage](../windows-control.md)
+and [measured evidence](../evidence/stage-04-control.json).
+Prerequisites: Stages 2 and 3.
 
 ## Outcome
 

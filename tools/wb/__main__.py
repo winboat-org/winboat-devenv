@@ -65,8 +65,43 @@ def parser():
     build.add_argument("--mode", choices=["release", "development"], default="release")
     build.add_argument("--background", action="store_true")
     build.add_argument("--manifest")
+    build.add_argument("--name", default="default")
     dev = commands.add_parser("devbox").add_subparsers(dest="action", required=True)
     dev.add_parser("capabilities")
+    windows_run = dev.add_parser("run")
+    windows_run.add_argument("--name", default="default")
+    windows_run.add_argument("--purpose", choices=["build", "install", "desktop", "system"], required=True)
+    windows_run.add_argument("--script", required=True)
+    windows_run.add_argument("--argument", action="append", default=[])
+    windows_run.add_argument("--direct", action="store_true")
+    windows_jobs = dev.add_parser("job")
+    windows_jobs.add_argument("job_action", choices=["status", "cancel", "resume"])
+    windows_jobs.add_argument("--name", default="default")
+    windows_jobs.add_argument("--id", required=True)
+    windows_mirror = dev.add_parser("mirror")
+    windows_mirror.add_argument("--name", default="default")
+    windows_mirror.add_argument("--repo", action="append", default=[])
+    windows_mirror.add_argument("--mode", choices=["release", "development"], default="release")
+    windows_mirror.add_argument("--background", action="store_true")
+    windows_registry = dev.add_parser("registry")
+    windows_registry.add_argument("registry_action", choices=["show", "verify", "reconcile"])
+    windows_registry.add_argument("--name", default="default")
+    windows_registry.add_argument("--background", action="store_true")
+    windows_install = dev.add_parser("install")
+    windows_install.add_argument("--name", default="default")
+    windows_install.add_argument("--manifest")
+    windows_install.add_argument("--resume")
+    windows_install.add_argument("--rollback")
+    windows_install.add_argument("--fixture", action="store_true")
+    windows_install.add_argument("--failure-after-copy", action="store_true")
+    windows_install.add_argument("--background", action="store_true")
+    windows_build = dev.add_parser("build")
+    windows_build.add_argument("--name", default="default")
+    windows_build.add_argument("--target")
+    windows_build.add_argument("--collect")
+    windows_build.add_argument("--configuration", choices=["release", "debug"], default="release")
+    windows_build.add_argument("--mode", choices=["release", "development"], default="release")
+    windows_build.add_argument("--background", action="store_true")
     cdi = dev.add_parser("cdi").add_subparsers(dest="cdi_action", required=True)
     cdi.add_parser("prepare").add_argument("--render-node")
     for name in ["media", "create", "up", "down", "restart", "status", "logs", "destroy", "guest-status", "viewer"]:
@@ -143,7 +178,7 @@ def dispatch(ws, args, operation_id, argv):
             return builds.plan(ws, args.target, args.configuration, args.mode)
         if args.background:
             return jobs.start(ws, [v for v in argv if v != "--background"])
-        return builds.execute(ws, args.target, args.configuration, args.mode, operation_id)
+        return builds.execute(ws, args.target, args.configuration, args.mode, operation_id, args.name)
     selected, containers = ws.select(args)
     if args.family == "doctor":
         tools = {name: shutil.which(name) for name in ["git", "node", "python3", "devenv", "nix", "ssh", "direnv"]}
@@ -262,6 +297,10 @@ def main(argv=None):
         code = exc.code if isinstance(exc, Failure) else 1
         payload = {"schemaVersion": 1, "operationId": operation_id, "state": "failed", "exitCode": code,
                    "error": str(exc), "details": exc.details if isinstance(exc, Failure) else {}, "evidencePaths": []}
+        if "ws" in locals():
+            receipt_path = ws.state / "operations" / (operation_id + ".json")
+            if receipt_path.exists():
+                payload["evidencePaths"].append(str(receipt_path))
     if not arguments.json and code:
         print(payload.get("error", "operation failed"), file=sys.stderr)
     print(json.dumps(payload, indent=None if arguments.json else 2))

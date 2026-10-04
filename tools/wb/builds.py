@@ -41,6 +41,8 @@ def plan(ws, name, configuration="release", mode="release"):
         expression = 'import (builtins.toPath (builtins.getEnv "WB_DISPATCH_EXPRESSION")) { nixpkgsPath = builtins.getEnv "WB_NIXPKGS"; request = builtins.getEnv "WB_DISPATCH_REQUEST"; }'
         result["dispatch"] = json.loads(run([os.environ["WB_NIX"], "eval", "--impure", "--json", "--expr", expression],
                                              env=dict(os.environ, WB_DISPATCH_REQUEST=json.dumps(request))).stdout)
+        if result["dispatch"].get("backendAvailable"):
+            result.update(available=True, externalStep="A verified named guest and complete observed Windows inputs are required")
     return result
 
 
@@ -141,8 +143,11 @@ def _files(root):
     return files
 
 
-def execute(ws, name, configuration, mode, operation_id):
+def execute(ws, name, configuration, mode, operation_id, devbox_name="default"):
     try:
+        if target(name)["backend"] == "devbox":
+            from . import windows
+            return windows.build(ws, devbox_name, name, configuration, mode, operation_id)
         return _execute(ws, name, configuration, mode, operation_id)
     except (Failure, OSError, ValueError, KeyError) as exc:
         path = ws.state / "operations" / (operation_id + ".json")

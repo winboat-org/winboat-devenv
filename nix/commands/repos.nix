@@ -23,6 +23,7 @@ let
           "scripts/host-smoke.py"
           "devbox.nix"
           "windows-payloads.nix"
+          "windows-build-tools.nix"
           "scripts/devbox-run.py"
           "windows/Bootstrap.ps1"
           "windows/Autologin.ps1"
@@ -32,6 +33,14 @@ let
           "windows/BuildFixture.ps1"
           "windows/Shutdown.ps1"
           "windows/TestDriver.c"
+          "windows/Control.ps1"
+          "windows/Task.ps1"
+          "windows/Snapshot.ps1"
+          "windows/GuestBuild.ps1"
+          "windows/Registry.ps1"
+          "windows/LoadedIdentity.cs"
+          "windows/Install.ps1"
+          "windows/Rollback.ps1"
           "adapters/venus-protocol.nix"
           "adapters/freerdp.nix"
           "adapters/winboat.nix"
@@ -57,6 +66,7 @@ let
           "wb/builds.py"
           "wb/devbox.py"
           "wb/graphics.py"
+          "wb/windows.py"
           "wb/common.py"
           "wb/jobs.py"
           "wb/publication.py"
@@ -96,6 +106,7 @@ let
     }
     export WB_VNCVIEWER=${pkgs.tigervnc}/bin/vncviewer
     export WB_SSH=${pkgs.openssh}/bin/ssh
+    export WB_SFTP=${pkgs.openssh}/bin/sftp
     export WB_SSH_KEYGEN=${pkgs.openssh}/bin/ssh-keygen
     export WB_NIX=${pkgs.nix}/bin/nix
     export WB_NIXPKGS=${pkgs.path}
@@ -123,6 +134,7 @@ let
     };
 in
 {
+  inherit environment;
   wb = command "wb" "";
   git = command "git" "git-wrapper";
 }
