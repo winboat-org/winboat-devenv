@@ -23,12 +23,13 @@ try {
     $env:WINBOAT_JOB_ROOT = $JobRoot
     $env:WINBOAT_CONTROL_ROOT = $PSScriptRoot
     $env:WINBOAT_PURPOSE = $request.purpose
+    $env:WINBOAT_REQUEST_SHA256 = $RequestSha256
     $receipt.state = 'running'; $receipt.exitCode = 0
     Write-ControlJson $receipt $receiptPath
-    # JSON decoding inside the child preserves each argument, including quotes,
-    # newlines and metacharacters. No argument text becomes PowerShell code.
-    $json = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes(($request | ConvertTo-Json -Depth 30 -Compress)))
-    $call = '$ErrorActionPreference="Stop"; $ProgressPreference="SilentlyContinue"; $r=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("' + $json + '")) | ConvertFrom-Json; . (Join-Path $env:WINBOAT_CONTROL_ROOT "Control.ps1"); $global:LASTEXITCODE=0; try { Invoke-ControlPayload $r.script @($r.arguments); $ok=$?; if($LASTEXITCODE) {exit $LASTEXITCODE}; if(-not $ok) {exit 1} } catch { [Console]::Error.WriteLine(($_ | Out-String) + $_.ScriptStackTrace); exit 1 }'
+    # Read and verify the retained JSON inside the child. Package manifests and
+    # literal arguments can exceed the Windows command-line limit; only this
+    # fixed launcher becomes code, regardless of the request's size/content.
+    $call = '$ErrorActionPreference="Stop"; $ProgressPreference="SilentlyContinue"; . (Join-Path $env:WINBOAT_CONTROL_ROOT "Control.ps1"); $global:LASTEXITCODE=0; try { $r=Read-ControlRequest $env:WINBOAT_JOB_ROOT $env:WINBOAT_REQUEST_SHA256; Invoke-ControlPayload $r.script @($r.arguments); $ok=$?; if($LASTEXITCODE) {exit $LASTEXITCODE}; if(-not $ok) {exit 1} } catch { [Console]::Error.WriteLine(($_ | Out-String) + $_.ScriptStackTrace); exit 1 }'
     $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($call))
     $process = Start-Process (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe') -ArgumentList @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-EncodedCommand',$encoded) -PassThru -RedirectStandardOutput (Join-Path $JobRoot 'stdout.log') -RedirectStandardError (Join-Path $JobRoot 'stderr.log')
     [void]$process.Handle

@@ -198,6 +198,7 @@ class Acceptance:
             observed = self.wait(submitted["operationId"], expected=code, via_mcp=True)
             assert observed["state"] == ("reboot-required" if code == 3010 else "failed"), observed
             assert json.loads(observed["logs"]["stdout.log"].splitlines()[-1])["argument"] == value, observed
+        self.large_request_fixture()
         cancelled = self.cli("cancel-start", "devbox", "run", "--name", self.args.name, "--purpose", "build", "--script", fixture, "--argument=-Seconds", "--argument=15")
         assert cancelled["exitCode"] == 0, cancelled
         cancellation = self.tool("devbox_job_cancel", {"name": self.args.name, "id": cancelled["operationId"]})
@@ -223,6 +224,8 @@ class Acceptance:
         self.finish()
 
     def extras(self):
+        if self.args.large_request:
+            self.large_request_fixture()
         if self.args.input_fixtures:
             self.input_fixtures()
         if self.args.native:
@@ -236,6 +239,24 @@ class Acceptance:
             self.reboot_fixture()
         if self.args.full_stack:
             self.full_stack()
+
+    def large_request_fixture(self):
+        # Encoding the whole request twice previously exceeded CreateProcess's
+        # command-line limit even though the retained JSON was valid.
+        value = "literal ' quotes \" & $dollar`n\nsecond line " * 600
+        submitted = self.tool('devbox_run', {'name': self.args.name, 'purpose': 'system',
+            'script': str(self.root/'tests/WindowsControlFixture.ps1'),
+            'arguments': ['-Seconds', '0', '-ExitCode', '42', '-Value', value]})
+        assert submitted['exitCode'] == 0, submitted
+        observed = self.wait(submitted['operationId'], expected=42, via_mcp=True)
+        assert observed['sessionId'] == 0 and observed['principal'] == 'NT AUTHORITY\\SYSTEM', observed
+        assert json.loads(observed['logs']['stdout.log'].splitlines()[-1])['argument'] == value
+        request_path = Path(self.args.state_root)/'devboxes'/self.args.name/'windows-jobs'/submitted['operationId']/'request.json'
+        request_bytes = request_path.stat().st_size
+        assert request_bytes > 20000
+        self.record('large-request-passed', {'operationId': submitted['operationId'],
+            'requestBytes': request_bytes, 'argumentSha256': hashlib.sha256(value.encode()).hexdigest(),
+            'exitCode': observed['exitCode'], 'principal': observed['principal'], 'sessionId': observed['sessionId']})
 
     def finish(self):
         summary = {"schemaVersion": 1, "state": "passed", "durationSeconds": self.args.seconds,
@@ -365,6 +386,7 @@ def main():
     parser.add_argument("--build-target", action='append', default=[], help='Additionally build and verify this component through MCP')
     parser.add_argument("--reboot", action='store_true', help='Reboot this explicitly named guest to recover a restart-required fixture install')
     parser.add_argument("--component-only", action='store_true', help='Run only the selected native/component/reboot checks, skipping the control suite')
+    parser.add_argument("--large-request", action='store_true', help='Verify a durable request beyond the Windows encoded-command size limit')
     parser.add_argument("--input-fixtures", action='store_true', help='Verify input trees and snapshot extraction/resume boundaries on Windows')
     parser.add_argument("--full-stack", action='store_true', help='Build clean pinned full stacks through CLI then MCP, install/reboot, and verify interactive graphics and loaded identities')
     args = parser.parse_args()
