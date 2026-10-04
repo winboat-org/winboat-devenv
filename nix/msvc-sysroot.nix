@@ -21,6 +21,7 @@ let
   kit = "Program Files/Windows Kits/10";
   sdk = "10.0.26100.0";
   licenses = "Program Files/Microsoft Visual Studio/2022/BuildTools/Licenses";
+  prepareScript = pkgs.writeText "msvc-sysroot.py" (builtins.readFile ./scripts/msvc-sysroot.py);
 in
 assert
   payloads == null
@@ -51,7 +52,7 @@ pkgs.runCommand "winboat-msvc-${tool.msvcToolset}-sdk-${sdk}-sysroot"
       cp -R "extracted/${kit}/Lib/${sdk}/ucrt/$architecture" "$out/sdk/lib/ucrt/$architecture"
     done
     cp -R 'extracted/${licenses}' "$out/share/licenses/msvc"
-    python3 ${./scripts/msvc-sysroot.py} "$out"
+    python3 ${prepareScript} "$out"
     test -f "$out/crt/include/vector"
     test -f "$out/sdk/include/um/Windows.h"
     for architecture in x64 x86; do

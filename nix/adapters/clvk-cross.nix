@@ -22,6 +22,13 @@ let
       ;
   };
   llvm = pkgs.llvmPackages_22;
+  patches = map (name: pkgs.writeText name (builtins.readFile (./. + "/${name}"))) [
+    "clvk-build-directory.patch"
+    "clvk-no-compiler-symbols.patch"
+    "clvk-cross-warning-flags.patch"
+    "clvk-clang-cl-warnings.patch"
+  ];
+  inspectScript = pkgs.writeText "msvc-cross-inspect.py" (builtins.readFile ../scripts/msvc-cross-inspect.py);
 in
 pkgs.runCommand "clvk-helios-msvc-cross-${configuration}"
   {
@@ -68,7 +75,7 @@ pkgs.runCommand "clvk-helios-msvc-cross-${configuration}"
         "helios"
       ]
     }
-    python3 - "$out/package/clspv-patches.json" ${sources.helios}/ci/patches/clspv ${./clvk-build-directory.patch} ${./clvk-no-compiler-symbols.patch} ${./clvk-cross-warning-flags.patch} ${./clvk-clang-cl-warnings.patch} <<'PY'
+    python3 - "$out/package/clspv-patches.json" ${sources.helios}/ci/patches/clspv ${pkgs.lib.concatStringsSep " " patches} <<'PY'
     import hashlib, json, pathlib, sys
     paths = sorted(pathlib.Path(sys.argv[2]).glob('*.patch')) + [pathlib.Path(p) for p in sys.argv[3:]]
     pathlib.Path(sys.argv[1]).write_text(json.dumps([{'path':p.name, 'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in paths]))
@@ -107,6 +114,6 @@ pkgs.runCommand "clvk-helios-msvc-cross-${configuration}"
         build_probe opencl-gl-sharing-smoke ${sources.helios}/packaging/windows/probes/opencl-gl-sharing-smoke.cpp d3d11.lib opengl32.lib gdi32.lib user32.lib
       fi
     done
-    python3 ${../scripts/msvc-cross-inspect.py} "$out" ${llvm.llvm}/bin/llvm-readobj \
+    python3 ${inspectScript} "$out" ${llvm.llvm}/bin/llvm-readobj \
       > "$out/images.json"
   ''

@@ -15,6 +15,18 @@ let
   };
   llvm = pkgs.llvmPackages_22;
   buildType = if configuration == "debug" then "Debug" else "RelWithDebInfo";
+  patches = map (name: pkgs.writeText name (builtins.readFile (./. + "/${name}"))) [
+    "clvk-build-directory.patch"
+    "clvk-no-compiler-symbols.patch"
+    "clvk-cross-warning-flags.patch"
+    "clvk-clang-cl-warnings.patch"
+  ];
+  symbolPolicy = pkgs.writeText "clvk-symbol-policy.py" (builtins.readFile ../scripts/clvk-symbol-policy.py);
+  clspvPatchDirectory = "${sources.helios}/ci/patches/clspv";
+  clspvPatches = map
+    (name: pkgs.writeText name (builtins.readFile "${clspvPatchDirectory}/${name}"))
+    (builtins.filter (name: pkgs.lib.hasSuffix ".patch" name)
+      (builtins.attrNames (builtins.readDir clspvPatchDirectory)));
 in
 pkgs.runCommand "clvk-helios-msvc-cross-compiler-${configuration}"
   {
@@ -36,11 +48,11 @@ pkgs.runCommand "clvk-helios-msvc-cross-compiler-${configuration}"
     PY
     cp -R ${sources.clvk-helios} source
     chmod -R u+w source
-    for patch in ${sources.helios}/ci/patches/clspv/*.patch; do
+    for patch in ${pkgs.lib.concatStringsSep " " clspvPatches}; do
       git -C source/external/clspv apply --check "$patch"
       git -C source/external/clspv apply "$patch"
     done
-    for patch in ${./clvk-build-directory.patch} ${./clvk-no-compiler-symbols.patch} ${./clvk-cross-warning-flags.patch} ${./clvk-clang-cl-warnings.patch}; do
+    for patch in ${pkgs.lib.concatStringsSep " " patches}; do
       git -C source apply --check "$patch"
       git -C source apply "$patch"
     done
@@ -60,10 +72,10 @@ pkgs.runCommand "clvk-helios-msvc-cross-compiler-${configuration}"
       -DCLSPV_LLVM_BINARY_DIR="$PWD/l" -DCLSPV_EXTERNAL_LIBCLC_DIR=${libclc} \
       -DLLVM_NATIVE_TOOL_DIR=${hostTools}/bin \
       -DLLVM_TABLEGEN=${hostTools}/bin/llvm-tblgen -DCLANG_TABLEGEN=${hostTools}/bin/clang-tblgen
-    python3 ${../scripts/clvk-symbol-policy.py} build/compile_commands.json ${inputs}/llvm "$PWD/l" --preflight
+    python3 ${symbolPolicy} build/compile_commands.json ${inputs}/llvm "$PWD/l" --preflight
     cmake --build build --target OpenCL --parallel "$NIX_BUILD_CORES"
     mkdir -p "$out/package" "$out/share/winboat"
-    python3 ${../scripts/clvk-symbol-policy.py} build/compile_commands.json ${inputs}/llvm "$PWD/l" \
+    python3 ${symbolPolicy} build/compile_commands.json ${inputs}/llvm "$PWD/l" \
       > "$out/package/llvm-symbol-policy.json"
     cp build/src/OpenCL.dll "$out/package/clvk.dll"
     cp build/src/OpenCL.pdb "$out/package/clvk.pdb"
