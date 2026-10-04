@@ -703,6 +703,75 @@ def up(ws, name, operation_id, rebuild_image=False):
         raise Failure("devbox QEMU startup timed out; inspect logs before retrying", 3, name=name)
 
 
+def migrate_host(ws, name, manifest, operation_id):
+    """Explicitly prepare a stopped guest for a clean QEMU-only host upgrade."""
+    with locked(ws.state / "locks" / ("devbox-" + name_check(name) + ".lock")):
+        directory, record = load(ws, name)
+        rt = runtime(ws, record)
+        existing = inspect(rt, record)
+        if existing and existing["State"].get("Running"):
+            raise Failure("stop the devbox before migrating its host artifact", 2)
+        if not record.get("image") or not record["provisioning"].get("verified"):
+            raise Failure("host migration requires an existing verified devbox image", 2)
+        previous = host_artifact(ws, record["hostArtifact"]["manifest"])
+        if previous["manifestSha256"] != record["hostArtifact"]["manifestSha256"]:
+            raise Failure("retained host artifact changed before migration", 2)
+        selected = host_artifact(ws, manifest)
+        old = json.loads(Path(previous["manifest"]).read_text())
+        new = json.loads(Path(selected["manifest"]).read_text())
+        if new.get("mode") != "release" or any(
+                s.get("diffSha256") or s.get("untracked") for s in new["sources"].values()):
+            raise Failure("host migration requires a clean release artifact", 2)
+        for component in ["virglrenderer", "venus-protocol"]:
+            before, after = old["sources"][component], new["sources"][component]
+            if (not before.get("narHash") or not after.get("narHash") or
+                    any(before.get(key) != after.get(key) for key in ["revision", "diffSha256", "narHash"])):
+                raise Failure("host migration cannot change the renderer or protocol; use a new guest", 2,
+                              component=component)
+        if selected["manifestSha256"] == previous["manifestSha256"]:
+            return {"state": "unchanged", "name": name, "hostArtifact": selected, "loaded": False}
+        retained = directory / "host-migrations" / operation_id
+        retained.mkdir(parents=True, mode=0o700)
+        write_json(retained / "before.json", record)
+        image = record["image"]
+        roots = [(image["archiveSha256"], image["output"])]
+        if image.get("runtimeRoot"):
+            roots.append((image["archiveSha256"] + "-runtime", image["runtimeRoot"]))
+        for label, output in roots:
+            run([os.environ["WB_NIX"], "build", "--out-link", retained / label, output])
+        receipt = {"kind": "devbox-host-migration", "state": "building-image", "name": name,
+                   "identity": record["identity"], "previousHostArtifact": previous,
+                   "selectedHostArtifact": selected, "previousRecord": str(retained / "before.json"),
+                   "loaded": False}
+        ws.journal(operation_id, receipt)
+        candidate = json.loads(json.dumps(record))
+        candidate["hostArtifact"] = selected
+        try:
+            candidate["image"] = build_image(ws, directory, candidate, rt)
+            current = inspect(rt, record)
+            if current and (current["State"].get("Running") or
+                            not existing or current["Id"] != existing["Id"]):
+                raise Failure("container changed during host migration; retained guest selection was preserved", 2)
+            if current:
+                logs = run(rt["command"] + ["logs", container_name(record)], check=False)
+                (retained / "container.log").write_text(logs.stdout + logs.stderr)
+                run(rt["command"] + ["rm", container_name(record)])
+            candidate.setdefault("previousHostArtifacts", []).append({
+                "operationId": operation_id, "hostArtifact": record["hostArtifact"],
+                "image": image, "record": str(retained / "before.json")})
+            candidate["hostMigration"] = {"operationId": operation_id, "state": "prepared",
+                                           "previousRecord": str(retained / "before.json")}
+            write_json(directory / "devbox.json", candidate)
+            receipt.update(state="prepared", image=candidate["image"],
+                           externalStep="Start this devbox and verify its loaded host and Windows graphics identities.")
+        except Exception as exc:
+            receipt.update(state="failed", error=str(exc))
+            ws.journal(operation_id, receipt)
+            raise
+        ws.journal(operation_id, receipt)
+        return receipt
+
+
 def status(ws, name, rt=None):
     directory, record = load(ws, name)
     result = {"name": name, "state": "prepared", "ports": record["ports"], "image": record["image"],
@@ -936,6 +1005,8 @@ def dispatch(ws, args, operation_id):
         return {"name": args.name, "logs": logs, "boundedBytesPerLog": 65536}
     if args.action == "up":
         return up(ws, args.name, operation_id, args.rebuild_image)
+    if args.action == "migrate-host":
+        return migrate_host(ws, args.name, args.manifest, operation_id)
     if args.action == "down":
         return down(ws, args.name, operation_id, args.force, args.timeout)
     if args.action == "restart":

@@ -136,6 +136,84 @@ class DevboxTests(unittest.TestCase):
                 devbox.destroy(self.ws, "one", record["identity"], "operation")
         self.assertTrue(disk.exists())
 
+    def host_migration_fixture(self):
+        record = self.record()
+        record['provisioning']['verified'] = True
+        record['image'] = {'id': 'old-image', 'archiveSha256': 'c' * 64,
+                           'output': '/nix/store/old-archive', 'runtimeRoot': '/nix/store/old-runtime'}
+        directory = devbox.location(self.ws, 'one')
+        old, new = self.root / 'old-host.json', self.root / 'new-host.json'
+        sources = {name: {'revision': 'd' * 40, 'narHash': 'sha256-fixture', 'diffSha256': None}
+                   for name in ['qemu-helios', 'virglrenderer', 'venus-protocol']}
+        for path in [old, new]:
+            write_json(path, {'mode': 'release', 'sources': sources})
+        record['hostArtifact']['manifest'] = str(old)
+        write_json(directory / 'devbox.json', record)
+        for relative, data in [('disk.qcow2', b'guest disk'), ('secrets/ssh', b'guest key'),
+                               ('tpm/tpm2-00.permall', b'guest TPM')]:
+            path = directory / relative
+            path.parent.mkdir(exist_ok=True)
+            path.write_bytes(data)
+        def artifact(ws, path):
+            return {'manifest': str(path), 'manifestSha256': ('b' if Path(path) == old else 'e') * 64,
+                    'output': '/nix/store/' + ('old' if Path(path) == old else 'new')}
+        return directory, record, new, artifact
+
+    def test_host_migration_refuses_running_guest_and_changed_protocol(self):
+        directory, record, new, artifact = self.host_migration_fixture()
+        with patch.object(devbox, 'runtime', return_value={'command': ['runtime']}), \
+                patch.object(devbox, 'inspect', return_value={'State': {'Running': True}}), \
+                patch.object(devbox, 'build_image') as build:
+            with self.assertRaises(Failure):
+                devbox.migrate_host(self.ws, 'one', str(new), 'running-operation')
+            build.assert_not_called()
+        data = json.loads(new.read_text())
+        data['sources']['venus-protocol']['narHash'] = 'sha256-changed'
+        write_json(new, data)
+        with patch.object(devbox, 'runtime', return_value={'command': ['runtime']}), \
+                patch.object(devbox, 'inspect', return_value=None), \
+                patch.object(devbox, 'host_artifact', side_effect=artifact), \
+                patch.object(devbox, 'build_image') as build:
+            with self.assertRaises(Failure):
+                devbox.migrate_host(self.ws, 'one', str(new), 'protocol-operation')
+            build.assert_not_called()
+        self.assertEqual(json.loads((directory / 'devbox.json').read_text()), record)
+
+    def test_failed_host_migration_preserves_selection_disk_keys_and_tpm(self):
+        directory, record, new, artifact = self.host_migration_fixture()
+        preserved = {p: (directory / p).read_bytes() for p in ['disk.qcow2', 'secrets/ssh', 'tpm/tpm2-00.permall']}
+        with patch.dict(os.environ, {'WB_NIX': 'nix'}), \
+                patch.object(devbox, 'runtime', return_value={'command': ['runtime']}), \
+                patch.object(devbox, 'inspect', return_value=None), \
+                patch.object(devbox, 'host_artifact', side_effect=artifact), \
+                patch.object(devbox, 'run') as run, \
+                patch.object(devbox, 'build_image', side_effect=Failure('image build failed', 3)):
+            with self.assertRaises(Failure):
+                devbox.migrate_host(self.ws, 'one', str(new), 'failed-operation')
+            self.assertEqual(len(run.call_args_list), 2)
+        self.assertEqual(json.loads((directory / 'devbox.json').read_text()), record)
+        self.assertEqual(json.loads((directory / 'host-migrations/failed-operation/before.json').read_text()), record)
+        self.assertEqual({p: (directory / p).read_bytes() for p in preserved}, preserved)
+
+    def test_host_migration_prepares_new_image_with_previous_identity_retained(self):
+        directory, record, new, artifact = self.host_migration_fixture()
+        stopped = {'Id': 'owned-container', 'State': {'Running': False}}
+        with patch.dict(os.environ, {'WB_NIX': 'nix'}), \
+                patch.object(devbox, 'runtime', return_value={'command': ['runtime']}), \
+                patch.object(devbox, 'inspect', return_value=stopped), \
+                patch.object(devbox, 'host_artifact', side_effect=artifact), \
+                patch.object(devbox, 'run', return_value=subprocess.CompletedProcess([], 0, 'retained log', '')), \
+                patch.object(devbox, 'build_image', return_value={'id': 'new-image'}):
+            result = devbox.migrate_host(self.ws, 'one', str(new), 'prepared-operation')
+        selected = json.loads((directory / 'devbox.json').read_text())
+        self.assertEqual(result['state'], 'prepared')
+        self.assertFalse(result['loaded'])
+        self.assertEqual(selected['identity'], record['identity'])
+        self.assertEqual(selected['image']['id'], 'new-image')
+        self.assertEqual(selected['previousHostArtifacts'][0]['hostArtifact'], record['hostArtifact'])
+        self.assertEqual(selected['previousHostArtifacts'][0]['image'], record['image'])
+        self.assertEqual((directory / 'secrets/ssh').read_bytes(), b'guest key')
+
     def test_authenticated_shutdown_waits_for_completion_and_preserves_timeout(self):
         record = self.record()
         record['provisioning']['verified'] = True

@@ -100,6 +100,10 @@ def plan(config, node, rt, hashes=True):
                     gbm_dirs.add(str(Path(argument.split('::', 1)[1]).parent))
     if not libraries or not vendor_files or not gbm_dirs:
         raise Failure('generated CDI spec lacks EGL libraries, vendor registration or GBM backend', 3)
+    # The vendor Vulkan ICD dynamically opens GLVND as well as its X11 ELF
+    # dependencies. Nix supplies those directories; they are in the image's
+    # selected host-stack closure and remain separate from injected CDI files.
+    libraries.update(path for path in os.environ.get('WB_GRAPHICS_LIBRARIES', '').split(os.pathsep) if path)
     result.update(cdiDevice=name, spec={'path': str(path), 'sha256': digest(path)},
                   inputs=inputs, hooks=[{'path': hook, 'sha256': digest(hook)} for hook in sorted(set(hooks))],
                   libraryDirectories=sorted(libraries), eglVendorFiles=sorted(vendor_files),

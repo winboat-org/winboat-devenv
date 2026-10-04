@@ -9,7 +9,7 @@
 /repos/
 /.state/
 /build/
-/out/
+/out
 /result
 /result-*
 /node_modules/

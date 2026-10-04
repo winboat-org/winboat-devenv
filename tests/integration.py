@@ -460,6 +460,14 @@ class Fixtures(unittest.TestCase):
         self.assertEqual(bad_purpose['error']['code'], -32602)
         missing_script = rpc('tools/call', {'name': 'devbox_run', 'arguments': {'purpose': 'desktop'}})
         self.assertEqual(missing_script['error']['code'], -32602)
+        self.assertIn('devbox_migrate_host', [t['name'] for t in tools])
+        missing_manifest = rpc('tools/call', {'name': 'devbox_migrate_host', 'arguments': {'name': 'missing'}})
+        self.assertEqual(missing_manifest['error']['code'], -32602)
+        missing_migration_guest = rpc('tools/call', {'name': 'devbox_migrate_host', 'arguments':
+            {'name': 'missing', 'manifest': 'missing-host.json', 'background': False}})['result']
+        self.assertTrue(missing_migration_guest['isError'])
+        self.assertEqual(missing_migration_guest['structuredContent']['error'],
+                         self.wb('devbox', 'migrate-host', '--name', 'missing', '--manifest', 'missing-host.json', check=False)['error'])
         missing_target = rpc('tools/call', {'name': 'devbox_build', 'arguments': {'target': 'unknown-target', 'background': False}})['result']
         self.assertTrue(missing_target['isError'])
         self.assertEqual(missing_target['structuredContent']['error'], self.wb('devbox', 'build', '--target', 'unknown-target', check=False)['error'])

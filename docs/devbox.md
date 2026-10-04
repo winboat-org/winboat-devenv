@@ -146,6 +146,22 @@ A timeout preserves the running VM and reports failure. `--force` remains an
 explicit unclean stop. Docker's QMP socket and generated service state return to
 the host state owner's UID/GID so lifecycle and guarded deletion remain usable.
 
+The Nix runtime supplies the GLVND and X11 libraries needed by NVIDIA's headless Vulkan
+ICD alongside the injected vendor libraries. Before starting QEMU, a native
+probe creates a Vulkan 1.3 instance and requires a physical device using the same
+ICD selection and library search path. Its result is retained as `hostVulkan`
+in the host observation; guest graphics acceptance still runs independently.
+
+To upgrade QEMU for an existing verified guest, first stop it, then run
+`wb devbox migrate-host --name <guest> --manifest <clean-host-stack-manifest>`.
+This explicit operation retains its previous record, image and runtime closure,
+builds the selected image and preserves the guest disk, keys and signing identity.
+It requires the same Nix lock, renderer and Venus protocol; broader stack changes
+require a new guest. A successful migration reports `prepared`, with loaded state
+still unknown. Start the guest and verify the loaded host images and Windows
+graphics before accepting the upgrade. MCP exposes the same operation as
+`devbox_migrate_host`.
+
 Each named devbox has its own generated ownership identity, disk, secure-capable
 Nix firmware with unenrolled Secure Boot keys, persistent NVRAM/TPM, credentials, SSH keys, host key and loopback SSH/VNC
 ports under `.state/devboxes/`. Initial creation journals ownership before
@@ -167,7 +183,12 @@ Winlogon password, and updates the login domain when the computer is renamed.
 The generated local account password does not expire, so automatic login and
 its private SMB credential remain usable across later boots.
 Provisioning still runs in its durable SYSTEM task independently of the desktop.
-Hybrid shutdown is disabled so startup-task recovery gets a full boot. Cache
+Hybrid shutdown is disabled so startup-task recovery gets a full boot. Automatic
+sleep on AC and battery power, including the unattended-wake timeout, is disabled
+and read back through the Windows power API so headless jobs remain reachable.
+An existing devbox can apply this declared policy with
+`wb devbox run --name <guest> --purpose system --script nix/windows/PowerPolicy.ps1`;
+observe that job's native completion before proceeding. Cache
 connection attempts are bounded while the guest network starts. SMB credentials
 use the explicit `WORKGROUP\wbdev` server identity; unqualified usernames caused
 Windows error 1312 in the measured compatibility probe. Drive mappings are

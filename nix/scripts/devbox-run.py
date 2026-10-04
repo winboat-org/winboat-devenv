@@ -175,7 +175,7 @@ if graphics['provider'] == 'nvidia-cdi':
     for item in graphics['inputs']:
         if sha(item['containerPath']) != item['sha256']:
             raise RuntimeError('Injected NVIDIA CDI file differs from verified host input: ' + item['containerPath'])
-    environment['LD_LIBRARY_PATH'] = ':'.join(graphics['libraryDirectories'])
+    environment['LD_LIBRARY_PATH'] = ':'.join(graphics['libraryDirectories'] + [os.environ['WB_GRAPHICS_LIBRARIES']])
     environment['GBM_BACKENDS_PATH'] = ':'.join(graphics['gbmBackendDirectories'])
     environment['GBM_BACKEND'] = 'nvidia-drm'
     environment['__EGL_VENDOR_LIBRARY_FILENAMES'] = ':'.join(graphics['eglVendorFiles'])
@@ -185,11 +185,17 @@ else:
     environment.setdefault('GBM_BACKENDS_PATH', os.environ['WB_MESA'] + '/lib/gbm')
     environment.setdefault('__EGL_VENDOR_LIBRARY_FILENAMES', ':'.join(str(path) for path in Path(os.environ['WB_MESA']).glob('share/glvnd/egl_vendor.d/*.json')))
     environment.setdefault('VK_DRIVER_FILES', ':'.join(str(path) for path in Path(os.environ['WB_MESA']).glob('share/vulkan/icd.d/*.json')))
+probe = subprocess.run([os.environ['WB_VULKAN_PROBE']], env=environment,
+                       capture_output=True, text=True, timeout=30)
+if probe.returncode:
+    raise RuntimeError('Host Vulkan preflight failed: ' + probe.stderr.strip())
+host_vulkan = json.loads(probe.stdout)
 with (state / 'qemu.log').open('a') as log:
     vm = subprocess.Popen(command, env=environment, stdout=log, stderr=log)
     children.append(vm)
     identity = {'schemaVersion': 1, 'state': 'starting', 'pid': vm.pid,
-                'command': command, 'hostStack': str(stack), 'loaded': False}
+                'command': command, 'hostStack': str(stack), 'loaded': False,
+                'hostVulkan': host_vulkan}
     try:
         for _ in range(200):
             if vm.poll() is not None:

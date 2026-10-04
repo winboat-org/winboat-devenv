@@ -45,6 +45,8 @@ const definitions = [
     { name: string, target: string, collect: string, dependencyManifests: strings, configuration: {type:'string',enum:['release','debug']}, mode: {type:'string',enum:['release','development']}, background: bool }],
   ['devbox_smoke', 'Run native and WoW64 graphics workloads as the interactive desktop user and compare actual mapped DLL code with an exact installation transaction.', ['devbox', 'smoke'],
     { name: string, transaction: string, background: bool }],
+  ['devbox_migrate_host', 'Prepare an explicit clean QEMU-only host upgrade for a stopped, verified devbox. Preserve its previous artifact/image; loaded host and Windows graphics verification remain required.', ['devbox', 'migrate-host'],
+    { name: string, manifest: string, background: bool }, ['manifest']],
   ...['status', 'cancel', 'resume'].map(action =>
     [`devbox_job_${action}`, `Observe or recover the exact durable Windows task; status retains native exit/reboot codes and bounded logs.`, ['devbox', 'job', action], { name: string, id: string }, ['id']]),
   ['devbox_cdi_prepare', 'Generate and validate private NVIDIA CDI using the Nix-pinned vendor toolkit for rootless Podman; never writes system configuration.', ['devbox', 'cdi', 'prepare'], { renderNode: string }],
@@ -117,7 +119,7 @@ function command(tool, args) {
     } else argv.push(flags[key], value);
   }
   if (['repo_sync', 'repo_push', 'repo_verify', 'build_run'].includes(tool.name) && args.background !== false && !args.plan) argv.push('--background');
-  if (['devbox_create', 'devbox_up', 'devbox_down', 'devbox_restart', 'devbox_guest_status', 'devbox_mirror', 'devbox_install', 'devbox_build', 'devbox_smoke', 'devbox_registry_show', 'devbox_registry_reconcile', 'devbox_registry_verify'].includes(tool.name) && args.background !== false) argv.push('--background');
+  if (['devbox_create', 'devbox_up', 'devbox_down', 'devbox_restart', 'devbox_guest_status', 'devbox_migrate_host', 'devbox_mirror', 'devbox_install', 'devbox_build', 'devbox_smoke', 'devbox_registry_show', 'devbox_registry_reconcile', 'devbox_registry_verify'].includes(tool.name) && args.background !== false) argv.push('--background');
   return argv;
 }
 

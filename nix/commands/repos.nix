@@ -24,8 +24,10 @@ let
           "msvc-meson.nix"
           "dispatch.nix"
           "host-smoke.nix"
+          "host-vulkan-probe.nix"
           "host-widl.nix"
           "scripts/host-smoke.py"
+          "scripts/host-vulkan-probe.c"
           "scripts/msvc-sysroot.py"
           "scripts/clvk-symbol-policy.py"
           "scripts/msvc-cross-inspect.py"
@@ -38,6 +40,7 @@ let
           "scripts/devbox-run.py"
           "scripts/windows-win-flex.py"
           "windows/Bootstrap.ps1"
+          "windows/PowerPolicy.ps1"
           "windows/Autologin.ps1"
           "windows/Provision.ps1"
           "windows/Toolchain.ps1"
@@ -123,6 +126,7 @@ let
     export WB_NVIDIA_CTK=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit}/bin/nvidia-ctk"}
     export WB_NVIDIA_CDI_HOOK=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-cdi-hook"}
     export WB_NVIDIA_TOOLKIT_ROOT=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit}"}
+    export WB_GRAPHICS_LIBRARIES=${pkgs.lib.optionalString pkgs.stdenv.isLinux (pkgs.lib.makeLibraryPath [ pkgs.libglvnd pkgs.libx11 pkgs.libxext ])}
     export WB_PODMAN=${pkgs.podman}/bin/podman
     export WB_CONTAINER_HOOKS_DIR=${pkgs.emptyDirectory}
     export WB_CONTAINER_POLICY=${
