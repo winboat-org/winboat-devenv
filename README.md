@@ -5,33 +5,30 @@ and desktop dependencies. The target is one control plane usable by maintainers,
 CI, Claude Code, Codex and other MCP clients, with reproducible source/tool pins
 and a headless Windows development VM running the Helios QEMU fork.
 
-**Stages 1–3 passed their measured native/cross and current-host devbox checks:**
-repository/MCP operations, six composable component recipes, isolated native
-graphics builds, a Windows DLL cross-build and immutable artifact manifests.
-Stage 4 is in progress: real DXVK/vkd3d x64/x86 MSVC builds, shared CLI/MCP Windows
-tasks and transaction recovery have passed on a fresh guest. Native KMD/UMD,
-Mesa and CLVK builds passed; clean pinned stack repeats, installation and
-loaded-stack acceptance remain pending. Linux MSVC cross builds now pass for
-DXVK, vkd3d and Mesa in both architectures, and for CLVK with zero LLVM/Clang
-compiler PDBs. Host-built CLVK and loaders also loaded successfully in Windows;
-see [cross dependency evidence](docs/evidence/stage-04-cross.json). See the
-[Windows evidence](docs/evidence/stage-04-control.json) and
-[native checkpoint](docs/evidence/stage-04-native.json). UMD x86 and the baseline
-fixture's resident kernel-code comparison passed. Helios/Mesa/CLVK candidates
-have Nix-declared offline inputs; WinBoat/Electron still need their complete
-fixed dependency closures. Stage 3's
-host lifecycle, unmodified blank-disk creation, all 14 installed tools,
-post-reboot autologin, signing/driver load and local mirror build checks passed.
-NVIDIA devboxes now use Nix-pinned rootless Podman with workspace-private,
-vendor-generated CDI. The host supplies its graphics driver and device access;
-the workspace supplies the toolkit and hooks. See [devbox usage](docs/devbox.md)
-and [validation](docs/validation.md) for runtime-specific checks and limits.
+**Stages 1–4 passed their measured current-host checks.** Stage 4 built the
+complete graphics stack from clean pins through CLI and MCP, installed each
+package, and verified all 12 mapped DLLs, resident Helios kernel code and 13
+interactive graphics workloads in both repeats. See
+[full acceptance evidence](docs/evidence/stage-04-acceptance.json).
+Windows dependencies use seven Linux MSVC cross-build targets: DXVK, vkd3d and
+Mesa in x64/x86, plus CLVK with its loaders and probes. LLVM/Clang produce no
+debug symbols; runtime symbols remain in component artifacts, and the install
+bundle contains zero PDBs. The primary Helios build uses Windows because its
+pinned WDK build scripts reject Linux hosts. See [build usage](docs/builds.md).
 
-The Stage 4 QEMU EGL fallback crash is fixed and the task-owned acceptance guest
-has explicitly upgraded to the new clean host artifact. Its startup verified
-loaded host images and NVIDIA Vulkan availability; isolated-overlay health and
-shutdown passed. Fresh CLI/MCP full-stack graphics checks are still pending.
-See [runtime evidence](docs/evidence/stage-04-runtime.json).
+Stage 3's unmodified blank-disk creation, all 14 installed tools, signing/driver
+load, autologin and local mirror checks passed. NVIDIA devboxes use Nix-pinned
+rootless Podman with workspace-private, vendor-generated CDI. The host supplies
+its graphics driver and device access; the workspace supplies the toolkit and
+hooks. The acceptance guest explicitly upgraded to the corrected QEMU artifact
+with its previous image/closure and guest identity retained. The original
+development guest remains preserved. See [runtime evidence](docs/evidence/stage-04-runtime.json),
+[devbox usage](docs/devbox.md) and [validation](docs/validation.md).
+
+Acceptance covers this development environment and its measured workloads.
+Driver conformance, another physical host, second-account Windows boot and
+canonical publication remain unverified. WinBoat/Electron still need their
+complete fixed dependency closures. Stages 5–7 remain planned.
 
 ## Start here
 
@@ -67,7 +64,8 @@ build checks and the native Fish activation limitation for paths with spaces.
 ## Implementation
 
 The [stage index](docs/stages/README.md) lists dependencies, deliverables and
-acceptance gates. Continue with [the Stage 4 handoff](docs/handoffs/stage-04.md).
+acceptance gates. [The Stage 4 handoff](docs/handoffs/stage-04.md) records the
+completed checkpoint and preservation boundaries.
 [Workspace usage](docs/workspace.md) covers commands, publication recovery,
 forks and MCP jobs.
 [Build usage](docs/builds.md) covers target selection, source modes, guest
@@ -75,7 +73,7 @@ dispatch plans and artifact/closure verification.
 [Devbox usage](docs/devbox.md) covers exact artifact selection, persistent state,
 the attachable VNC viewer, automatic desktop login and offline toolchain.
 [Windows control](docs/windows-control.md) covers Stage 4's shared tasks,
-verified snapshots, transactions, inventory and remaining acceptance gates.
+verified snapshots, transactions, inventory and measured acceptance scope.
 [Architecture](docs/architecture.md) defines the shared CLI/MCP, devbox and
 artifact contracts. [Repository policy](docs/repositories.md) describes subsets,
 pins and the current nested layout.

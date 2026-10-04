@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "stage": 4,
   "state": "runtime-diagnostic-passed",
-  "observedAt": "2026-10-04T18:39:13.731225+00:00",
+  "observedAt": "2026-10-04T20:32:15.536670+00:00",
   "fullComponentAcceptance": false,
   "crash": {
     "signal": "SIGABRT",
@@ -250,12 +250,85 @@
     "mcpLog": {
       "path": "docs/user/stage04-host-migration-mcp-tests.log",
       "sha256": "1f98730b7cab279ec05c0c685c9bf5e390be3237e4317fe1f881360798757cdf"
+    },
+    "latestLog": {
+      "path": "docs/user/stage04-wsi-activation-local-tests.log",
+      "sha256": "ffde96832b91de33ef353ba6e3ee6a18a340400cef9e53177ce98256791322df"
     }
   },
   "limits": [
-    "Fresh CLI/MCP full-stack installation and graphics acceptance remain pending.",
+    "Full-stack acceptance is recorded separately in docs/evidence/stage-04-acceptance.json; these diagnostics do not establish it.",
     "QMP screenshot returned no surface; no visual acceptance is claimed.",
     "Source checkpoints and pins remain local and unpublished.",
-    "Original development guest retains its original host artifact."
-  ]
+    "Original development guest retains its original host artifact.",
+    "UMD12 reports stale Linux cached bindgen data; native builds generate bindings from the locked WDK. Cached Linux checks do not verify that same ABI."
+  ],
+  "fullAcceptanceEvidence": "docs/evidence/stage-04-acceptance.json",
+  "sameInfRepair": {
+    "cause": "Windows retained the previous identical-INF package although all five rebuilt driver-image hashes differed.",
+    "componentCommit": "8572260ae90850f496da13393037215979f0dc4c",
+    "nativePowerShellFixture": {
+      "path": "docs/user/stage04-driver-replacement-live-result.json",
+      "sha256": "9568cd8ef8b34f01baed9b4240e06c5e6e1226b0a56e8b35fc62350d46d912ba",
+      "operationId": "op-c0db039f193c423babfbe1b5496c8a1a",
+      "exitCode": 0
+    },
+    "hostFixtures": {
+      "path": "docs/user/stage04-driver-replacement-fixtures.log",
+      "sha256": "7979efa855b38c02eb04db29a84dfdf0c87874757c31e5af43edda83186a1218"
+    },
+    "existingHotplugCases": 33,
+    "hotplugLog": {
+      "path": "docs/user/stage04-driver-repair-hotplug-tests.log",
+      "sha256": "5522b34d38dbaa68b27054b8b5474568a816634dab42f9738a64363dddd1e3a0"
+    },
+    "realRemovalOperation": "op-5e6424d2eafd4cb38011208e3ecd06e0",
+    "removalExitCode": 3010,
+    "installationResume": "passed",
+    "retainedBackupJournal": "C:\\ProgramData\\Helios\\driver-backups\\79bf0fa41799425497f91227ba2b2ce8\\replacement.json",
+    "method": "Verify managed device/INF, export and verify complete previous package, journal before PnP removal, require a changed boot before adding the replacement."
+  },
+  "activationReboot": {
+    "restartReceipt": {
+      "path": "docs/user/stage04-opengl-activation-restart-result.json",
+      "sha256": "002be3cbd68f082d6267ad79928ecd184b25371c7dc8e0848a03e48301841c1f"
+    },
+    "operationId": "op-2f7bf16a3bc84b2fb98d435610a3c1cb",
+    "before": "Microsoft GDI Generic; OpenGL smoke exit 6.",
+    "after": "WinBoat/Zink OpenGL 4.6; all seven x64 workloads exit 0 and all twelve DLL mappings match.",
+    "reason": "Automatic provisioning installed the replacement during the removal reboot; the display/ICD registration needed a subsequent boot.",
+    "scope": "Diagnostic continuation, not a full clean-stack repeat."
+  },
+  "win32VehicleAbi": {
+    "state": "diagnostic-passed",
+    "componentCommit": "59cfd87f49b3f65b382a86af33a7efbb2bd24789",
+    "crashEvents": {
+      "path": "docs/user/stage04-x86-wsi-events-compact.json",
+      "sha256": "e0a6af9ecee26a08739660b4baaedc33d0f76f40403c24cf5465de2fe51641ce"
+    },
+    "failedOperation": "op-5478646d5c8d4b9197b07ed0596dcb06",
+    "exceptionCode": "0xc0000005",
+    "module": "vulkan_virtio.dll",
+    "offset": "0x175014",
+    "symbolizedOffset": {
+      "path": "docs/user/stage04-x86-wsi-symbolized-offset.log",
+      "sha256": "7dbe35cb4de39981c645faa5ab4cbb92ef6addc557bd5dee24d5caab1410fa42"
+    },
+    "sourceLocation": "src/vulkan/wsi/wsi_common_win32.cpp:2216",
+    "cause": "Mesa cdecl function pointers called Rust Windows system exports; Win32 cleaned the argument stack twice.",
+    "fix": "Use WINAPI for all three UMD vehicle export pointer types.",
+    "candidateManifest": "out/guest/op-4bafb75ad7e347d1bb018f4a9280cd6d/manifest.json",
+    "fixedProbe": {
+      "path": "docs/user/stage04-x86-abi-probe-result.json",
+      "sha256": "8cfb0bfc134d4dbeb074256bacc636d7d8197dbca4cdb817ab2e02f665a67d20",
+      "operationId": "op-d9d0277504ae49a4993a9fdae5a508e2",
+      "exitCode": 0,
+      "presentationPhases": [
+        38,
+        40,
+        10
+      ]
+    },
+    "scope": "Linux MSVC development build with the unchanged selected probe/loader, on the existing driver. Fresh pinned full repeats remain separate."
+  }
 }

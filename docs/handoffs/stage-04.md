@@ -1,54 +1,55 @@
 # Stage 4 handoff
 
-Build policy: cross-compile Windows dependencies on the host wherever possible;
-use the devbox for builds only after documenting a concrete cross-compilation
-limitation. This restores the original scaffold request. An MSVC ABI requirement
-alone is not such a limitation. Native candidate evidence below remains valid
-for those artifacts, but does not establish that cross-compilation is impossible.
-The corrected no-symbol native CLVK retry was cancelled before compilation at
-the user's direction. [Cross dependency evidence](../evidence/stage-04-cross.json)
-now records successful Linux MSVC builds of DXVK, vkd3d and Mesa in x64/x86,
-plus CLVK, loaders and smoke programs. LLVM/Clang emitted zero compiler PDBs.
-Verified imports and Windows loads of CLVK/OpenCL/both Vulkan loaders passed;
-MCP also selected the host Mesa recipe. These are development snapshots.
-Primary Helios relinking with cross engines and lean composition also passed.
-The install bundle has zero PDBs and 232,427,853 bytes of runtime files; runtime
-symbols remain in component artifacts. An earlier clean CLI stack built and
-installed; the fresh CLI/MCP repeats now use the corrected QEMU and parent pins.
-Loaded-stack graphics acceptance remains pending. The QEMU DMA-BUF fallback
-crash was reproduced and fixed with explicit EGL context restoration. An isolated
-disk overlay booted with Helios PnP status 0, an interactive desktop and native
-Vulkan scanout, then shut down with a zero container exit. Its QMP screenshot
-reported `no surface`, so it establishes diagnostic health rather than visual
-acceptance. The task-owned acceptance guest was explicitly migrated to the new
-clean host artifact; its old record, image and full runtime closure remain
-retained. The original development guest remains on its original artifact. See
-[runtime evidence](../evidence/stage-04-runtime.json).
-The pinned windows-drivers-rs build scripts explicitly reject Linux hosts;
-Helios UMD12's Linux path supports checking rather than DLL linking. This
-documented primary-driver build limitation retains the devbox for that build.
-The [MSVC cross foundation](../evidence/stage-04-msvc-cross.json) now passed:
-locked Linux Clang/LLD and the existing verified EWDK build static-CRT x64/x86
-C++ executables, both of which also ran successfully in Windows. This proves
-the toolchain, while complete dependency builds and Stage 4 acceptance remain pending.
+Stage 4 is accepted on the current host. The final clean-pinned CLI and MCP
+repeats each built and installed the complete selected stack, passed all 13
+interactive graphics workloads, matched all 12 mapped DLLs and verified actual
+resident Helios kernel code. Both observed inventories matched their own bundle
+manifests. See [acceptance evidence](../evidence/stage-04-acceptance.json),
+[Windows control](../windows-control.md) and [validation](../validation.md).
 
-Stage 4 is now in progress. Start continuation with
-[Windows control](../windows-control.md) and the
-[control checkpoint evidence](../evidence/stage-04-control.json): shared tasks,
-verified transfer/mirrors, real DXVK x64/x86, mapped-image fixtures and install
-recovery passed. Native KMD, all four UMD variants and Mesa's x64/x86 ICDs have
-also built. CLVK and its loaders/smoke binaries now passed native architecture
-and static CRT checks, with all 171 PDBs and notices returned. The first development
-package also composed and exported successfully. The replacement recipe disables
-LLVM/Clang debug information, keeps runtime PDBs in component artifacts and omits
-them from the install bundle. Cross builds and lean composition passed, followed
-by the remaining clean pinned stack repeats, full installation, kernel
-identity and interactive graphics acceptance. The original
-handoff below still defines the baseline and preservation boundaries. Current
-guest/state selections and retained failure receipts are in ignored local notes.
-The [native checkpoint](../evidence/stage-04-native.json) additionally records
-vkd3d x64/x86, UMD x86 and the signing fixture's actual resident kernel code.
-Helios's kernel identity and complete-stack acceptance remain required.
+Build policy follows the original scaffold instruction: cross-compile Windows
+dependencies wherever possible and select a devbox build only for a documented
+limitation. Seven targets now build on Linux with the MSVC ABI and static CRT:
+DXVK, vkd3d and Mesa x64/x86, plus CLVK/loaders/probes. LLVM/Clang generate no debug
+symbols. Runtime symbols remain in component artifacts; both 608-file install
+bundles contain zero PDBs. The primary driver still requires Windows because
+pinned windows-drivers-rs build scripts reject Linux hosts and UMD12's Linux path
+does not link a DLL. [Build usage](../builds.md) records the exact blockers.
+
+The accepted source set is Helios `0f2ff4a5fe047d59cca68d3bd1603d1b082f25dc`,
+Mesa `59cfd87f49b3f65b382a86af33a7efbb2bd24789`,
+DXVK `e73ee9d0da9628e5f444b2e002e0079fd96ae3d3`,
+vkd3d `aff0927cab46c700a6edd78a3b1621fa9e109f18`, and
+CLVK `56c626132782bf083a80a6c17f5ca763be0ff8fb`.
+Host QEMU is `e81b51e1188a39e7041c4e06117b6bdf45becdd1`; renderer and paired
+Venus identities remain recorded in the retained host manifest below.
+All these checkpoints remain local/unpublished. No push was authorized.
+
+[Runtime evidence](../evidence/stage-04-runtime.json) retains the original QEMU
+EGL fallback crash and corrected isolated-overlay boot/shutdown, actual same-INF
+driver-package export/removal/reboot recovery, OpenGL activation reboot, and the
+symbolized Win32 WSI failure corrected by WINAPI function-pointer declarations.
+The acceptance guest explicitly upgraded its host artifact with its old image,
+closure and guest identity retained. The original development guest remains
+on its original artifact. Large artifacts moved to selected local storage only
+after complete type/mode/link/hash verification; portable `out/` paths remain.
+
+The final graphics runs establish this development environment's measured
+workloads, not driver conformance. QMP's diagnostic screenshot reported
+`no surface`; visual acceptance is not claimed. Native UMD12 emits a stale Linux
+cached-binding warning but generates fresh locked-WDK bindings with layout
+assertions enabled. Another physical host, second-account Windows boot, the
+corrected Docker repeat, canonical publication and WinBoat/Electron dependency
+closure completion retain their previous limits. Stages 5–7 remain planned;
+do not remove the old installer, win-mcp or submodules as part of this checkpoint.
+Personal guest/state choices and retained operation logs are in ignored local
+notes. The genuine Nix and provisioning locks remain unchanged.
+
+## Retained Stage 3 baseline and original task
+
+The text below records the original continuation contract and earlier baseline.
+Its Stage 4 build/runtime requirements are now satisfied by the acceptance
+evidence above; its preservation and publication boundaries still apply.
 
 The current-host Windows baseline passed all 14 installed-tool probes, the
 signing reboot/driver load, autologin, local mirror/build/hash return and recovery

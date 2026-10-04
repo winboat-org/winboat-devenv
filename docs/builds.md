@@ -41,13 +41,15 @@ assuming a parent checkout location. Root adapters compose these interfaces.
 | `dxvk-win64` | Standalone x64 MinGW DXGI/D3D9/D3D10core/D3D11 DLLs; GCC/C++/pthread runtimes link statically, Windows system `msvcrt.dll` remains an import |
 | `WBFreeRDP` | Forked native client/library outputs, licenses and debug symbols |
 | `dxvk-engine-x64/x86`, `vkd3d-engine-x64/x86` | Linux clang-cl/LLD cross builds of MSVC COFF archives with `/MT` and embedded CodeView symbols |
-| `helios-guest-x64/x86` | Durable guest build plans; KMD is x64 only, UMD11/UMD12 have x64/x86 contracts |
+| `helios-guest-x64/x86` | Durable Windows WDK builds; KMD is x64 only, UMD11/UMD12 have x64/x86 contracts |
 | `mesa-guest-x64/x86` | Linux clang-cl/LLD MSVC `/MT` cross builds and generated paired protocol headers |
 | `clvk-helios` | Linux MSVC `/MT` cross build with pinned LLVM/clspv, loaders and x64/x86 smoke programs; LLVM/Clang have no debug symbols |
 | `helios-development-package` | Composes verified component artifacts, original install scripts, licenses and provenance; runtime PDBs remain in component artifacts |
 | `winboat`, `electron` | Explicit adapter/input contracts; missing fixed dependency closures fail closed |
 
-Host cross-compilation is the default for Windows dependencies. Both clean
+The [Stage 4 acceptance](evidence/stage-04-acceptance.json) records complete
+clean-pinned CLI/MCP build, installation and loaded-code checks on the current
+host. Host cross-compilation is the default for Windows dependencies. Both clean
 pinned release mode and explicit development snapshots use this backend.
 Linux uses the locked Clang/LLD 22.1.8 and the exact EWDK MSVC/SDK headers
 and static libraries. CLVK separately builds matching Linux LLVM generators and
@@ -83,8 +85,8 @@ Cargo outputs and durable elevated `build` tasks. Stage 4's controller binds
 and executes those commands in a named guest; other incomplete contracts still
 fail with code 3. See [Windows control](windows-control.md). No guest install or loaded-state evidence
 is produced by these plans. Meson/Ninja command templates use named tokens
-for mirrored source/build/native-file paths; Stage 4 must bind them before
-execution, rather than send host Nix paths directly to Windows.
+for mirrored source/build/native-file paths; the controller binds them before
+execution instead of sending host Nix paths directly to Windows.
 
 QEMU requires keycodemapdb and Berkeley floating-point test wraps. Its recipe
 supplies them from the locked Nix QEMU **source tarball**, compares wrap identities
@@ -95,8 +97,9 @@ declared and initialized at its parent's gitlink. Meson uses `nodownload`;
 CMake adapter fetching is disconnected. Electron's DEPS, Chromium, depot_tools,
 CIPD and sysroots require a complete verified closure; a Git pin does not provide
 one. The WinBoat adapter additionally needs its Bun cache and exact forked
-Electron/guest-server artifacts. CLVK requires its full compiler/LLVM/shader
-translator closure. No floating dependency refresh is performed.
+Electron/guest-server artifacts. CLVK's complete compiler/LLVM/shader
+translator closure is Nix-declared and verified. No floating dependency refresh
+is performed.
 
 Artifacts use manifest schema 1 and distinct `out/native/` and `out/guest/`
 operation directories. Each manifest records source/diff/NAR identities,

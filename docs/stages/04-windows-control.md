@@ -1,30 +1,30 @@
 # Stage 4 — Windows builds, installation and devbox MCP
 
-Status: in progress. Shared task/transfer, source snapshot, DXVK dispatch,
-transaction and registry operations passed live CLI/MCP checks, including an
-eight-minute SYSTEM job, x64/x86 mapped-DLL replacement detection and reboot
-recovery. DXVK and vkd3d x64 built through CLI and x86 through MCP. Native Helios
-KMD with all four UMD variants, Mesa ICDs in both architectures, standalone UMD
-x86 and the baseline fixture's resident kernel-code comparison passed. CLVK,
-both Vulkan loaders, OpenCL loader and fourteen smoke binaries also passed native
-build, architecture and static CRT checks; all symbols and notices were retained.
-Clean pinned stack builds, installation and loaded-stack acceptance remain
-pending. See [control usage](../windows-control.md)
-and [measured evidence](../evidence/stage-04-control.json), with the
-[native checkpoint](../evidence/stage-04-native.json).
-Linux MSVC cross builds now also pass for all DXVK/vkd3d/Mesa x64/x86 dependencies
-and CLVK, with zero LLVM/Clang compiler PDBs. Verified import and Windows DLL
-loads passed for CLVK and both loader architectures. The primary driver relink
-and zero-PDB bundle composition passed; clean release repeats and full
-installation/graphics checks remain pending;
-see [cross evidence](../evidence/stage-04-cross.json).
-The host EGL fallback crash was reproduced and fixed. An isolated disk overlay
-passed Helios/PnP and interactive desktop health plus zero-exit shutdown; it did
-not establish visual acceptance. The task-owned acceptance guest explicitly
-upgraded its stopped QEMU artifact while retaining the previous image/closure
-and guest identity. New startup verified loaded host images and NVIDIA Vulkan
-availability. Fresh CLI/MCP installation and graphics repeats remain pending;
-see [runtime evidence](../evidence/stage-04-runtime.json).
+Status: accepted on the current host. Complete clean-pinned graphics stacks
+built through CLI and MCP using seven Linux MSVC cross-build dependency targets
+and the documented Windows WDK backend for primary Helios. Each exact package
+installed and passed 13 interactive graphics workloads, all 12 mapped DLL
+identities and resident Helios kernel-code comparison. Both architecture variants
+and all 14 locked installed-tool probes were checked. LLVM/Clang emitted no
+compiler debug symbols; runtime PDBs remain in component artifacts and the install
+bundle contains none. See [full acceptance evidence](../evidence/stage-04-acceptance.json).
+
+Earlier [control evidence](../evidence/stage-04-control.json) records the
+eight-minute disconnected SYSTEM job, CLI/MCP task/session parity, native exits,
+mapped-DLL replacement detection, injected failures, drift, rollback and reboot
+recovery. [Runtime evidence](../evidence/stage-04-runtime.json) preserves the
+QEMU EGL fallback, same-INF driver replacement, activation reboot and Win32 WSI
+calling-convention repairs, including their original failures. Local validation
+passed 67 tests plus PowerShell parsing, mapped-image C# compilation and literal
+argument checks; the installer repair also passed native PowerShell 5.1 fixtures
+as SYSTEM and the existing 33 hotplug cases.
+
+This is measured development-environment acceptance, not driver conformance or
+visual screenshot acceptance. Component commits remain unpublished; another
+physical host and second-account Windows boot remain unverified. Linux cached
+UMD12 bindings are stale; native builds use freshly generated locked-WDK bindings
+with layout assertions enabled. Old tooling/submodules remain for later migration.
+
 Prerequisites: Stages 2 and 3.
 
 ## Outcome

@@ -186,7 +186,7 @@ managed-source changes, component/installer CI, migration removals or pushes
 were performed. [The Stage 4 handoff](handoffs/stage-04.md) records the measured
 baseline and the remaining component-build and fresh-host limits.
 
-## Stage 4 control checkpoint
+## Stage 4 control checkpoint (historical)
 
 [Stage 4 evidence](evidence/stage-04-control.json) records the fresh named guest
 using the corrected host manifest and unchanged provisioning/Nix locks. Shared
@@ -251,3 +251,45 @@ postcheck. A preserved-MSI reinstall verified the product opt-out, unchanged
 executable hash and unchanged global update-service identities/flags. An MCP
 repeat then left those settings intact without running MSI maintenance.
 Full-stack build/install/loaded acceptance remains pending.
+
+## Stage 4 full current-host acceptance
+
+[Final evidence](evidence/stage-04-acceptance.json) supersedes the incomplete
+Stage 4 gates recorded in the historical checkpoints above. Two complete stacks
+built from the same clean pinned sources through CLI and MCP. Seven dependency
+targets used Linux MSVC cross recipes; primary Helios used the documented native
+WDK backend. All eight component artifacts retained complete file tables,
+licenses, source/toolchain provenance and runtime symbols. LLVM/Clang's actual
+compile commands contained no debug generation and no compiler PDBs were emitted.
+Both 608-file install bundles contained zero PDBs.
+
+Each exact package installed through a durable SYSTEM transaction, recovered
+required reboots and received a final activation reboot. Each repeat passed all
+13 interactive native/WoW64 graphics workloads: Vulkan enumeration and WSI,
+Direct3D 11, OpenGL, Direct3D 12 device and clear in both architectures, plus x64
+OpenCL compilation/execution. All 12 package DLL mappings matched executable
+code, including private package loaders; each workload used verified app-local
+loaders. Fresh registry verification independently checked all 14 locked tools,
+installed package/Driver Store/registrations, paired protocol/host identities
+and actual resident Helios kernel code. Both returned zero with installed and
+loaded verification true. The retained source identities agree across repeats;
+each repeat's installed and loaded identities match its own signed artifact.
+
+[Runtime evidence](evidence/stage-04-runtime.json) retains the failures that led
+to the EGL context restoration, same-INF package repair, activation reboot and
+Win32 vehicle calling-convention fixes. The installer repair fixtures passed
+under host PowerShell and native Windows PowerShell 5.1 as SYSTEM; the existing
+33 hotplug cases also passed. Local validation passed 67 tests, PowerShell
+parsing, mapped-image C# compilation and literal argument binding. The final
+full live suite passed with both clean repeats; earlier failed receipts remain
+retained. The genuine Nix/provisioning locks are unchanged and all managed
+source checkpoints are clean and local. Nothing was pushed.
+
+Acceptance covers the measured development environment on this host. It does
+not establish driver conformance, screenshot/visual acceptance, another physical
+host or second-account Windows boot. QMP's diagnostic screenshot returned
+`no surface`. UMD12 warns that Linux cached bindings are stale; native builds
+generate fresh locked-WDK bindings with layout assertions enabled. The original
+development guest, old host images/closures, guest identities, keys/media and
+external reference repositories remain preserved. WinBoat/Electron closures,
+publication and later CI/installer/tooling migration retain their separate scope.

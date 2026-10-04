@@ -1,9 +1,10 @@
 # Windows execution and inventory
 
-Stage 4 is in progress. Its shared Windows controller is Nix-declared and the
-Node MCP proxies the same `wb` operations. Complete Helios KMD/UMD/Mesa/CLVK and
-loader build/install/loaded-state acceptance remains required. Keep the existing
-win-mcp, installer and submodules available until those parity gates pass.
+Stage 4 passed current-host acceptance. Its shared Windows controller is
+Nix-declared and the Node MCP proxies the same `wb` operations. Complete clean
+CLI/MCP stack builds, installation, graphics and resident kernel/DLL identities
+passed; see [acceptance evidence](evidence/stage-04-acceptance.json). Keep the
+existing win-mcp, installer and submodules for the later migration stage.
 
 ## Durable tasks and sessions
 
@@ -79,9 +80,9 @@ inputs from the already verified provisioning payload; its header overlay and
 library aliases accommodate Windows case-insensitive lookup on Linux. The
 [cross dependency evidence](evidence/stage-04-cross.json) now records successful
 DXVK/vkd3d/Mesa x64/x86 and CLVK cross builds, verified Windows imports and
-CLVK/loader DLL loads. Component builds and lean composition passed; clean
-pinned stack checks are next. Select devbox compilation only after documenting a
-concrete cross-compilation blocker.
+CLVK/loader DLL loads. Complete clean-pinned CLI/MCP stack checks also passed.
+Select devbox compilation only after documenting a concrete cross-compilation
+blocker.
 
 DXVK and vkd3d now use Linux MSVC cross builds by default. Linux WIDL is built
 from the pinned mingw-w64 source and generates Windows headers on the host. vkd3d
@@ -105,7 +106,8 @@ and requires zero compiler PDBs in `package/llvm-symbol-policy.json`. CLVK and
 loader runtime symbols remain in their component artifacts.
 Mesa's cross build uses the existing clang-cl
 compatibility path with `/MT`, regenerates the paired Venus headers, and retains
-them in its artifact. Full loaded-stack acceptance remains pending.
+them in its artifact. Full current-host loaded-stack acceptance passed in both
+clean CLI/MCP repeats.
 
 `helios-development-package` assembles the existing script-driven development
 bundle from Helios x64 (including its four UMDs), Mesa x64/x86 and CLVK/loaders.
@@ -170,9 +172,10 @@ repeat verifies the export, installs its exact manifest, resumes the original
 transaction after required reboots, and checks 12 mapped DLLs, 13 interactive
 graphics workloads and the actual resident kernel code. Source identities must
 agree across the repeats; installed and loaded bytes must match each repeat's
-own artifact manifest. This mode is implemented but full live acceptance is
-still pending. It uses host cross builds for seven dependency targets and the
-documented Windows WDK backend for primary Helios.
+own artifact manifest. Both repeats passed on the current host, as recorded in
+[acceptance evidence](evidence/stage-04-acceptance.json). The suite uses host cross
+builds for seven dependency targets and the documented Windows WDK backend for
+primary Helios.
 The suite also performs a final activation reboot after installation succeeds:
 automatic provisioning can install the replacement during the earlier removal
 reboot, and OpenGL's adapter registration takes effect in a subsequent boot.
@@ -196,8 +199,13 @@ scripts beside `manifest.json`. It checks
 every package file before staging or starting a task. The shared payload
 preserves prior registry/legacy install snapshots and invokes that exact legacy
 package installer as SYSTEM, retaining its unattended/reboot protocol. It does
-not compile an installer or assemble a release bundle. Full-stack execution of
-this path remains an acceptance gate.
+not compile an installer or assemble a release bundle. Both clean CLI/MCP
+full-stack installs passed. When Windows retains an older managed package with
+the same INF but different driver bytes, the installer verifies and exports the
+complete old package before PnP removal, then requires a changed boot before
+adding the replacement. A final activation reboot precedes loaded graphics
+checks; installation success alone does not establish those registrations are
+active.
 The transaction journals original file existence as well as snapshot hashes.
 Resume verifies retained backups and never treats state created by the first
 installation attempt as a prior installation. The native recovery fixture
@@ -247,14 +255,14 @@ a nonzero native exit still fails the smoke.
 The mapped-image reader compares executable sections with the selected DLL,
 normalizing PE base relocations. A replaced file can report `stale-mapped-image`
 while its older code remains in a process. Unreadable images remain unknown.
-This is executable-code evidence, not a hash of every mapped byte. Kernel loaded
-image identity and complete selected-stack verification are still pending;
-the baseline signing fixture's resident executable section has been measured
-through the owned QEMU QMP socket. Kernel observation uses the native module
-inventory's loaded base, reads resident executable sections, undoes relocations
-and retains memory hashes. Discarded initialization sections are excluded and
-unreadable resident sections remain unknown. Helios's full kernel gate remains
-unmeasured; `registry verify` returns code 76 while any required evidence is missing.
+This is executable-code evidence, not a hash of every mapped byte. Both clean
+stack repeats verified Helios's resident kernel code through the owned QEMU QMP
+socket, extending the earlier independent signing-fixture proof. Kernel
+observation uses the native module inventory's loaded base, reads resident
+executable sections, undoes relocations and retains memory hashes. Discarded
+initialization sections are excluded and unreadable resident sections remain
+unknown. `registry verify` returns code 76 while any required evidence is missing;
+both accepted repeats returned zero with `loadedVerified` true.
 Installation success and on-disk hashes never set `loadedVerified`.
 
 `wb devbox smoke --name <guest> --transaction <install-id>` (MCP `devbox_smoke`)
@@ -263,7 +271,9 @@ separately verifies actual mapped DLL code in native/WoW64 processes and runs
 Vulkan enumeration/WSI, Direct3D 11, OpenGL and Direct3D 12 device/clear workloads
 for both architectures, plus x64 OpenCL compilation/execution. Probe results
 retain exact program hashes, native exits, session, boot and transaction identity.
-This operation still requires full native component/install acceptance.
+All 13 workloads passed in each clean CLI/MCP repeat on this host. These
+measured workloads establish development acceptance rather than full driver
+conformance.
 Registry `show` returns its retained observation with its original timestamp;
 `reconcile` and `verify` acquire new guest and host evidence.
 
