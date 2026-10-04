@@ -205,7 +205,7 @@ inspection fields. Independent native DLL/PDB fixtures built for x64 and x86;
 actual loaded code matched, became stale after replacing the disk file, and
 matched again after unloading/reloading in both process architectures.
 
-The local suite passes 59 tests plus PowerShell parsing, mapped-image C#
+The local suite passes 60 tests plus PowerShell parsing, mapped-image C#
 compilation and literal argument binding. Live tests are opt-in and excluded
 from ordinary CI. Earlier failures are retained, including an x86 shader tool
 loading a 32-bit CRT into its 64-bit process and a receipt reader sharing race;

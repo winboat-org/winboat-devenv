@@ -333,7 +333,7 @@
     "selectedHeliosIdentity": null
   },
   "checks": {
-    "localTests": 59,
+    "localTests": 60,
     "fullInstalledStack": false,
     "fullLoadedStack": false,
     "interactiveGraphics": false

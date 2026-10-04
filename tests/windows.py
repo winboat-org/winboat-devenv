@@ -199,6 +199,34 @@ class WindowsTests(unittest.TestCase):
         windows.extract_artifact(archive, destination, files)
         self.assertEqual((destination / "package/test.dll").read_bytes(), b"image")
 
+    def test_windows_empty_archive_directory_is_metadata_and_cannot_hide_data(self):
+        archive, files = self.artifact([(r"package\test.dll", b"image")])
+        files[0]['path'] = 'package/test.dll'
+        with zipfile.ZipFile(archive, 'a') as zipped:
+            zipped.writestr('licenses\\venus-protocol\\', b'')
+        destination = self.root / 'valid' / 'files'
+        windows.extract_artifact(archive, destination, files)
+        self.assertEqual((destination / 'package/test.dll').read_bytes(), b'image')
+        self.assertFalse((destination / 'licenses').exists())
+        for name, content, symlink in [
+            ('../escape\\', b'', False),
+            ('C:\\escape\\', b'', False),
+            ('licenses\\notice\\', b'hidden data', False),
+            ('package\\test.dll\\', b'', False),
+            ('licenses\\link\\', b'', True),
+        ]:
+            archive, _ = self.artifact([('package/test.dll', b'image')])
+            with zipfile.ZipFile(archive, 'a') as zipped:
+                entry = zipfile.ZipInfo(name)
+                if symlink:
+                    entry.create_system = 3
+                    entry.external_attr = 0o120777 << 16
+                zipped.writestr(entry, content)
+            refused = self.root / 'refused' / 'files'
+            with self.subTest(name=name), self.assertRaises(Failure):
+                windows.extract_artifact(archive, refused, files)
+            self.assertFalse(refused.exists())
+
     def test_source_links_materialize_without_cycles_or_escape(self):
         source = self.root / "source"
         (source / "bin").mkdir(parents=True)

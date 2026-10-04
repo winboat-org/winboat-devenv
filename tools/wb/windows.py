@@ -509,18 +509,26 @@ def extract_artifact(archive, destination, files):
         table[relative.casefold()] = file
     destination = Path(destination)
     with zipfile.ZipFile(archive) as zipped:
-        members = [member for member in zipped.infolist() if not member.is_dir()]
+        members = []
         seen = set()
-        for member in members:
+        for member in zipped.infolist():
             relative = windows_relative(member.filename)
+            if (member.external_attr >> 16) & 0o170000 == 0o120000:
+                raise Failure("artifact archive contains a symlink", 74)
+            # .NET writes empty directory entries with Windows separators.
+            # Validate their paths before ignoring metadata; bytes and a file
+            # table alias must never be concealed by a trailing separator.
+            if member.filename.replace('\\', '/').endswith('/'):
+                if member.file_size or relative.casefold() in table:
+                    raise Failure("artifact archive contains an invalid directory entry", 74)
+                continue
             if relative.casefold() in seen or relative.casefold() not in table:
                 raise Failure("artifact archive member differs from its file table", 74)
             file = table[relative.casefold()]
             if relative != file["path"] or member.file_size != file["size"]:
                 raise Failure("artifact archive path/size differs from its file table", 74)
-            if (member.external_attr >> 16) & 0o170000 == 0o120000:
-                raise Failure("artifact archive contains a symlink", 74)
             seen.add(relative.casefold())
+            members.append(member)
         if seen != set(table):
             raise Failure("artifact archive omitted required files", 74)
         for member in members:
