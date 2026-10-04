@@ -14,7 +14,7 @@ import unittest
 import zipfile
 from unittest.mock import patch
 
-from wb import windows
+from wb import builds, windows
 from wb.common import Failure, digest
 
 
@@ -140,6 +140,57 @@ class WindowsTests(unittest.TestCase):
             fresh=windows.mirror_build_tools(self.ws,'one','utilities')
             self.assertNotEqual(fresh['operationId'],previous.name)
             submit.assert_called_once()
+
+    def test_cross_artifact_import_verifies_locks_bytes_and_guest_identity(self):
+        self.ws.root = self.root
+        def resolve(value):
+            if not isinstance(value, str):
+                raise Failure('path overrides must be nonempty strings', 2)
+            return Path(value).resolve()
+        self.ws.resolve = resolve
+        (self.root/'config').mkdir()
+        (self.root/'config/provision.lock.json').write_text('fixture provisioning lock')
+        (self.root/'devenv.lock').write_text('fixture Nix lock')
+        artifact = self.root/'artifact'; (artifact/'files').mkdir(parents=True)
+        image = artifact/'files/runtime.dll'; image.write_bytes(b'fixture image')
+        manifest_path = artifact/'manifest.json'
+        manifest = {'schemaVersion':1, 'state':'built', 'artifactId':'op-'+'b'*32,
+            'target':'clvk-helios', 'configuration':'release', 'mode':'development', 'sources':{},
+            'toolchain':{'lockSha256':digest(self.root/'devenv.lock'),
+                'msvc':{'lockSha256':digest(self.root/'config/provision.lock.json')}},
+            'images':[{'path':'runtime.dll','format':'PE','architecture':'x64','staticCrtVerified':True}],
+            'files':builds._files(artifact/'files'), 'outputs':[{'drvPath':'fixture.drv','outputs':{'out':'fixture-output'}}]}
+        manifest_path.write_text(json.dumps(manifest))
+        guest_dir = self.root/'guest'; guest = {'identity':'guest-one'}
+        def submitted(ws, name, op, script, purpose, arguments, inputs, metadata):
+            spec=json.loads(inputs['snapshot.json'].read_text())
+            self.assertEqual(spec['destinationKind'],'artifact')
+            self.assertEqual(spec['images'],[{'path':'runtime.dll','architecture':'x64'}])
+            with zipfile.ZipFile(inputs['artifact.zip']) as archive:
+                self.assertEqual(archive.read('runtime.dll'),image.read_bytes())
+            path=guest_dir/'windows-jobs'/op/'job.json'; path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({'guestIdentity':guest['identity'], 'metadata':metadata,
+                'transfers':[{'remote':'C:\\fixture\\snapshot.json','sha256':digest(inputs['snapshot.json'])}]}))
+            return {'state':'queued'}
+        with patch.object(builds,'plan',return_value={'contract':{'toolchain':'linux-msvc-cross'}}), \
+             patch.object(windows,'validate_dependency_sources'), \
+             patch.object(windows,'connection',return_value=(guest_dir,guest)), \
+             patch.object(windows,'submit',side_effect=submitted) as submit, \
+             patch.object(windows,'wait'), patch.object(windows,'job',return_value={'state':'succeeded'}), \
+             patch.dict(os.environ,{'WB_DEVBOX_PAYLOADS':str(self.root)}):
+            first=windows.import_artifact(self.ws,'one',manifest_path,'release','development')
+            self.assertEqual(first['guestIdentity'],'guest-one')
+            reused=windows.import_artifact(self.ws,'one',manifest_path,'release','development')
+            self.assertTrue(reused['reusedVerifiedMirror']); self.assertEqual(submit.call_count,1)
+            guest['identity']='guest-two'
+            second=windows.import_artifact(self.ws,'one',manifest_path,'release','development')
+            self.assertNotEqual(second['operationId'],first['operationId']); self.assertEqual(submit.call_count,2)
+            (self.root/'config/provision.lock.json').write_text('changed lock')
+            with self.assertRaises(Failure): windows.import_artifact(self.ws,'one',manifest_path,'release','development')
+            self.assertEqual(submit.call_count,2)
+            image.write_bytes(b'changed image')
+            with self.assertRaises(Failure): windows.import_artifact(self.ws,'one',manifest_path,'release','development')
+            self.assertEqual(submit.call_count,2)
 
     def artifact(self, members):
         archive = self.root / "artifact.zip"

@@ -41,7 +41,7 @@ const definitions = [
     [`devbox_registry_${action}`, 'Observe actual PnP/DriverStore, both registry views, DLL hashes, certificates, provisioning and mapped process code. Unknown loaded kernel identity remains unknown.', ['devbox', 'registry', action], { name: string, background: bool }]),
   ['devbox_install', 'Install an exact verified package as a durable SYSTEM transaction preserving prior state. Resume uses its original ID and manifest. Installer success alone does not verify loaded identities.', ['devbox', 'install'],
     { name: string, manifest: string, resume: string, rollback: string, fixture: bool, failureAfterCopy: bool, background: bool }],
-  ['devbox_build', 'Use the Nix component recipe on a verified local mirror, or collect a completed guest build after a host/client interruption.', ['devbox', 'build'],
+  ['devbox_build', 'Build the Nix component recipe on the host when cross compilation is supported; otherwise use a verified guest mirror. Also collect a completed guest build after a host/client interruption.', ['devbox', 'build'],
     { name: string, target: string, collect: string, dependencyManifests: strings, configuration: {type:'string',enum:['release','debug']}, mode: {type:'string',enum:['release','development']}, background: bool }],
   ['devbox_smoke', 'Run native and WoW64 graphics workloads as the interactive desktop user and compare actual mapped DLL code with an exact installation transaction.', ['devbox', 'smoke'],
     { name: string, transaction: string, background: bool }],

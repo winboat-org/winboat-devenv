@@ -22,6 +22,12 @@ let
       execution = "durable-elevated-task";
       availability = "pending-stage-4";
     };
+  msvcCross =
+    repositories: abi: outputs:
+    (target repositories "nix" abi outputs)
+    // {
+      toolchain = "linux-msvc-cross";
+    };
 in
 {
   schemaVersion = 1;
@@ -56,7 +62,7 @@ in
       "zink-opengl"
     ];
     WBFreeRDP = target [ "WBFreeRDP" ] "nix" "linux-x86_64" [ "xfreerdp" ];
-    dxvk-engine-x64 = guest [ "dxvk" "helios" ] "windows-x86_64-msvc-mt" [
+    dxvk-engine-x64 = msvcCross [ "dxvk" "helios" ] "windows-x86_64-msvc-mt" [
       "libdxvk.a"
       "libhelios_d3d11_static.a"
       "libdxbc_spv.a"
@@ -65,9 +71,9 @@ in
       "libutil.a"
       "libwsi.a"
       "libvkcommon.a"
-      "pdb"
+      "embedded-CodeView"
     ];
-    dxvk-engine-x86 = guest [ "dxvk" "helios" ] "windows-x86-msvc-mt" [
+    dxvk-engine-x86 = msvcCross [ "dxvk" "helios" ] "windows-x86-msvc-mt" [
       "libdxvk.a"
       "libhelios_d3d11_static.a"
       "libdxbc_spv.a"
@@ -76,17 +82,17 @@ in
       "libutil.a"
       "libwsi.a"
       "libvkcommon.a"
-      "pdb"
+      "embedded-CodeView"
     ];
-    vkd3d-engine-x64 = guest [ "vkd3d-proton" "dxil-spirv" ] "windows-x86_64-msvc-mt" [
+    vkd3d-engine-x64 = msvcCross [ "vkd3d-proton" "dxil-spirv" ] "windows-x86_64-msvc-mt" [
       "libhelios_d3d12_static.a"
       "dxil-spirv"
-      "pdb"
+      "embedded-CodeView"
     ];
-    vkd3d-engine-x86 = guest [ "vkd3d-proton" "dxil-spirv" ] "windows-x86-msvc-mt" [
+    vkd3d-engine-x86 = msvcCross [ "vkd3d-proton" "dxil-spirv" ] "windows-x86-msvc-mt" [
       "libhelios_d3d12_static.a"
       "dxil-spirv"
-      "pdb"
+      "embedded-CodeView"
     ];
     helios-guest-x64 =
       guest [ "helios" "dxvk" "vkd3d-proton" "dxil-spirv" ] "windows-x86_64-msvc-mt-wdk"
@@ -104,13 +110,13 @@ in
     helios-development-package = guest [ "helios" ] "windows-x64-wow64-development-package" [
       "bundle/manifest.json"
     ];
-    mesa-guest-x64 = guest [ "mesa-helios" "venus-protocol" "helios" ] "windows-x86_64-msvc-mt" [
+    mesa-guest-x64 = msvcCross [ "mesa-helios" "venus-protocol" "helios" ] "windows-x86_64-msvc-mt" [
       "vulkan_virtio.dll"
       "opengl32.dll"
       "icd-json"
       "pdb"
     ];
-    mesa-guest-x86 = guest [ "mesa-helios" "venus-protocol" "helios" ] "windows-x86-msvc-mt" [
+    mesa-guest-x86 = msvcCross [ "mesa-helios" "venus-protocol" "helios" ] "windows-x86-msvc-mt" [
       "vulkan_virtio.dll"
       "opengl32.dll"
       "icd-json"
@@ -134,14 +140,17 @@ in
         inherit (import ./adapters/electron.nix) reason inputContract;
       };
     clvk-helios =
-      (guest [ "clvk-helios" "helios" ] "windows-x86_64-msvc-mt" [
-        "clvk.dll"
-        "clspv"
-        "OpenCL-loader"
-        "pdb"
+      (target [ "clvk-helios" "helios" ] "nix" "windows-x86_64-msvc-mt" [
+        "package/clvk.dll"
+        "package/vulkan-1.dll"
+        "package/OpenCL.dll"
+        "package/x86/vulkan-1.dll"
+        "package/smoke"
+        "package/llvm-symbol-policy.json"
       ])
       // {
-        inherit (import ./adapters/clvk.nix) reason inputContract;
+        toolchain = "linux-msvc-cross";
+        inherit (import ./adapters/clvk.nix) inputContract;
       };
   };
 }

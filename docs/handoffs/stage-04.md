@@ -6,7 +6,18 @@ limitation. This restores the original scaffold request. An MSVC ABI requirement
 alone is not such a limitation. Native candidate evidence below remains valid
 for those artifacts, but does not establish that cross-compilation is impossible.
 The corrected no-symbol native CLVK retry was cancelled before compilation at
-the user's direction; component cross backends and symbol-policy validation are pending.
+the user's direction. [Cross dependency evidence](../evidence/stage-04-cross.json)
+now records successful Linux MSVC builds of DXVK, vkd3d and Mesa in x64/x86,
+plus CLVK, loaders and smoke programs. LLVM/Clang emitted zero compiler PDBs.
+Verified imports and Windows loads of CLVK/OpenCL/both Vulkan loaders passed;
+MCP also selected the host Mesa recipe. These are development snapshots.
+Primary Helios relinking with cross engines and lean composition also passed.
+The install bundle has zero PDBs and 232,427,853 bytes of runtime files; runtime
+symbols remain in component artifacts. Clean pinned repeats, installation and
+loaded-stack graphics acceptance remain pending.
+The pinned windows-drivers-rs build scripts explicitly reject Linux hosts;
+Helios UMD12's Linux path supports checking rather than DLL linking. This
+documented primary-driver build limitation retains the devbox for that build.
 The [MSVC cross foundation](../evidence/stage-04-msvc-cross.json) now passed:
 locked Linux Clang/LLD and the existing verified EWDK build static-CRT x64/x86
 C++ executables, both of which also ran successfully in Windows. This proves
@@ -21,8 +32,8 @@ also built. CLVK and its loaders/smoke binaries now passed native architecture
 and static CRT checks, with all 171 PDBs and notices returned. The first development
 package also composed and exported successfully. The replacement recipe disables
 LLVM/Clang debug information, keeps runtime PDBs in component artifacts and omits
-them from the install bundle. Its cross build and composition checks remain
-pending, followed by clean pinned stack repeats, full installation, kernel
+them from the install bundle. Cross builds and lean composition passed, followed
+by the remaining clean pinned stack repeats, full installation, kernel
 identity and interactive graphics acceptance. The original
 handoff below still defines the baseline and preservation boundaries. Current
 guest/state selections and retained failure receipts are in ignored local notes.

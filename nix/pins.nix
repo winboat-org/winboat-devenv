@@ -6,9 +6,9 @@
   schemaVersion = 1;
   repositories = {
     helios = {
-      rev = "9dcf346aa07caa230d1a0420645805d168282a78";
+      rev = "59181c06c9b4c8b54d09071f06fb702213a8cb6b";
       ref = "refs/heads/master";
-      provenance = "explicit-verified-pin";
+      provenance = "stage-04-cross-local-unpublished";
     };
     qemu-helios = {
       rev = "2544a0bb2b11992fe31d043961ed507fe581f31f";
@@ -16,9 +16,9 @@
       provenance = "stage-03-local-unpublished";
     };
     dxvk = {
-      rev = "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa";
+      rev = "e73ee9d0da9628e5f444b2e002e0079fd96ae3d3";
       ref = "refs/heads/master";
-      provenance = "stage-02-local-unpublished";
+      provenance = "stage-04-cross-local-unpublished";
     };
     virglrenderer = {
       rev = "8668479d681f47ade80808c9d3fc1457540d7d58";
@@ -26,14 +26,14 @@
       provenance = "stage-02-local-unpublished";
     };
     mesa-helios = {
-      rev = "4aa49189a28ab25e83012d093e5c7b38185304a5";
+      rev = "48003fe5ce933381ea3609a654e86a2a24b87f71";
       ref = "refs/heads/main";
-      provenance = "explicit-verified-pin";
+      provenance = "stage-04-cross-local-unpublished";
     };
     vkd3d-proton = {
-      rev = "e9468e1b6d71fbe7a45013f2bb28b8b611758caa";
+      rev = "aff0927cab46c700a6edd78a3b1621fa9e109f18";
       ref = "refs/heads/master";
-      provenance = "explicit-verified-pin";
+      provenance = "stage-04-cross-local-unpublished";
     };
     dxil-spirv = {
       rev = "f4651bd076a2613728823ec289abc121a348a48a";

@@ -1,0 +1,25 @@
+diff --git a/external/clspv/CMakeLists.txt b/external/clspv/CMakeLists.txt
+--- a/external/clspv/CMakeLists.txt
++++ b/external/clspv/CMakeLists.txt
+@@ -126,7 +126,8 @@ else()
+ 
+   # Kokoro bots have older toolchains so make that LLVM check a warning.
+   option(LLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN "" ON)
+-  set(CLSPV_LLVM_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/llvm)
++  set(CLSPV_LLVM_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/llvm
++      CACHE PATH "LLVM build directory")
+ 
+   # First tell LLVM where to find clang.
+   set(LLVM_EXTERNAL_CLANG_SOURCE_DIR ${CLSPV_CLANG_SOURCE_DIR})
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -134,7 +134,6 @@ option(CLVK_ENABLE_SPIRV_IL "Enable SPIR-V as an intermediate language" ON)
+ # SPIRV-LLVM-Translator
+ if (CLVK_COMPILER_AVAILABLE AND CLVK_ENABLE_SPIRV_IL)
+-  set(LLVM_DIR
+-      ${CMAKE_BINARY_DIR}/external/clspv/third_party/llvm/lib/cmake/llvm)
++  set(LLVM_DIR ${CLSPV_LLVM_BINARY_DIR}/lib/cmake/llvm)
+   set(LLVM_SPIRV_SOURCE ${PROJECT_SOURCE_DIR}/external/SPIRV-LLVM-Translator CACHE STRING
+       "Path to SPIRV-LLVM-Translator directory")
+   set(LLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR ${SPIRV_HEADERS_SOURCE_DIR})

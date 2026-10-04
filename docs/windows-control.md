@@ -76,28 +76,34 @@ The [MSVC cross foundation](evidence/stage-04-msvc-cross.json) passed Linux
 compilation/linking and Windows execution for x64 and x86 C++ executables using
 the locked EWDK headers and static CRT. `nix/msvc-sysroot.nix` extracts those
 inputs from the already verified provisioning payload; its header overlay and
-library aliases accommodate Windows case-insensitive lookup on Linux. Component
-cross backends still need their own build and runtime acceptance. Select devbox
-compilation only after documenting a concrete cross-compilation blocker.
+library aliases accommodate Windows case-insensitive lookup on Linux. The
+[cross dependency evidence](evidence/stage-04-cross.json) now records successful
+DXVK/vkd3d/Mesa x64/x86 and CLVK cross builds, verified Windows imports and
+CLVK/loader DLL loads. Component builds and lean composition passed; clean
+pinned stack checks are next. Select devbox compilation only after documenting a
+concrete cross-compilation blocker.
 
-DXVK and vkd3d have measured native x64/x86 backends. Windows WIDL is built by
-the locked Nixpkgs MinGW compiler and mirrored with its matching headers. vkd3d
+DXVK and vkd3d now use Linux MSVC cross builds by default. Linux WIDL is built
+from the pinned mingw-w64 source and generates Windows headers on the host. vkd3d
 enumerates seven required archives; its core archive already contains the full
 shader dependency union, so there is no additional archive merge.
 
 Helios's KMD and all four UMD variants, and Mesa's three ICD DLLs in both
 architectures, passed native build acceptance. Their backends now allow clean
-pinned release builds. CLVK and the package
-composer still require explicit `--mode development` for native candidates.
+pinned release builds of the primary driver. Its current WDK build scripts
+reject a Linux host, as detailed in [build usage](builds.md). Cross dependencies
+and the package composer support clean pinned release builds; development mode
+explicitly captures dirty source snapshots.
 Nix supplies offline Cargo inputs from all three component
-locks, Windows CMake/WinFlexBison and pure Python build modules, and CLVK's exact
-LLVM/header/loader sources. Their file tables, derivations, hashes and licenses
+locks and CLVK's exact LLVM/header/loader sources. Linux generators and compiler
+tools come from Nix; the primary Windows build gets its offline Cargo mirror.
+File tables, derivations, hashes and licenses
 remain in the artifact evidence. These extra build inputs do not change the
 prepared Stage 3 provisioning lock. CLVK's LLVM/Clang dependencies use optimized
 code without debug information; the recipe checks their actual compile commands
 and requires zero compiler PDBs in `package/llvm-symbol-policy.json`. CLVK and
 loader runtime symbols remain in their component artifacts.
-Mesa's candidate uses the existing clang-cl
+Mesa's cross candidate uses the existing clang-cl
 compatibility path with `/MT`, regenerates the paired Venus headers, and retains
 them in its artifact. Full candidate acceptance remains pending.
 

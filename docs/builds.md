@@ -40,12 +40,40 @@ assuming a parent checkout location. Root adapters compose these interfaces.
 | `helios-protocol` | Linux Rust wire definitions and protocol tests; guest driver execution is separate |
 | `dxvk-win64` | Standalone x64 MinGW DXGI/D3D9/D3D10core/D3D11 DLLs; GCC/C++/pthread runtimes link statically, Windows system `msvcrt.dll` remains an import |
 | `WBFreeRDP` | Forked native client/library outputs, licenses and debug symbols |
-| `dxvk-engine-x64/x86`, `vkd3d-engine-x64/x86` | Nix-evaluated guest dispatch plans for clang-cl/MSVC COFF engine archives with `/MT`; no MinGW substitution |
+| `dxvk-engine-x64/x86`, `vkd3d-engine-x64/x86` | Linux clang-cl/LLD cross builds of MSVC COFF archives with `/MT` and embedded CodeView symbols |
 | `helios-guest-x64/x86` | Durable guest build plans; KMD is x64 only, UMD11/UMD12 have x64/x86 contracts |
-| `mesa-guest-x64/x86` | Native clang-cl/MSVC `/MT` candidates and generated paired protocol headers |
-| `clvk-helios` | Native MSVC `/MT` candidate with pinned LLVM/clspv, native loaders and x64/x86 smoke programs |
-| `helios-development-package` | Composes verified guest component artifacts, original install scripts, licenses, symbols and provenance |
+| `mesa-guest-x64/x86` | Linux clang-cl/LLD MSVC `/MT` cross builds and generated paired protocol headers |
+| `clvk-helios` | Linux MSVC `/MT` cross build with pinned LLVM/clspv, loaders and x64/x86 smoke programs; LLVM/Clang have no debug symbols |
+| `helios-development-package` | Composes verified component artifacts, original install scripts, licenses and provenance; runtime PDBs remain in component artifacts |
 | `winboat`, `electron` | Explicit adapter/input contracts; missing fixed dependency closures fail closed |
+
+Host cross-compilation is the default for Windows dependencies. Both clean
+pinned release mode and explicit development snapshots use this backend.
+Linux uses the locked Clang/LLD 22.1.8 and the exact EWDK MSVC/SDK headers
+and static libraries. CLVK separately builds matching Linux LLVM generators and
+libclc before compiling its Windows compiler/runtime; its LLVM/Clang build checks
+actual compiler commands and requires zero compiler PDBs. Non-Helios adapters
+live in this root repository.
+
+Helios's primary driver build still needs the devbox with the pinned build system:
+`wdk-build` 0.5.1 from windows-drivers-rs revision
+`36558802149bc92455bf5719fe77f3a829d8580f` explicitly emits `compile_error!` for
+non-Windows build hosts in `src/utils.rs` (`set_var` and `remove_var`), and uses
+Windows registry APIs for kit discovery. Helios's current UMD12 build script
+also returns from its Linux host path before building the engine bridge; that
+path supports `cargo check`, not DLL production. This is a concrete limitation
+of the pinned build scripts, rather than a limitation of the MSVC ABI. Kernel
+catalog generation, signing, installation and graphics validation still execute
+in Windows.
+
+Host-built Windows artifacts retain their Nix source/toolchain/closure provenance.
+The controller verifies their complete manifest before transfer, stages a ZIP,
+and runs a durable import task into a protected local Windows build directory.
+The guest verifies the file set and re-inspects every PE image/COFF archive for
+architecture and static CRT. Cached imports require the same guest UUID, exact
+manifest and successful task. Each consuming build rechecks the imported tree.
+Both `wb build` and `wb devbox build`, and their MCP counterparts, select these
+same host recipes; native Helios builds consume the imported engine artifacts.
 
 The engine archive names and compatibility headers follow the component's
 current UMD link inputs. Guest plans retain LLVM 22.1.8, MSVC v143, matched

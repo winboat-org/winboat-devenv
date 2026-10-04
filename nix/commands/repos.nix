@@ -18,9 +18,17 @@ let
         )
         [
           "build.nix"
+          "msvc-sysroot.nix"
+          "msvc-toolchain.nix"
+          "msvc-cross-tools.nix"
+          "msvc-meson.nix"
           "dispatch.nix"
           "host-smoke.nix"
+          "host-widl.nix"
           "scripts/host-smoke.py"
+          "scripts/msvc-sysroot.py"
+          "scripts/clvk-symbol-policy.py"
+          "scripts/msvc-cross-inspect.py"
           "devbox.nix"
           "windows-payloads.nix"
           "windows-build-tools.nix"
@@ -53,6 +61,16 @@ let
           "adapters/winboat.nix"
           "adapters/electron.nix"
           "adapters/clvk.nix"
+          "adapters/clvk-inputs.nix"
+          "adapters/clvk-host-tools.nix"
+          "adapters/clvk-libclc.nix"
+          "adapters/clvk-loaders.nix"
+          "adapters/clvk-cross.nix"
+          "adapters/clvk-compiler.nix"
+          "adapters/clvk-build-directory.patch"
+          "adapters/clvk-no-compiler-symbols.patch"
+          "adapters/clvk-cross-warning-flags.patch"
+          "adapters/clvk-clang-cl-warnings.patch"
         ]
   );
   devenv = inputs.devenv-cli.packages.${pkgs.stdenv.hostPlatform.system}.default;

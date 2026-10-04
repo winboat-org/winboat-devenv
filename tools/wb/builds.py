@@ -32,9 +32,11 @@ def plan(ws, name, configuration="release", mode="release"):
             "mode": mode, "contract": contract, "sources": records,
             "lockSha256": digest(ws.root / "devenv.lock"),
             "available": contract["backend"] == "nix",
-            "externalStep": contract.get("reason") or
+            "externalStep": None if contract["backend"] == "nix" else contract.get("reason") or
             ("Stage 4 devbox build backend is unavailable; no Windows execution was attempted"
              if contract["backend"] == "devbox" else None)}
+    if contract.get("availability") == "development-only" and mode != "development":
+        result.update(available=False, externalStep=contract["reason"])
     if contract["backend"] != "nix" and all(record["present"] for record in records):
         request = {"system": os.environ["WB_SYSTEM"], "target": name, "configuration": configuration,
                    "sources": {r["repository"]: {"path": r["path"]} for r in records}}
@@ -155,6 +157,27 @@ def _files(root):
     return files
 
 
+def msvc_inputs(ws):
+    """Reuse immutable provisioning bytes with the exact current lock identity."""
+    lock = ws.root / "config/provision.lock.json"
+    lock_hash = digest(lock)
+    definition = json.loads(lock.read_text())
+    ewdk = next(tool for tool in definition["tools"] if tool.get("sourceKind") == "self-contained-ewdk")
+    payload = ewdk["payloads"][0]
+    store = Path(run([os.environ["WB_NIX"], "eval", "--raw", "--expr", "builtins.storeDir"]).stdout.strip())
+    selected = None
+    for candidate in sorted(store.glob("*-winboat-windows-payloads")):
+        receipt = candidate / "provision.lock.json"
+        archive = candidate / "files" / (payload["sha256"] + "-" + payload["file"])
+        if receipt.is_file() and digest(receipt) == lock_hash and archive.is_file():
+            run([os.environ["WB_NIX"], "path-info", str(candidate)])
+            selected = str(candidate)
+            break
+    # The Nix recipe verifies the ISO hash while extracting. With no cache it
+    # fetches only this exact locked EWDK payload, not the entire guest baseline.
+    return {"lockFile": str(lock), "lockSha256": lock_hash, "payloads": selected}
+
+
 def execute(ws, name, configuration, mode, operation_id, devbox_name="default"):
     try:
         if target(name)["backend"] == "devbox":
@@ -186,12 +209,14 @@ def _execute(ws, name, configuration, mode, operation_id):
             path = ws.validate_checkout(component)
             exported = directory / "sources" / component
             identity = _export(path, exported, mode, ws.repos[component]["pin"]["rev"],
-                               gitlinks=selected_gitlinks(ws, component) if component in {"dxvk", "vkd3d-proton", "dxil-spirv"} else ())
+                               gitlinks=selected_gitlinks(ws, component) if component in {"dxvk", "vkd3d-proton", "dxil-spirv", "clvk-helios"} else ())
             source_records[component] = {"path": str(exported), "canonicalUrl": ws.repos[component]["url"],
                                          "declaredPin": ws.repos[component]["pin"]["rev"], **identity}
             source_records[component]["narHash"] = run([os.environ["WB_NIX"], "hash", "path", "--sri", exported]).stdout.strip()
     specification = {"schemaVersion": 1, "target": name, "configuration": configuration,
                      "system": os.environ["WB_SYSTEM"], "sources": source_records}
+    if contract.get("toolchain") == "linux-msvc-cross":
+        specification["msvc"] = msvc_inputs(ws)
     spec_path = directory / "specification.json"
     write_json(spec_path, specification)
     receipt = {"kind": "build", "state": "building", "target": name, "specification": str(spec_path),
@@ -201,6 +226,8 @@ def _execute(ws, name, configuration, mode, operation_id):
     argv = [os.environ["WB_NIX"], "build", "--json", "--out-link", str(directory / "result"), "--print-build-logs",
             "--file", expression, "--argstr", "nixpkgsPath", os.environ["WB_NIXPKGS"],
             "--argstr", "specification", str(spec_path)]
+    if "msvc" in specification:
+        argv.append("--impure")  # Explicit verified store-cache input; source snapshots still carry NAR hashes.
     with (directory / "build.log").open("w") as log:
         proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=log, text=True)
         stdout, _ = proc.communicate()
@@ -259,6 +286,17 @@ def _execute(ws, name, configuration, mode, operation_id):
             images.append({"path": file["path"], "format": "ELF",
                            "headers": run([os.environ["WB_READELF"], "-h", "-n", "-d", image]).stdout})
     manifest["images"] = images
+    if contract.get("toolchain") == "linux-msvc-cross":
+        inspections = json.loads((export / "files/images.json").read_text())
+        indexed = {image["path"]: image for image in inspections}
+        for image in images:
+            if image["format"] == "PE":
+                if image["path"] not in indexed:
+                    raise Failure("cross artifact lacks its architecture/static CRT inspection", artifact=image["path"])
+                image.update(indexed[image["path"]])
+        images.extend(image for image in inspections if image["format"] == "COFF archive")
+        manifest["embeddedSymbols"] = any(image.get("embeddedCodeView") for image in images)
+        manifest["toolchain"]["msvc"] = specification["msvc"]
     manifest["closure"] = json.loads(run([os.environ["WB_NIX"], "path-info", "--recursive", "--json", output]).stdout)
     manifest_path = export / "manifest.json"
     write_json(manifest_path, manifest)

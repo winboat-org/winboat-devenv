@@ -1,0 +1,835 @@
+{
+  "schemaVersion": 1,
+  "stage": 4,
+  "state": "development-cross-builds-and-dll-loads-passed",
+  "foundationEvidence": "docs/evidence/stage-04-msvc-cross.json",
+  "components": [
+    {
+      "artifactId": "op-75df478edf464f2a82f15fa15e2cc416",
+      "target": "dxvk-engine-x64",
+      "abi": "windows-x86_64-msvc-mt",
+      "configuration": "release",
+      "mode": "development",
+      "outputs": [
+        {
+          "drvPath": "/nix/store/2255k040lsr7qcnhip9yi92ng8jbsx40-helios-dxvk-msvc-cross-x64-release.drv",
+          "outputs": {
+            "out": "/nix/store/nr3ggvgyq1zrdnw9vr2x54ikz5g1f0nj-helios-dxvk-msvc-cross-x64-release"
+          }
+        }
+      ],
+      "manifest": "out/guest/op-75df478edf464f2a82f15fa15e2cc416/manifest.json",
+      "manifestSha256": "0a14f7ee14c53b43e89585c95b6219bb5c09c751878bf6163eb2f00d57de1a5e",
+      "files": 53,
+      "bytes": 215676659,
+      "runtimePdbFiles": 0,
+      "images": [
+        {
+          "path": "src/d3d11/libhelios_d3d11_static.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/dxvk/libdxvk.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/spirv/libspirv.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/util/libutil.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/vulkan/libvkcommon.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/wsi/libwsi.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/dxbc-spirv/libdxbc_spv.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/libdisplay-info/libdisplay-info.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        }
+      ],
+      "sources": {
+        "dxvk": {
+          "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+          "diffSha256": "a85e905b21b7bea0100a20ee634f63f9a8cda8bb7068f1f3426ee7efdf36b1d9",
+          "untracked": [
+            "nix/cross-engine.nix"
+          ],
+          "narHash": "sha256-52AubnaLGWDaJ2FGPNOqBVrSm18DKQYXfATEufmQtx4="
+        },
+        "helios": {
+          "revision": "9dcf346aa07caa230d1a0420645805d168282a78",
+          "diffSha256": "c624e21888c4e31fe9d4a6dfe573a0fe06307ae2f448c639678f6e3f0b207a76",
+          "untracked": [],
+          "narHash": "sha256-TMfXNqaExnG4rNtzagdHo+feKOSZrATR9mflUd4seP4="
+        }
+      }
+    },
+    {
+      "artifactId": "op-8499127e91e24411852cefdce8346d6d",
+      "target": "dxvk-engine-x86",
+      "abi": "windows-x86-msvc-mt",
+      "configuration": "release",
+      "mode": "development",
+      "outputs": [
+        {
+          "drvPath": "/nix/store/9k4mklvhb31b06j372z0a5z8crf8rhxk-helios-dxvk-msvc-cross-x86-release.drv",
+          "outputs": {
+            "out": "/nix/store/pfms7fnhc6z9gn3h29xnfh3y1mcc70p2-helios-dxvk-msvc-cross-x86-release"
+          }
+        }
+      ],
+      "manifest": "out/guest/op-8499127e91e24411852cefdce8346d6d/manifest.json",
+      "manifestSha256": "1180a05690e33a2ee78b4ee686ceb4346950f6fd6bdcdb2d416b4206360d2480",
+      "files": 53,
+      "bytes": 201419177,
+      "runtimePdbFiles": 0,
+      "images": [
+        {
+          "path": "src/d3d11/libhelios_d3d11_static.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/dxvk/libdxvk.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/spirv/libspirv.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/util/libutil.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/vulkan/libvkcommon.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "src/wsi/libwsi.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/dxbc-spirv/libdxbc_spv.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/libdisplay-info/libdisplay-info.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        }
+      ],
+      "sources": {
+        "dxvk": {
+          "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+          "diffSha256": "a85e905b21b7bea0100a20ee634f63f9a8cda8bb7068f1f3426ee7efdf36b1d9",
+          "untracked": [
+            "nix/cross-engine.nix"
+          ],
+          "narHash": "sha256-52AubnaLGWDaJ2FGPNOqBVrSm18DKQYXfATEufmQtx4="
+        },
+        "helios": {
+          "revision": "9dcf346aa07caa230d1a0420645805d168282a78",
+          "diffSha256": "c624e21888c4e31fe9d4a6dfe573a0fe06307ae2f448c639678f6e3f0b207a76",
+          "untracked": [],
+          "narHash": "sha256-TMfXNqaExnG4rNtzagdHo+feKOSZrATR9mflUd4seP4="
+        }
+      }
+    },
+    {
+      "artifactId": "op-f703f23deb7344ee967b97ad2cd05e18",
+      "target": "vkd3d-engine-x64",
+      "abi": "windows-x86_64-msvc-mt",
+      "configuration": "release",
+      "mode": "development",
+      "outputs": [
+        {
+          "drvPath": "/nix/store/3x045nlq5n7yv57pcc4q3670s6j31f7d-helios-vkd3d-msvc-cross-x64-release.drv",
+          "outputs": {
+            "out": "/nix/store/00am9vjmbprk8ryrxri6b0i0n0gfr6a8-helios-vkd3d-msvc-cross-x64-release"
+          }
+        }
+      ],
+      "manifest": "out/guest/op-f703f23deb7344ee967b97ad2cd05e18/manifest.json",
+      "manifestSha256": "6dda22b49ac857d164650799b9492eaefa572ba61f6787d69ba43d3b50b87aaa",
+      "files": 110,
+      "bytes": 241662612,
+      "runtimePdbFiles": 0,
+      "images": [
+        {
+          "path": "libs/d3d12core/libhelios_d3d12_static.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "libs/vkd3d/libvkd3d-proton.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "libs/vkd3d-common/libvkd3d_common.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "libs/vkd3d-shader/libvkd3d-shader.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/dxil-spirv/libdxbc_spv_module.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/dxil-spirv/libdxil-spirv.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/dxil-spirv/subprojects/dxbc-spirv/libdxbc_spv.a",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        }
+      ],
+      "sources": {
+        "vkd3d-proton": {
+          "revision": "e9468e1b6d71fbe7a45013f2bb28b8b611758caa",
+          "diffSha256": "7c521918833e2cfa86c96d64c42f70395bfeb5bbc87f800a8dcb213b896c0065",
+          "untracked": [
+            "nix/cross-engine.nix"
+          ],
+          "narHash": "sha256-CQl9XaOIO6/WwJ3A4eqFF8Xjn1LUCactQGDeVsDn4HM="
+        },
+        "dxil-spirv": {
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "diffSha256": null,
+          "untracked": [],
+          "narHash": "sha256-XolWbgNvzZSegN2cEKLFc6QiAn3NlVUl7Ahg8STPVoE="
+        }
+      }
+    },
+    {
+      "artifactId": "op-ebb98705171440a3a39cf9a7fe9de128",
+      "target": "vkd3d-engine-x86",
+      "abi": "windows-x86-msvc-mt",
+      "configuration": "release",
+      "mode": "development",
+      "outputs": [
+        {
+          "drvPath": "/nix/store/5svp4zdfvqy807s112pplb3qmyj2hfjp-helios-vkd3d-msvc-cross-x86-release.drv",
+          "outputs": {
+            "out": "/nix/store/vlzhi4qlk668ifgipk4adnq0ivhla1gb-helios-vkd3d-msvc-cross-x86-release"
+          }
+        }
+      ],
+      "manifest": "out/guest/op-ebb98705171440a3a39cf9a7fe9de128/manifest.json",
+      "manifestSha256": "26f21f25a98058ca10c1a602e1c3b0ef5c5df13cc6896872e2c1fc298bba43dc",
+      "files": 110,
+      "bytes": 226729255,
+      "runtimePdbFiles": 0,
+      "images": [
+        {
+          "path": "libs/d3d12core/libhelios_d3d12_static.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "libs/vkd3d/libvkd3d-proton.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "libs/vkd3d-common/libvkd3d_common.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "libs/vkd3d-shader/libvkd3d-shader.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/dxil-spirv/libdxbc_spv_module.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/dxil-spirv/libdxil-spirv.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        },
+        {
+          "path": "subprojects/dxil-spirv/subprojects/dxbc-spirv/libdxbc_spv.a",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": true
+        }
+      ],
+      "sources": {
+        "vkd3d-proton": {
+          "revision": "e9468e1b6d71fbe7a45013f2bb28b8b611758caa",
+          "diffSha256": "7c521918833e2cfa86c96d64c42f70395bfeb5bbc87f800a8dcb213b896c0065",
+          "untracked": [
+            "nix/cross-engine.nix"
+          ],
+          "narHash": "sha256-CQl9XaOIO6/WwJ3A4eqFF8Xjn1LUCactQGDeVsDn4HM="
+        },
+        "dxil-spirv": {
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "diffSha256": null,
+          "untracked": [],
+          "narHash": "sha256-XolWbgNvzZSegN2cEKLFc6QiAn3NlVUl7Ahg8STPVoE="
+        }
+      }
+    },
+    {
+      "artifactId": "op-cd03d34ca6f44e3e892ba8c6ac70113c",
+      "target": "mesa-guest-x64",
+      "abi": "windows-x86_64-msvc-mt",
+      "configuration": "release",
+      "mode": "development",
+      "outputs": [
+        {
+          "drvPath": "/nix/store/3i3jzq3kfm18vxzqxrgnpfr607xvls1s-mesa-helios-msvc-cross-x64-release.drv",
+          "outputs": {
+            "out": "/nix/store/5vj6v6aadjczbyzx0jxpynx5wbici4xs-mesa-helios-msvc-cross-x64-release"
+          }
+        }
+      ],
+      "manifest": "out/guest/op-cd03d34ca6f44e3e892ba8c6ac70113c/manifest.json",
+      "manifestSha256": "21f4724197f4163fa718bc922cbf575e07d894463b0bf611d911e7409b0acb59",
+      "files": 72,
+      "bytes": 133383332,
+      "runtimePdbFiles": 3,
+      "images": [
+        {
+          "path": "mesa/src/gallium/targets/libgl-gdi/opengl32.dll",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "mesa/src/gallium/targets/wgl/libgallium_wgl.dll",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "mesa/src/virtio/vulkan/vulkan_virtio.dll",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        }
+      ],
+      "sources": {
+        "mesa-helios": {
+          "revision": "4aa49189a28ab25e83012d093e5c7b38185304a5",
+          "diffSha256": "ed09a6b20a7c69dd33fbbb2eba20b06c18cc3fc698185fda3d9a9024602be037",
+          "untracked": [
+            "nix/cross-guest.nix",
+            "nix/lexer-compat.h"
+          ],
+          "narHash": "sha256-/YH+jCiqW18Z2iYGeN5Fp5cCmHn5w4hoCXahv3q7DMY="
+        },
+        "venus-protocol": {
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "diffSha256": null,
+          "untracked": [],
+          "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s="
+        },
+        "helios": {
+          "revision": "9dcf346aa07caa230d1a0420645805d168282a78",
+          "diffSha256": "c624e21888c4e31fe9d4a6dfe573a0fe06307ae2f448c639678f6e3f0b207a76",
+          "untracked": [],
+          "narHash": "sha256-TMfXNqaExnG4rNtzagdHo+feKOSZrATR9mflUd4seP4="
+        }
+      }
+    },
+    {
+      "artifactId": "op-7a0d5314ad5b45b398a99bcf0b0f08f2",
+      "target": "mesa-guest-x86",
+      "abi": "windows-x86-msvc-mt",
+      "configuration": "release",
+      "mode": "development",
+      "outputs": [
+        {
+          "drvPath": "/nix/store/q2ynf3zbhbwbaka6f48rrzjr3hjn9vyp-mesa-helios-msvc-cross-x86-release.drv",
+          "outputs": {
+            "out": "/nix/store/5yimywkf93cgk3f24zgv28x7q83nhfgy-mesa-helios-msvc-cross-x86-release"
+          }
+        }
+      ],
+      "manifest": "out/guest/op-7a0d5314ad5b45b398a99bcf0b0f08f2/manifest.json",
+      "manifestSha256": "fddbd58e2a38b90fe9936941de38555819d106b280ca113aa52fa3e793d7c99f",
+      "files": 72,
+      "bytes": 135610184,
+      "runtimePdbFiles": 3,
+      "images": [
+        {
+          "path": "mesa/src/gallium/targets/libgl-gdi/opengl32.dll",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "mesa/src/gallium/targets/wgl/libgallium_wgl.dll",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "mesa/src/virtio/vulkan/vulkan_virtio.dll",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        }
+      ],
+      "sources": {
+        "mesa-helios": {
+          "revision": "4aa49189a28ab25e83012d093e5c7b38185304a5",
+          "diffSha256": "ed09a6b20a7c69dd33fbbb2eba20b06c18cc3fc698185fda3d9a9024602be037",
+          "untracked": [
+            "nix/cross-guest.nix",
+            "nix/lexer-compat.h"
+          ],
+          "narHash": "sha256-/YH+jCiqW18Z2iYGeN5Fp5cCmHn5w4hoCXahv3q7DMY="
+        },
+        "venus-protocol": {
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "diffSha256": null,
+          "untracked": [],
+          "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s="
+        },
+        "helios": {
+          "revision": "9dcf346aa07caa230d1a0420645805d168282a78",
+          "diffSha256": "c624e21888c4e31fe9d4a6dfe573a0fe06307ae2f448c639678f6e3f0b207a76",
+          "untracked": [],
+          "narHash": "sha256-TMfXNqaExnG4rNtzagdHo+feKOSZrATR9mflUd4seP4="
+        }
+      }
+    },
+    {
+      "artifactId": "op-9894b0c2ce4c4bf09c7759514afecbad",
+      "target": "clvk-helios",
+      "abi": "windows-x86_64-msvc-mt",
+      "configuration": "release",
+      "mode": "development",
+      "outputs": [
+        {
+          "drvPath": "/nix/store/s0dlkc1y4kb152a8nlrign4wan5d46mv-clvk-helios-msvc-cross-release.drv",
+          "outputs": {
+            "out": "/nix/store/6v322zwc58yzd19cj6d5xf6mh3flhlbh-clvk-helios-msvc-cross-release"
+          }
+        }
+      ],
+      "manifest": "out/guest/op-9894b0c2ce4c4bf09c7759514afecbad/manifest.json",
+      "manifestSha256": "fbcdb8f50e795f24c1b3e21d07acf3bcd56c1b859212ac035847b02605f610d4",
+      "files": 85,
+      "bytes": 399182493,
+      "runtimePdbFiles": 18,
+      "images": [
+        {
+          "path": "package/OpenCL.dll",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/clvk.dll",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/d3d11-smoke.exe",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/d3d12-clear.exe",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/d3d12-smoke.exe",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/opencl-gl-sharing-smoke.exe",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/opencl-smoke.exe",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/opengl-smoke.exe",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/vulkan-smoke.exe",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/vulkan-wsi-probe.exe",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/x86/d3d11-smoke.exe",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/x86/d3d12-clear.exe",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/x86/d3d12-smoke.exe",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/x86/opengl-smoke.exe",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/x86/vulkan-smoke.exe",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/smoke/x86/vulkan-wsi-probe.exe",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/vulkan-1.dll",
+          "architecture": "x64",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        },
+        {
+          "path": "package/x86/vulkan-1.dll",
+          "architecture": "x86",
+          "staticCrtVerified": true,
+          "embeddedCodeView": false
+        }
+      ],
+      "sources": {
+        "clvk-helios": {
+          "revision": "56c626132782bf083a80a6c17f5ca763be0ff8fb",
+          "diffSha256": "8d7caaec781411f90468acd78c3e7446af8858e9e137e60c6d7d4efad0220f08",
+          "untracked": [
+            "nix/Build-Guest.ps1",
+            "nix/README.md",
+            "nix/clspv-build-directory.patch",
+            "nix/clspv-no-compiler-symbols.patch",
+            "nix/default.nix",
+            "nix/windows-inputs.nix"
+          ],
+          "narHash": "sha256-6ap7Oa4fvKbr7gjCO2IjJS97UmA12BHvvxr2IyLsyI0="
+        },
+        "helios": {
+          "revision": "9dcf346aa07caa230d1a0420645805d168282a78",
+          "diffSha256": "c624e21888c4e31fe9d4a6dfe573a0fe06307ae2f448c639678f6e3f0b207a76",
+          "untracked": [],
+          "narHash": "sha256-TMfXNqaExnG4rNtzagdHo+feKOSZrATR9mflUd4seP4="
+        }
+      }
+    }
+  ],
+  "llvmCompilerSymbolPolicy": {
+    "schemaVersion": 1,
+    "debugSymbols": false,
+    "pdbFiles": 0,
+    "compilerCommandsChecked": 3370,
+    "backend": "linux-msvc-cross"
+  },
+  "windowsImportAcceptance": {
+    "operationId": "op-7f29559c52934d02a8f0a911cdc6842b",
+    "state": "passed",
+    "imports": [
+      {
+        "target": "clvk-helios",
+        "artifactId": "op-9894b0c2ce4c4bf09c7759514afecbad",
+        "operationId": "op-394476e10e714b6eba80539f22b86726",
+        "manifestSha256": "fbcdb8f50e795f24c1b3e21d07acf3bcd56c1b859212ac035847b02605f610d4"
+      },
+      {
+        "target": "dxvk-engine-x64",
+        "artifactId": "op-75df478edf464f2a82f15fa15e2cc416",
+        "operationId": "op-091a4ee7b7f440ddba74d93c8ec8bd67",
+        "manifestSha256": "0a14f7ee14c53b43e89585c95b6219bb5c09c751878bf6163eb2f00d57de1a5e"
+      },
+      {
+        "target": "vkd3d-engine-x64",
+        "artifactId": "op-f703f23deb7344ee967b97ad2cd05e18",
+        "operationId": "op-c90caca341784e4a838a2726a906faee",
+        "manifestSha256": "6dda22b49ac857d164650799b9492eaefa572ba61f6787d69ba43d3b50b87aaa"
+      },
+      {
+        "target": "dxvk-engine-x86",
+        "artifactId": "op-8499127e91e24411852cefdce8346d6d",
+        "operationId": "op-b9c156c3f8924982bb31d5df65017b19",
+        "manifestSha256": "1180a05690e33a2ee78b4ee686ceb4346950f6fd6bdcdb2d416b4206360d2480"
+      },
+      {
+        "target": "vkd3d-engine-x86",
+        "artifactId": "op-ebb98705171440a3a39cf9a7fe9de128",
+        "operationId": "op-b7e777b17d1844fc9510017ec4a012d1",
+        "manifestSha256": "26f21f25a98058ca10c1a602e1c3b0ef5c5df13cc6896872e2c1fc298bba43dc"
+      }
+    ],
+    "dlls": [
+      {
+        "export": "clGetPlatformIDs",
+        "path": "package/clvk.dll",
+        "loadedPath": "C:\\WinBoatDev\\build\\op-394476e10e714b6eba80539f22b86726\\artifact\\package\\clvk.dll",
+        "architecture": "x64",
+        "sha256": "c2e013d09ada29c711571f066f8e3c956c0568b49dc4bf0ede2c9c90167b21fe"
+      },
+      {
+        "export": "vkGetInstanceProcAddr",
+        "path": "package/vulkan-1.dll",
+        "loadedPath": "C:\\WinBoatDev\\build\\op-394476e10e714b6eba80539f22b86726\\artifact\\package\\vulkan-1.dll",
+        "architecture": "x64",
+        "sha256": "77d37cc2ba25241f559eed43b06772a8e1ff66d29202a6d46bb50d7016c5ea13"
+      },
+      {
+        "export": "clGetPlatformIDs",
+        "path": "package/OpenCL.dll",
+        "loadedPath": "C:\\WinBoatDev\\build\\op-394476e10e714b6eba80539f22b86726\\artifact\\package\\OpenCL.dll",
+        "architecture": "x64",
+        "sha256": "7e914d2166c0891880d6db8cad9ced75dec4b37d7c220e464d37f35814509a30"
+      },
+      {
+        "export": "vkGetInstanceProcAddr",
+        "path": "package/x86/vulkan-1.dll",
+        "loadedPath": "C:\\WinBoatDev\\build\\op-394476e10e714b6eba80539f22b86726\\artifact\\package\\x86\\vulkan-1.dll",
+        "architecture": "x86",
+        "sha256": "8008bb26c3fcfd5ace1043e7e7d5e86599f22d52c0651dc35191dc275f8d25f5"
+      }
+    ]
+  },
+  "mcpHostBuild": {
+    "schemaVersion": 1,
+    "operationId": "op-ffb2e91a7a0444a1a31dfb732131326c",
+    "state": "succeeded",
+    "exitCode": 0,
+    "evidencePaths": [
+      "/media/rupansh/wdblack/winboat-stage04-state/operations/op-ffb2e91a7a0444a1a31dfb732131326c.json"
+    ],
+    "result": {
+      "kind": "build",
+      "state": "succeeded",
+      "target": "mesa-guest-x64",
+      "specification": "/media/rupansh/wdblack/winboat-stage04-state/builds/op-ffb2e91a7a0444a1a31dfb732131326c/specification.json",
+      "log": "/media/rupansh/wdblack/winboat-stage04-state/builds/op-ffb2e91a7a0444a1a31dfb732131326c/build.log",
+      "mode": "development",
+      "configuration": "release",
+      "exitCode": 0,
+      "manifest": "/home/rupansh/winboat-devenv/out/guest/op-ffb2e91a7a0444a1a31dfb732131326c/manifest.json",
+      "manifestSha256": "10eececf87428f3185146a69fc80745a9986d2f0b723eb7d325dc58840460b3a",
+      "outputs": [
+        {
+          "drvPath": "/nix/store/3i3jzq3kfm18vxzqxrgnpfr607xvls1s-mesa-helios-msvc-cross-x64-release.drv",
+          "outputs": {
+            "out": "/nix/store/5vj6v6aadjczbyzx0jxpynx5wbici4xs-mesa-helios-msvc-cross-x64-release"
+          }
+        }
+      ],
+      "artifactDirectory": "/home/rupansh/winboat-devenv/out/guest/op-ffb2e91a7a0444a1a31dfb732131326c"
+    }
+  },
+  "localChecks": "devenv test passed 63 local tests plus PowerShell/C# checks (stage04-cross-release-local-tests.log)",
+  "limitations": [
+    "These are explicit development snapshots; clean pinned release repeats remain pending.",
+    "DLL load/export proof does not establish Vulkan/OpenCL rendering or compute acceptance.",
+    "Clean pinned repeats, full installation and loaded-stack graphics acceptance remain pending."
+  ],
+  "primaryDriverBuild": {
+    "operationId": "op-47248fb765fe4fac99856c60f2c2af53",
+    "manifest": "out/guest/op-47248fb765fe4fac99856c60f2c2af53/manifest.json",
+    "manifestSha256": "8045c2ab73ee278715dd8698f14341a7a188548bb6a738398805dc3eb5270786",
+    "state": "passed",
+    "mode": "development",
+    "images": [
+      {
+        "staticCrtVerified": true,
+        "path": "package/helios_umd32.dll",
+        "embeddedCodeView": false,
+        "architecture": "x86",
+        "machine": "IMAGE_FILE_MACHINE_I386"
+      },
+      {
+        "staticCrtVerified": true,
+        "path": "package/helios_umd12_32.dll",
+        "embeddedCodeView": false,
+        "architecture": "x86",
+        "machine": "IMAGE_FILE_MACHINE_I386"
+      },
+      {
+        "staticCrtVerified": true,
+        "path": "package/helios_umd.dll",
+        "embeddedCodeView": false,
+        "architecture": "x64",
+        "machine": "IMAGE_FILE_MACHINE_AMD64"
+      },
+      {
+        "staticCrtVerified": true,
+        "path": "package/helios_umd12.dll",
+        "embeddedCodeView": false,
+        "architecture": "x64",
+        "machine": "IMAGE_FILE_MACHINE_AMD64"
+      },
+      {
+        "staticCrtVerified": true,
+        "path": "package/helios_kmd_render.sys",
+        "embeddedCodeView": false,
+        "architecture": "x64",
+        "machine": "IMAGE_FILE_MACHINE_AMD64"
+      }
+    ],
+    "engineArtifacts": [
+      {
+        "target": "dxvk-engine-x64",
+        "artifactId": "op-75df478edf464f2a82f15fa15e2cc416",
+        "manifestSha256": "0a14f7ee14c53b43e89585c95b6219bb5c09c751878bf6163eb2f00d57de1a5e",
+        "importOperationId": "op-091a4ee7b7f440ddba74d93c8ec8bd67"
+      },
+      {
+        "target": "vkd3d-engine-x64",
+        "artifactId": "op-f703f23deb7344ee967b97ad2cd05e18",
+        "manifestSha256": "6dda22b49ac857d164650799b9492eaefa572ba61f6787d69ba43d3b50b87aaa",
+        "importOperationId": "op-c90caca341784e4a838a2726a906faee"
+      },
+      {
+        "target": "dxvk-engine-x86",
+        "artifactId": "op-8499127e91e24411852cefdce8346d6d",
+        "manifestSha256": "1180a05690e33a2ee78b4ee686ceb4346950f6fd6bdcdb2d416b4206360d2480",
+        "importOperationId": "op-b9c156c3f8924982bb31d5df65017b19"
+      },
+      {
+        "target": "vkd3d-engine-x86",
+        "artifactId": "op-ebb98705171440a3a39cf9a7fe9de128",
+        "manifestSha256": "26f21f25a98058ca10c1a602e1c3b0ef5c5df13cc6896872e2c1fc298bba43dc",
+        "importOperationId": "op-b7e777b17d1844fc9510017ec4a012d1"
+      }
+    ]
+  },
+  "hostLlvmSymbolPolicy": {
+    "output": "/nix/store/ir0m6a8p459bpidgmzrw5fv88v549xy6-clvk-llvm-host-tools-23-140fc5aa",
+    "elfDebugSections": 0,
+    "pdbFiles": 0,
+    "tools": [
+      "clang",
+      "clang++",
+      "clang-23",
+      "clang-cl",
+      "clang-cpp",
+      "clang-tblgen",
+      "llvm-link",
+      "llvm-min-tblgen",
+      "llvm-tblgen",
+      "opt"
+    ]
+  },
+  "composition": {
+    "operationId": "op-12ef5332fe6949169f007f21b18ac4ac",
+    "manifest": "out/guest/op-12ef5332fe6949169f007f21b18ac4ac/manifest.json",
+    "manifestSha256": "dd640277172624bea6527b11cfe061cd94802d51cb67892cd148c89bf4d8a0fe",
+    "bundleManifest": "out/guest/op-12ef5332fe6949169f007f21b18ac4ac/files/bundle/manifest.json",
+    "bundleManifestSha256": "f86769d938accd45596f5de977afa3db3c2a3bce43ddb367a06bd47164116686",
+    "state": "passed",
+    "files": 608,
+    "bytes": 232427853,
+    "pdbFiles": 0,
+    "smokePrograms": 14,
+    "symbolStorage": "component-artifacts",
+    "installed": false,
+    "loaded": false
+  },
+  "localSourceCheckpoints": {
+    "helios": "59181c06c9b4c8b54d09071f06fb702213a8cb6b",
+    "dxvk": "e73ee9d0da9628e5f444b2e002e0079fd96ae3d3",
+    "vkd3d-proton": "aff0927cab46c700a6edd78a3b1621fa9e109f18",
+    "mesa-helios": "48003fe5ce933381ea3609a654e86a2a24b87f71"
+  },
+  "localPinOperationId": "op-b75af958c9024336aa83b3931db5d449"
+}

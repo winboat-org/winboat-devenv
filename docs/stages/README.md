@@ -11,6 +11,11 @@ and the baseline fixture's resident kernel-code comparison passed. See
 activation limitation; interactive activation tests were excluded at the
 maintainer's request.
 
+Host MSVC cross builds now pass for DXVK, vkd3d and Mesa x64/x86, plus CLVK,
+loaders and probes. CLVK retains runtime symbols while LLVM/Clang generate none.
+Verified Windows imports and CLVK/loader DLL loads passed; full stack graphics
+acceptance remains pending. See [cross evidence](../evidence/stage-04-cross.json).
+
 | Stage | Scope | Prerequisites | Status |
 | --- | --- | --- | --- |
 | 0 | devenv initialization, inventory/seed pins, docs and agent guidance | Empty workspace | Complete |

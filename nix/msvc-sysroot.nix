@@ -1,6 +1,6 @@
 {
   pkgs,
-  payloads,
+  payloads ? null,
   lockFile,
 }:
 let
@@ -9,15 +9,24 @@ let
     builtins.filter (item: (item.sourceKind or "") == "self-contained-ewdk") lock.tools
   );
   payload = builtins.head tool.payloads;
-  iso = payloads + "/files/${payload.sha256}-${payload.file}";
+  iso =
+    if payloads != null then
+      payloads + "/files/${payload.sha256}-${payload.file}"
+    else
+      pkgs.fetchurl {
+        inherit (payload) url sha256;
+        name = payload.file;
+      };
   vc = "Program Files/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/${tool.msvcToolset}";
   kit = "Program Files/Windows Kits/10";
   sdk = "10.0.26100.0";
   licenses = "Program Files/Microsoft Visual Studio/2022/BuildTools/Licenses";
 in
 assert
-  builtins.hashFile "sha256" (payloads + "/provision.lock.json")
-  == builtins.hashFile "sha256" lockFile;
+  payloads == null
+  ||
+    builtins.hashFile "sha256" (payloads + "/provision.lock.json")
+    == builtins.hashFile "sha256" lockFile;
 pkgs.runCommand "winboat-msvc-${tool.msvcToolset}-sdk-${sdk}-sysroot"
   {
     nativeBuildInputs = [

@@ -1,0 +1,16 @@
+diff --git a/external/clspv/CMakeLists.txt b/external/clspv/CMakeLists.txt
+--- a/external/clspv/CMakeLists.txt
++++ b/external/clspv/CMakeLists.txt
+@@ -217,4 +217,4 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+ elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror-unused-variable -Werror-switch")
++  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=unused-variable -Werror=switch")
+ endif()
+ 
+diff --git a/external/clspv/lib/CMakeLists.txt b/external/clspv/lib/CMakeLists.txt
+--- a/external/clspv/lib/CMakeLists.txt
++++ b/external/clspv/lib/CMakeLists.txt
+@@ -169,2 +169,2 @@
+-if (MSVC)
++if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+   set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/SPIRVProducerPass.cpp"

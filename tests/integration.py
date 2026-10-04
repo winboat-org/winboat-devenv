@@ -482,9 +482,10 @@ class Fixtures(unittest.TestCase):
         self.assertEqual(build_list["structuredContent"]["result"], self.wb("build", "list"))
         build_plan = rpc("tools/call", {"name": "build_run", "arguments": {"target": "dxvk-engine-x64", "plan": True}})["result"]
         self.assertEqual(build_plan["structuredContent"]["result"], self.wb("build", "dxvk-engine-x64", "--plan"))
-        unavailable = rpc("tools/call", {"name": "build_run", "arguments": {"target": "dxvk-engine-x64", "background": False}})["result"]
+        unavailable = rpc("tools/call", {"name": "build_run", "arguments": {"target": "electron", "background": False}})["result"]
         self.assertTrue(unavailable["isError"])
-        self.assertEqual(unavailable["structuredContent"]["details"]["backend"], "devbox")
+        self.assertEqual(unavailable["structuredContent"]["details"]["backend"], "unavailable")
+        self.assertIn("source closure", unavailable["structuredContent"]["error"])
         response = rpc("tools/call", {"name": "repo_status", "arguments": {"repos": ["winboat"]}})["result"]
         self.assertEqual(response["structuredContent"]["result"], self.wb("repo", "status", "--repo", "winboat"))
         bad = rpc("tools/call", {"name": "repo_sync", "arguments": {"repos": "winboat"}})
@@ -528,6 +529,23 @@ class Fixtures(unittest.TestCase):
         refused = self.wb("build", "helios-guest-x64", check=False)
         self.assertEqual(refused["exitCode"], 3)
         self.assertIn("Stage 4", refused["error"])
+
+    def test_msvc_dependencies_select_host_cross_without_guest_work(self):
+        before = self.snapshot(self.root)
+        for name in ["dxvk-engine-x64", "dxvk-engine-x86", "vkd3d-engine-x64", "vkd3d-engine-x86", "mesa-guest-x64", "mesa-guest-x86", "clvk-helios"]:
+            release = self.wb("build", name, "--plan")
+            development = self.wb("build", name, "--plan", "--mode", "development")
+            self.assertEqual(release["contract"]["backend"], "nix")
+            self.assertEqual(release["contract"]["toolchain"], "linux-msvc-cross")
+            self.assertTrue(release["available"])
+            self.assertTrue(development["available"])
+            self.assertNotIn("dispatch", development)
+        self.assertEqual(before, self.snapshot(self.root))
+        guest_surface = self.wb("devbox", "build", "--target", "clvk-helios",
+                                "--dependency-manifest", "unexpected.json", check=False)
+        self.assertEqual(guest_surface["exitCode"], 2)
+        self.assertIn("Nix closure", guest_surface["error"])
+        self.assertFalse((self.root / ".state/windows-builds").exists())
 
     def test_source_snapshot_preserves_work_and_detects_dirty_and_missing_gitlinks(self):
         self.wb("repo", "sync", "--repo", "winboat")

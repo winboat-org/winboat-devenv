@@ -394,6 +394,93 @@ def validate_dependency_sources(ws, manifest, mode):
                 raise Failure('release dependency requires a clean checkout at its declared pin', 2, source=source)
 
 
+def import_artifact(ws, name, manifest_path, configuration, mode):
+    """Mirror an immutable Linux MSVC cross artifact into this guest's local disk."""
+    manifest_path = ws.resolve(str(manifest_path))
+    _, guest = connection(ws, name)
+    with locked(ws.state/'locks'/('windows-import-'+guest['identity']+'-'+digest(manifest_path)+'.lock')):
+        return _import_artifact(ws, name, manifest_path, configuration, mode)
+
+
+def _import_artifact(ws, name, manifest_path, configuration, mode):
+    from . import builds
+    verified = builds.verify(manifest_path)
+    manifest = json.loads(manifest_path.read_text())
+    selection = builds.plan(ws, manifest['target'], configuration, mode)
+    toolchain = manifest.get('toolchain', {})
+    if (selection['contract'].get('toolchain') != 'linux-msvc-cross'
+            or manifest['configuration'] != configuration or not toolchain.get('msvc')
+            or toolchain.get('lockSha256') != digest(ws.root / 'devenv.lock')
+            or toolchain['msvc']['lockSha256'] != digest(ws.root / 'config/provision.lock.json')):
+        raise Failure('cross dependency configuration or locked toolchain differs', 2)
+    if mode == 'release' and (manifest['mode'] != 'release'
+            or any(s.get('diffSha256') or s.get('untracked') for s in manifest['sources'].values())):
+        raise Failure('release dependency requires a clean pinned cross artifact', 2)
+    validate_dependency_sources(ws, manifest, mode)
+    images = []
+    for image in manifest.get('images', []):
+        if image.get('format') in {'PE', 'COFF archive'}:
+            if image.get('architecture') not in {'x64', 'x86'} or not image.get('staticCrtVerified'):
+                raise Failure('cross dependency lacks architecture/static CRT proof', 2)
+            images.append({'path': image['path'], 'architecture': image['architecture']})
+    declared = {image['path'] for image in images}
+    binaries = {file['path'] for file in manifest['files'] if Path(file['path']).suffix.lower() in {'.a','.lib','.dll','.sys','.exe'}}
+    if not images or declared != binaries or len(declared) != len(images):
+        raise Failure('cross dependency image set differs from its file manifest', 2)
+    seen = set()
+    for file in manifest['files']:
+        relative = windows_relative(file['path'])
+        if relative.casefold() in seen or 'linkTarget' in file or file.get('type') == 'directorySymlink':
+            raise Failure('cross dependency has Windows aliases or linked files', 2)
+        seen.add(relative.casefold())
+    directory, guest = connection(ws, name)
+    manifest_hash = verified['manifestSha256']
+    # Reuse only a completed import into the same immutable guest identity.
+    # Every consumer checks the local mirror's complete tree again.
+    for path in sorted((ws.state/'windows-imports').glob('*/import.json'), key=lambda p:p.stat().st_mtime, reverse=True):
+        previous = json.loads(path.read_text())
+        if previous.get('guestIdentity') != guest['identity'] or previous.get('manifestSha256') != manifest_hash:
+            continue
+        job_path = directory/'windows-jobs'/job_id(previous['operationId'])/'job.json'
+        snapshot = path.parent/'snapshot.json'
+        if not job_path.is_file() or not snapshot.is_file():
+            continue
+        original = json.loads(job_path.read_text())
+        hashes = [f['sha256'] for f in original['transfers'] if f['remote'].endswith('\\snapshot.json')]
+        if (original['guestIdentity'] != guest['identity'] or hashes != [digest(snapshot)]
+                or original['metadata'].get('manifestSha256') != manifest_hash):
+            continue
+        if job(ws, name, previous['operationId'], 'status', identity())['state'] == 'succeeded':
+            return {**previous, 'reusedVerifiedMirror': True}
+    operation_id = identity()
+    local = ws.state/'windows-imports'/operation_id
+    local.mkdir(parents=True)
+    archive = local/'artifact.zip'
+    with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=1, strict_timestamps=False) as output:
+        for file in manifest['files']:
+            output.write(manifest_path.parent/'files'/file['path'], file['path'])
+    # Refuse a concurrent modification during ZIP construction.
+    if builds.verify(manifest_path)['manifestSha256'] != manifest_hash:
+        raise Failure('cross dependency changed during import', 74)
+    remote = ROOT+'\\jobs\\'+operation_id
+    spec = {'schemaVersion': 1, 'operationId': operation_id, 'destinationKind': 'artifact',
+        'manifestSha256': manifest_hash, 'target': manifest['target'], 'files': manifest['files'],
+        'images': images, 'provisionLockSha256': toolchain['msvc']['lockSha256'],
+        'archive': remote+'\\artifact.zip', 'archiveSha256': digest(archive), 'archiveSize': archive.stat().st_size}
+    write_json(local/'snapshot.json', spec)
+    submit(ws, name, operation_id, Path(os.environ['WB_DEVBOX_PAYLOADS'])/'Snapshot.ps1', 'build',
+        [remote+'\\snapshot.json'], inputs={'snapshot.json': local/'snapshot.json', 'artifact.zip': archive},
+        metadata={'kind': 'cross-artifact-import', 'manifestSha256': manifest_hash, 'target': manifest['target'],
+                  'hostDerivation': manifest['outputs'][0]['drvPath']})
+    wait(ws, name, operation_id)
+    result = {'operationId': operation_id, 'guestIdentity': guest['identity'], 'guest': name,
+        'artifactId': manifest['artifactId'], 'manifestSha256': manifest_hash,
+        'snapshotSha256': digest(local/'snapshot.json'), 'root': r'C:\WinBoatDev\build'+'\\'+operation_id+'\\artifact',
+        'hostOutputs': manifest['outputs'], 'toolchain': toolchain, 'state': 'imported', 'installed': False, 'loaded': False}
+    write_json(local/'import.json', result)
+    return result
+
+
 def build(ws, name, target, configuration, mode, operation_id, dependency_manifests=()):
     from . import builds
     plan = builds.plan(ws, target, configuration, mode)
@@ -417,12 +504,15 @@ def build(ws, name, target, configuration, mode, operation_id, dependency_manife
         builds.verify(path)
         manifest = json.loads(path.read_text())
         dependency_target = manifest['target']
-        if dependency_target in selected_dependencies or manifest['configuration'] != configuration or manifest['provenance']['guest'] != name:
+        if dependency_target in selected_dependencies or manifest['configuration'] != configuration:
             raise Failure('dependency manifest has duplicate target, configuration or guest mismatch', 2)
-        directory, guest_record = connection(ws, name)
-        original = json.loads((directory/'windows-jobs'/job_id(manifest['artifactId'])/'job.json').read_text())
-        if original['guestIdentity'] != guest_record['identity']:
-            raise Failure('dependency artifact belongs to another guest identity', 2)
+        if not manifest.get('toolchain', {}).get('msvc'):
+            if manifest['provenance'].get('guest') != name:
+                raise Failure('dependency artifact belongs to another guest', 2)
+            directory, guest_record = connection(ws, name)
+            original = json.loads((directory/'windows-jobs'/job_id(manifest['artifactId'])/'job.json').read_text())
+            if original['guestIdentity'] != guest_record['identity']:
+                raise Failure('dependency artifact belongs to another guest identity', 2)
         if mode == 'release' and (manifest['mode'] != 'release' or any(s.get('diffSha256') or s.get('untracked') for s in manifest['sources'].values())):
             raise Failure('release package requires clean pinned dependency builds', 2)
         selected_dependencies[dependency_target] = (path, manifest)
@@ -431,16 +521,18 @@ def build(ws, name, target, configuration, mode, operation_id, dependency_manife
             manifest_path, manifest = selected_dependencies.pop(component_target)
             current = builds.plan(ws, component_target, configuration, mode)
             validate_dependency_sources(ws, manifest, mode)
-            if current['dispatch']['outputs'] != json.loads((ws.state/'windows-builds'/manifest['artifactId']/'build.json').read_text())['outputs']:
+            if not manifest.get('toolchain', {}).get('msvc') and current['dispatch']['outputs'] != json.loads((ws.state/'windows-builds'/manifest['artifactId']/'build.json').read_text())['outputs']:
                 raise Failure('dependency outputs differ from the selected recipe', 2)
         else:
-            dependency = build(ws, name, component_target, configuration, mode, identity())
+            dependency = builds.execute(ws, component_target, configuration, mode, identity(), devbox_name=name)
             manifest_path = Path(dependency['manifest'])
             manifest = json.loads(manifest_path.read_text())
+        imported = import_artifact(ws, name, manifest_path, configuration, mode) if manifest.get('toolchain', {}).get('msvc') else None
         component_dependencies.append({'target': component_target, 'artifactId': manifest['artifactId'],
             'manifestSha256': digest(manifest_path), 'files': manifest['files'], 'sources': manifest['sources'],
             'componentDependencies': manifest.get('componentDependencies', []), 'prerequisites': manifest.get('prerequisites', []),
-            'root': r'C:\WinBoatDev\build'+'\\'+manifest['artifactId']+'\\artifact'})
+            'import': imported,
+            'root': imported['root'] if imported else r'C:\WinBoatDev\build'+'\\'+manifest['artifactId']+'\\artifact'})
     if target.startswith("mesa-guest"):
         prerequisites = [mirror_build_tools(ws, name, "utilities"), mirror_build_tools(ws, name, "mesa")]
     if target == "clvk-helios":
@@ -739,6 +831,11 @@ def dispatch(ws, args, operation_id):
             return collect_build(ws, args.name, identifier, receipt, plan, local, spec["sources"], plan["configuration"], plan["mode"])
         if not args.target:
             raise Failure("devbox build requires --target or --collect", 2)
+        from . import builds
+        if builds.target(args.target)['backend'] == 'nix':
+            if args.dependency_manifest:
+                raise Failure('host component builds select dependencies through their Nix closure', 2)
+            return builds.execute(ws, args.target, args.configuration, args.mode, operation_id, devbox_name=args.name)
         return build(ws, args.name, args.target, args.configuration, args.mode, operation_id, args.dependency_manifest)
     raise Failure("unknown Windows control operation", 2)
 

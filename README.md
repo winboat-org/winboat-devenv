@@ -11,7 +11,10 @@ graphics builds, a Windows DLL cross-build and immutable artifact manifests.
 Stage 4 is in progress: real DXVK/vkd3d x64/x86 MSVC builds, shared CLI/MCP Windows
 tasks and transaction recovery have passed on a fresh guest. Native KMD/UMD,
 Mesa and CLVK builds passed; clean pinned stack repeats, installation and
-loaded-stack acceptance remain pending. See the
+loaded-stack acceptance remain pending. Linux MSVC cross builds now pass for
+DXVK, vkd3d and Mesa in both architectures, and for CLVK with zero LLVM/Clang
+compiler PDBs. Host-built CLVK and loaders also loaded successfully in Windows;
+see [cross dependency evidence](docs/evidence/stage-04-cross.json). See the
 [Windows evidence](docs/evidence/stage-04-control.json) and
 [native checkpoint](docs/evidence/stage-04-native.json). UMD x86 and the baseline
 fixture's resident kernel-code comparison passed. Helios/Mesa/CLVK candidates

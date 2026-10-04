@@ -20,7 +20,7 @@ let
     helios-development-package = load "helios" "development-package";
     mesa-guest-x64 = load "mesa-helios" "guest-x64";
     mesa-guest-x86 = load "mesa-helios" "guest-x86";
-    clvk-helios = load "clvk-helios" "guest-x64";
+    clvk-helios = import ./adapters/clvk.nix;
     electron = import ./adapters/electron.nix;
     winboat = import ./adapters/winboat.nix;
   };
@@ -37,6 +37,7 @@ selected
     "vkd3d-engine-x86"
     "helios-guest-x64"
     "helios-guest-x86"
+    "helios-development-package"
     "mesa-guest-x64"
     "mesa-guest-x86"
   ];

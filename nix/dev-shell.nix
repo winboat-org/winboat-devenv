@@ -61,6 +61,12 @@ in
       pkgs.python3.withPackages (ps: [ ps.pyyaml ])
     }/bin/python3 ${../tests/msvc-cross-live.py} "$@"
   '';
+  scripts.wb-cross-artifact-live.exec = ''
+    ${commands.environment}
+    exec ${
+      pkgs.python3.withPackages (ps: [ ps.pyyaml ])
+    }/bin/python3 ${../tests/cross-artifact-live.py} "$@"
+  '';
   scripts.wb-windows-check.exec = ''
     exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
   '';

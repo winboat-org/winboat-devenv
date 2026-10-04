@@ -12,6 +12,12 @@ Clean pinned stack builds, installation and loaded-stack acceptance remain
 pending. See [control usage](../windows-control.md)
 and [measured evidence](../evidence/stage-04-control.json), with the
 [native checkpoint](../evidence/stage-04-native.json).
+Linux MSVC cross builds now also pass for all DXVK/vkd3d/Mesa x64/x86 dependencies
+and CLVK, with zero LLVM/Clang compiler PDBs. Verified import and Windows DLL
+loads passed for CLVK and both loader architectures. The primary driver relink
+and zero-PDB bundle composition passed; clean release repeats and full
+installation/graphics checks remain pending;
+see [cross evidence](../evidence/stage-04-cross.json).
 Prerequisites: Stages 2 and 3.
 
 ## Outcome

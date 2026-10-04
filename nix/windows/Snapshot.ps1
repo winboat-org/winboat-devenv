@@ -2,7 +2,15 @@ param([Parameter(Mandatory)][string]$Specification)
 . (Join-Path $env:WINBOAT_CONTROL_ROOT 'Control.ps1')
 $spec = Get-Content -Raw -LiteralPath $Specification | ConvertFrom-Json
 if ($spec.schemaVersion -ne 1 -or $spec.operationId -notmatch '^op-[a-f0-9]{32}$') { throw 'Unsupported source snapshot' }
-$destination = Assert-ControlPath ('C:\WinBoatDev\src\' + $spec.operationId) 'C:\WinBoatDev\src'
+$kind = if ($spec.PSObject.Properties['destinationKind']) {$spec.destinationKind} else {'source'}
+if ($kind -notin @('source','artifact')) {throw 'Unsupported snapshot destination kind'}
+if ($kind -eq 'artifact') {
+    $inventory = Read-ControlJson 'C:\ProgramData\WinBoatDev\provisioning.json'
+    if ($inventory.phase -ne 'verified' -or $inventory.lockSha256 -ne $spec.provisionLockSha256) {throw 'Artifact import requires the selected verified guest toolchain'}
+    $destination = Assert-ControlPath ('C:\WinBoatDev\build\' + $spec.operationId + '\artifact') 'C:\WinBoatDev\build'
+} else {
+    $destination = Assert-ControlPath ('C:\WinBoatDev\src\' + $spec.operationId) 'C:\WinBoatDev\src'
+}
 if (Test-Path -LiteralPath $destination) {
     $ownerPath = Join-Path $destination '.winboat-owner.json'
     if (-not (Test-Path -LiteralPath $ownerPath)) { throw 'Snapshot destination is not owned by this operation' }
@@ -52,6 +60,23 @@ try {
         Assert-ControlFile $path $file.sha256 $file.size
     }
     Assert-ControlTree $destination $spec.files
+    if ($kind -eq 'artifact') {
+        $imagePaths = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+        foreach ($image in $spec.images) {
+            if (-not $expected.ContainsKey($image.path) -or -not $imagePaths.Add($image.path) -or $image.architecture -notin @('x64','x86')) {throw 'Invalid imported image declaration'}
+            $path = Join-Path $destination $image.path
+            $headers = (& 'C:\WinBoatDev\tools\LLVM\bin\llvm-readobj.exe' --file-headers --coff-imports --coff-directives $path | Out-String)
+            if ($LASTEXITCODE) {throw "Cannot inspect imported Windows image: $($image.path)"}
+            $machines = @([regex]::Matches($headers,'Machine: (IMAGE_FILE_MACHINE_[A-Z0-9_]+)') | ForEach-Object {$_.Groups[1].Value} | Select-Object -Unique)
+            $required = if ($image.architecture -eq 'x86') {'IMAGE_FILE_MACHINE_I386'} else {'IMAGE_FILE_MACHINE_AMD64'}
+            if ($machines.Count -ne 1 -or $machines[0] -ne $required) {throw "Imported image architecture differs: $($image.path)"}
+            if ($headers -match '(?i)(DEFAULTLIB:|Name: )(MSVCRT[D]?|MSVCPRT[D]?|MSVCR\d+|MSVCP\d+|VCRUNTIME\d+(?:_\d+)?|UCRTBASE|api-ms-win-crt-[^\s.]+)(?:\.dll|\.lib)?(?:["\s]|$)') {throw "Imported image requires dynamic CRT: $($image.path)"}
+        }
+        foreach ($file in $spec.files) {
+            if ([IO.Path]::GetExtension($file.path) -in @('.a','.lib','.dll','.sys','.exe') -and -not $imagePaths.Contains($file.path)) {throw "Imported image has no architecture/CRT declaration: $($file.path)"}
+        }
+        if (-not $imagePaths.Count) {throw 'Artifact import has no Windows images'}
+    }
     foreach ($file in $spec.files) {
         $path = Join-Path $destination $file.path
         # ZIP stores local times without a timezone. Source identity comes

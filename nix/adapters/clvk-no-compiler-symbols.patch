@@ -1,0 +1,56 @@
+diff --git a/external/clspv/CMakeLists.txt b/external/clspv/CMakeLists.txt
+--- a/external/clspv/CMakeLists.txt
++++ b/external/clspv/CMakeLists.txt
+@@ -158,7 +158,28 @@ else()
+       CACHE STRING "Semicolon-separated list of targets to build, or \"all\".")
+ 
+   # Then pull in LLVM for building.
+-  add_subdirectory(${CLSPV_LLVM_SOURCE_DIR} ${CLSPV_LLVM_BINARY_DIR} EXCLUDE_FROM_ALL)
++  if(MSVC)
++    # Compiler dependencies use optimized code without debug information even
++    # when the CLVK runtime itself uses Debug or RelWithDebInfo.
++    block(SCOPE_FOR VARIABLES)
++      set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "")
++      foreach(language C CXX)
++        foreach(configuration DEBUG RELWITHDEBINFO)
++          set(CMAKE_${language}_FLAGS_${configuration}
++              "${CMAKE_${language}_FLAGS_RELEASE}")
++        endforeach()
++      endforeach()
++      foreach(kind EXE SHARED MODULE)
++        foreach(configuration DEBUG RELWITHDEBINFO)
++          set(CMAKE_${kind}_LINKER_FLAGS_${configuration}
++              "${CMAKE_${kind}_LINKER_FLAGS_RELEASE}")
++        endforeach()
++      endforeach()
++      add_subdirectory(${CLSPV_LLVM_SOURCE_DIR} ${CLSPV_LLVM_BINARY_DIR} EXCLUDE_FROM_ALL)
++    endblock()
++  else()
++    add_subdirectory(${CLSPV_LLVM_SOURCE_DIR} ${CLSPV_LLVM_BINARY_DIR} EXCLUDE_FROM_ALL)
++  endif()
+ 
+   # Ensure clspv and LLVM use the same build options (e.g. -D_FILE_OFFSET_BITS=64).
+   list(APPEND CMAKE_MODULE_PATH ${CLSPV_LLVM_SOURCE_DIR}/cmake/modules/)
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -139,9 +139,16 @@ if (CLVK_COMPILER_AVAILABLE AND CLVK_ENABLE_SPIRV_IL)
+       "Path to SPIRV-LLVM-Translator directory")
+   set(LLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR ${SPIRV_HEADERS_SOURCE_DIR})
+   set(LLVM_SPIRV_BUILD_EXTERNAL YES)
+-  add_subdirectory(${LLVM_SPIRV_SOURCE}
+-                   ${CMAKE_CURRENT_BINARY_DIR}/external/SPIRV-LLVM-Translator
+-                   EXCLUDE_FROM_ALL)
++  block(SCOPE_FOR VARIABLES)
++    if(MSVC)
++      # Translator symbols differ from LLVM's compiler flags, so LLVM's PCH
++      # cannot be reused by translator targets.
++      set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON)
++    endif()
++    add_subdirectory(${LLVM_SPIRV_SOURCE}
++                     ${CMAKE_CURRENT_BINARY_DIR}/external/SPIRV-LLVM-Translator
++                     EXCLUDE_FROM_ALL)
++  endblock()
+ 
+   if (CLVK_CLSPV_ONLINE_COMPILER)
+     # Include LLVM dependencies for SPIRV-LLVM
