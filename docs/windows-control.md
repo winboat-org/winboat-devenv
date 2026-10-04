@@ -59,18 +59,47 @@ has a unique `C:\WinBoatDev\src\<id>` destination; it cannot delete an earlier
 mirror or a build tree. There is no compilation on the share. Build and Cargo
 outputs stay under `C:\WinBoatDev\build\<id>`.
 
-The controller binds DXVK's Nix recipe tokens to those local paths, imports the
+The controller binds the component Nix recipe tokens to those local paths, imports the
 portable EWDK environment, selects LLVM and the matched kit, and runs its `/MT`
 commands as a durable SYSTEM task. It returns hash/size-verified archives,
 available PDBs, tool observations and license notices in manifest schema 1.
 `build verify` checks the returned export. `--collect` resumes interrupted host
 artifact collection from a succeeded guest build without compiling again.
 
-Other Windows component targets still refuse incomplete input/output contracts.
-The Stage 3 toolchain does not supply all native `widl`, Python/Mesa MinGW,
-shader, Rust dependency and CLVK compiler inputs needed by the full stack.
-vkd3d's generic `shader-libraries` output description must become an exact file
-contract. A dispatch plan or a fixture DLL cannot establish component acceptance.
+DXVK and vkd3d have measured native x64/x86 backends. Windows WIDL is built by
+the locked Nixpkgs MinGW compiler and mirrored with its matching headers. vkd3d
+enumerates seven required archives; its core archive already contains the full
+shader dependency union, so there is no additional archive merge.
+
+Helios, Mesa and CLVK currently require explicit `--mode development` for their
+native candidates. Nix supplies offline Cargo inputs from all three component
+locks, Windows CMake/WinFlexBison and pure Python build modules, and CLVK's exact
+LLVM/header/loader sources. Their file tables, derivations, hashes and licenses
+remain in the artifact evidence. These extra build inputs do not change the
+prepared Stage 3 provisioning lock. Mesa's candidate uses the existing clang-cl
+compatibility path with `/MT`, regenerates the paired Venus headers, and retains
+them in its artifact. Full candidate acceptance remains pending.
+
+`helios-development-package` assembles the existing script-driven development
+bundle from Helios x64 (including its four UMDs), Mesa x64/x86 and CLVK/loaders.
+Pass repeated `--dependency-manifest <artifact-manifest>` arguments to select
+already verified builds explicitly; omitted dependencies build through the same
+recipes. MCP exposes the equivalent `dependencyManifests` array. Selection checks
+the guest identity, source revisions, configuration and required outputs, then
+the guest rechecks every artifact byte. The returned install manifest is
+`files/bundle/manifest.json`. This development bundle preserves the legacy
+installer contract; the prebuilt installer migration remains a later stage.
+
+Artifacts return as one verified ZIP. Collection validates its complete member
+table, sizes and file hashes before publishing each file. Corrupt partials stay
+outside the final manifest tree. Older completed builds use a separate declared
+export task; their original build receipts remain unchanged.
+
+Windows source export materializes internal file/directory links while retaining
+the original Git/NAR snapshot identity and a separate link table. Escaping links,
+cycles and Windows path aliases fail before transfer. WinFlexBison runs with a
+private temporary directory per invocation so concurrent generators cannot share
+its fixed intermediate filenames.
 
 The [retained acceptance evidence](evidence/stage-04-control.json) records real
 clean-pinned DXVK x64 through CLI and x86 through MCP, with matching returned
@@ -87,6 +116,8 @@ devenv shell -- wb-windows-live --name <guest> --state-root <state-root> \
   --seconds 480
 devenv shell -- wb-windows-live --name <guest> --state-root <state-root> \
   --component-only --native --build-target dxvk-engine-x86 --reboot
+devenv shell -- wb-windows-live --name <guest> --state-root <state-root> \
+  --component-only --input-fixtures
 ```
 
 The first checks CLI/MCP task purpose, cancellation/resume, script tampering,
@@ -96,6 +127,8 @@ component build/manifest verification and a restart-required fixture. `--reboot`
 restarts the named guest; omit it for checks that preserve its current boot.
 Receipts remain under the selected state's `windows-acceptance/<id>` directory.
 These checks neither create nor destroy a VM.
+The input fixtures verify whole-tree hashes, missing/extra files, escaping paths
+and junction refusal, then exercise snapshot extraction and resumed repair.
 
 ## Installation and observations
 
@@ -109,7 +142,8 @@ devenv shell -- wb devbox registry verify --name <guest> --json
 ```
 
 Installation requires an exact complete x64/WoW64 Helios package manifest with
-immutable source commits, signing identity and a manifested installer. It checks
+immutable source commits, signing identity and the four original installer
+scripts beside `manifest.json`. It checks
 every package file before staging or starting a task. The shared payload
 preserves prior registry/legacy install snapshots and invokes that exact legacy
 package installer as SYSTEM, retaining its unattended/reboot protocol. It does
@@ -128,14 +162,38 @@ registry views, UMD/OpenGL registrations, x64/x86 loaders, certificates, runtime
 files, fixture transactions and mapped process images. Unknown/manual images
 retain unknown provenance. Expected file or registration mismatches report
 drift. Host QEMU/renderer observations are recorded separately from the guest.
+The latest package request remains separate from the observed installed package;
+a failed or unfinished newer transaction cannot verify an older installation.
+Protocol pairing compares the retained clean source snapshot and NAR identities.
+Each reconciliation independently executes the 14 locked installed-tool probes;
+cached provisioning success cannot hide a later tool update. The scoped
+`Restore-PowerShell.ps1` operation verifies the prepared lock and original MSI,
+preserves the previous package, and restores the selected version. Its MSI
+options opt this product out of Microsoft Update without changing the machine's
+global update configuration; see the [publisher's option definitions](https://learn.microsoft.com/en-us/powershell/scripting/install/microsoft-update-faq?view=powershell-7.6).
 
 The mapped-image reader compares executable sections with the selected DLL,
 normalizing PE base relocations. A replaced file can report `stale-mapped-image`
 while its older code remains in a process. Unreadable images remain unknown.
 This is executable-code evidence, not a hash of every mapped byte. Kernel loaded
 image identity and complete selected-stack verification are still pending;
-`registry verify` returns code 76 until that gate is implemented and measured.
+the baseline signing fixture's resident executable section has been measured
+through the owned QEMU QMP socket. Kernel observation uses the native module
+inventory's loaded base, reads resident executable sections, undoes relocations
+and retains memory hashes. Discarded initialization sections are excluded and
+unreadable resident sections remain unknown. Helios's full kernel gate remains
+unmeasured; `registry verify` returns code 76 while any required evidence is missing.
 Installation success and on-disk hashes never set `loadedVerified`.
+
+`wb devbox smoke --name <guest> --transaction <install-id>` (MCP `devbox_smoke`)
+dispatches the shared candidate graphics operation as the interactive user. It
+separately verifies actual mapped DLL code in native/WoW64 processes and runs
+Vulkan enumeration/WSI, Direct3D 11, OpenGL and Direct3D 12 device/clear workloads
+for both architectures, plus x64 OpenCL compilation/execution. Probe results
+retain exact program hashes, native exits, session, boot and transaction identity.
+This operation still requires full native component/install acceptance.
+Registry `show` returns its retained observation with its original timestamp;
+`reconcile` and `verify` acquire new guest and host evidence.
 
 Keep machine paths, credentials and the chosen guest/state root in ignored
 `docs/user/`. The original development guest remains preserved; Stage 4 live

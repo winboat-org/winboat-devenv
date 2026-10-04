@@ -17,9 +17,10 @@ let
     vkd3d-engine-x86 = load "vkd3d-proton" "engine-x86";
     helios-guest-x64 = load "helios" "guest-x64";
     helios-guest-x86 = load "helios" "guest-x86";
+    helios-development-package = load "helios" "development-package";
     mesa-guest-x64 = load "mesa-helios" "guest-x64";
     mesa-guest-x86 = load "mesa-helios" "guest-x86";
-    clvk-helios = import ./adapters/clvk.nix;
+    clvk-helios = load "clvk-helios" "guest-x64";
     electron = import ./adapters/electron.nix;
     winboat = import ./adapters/winboat.nix;
   };
@@ -32,6 +33,8 @@ selected
   backendAvailable = builtins.elem spec.target [
     "dxvk-engine-x64"
     "dxvk-engine-x86"
+    "vkd3d-engine-x64"
+    "vkd3d-engine-x86"
   ];
 }
 // pkgs.lib.optionalAttrs (selected.backend == "devbox") {
@@ -46,6 +49,7 @@ selected
       "@sourceDirectory@"
       "@buildDirectory@"
       "@nativeFile@"
+      "@specification@"
       "@heliosSourceDirectory@"
       "@protocolArtifact@"
     ];

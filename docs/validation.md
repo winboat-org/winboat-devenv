@@ -205,7 +205,7 @@ inspection fields. Independent native DLL/PDB fixtures built for x64 and x86;
 actual loaded code matched, became stale after replacing the disk file, and
 matched again after unloading/reloading in both process architectures.
 
-The local suite passes 46 tests plus PowerShell parsing, mapped-image C#
+The local suite passes 57 tests plus PowerShell parsing, mapped-image C#
 compilation and literal argument binding. Live tests are opt-in and excluded
 from ordinary CI. Earlier failures are retained, including an x86 shader tool
 loading a 32-bit CRT into its 64-bit process and a receipt reader sharing race;
@@ -213,3 +213,13 @@ corrected runs passed. Full KMD/UMD/Mesa/CLVK build/install, kernel loaded-image
 identity and interactive graphics smoke remain pending. Registry verification
 returns code 76 for that incomplete gate. No stage approval or publication is
 claimed; the original development VM and external source trees are preserved.
+
+[The native checkpoint](evidence/stage-04-native.json) records clean-pinned
+vkd3d x64 through CLI and x86 through MCP: seven static engine/shader archives,
+native architecture and static CRT checks, generated headers, two PDBs and
+15 license notices per architecture. Native UMD x86 returned both DLLs, fresh
+bindgen output and 56 PDBs, using a recorded development snapshot. Existing
+compiler and stale cached-binding warnings were retained; fresh native layout
+assertions remained enabled. The baseline signing fixture's kernel `.text`
+bytes matched its SYS through the VM's QMP memory reader. This kernel proof
+concerns that independent fixture; it does not establish Helios installation.

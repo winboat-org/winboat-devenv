@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "stage": 4,
+  "state": "in-progress",
+  "builds": [
+    {
+      "target": "vkd3d-engine-x64",
+      "manifest": "out/guest/op-f5bb6ce8d6524cb292332cc706659748/manifest.json",
+      "manifestSha256": "84aafb62fe422239699c979c4f6f33aad00668b354ade847b92134f61633cba7",
+      "operationId": "op-f5bb6ce8d6524cb292332cc706659748",
+      "mode": "release",
+      "configuration": "release",
+      "files": 104,
+      "licenses": 15,
+      "pdbFiles": 2,
+      "images": [
+        {
+          "staticCrtVerified": true,
+          "path": "libs/d3d12core/libhelios_d3d12_static.a",
+          "embeddedCodeView": true,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "libs/vkd3d/libvkd3d-proton.a",
+          "embeddedCodeView": true,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "libs/vkd3d-shader/libvkd3d-shader.a",
+          "embeddedCodeView": true,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "libs/vkd3d-common/libvkd3d_common.a",
+          "embeddedCodeView": true,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "subprojects/dxil-spirv/libdxil-spirv.a",
+          "embeddedCodeView": true,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "subprojects/dxil-spirv/libdxbc_spv_module.a",
+          "embeddedCodeView": true,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "subprojects/dxil-spirv/subprojects/dxbc-spirv/libdxbc_spv.a",
+          "embeddedCodeView": true,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        }
+      ],
+      "sources": {
+        "vkd3d-proton": {
+          "revision": "e9468e1b6d71fbe7a45013f2bb28b8b611758caa",
+          "diffSha256": null,
+          "snapshotSha256": "a36039c5e8234f3fe5762542c739f010bce0199fe05be5b555ab82cbad2b9f9e",
+          "narHash": "sha256-9Mu6B7Hcg/z+VlNVqnD0VMj5V7D3N8QngK/YEU97EmY=",
+          "untracked": []
+        },
+        "dxil-spirv": {
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "diffSha256": null,
+          "snapshotSha256": "855461b94b76b099a53fc26adcb21f2d4c9a9ecc0320dd563d5bc39eec6baa66",
+          "narHash": "sha256-XolWbgNvzZSegN2cEKLFc6QiAn3NlVUl7Ahg8STPVoE=",
+          "untracked": []
+        }
+      },
+      "installed": false,
+      "loaded": false
+    },
+    {
+      "target": "vkd3d-engine-x86",
+      "manifest": "out/guest/op-4f3511e96bde42e5a97cf1cb173c914f/manifest.json",
+      "manifestSha256": "a52e9abc8d588c48adfdbfb1b0bc57c1ad7a66ce61d7e1d7206439e145f26d5a",
+      "operationId": "op-4f3511e96bde42e5a97cf1cb173c914f",
+      "mode": "release",
+      "configuration": "release",
+      "files": 104,
+      "licenses": 15,
+      "pdbFiles": 2,
+      "images": [
+        {
+          "staticCrtVerified": true,
+          "path": "libs/d3d12core/libhelios_d3d12_static.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "libs/vkd3d/libvkd3d-proton.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "libs/vkd3d-shader/libvkd3d-shader.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "libs/vkd3d-common/libvkd3d_common.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "subprojects/dxil-spirv/libdxil-spirv.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "subprojects/dxil-spirv/libdxbc_spv_module.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "subprojects/dxil-spirv/subprojects/dxbc-spirv/libdxbc_spv.a",
+          "embeddedCodeView": true,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        }
+      ],
+      "sources": {
+        "vkd3d-proton": {
+          "revision": "e9468e1b6d71fbe7a45013f2bb28b8b611758caa",
+          "diffSha256": null,
+          "snapshotSha256": "a36039c5e8234f3fe5762542c739f010bce0199fe05be5b555ab82cbad2b9f9e",
+          "narHash": "sha256-9Mu6B7Hcg/z+VlNVqnD0VMj5V7D3N8QngK/YEU97EmY=",
+          "untracked": []
+        },
+        "dxil-spirv": {
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "diffSha256": null,
+          "snapshotSha256": "855461b94b76b099a53fc26adcb21f2d4c9a9ecc0320dd563d5bc39eec6baa66",
+          "narHash": "sha256-XolWbgNvzZSegN2cEKLFc6QiAn3NlVUl7Ahg8STPVoE=",
+          "untracked": []
+        }
+      },
+      "installed": false,
+      "loaded": false
+    },
+    {
+      "target": "helios-guest-x86",
+      "manifest": "out/guest/op-090fc1065e4e4782b40ffe6f0f506977/manifest.json",
+      "manifestSha256": "9ed58f27a47b56e8cedcf981898f6a1fd0b16d463c9ab21a5937fd49b6608a50",
+      "operationId": "op-090fc1065e4e4782b40ffe6f0f506977",
+      "mode": "development",
+      "configuration": "release",
+      "files": 541,
+      "licenses": 481,
+      "pdbFiles": 56,
+      "images": [
+        {
+          "staticCrtVerified": true,
+          "path": "package/helios_umd32.dll",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/helios_umd12_32.dll",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        }
+      ],
+      "sources": {
+        "helios": {
+          "revision": "b84ed182ba68974cb495b53bad74200409d6367f",
+          "diffSha256": "bf780db45aac6bb03dad06d304777f67afa19672064d68f3acd12a21e21dbbf6",
+          "snapshotSha256": "3aed0689227350654a999834ede96e162a3cf1b0418c82d033309d6644ae7218",
+          "narHash": "sha256-GURTfY2u4A+YWcS0LcHp7Flm6OZ2JIZGrgFQu1Q122Y=",
+          "untracked": [
+            "nix/Build-Guest.ps1"
+          ]
+        },
+        "dxvk": {
+          "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+          "diffSha256": null,
+          "snapshotSha256": "2b0be8f7ed2a33b6b46e6e01f89c348ee22b6490e828530717958054032f243c",
+          "narHash": "sha256-uCtFWNqLnH0jVBYLIBvGXVD7ekc3N9UOxDGIoSYDets=",
+          "untracked": []
+        },
+        "vkd3d-proton": {
+          "revision": "e9468e1b6d71fbe7a45013f2bb28b8b611758caa",
+          "diffSha256": null,
+          "snapshotSha256": "a36039c5e8234f3fe5762542c739f010bce0199fe05be5b555ab82cbad2b9f9e",
+          "narHash": "sha256-9Mu6B7Hcg/z+VlNVqnD0VMj5V7D3N8QngK/YEU97EmY=",
+          "untracked": []
+        },
+        "dxil-spirv": {
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "diffSha256": null,
+          "snapshotSha256": "855461b94b76b099a53fc26adcb21f2d4c9a9ecc0320dd563d5bc39eec6baa66",
+          "narHash": "sha256-XolWbgNvzZSegN2cEKLFc6QiAn3NlVUl7Ahg8STPVoE=",
+          "untracked": []
+        }
+      },
+      "installed": false,
+      "loaded": false
+    }
+  ],
+  "kernelFixture": {
+    "operationId": "op-c09736bd46c54e5c9d32b48e0ff860b4",
+    "bootTime": "2026-10-04T09:27:59.5000000Z",
+    "moduleBase": "fffff800729f0000",
+    "diskSha256": "5efc5a6c46408859558cba2f3fa10afc2dc49659f6cca0d0d2f11e5b355b3c3b",
+    "state": "mapped-code-matches",
+    "sections": [
+      {
+        "name": ".text",
+        "rva": 4096,
+        "size": 512,
+        "normalizedSha256": "e8c9ea1cb7ace055aedbfb56949201bdeee9a86e59336b1c66b2f285bb301691",
+        "expectedSha256": "e8c9ea1cb7ace055aedbfb56949201bdeee9a86e59336b1c66b2f285bb301691",
+        "matches": true
+      }
+    ],
+    "discardableSectionsExcluded": true,
+    "selectedHeliosIdentity": null
+  },
+  "checks": {
+    "localTests": 57,
+    "fullInstalledStack": false,
+    "fullLoadedStack": false,
+    "interactiveGraphics": false
+  },
+  "limits": [
+    "UMD x86 is a development source snapshot, with fresh bindgen layout assertions enabled and existing compiler/cached-binding warnings retained.",
+    "Kernel evidence concerns the Stage 3 independent signing fixture. Helios loaded identity is not established.",
+    "Full x64 KMD/UMD, Mesa and CLVK native acceptance, clean CLI/MCP stack repeats and installation remain pending.",
+    "All checkpoints and pins remain local and unpublished."
+  ],
+  "inputFixtures": {
+    "suiteId": "675faa4a54dd448eb99ff5991c8a3fa5",
+    "state": "passed",
+    "checks": [
+      {
+        "label": "verified-tree-fixture.json",
+        "result": {
+          "verifiedOriginal": true,
+          "schemaVersion": 1,
+          "refused": [
+            "extra-file",
+            "changed-file",
+            "escaping-file",
+            "junction"
+          ],
+          "state": "passed"
+        }
+      },
+      {
+        "label": "verified-snapshot-fixture-result.json",
+        "result": {
+          "tamperRepaired": true,
+          "extraFileRefused": true,
+          "junctionRefused": true,
+          "valid": true,
+          "state": "passed",
+          "snapshotOperation": "op-c9de6ab9bac048748eb712dc675ea5e4"
+        }
+      }
+    ]
+  }
+}

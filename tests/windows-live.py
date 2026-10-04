@@ -118,6 +118,8 @@ class Acceptance:
         self.finish()
 
     def extras(self):
+        if self.args.input_fixtures:
+            self.input_fixtures()
         if self.args.native:
             self.native_fixture()
         for target in self.args.build_target:
@@ -134,6 +136,27 @@ class Acceptance:
                    "fullComponentAcceptance": False}
         (self.directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
         print(json.dumps(summary), flush=True)
+
+    def input_fixtures(self):
+        from wb import windows
+        from wb.common import identity
+        from wb.workspace import Workspace
+        workspace = Workspace(self.root, {"stateRoot": self.args.state_root})
+        for script, result_name, inputs in [
+            ('WindowsTreeFixture.ps1', 'tree-fixture.json', {}),
+            ('WindowsSnapshotFixture.ps1', 'snapshot-fixture-result.json',
+             {'Snapshot.ps1': Path(os.environ['WB_DEVBOX_PAYLOADS'])/'Snapshot.ps1'}),
+        ]:
+            identifier = identity()
+            self.record(script, windows.submit(workspace, self.args.name, identifier,
+                self.root/'tests'/script, 'system', inputs=inputs, metadata={'kind': 'input-fixture'}))
+            observed = self.wait(identifier)
+            assert observed['principal'] == 'NT AUTHORITY\\SYSTEM' and observed['sessionId'] == 0, observed
+            path = self.directory/result_name
+            windows.download(workspace, self.args.name, windows.ROOT+'\\jobs\\'+identifier+'\\'+result_name, path)
+            result = json.loads(path.read_text(encoding='utf-8-sig'))
+            assert result['state'] == 'passed', result
+            self.record('verified-'+result_name, result)
 
     def native_fixture(self):
         sys.path.insert(0, os.environ['WB_OPERATION_SOURCES'])
@@ -233,6 +256,7 @@ def main():
     parser.add_argument("--build-target", action='append', default=[], help='Additionally build and verify this component through MCP')
     parser.add_argument("--reboot", action='store_true', help='Reboot this explicitly named guest to recover a restart-required fixture install')
     parser.add_argument("--component-only", action='store_true', help='Run only the selected native/component/reboot checks, skipping the control suite')
+    parser.add_argument("--input-fixtures", action='store_true', help='Verify input trees and snapshot extraction/resume boundaries on Windows')
     args = parser.parse_args()
     if not 1 <= args.seconds <= 600:
         parser.error("seconds must be between 1 and 600")

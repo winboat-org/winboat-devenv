@@ -8,6 +8,9 @@ recovery passed. Complete KMD/UMD/Mesa/CLVK builds, full installation, kernel
 identity and interactive graphics acceptance remain required. The original
 handoff below still defines the baseline and preservation boundaries. Current
 guest/state selections and retained failure receipts are in ignored local notes.
+The [native checkpoint](../evidence/stage-04-native.json) additionally records
+vkd3d x64/x86, UMD x86 and the signing fixture's actual resident kernel code.
+Helios's kernel identity and complete-stack acceptance remain required.
 
 The current-host Windows baseline passed all 14 installed-tool probes, the
 signing reboot/driver load, autologin, local mirror/build/hash return and recovery

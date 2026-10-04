@@ -16,5 +16,5 @@
     ];
     identity = "The complete compiler/gitlink closure requires immutable source and archive hashes, including clspv's nested dependencies.";
   };
-  reason = "Fixed compiler/header/translator inputs and the Stage 4 guest backend are unavailable; no compiler or downloads were run.";
+  reason = "The fixed compiler/header/loader closure has a native development candidate; complete guest build and runtime acceptance are pending.";
 }

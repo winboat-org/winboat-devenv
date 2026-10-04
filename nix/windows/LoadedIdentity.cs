@@ -72,3 +72,43 @@ public static class WinBoatLoadedIdentity {
         } finally { CloseHandle(process); }
     }
 }
+
+// Native loaded-module discovery supplies a kernel base independently of the
+// service configuration and disk filename. The host reads that virtual image
+// through the owned VM's QMP connection before assigning a loaded identity.
+public sealed class WinBoatKernelModule {
+    public string Path { get; set; }
+    public string BaseAddress { get; set; }
+    public uint ImageSize { get; set; }
+    [DllImport("ntdll.dll")] static extern int NtQuerySystemInformation(int informationClass, IntPtr data, uint length, out uint required);
+    public static WinBoatKernelModule[] Query() {
+        if (IntPtr.Size!=8) throw new InvalidOperationException("Native x64 module discovery required");
+        uint length=1024*1024, required;
+        for(int attempt=0;attempt<4;attempt++) {
+            IntPtr data=Marshal.AllocHGlobal(checked((int)length));
+            try {
+                int status=NtQuerySystemInformation(11,data,length,out required);
+                if(status==unchecked((int)0xc0000004)) {
+                    length=Math.Max(length*2,required);
+                    if(length>16*1024*1024) throw new InvalidDataException("Kernel module inventory exceeds bound");
+                    continue;
+                }
+                if(status!=0) throw new IOException("Kernel module discovery NTSTATUS 0x"+status.ToString("x8"));
+                int count=Marshal.ReadInt32(data);
+                if(count<0 || 8L+count*296L>length) throw new InvalidDataException("Invalid kernel module inventory");
+                var selected=new System.Collections.Generic.List<WinBoatKernelModule>();
+                for(int i=0;i<count;i++) {
+                    IntPtr module=IntPtr.Add(data,8+i*296);
+                    string path=Marshal.PtrToStringAnsi(IntPtr.Add(module,40),256).TrimEnd('\0');
+                    string name=System.IO.Path.GetFileName(path);
+                    if(name.IndexOf("helios",StringComparison.OrdinalIgnoreCase)<0 && name.IndexOf("wbdev-test",StringComparison.OrdinalIgnoreCase)<0) continue;
+                    selected.Add(new WinBoatKernelModule { Path=path,
+                        BaseAddress=unchecked((ulong)Marshal.ReadInt64(module,16)).ToString("x16"),
+                        ImageSize=unchecked((uint)Marshal.ReadInt32(module,24)) });
+                }
+                return selected.ToArray();
+            } finally { Marshal.FreeHGlobal(data); }
+        }
+        throw new IOException("Kernel module inventory changed repeatedly");
+    }
+}

@@ -45,7 +45,28 @@ function Assert-ControlPath([string]$Path, [string]$Boundary) {
 
 function Assert-ControlFile([string]$Path, [string]$Sha256, [long]$Size) {
     $file = Get-Item -LiteralPath $Path -Force
+    if($file.Attributes -band [IO.FileAttributes]::ReparsePoint) {throw 'Verified file is a reparse point'}
     if ($file.Length -ne $Size -or (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLower() -ne $Sha256) { throw "Verified file changed: $Path" }
+}
+
+function Assert-ControlTree([string]$Directory,$Files) {
+    [void](Assert-ControlPath $Directory (Split-Path $Directory -Parent))
+    foreach($child in Get-ChildItem -LiteralPath $Directory -Directory -Recurse -Force) {
+        if($child.Attributes -band [IO.FileAttributes]::ReparsePoint) {throw 'Reparse point in verified input tree'}
+    }
+    $expected=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    foreach($file in $Files) {
+        if(-not $expected.Add($file.path.Replace('/','\'))) {throw 'Duplicate input tree file'}
+        $path=[IO.Path]::GetFullPath((Join-Path $Directory $file.path))
+        if(-not $path.StartsWith($Directory.TrimEnd('\')+'\',[StringComparison]::OrdinalIgnoreCase)) {throw 'Verified input path escaped its tree'}
+        Assert-ControlFile $path $file.sha256 $file.size
+    }
+    foreach($file in Get-ChildItem -LiteralPath $Directory -File -Recurse -Force) {
+        $relative=$file.FullName.Substring($Directory.Length+1)
+        if($relative -in @('.winboat-owner.json','.winboat-snapshot.json')) {continue}
+        if(-not $expected.Remove($relative)) {throw "Unexpected file in verified input tree: $relative"}
+    }
+    if($expected.Count) {throw 'Verified input tree is incomplete'}
 }
 
 function Invoke-ControlPayload([string]$Script, [object[]]$Arguments) {
@@ -100,8 +121,13 @@ function Import-ControlBuildEnvironment([ValidateSet('x64','x86')][string]$Archi
     $vulkan = [Environment]::GetEnvironmentVariable('VULKAN_SDK','Machine')
     if (-not $vulkan) { throw 'The verified Vulkan shader toolchain is not configured' }
     $compiler = Join-Path $env:VCToolsInstallDir ('bin\Hostx64\' + $Architecture)
+    # SetupBuildEnv can replace PATH on each architecture switch. Cargo's
+    # executable lives in the provisioned tool directory even when a build has
+    # its own offline CARGO_HOME; restore that native executable explicitly.
+    $rustBin = 'C:\WinBoatDev\tools\cargo\bin'
+    if (-not (Test-Path -LiteralPath (Join-Path $rustBin 'cargo.exe'))) { throw 'The verified native Rust toolchain is missing' }
     $env:VSCMD_ARG_TGT_ARCH = $Architecture
-    $env:PATH = 'C:\WinBoatDev\tools\Git\cmd;C:\WinBoatDev\tools\LLVM\bin;C:\WinBoatDev\tools\Python;C:\WinBoatDev\tools\Python\Scripts;C:\WinBoatDev\tools\Ninja;' + $compiler + ';' + (Join-Path $kits "bin\$kit\x64") + ';' + (Join-Path $vulkan 'Bin') + ';' + $env:PATH
+    $env:PATH = 'C:\WinBoatDev\tools\Git\cmd;C:\WinBoatDev\tools\LLVM\bin;C:\WinBoatDev\tools\Python;C:\WinBoatDev\tools\Python\Scripts;C:\WinBoatDev\tools\Ninja;' + $rustBin + ';' + $compiler + ';' + (Join-Path $kits "bin\$kit\x64") + ';' + (Join-Path $vulkan 'Bin') + ';' + $env:PATH
     $env:PATH = (($env:PATH -split ';' | Where-Object { $_ -notmatch '(?i)msys[^;]*[\\/]usr[\\/]bin|[\\/]bin[\\/]Hostx86[\\/]' }) -join ';')
 }
 

@@ -18,10 +18,19 @@ try {
     $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $expected=@{}
     foreach($file in $spec.files) {$expected[$file.path]=$file}
+    # The protected destination has one operation owner. Scan existing
+    # directories once on resume, then validate each archive path lexically;
+    # walking all ancestors twice per entry makes large compiler mirrors slow.
+    if(Test-Path -LiteralPath $destination) {
+        foreach($directory in Get-ChildItem -LiteralPath $destination -Directory -Recurse -Force) {
+            if($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) {throw 'Reparse point in snapshot destination'}
+        }
+    }
     foreach ($entry in $entries) {
         $relative = $entry.FullName.Replace('/','\')
         if ([IO.Path]::IsPathRooted($relative) -or ($relative -split '\\') -contains '..' -or $relative.Contains(':') -or -not $seen.Add($relative)) { throw 'Unsafe or duplicate snapshot path' }
-        [void](Assert-ControlPath (Join-Path $destination $relative) $destination)
+        $path=[IO.Path]::GetFullPath((Join-Path $destination $relative))
+        if(-not $path.StartsWith($destination+'\',[StringComparison]::OrdinalIgnoreCase)) {throw 'Archive entry escaped the snapshot destination'}
         if (-not $expected.ContainsKey($entry.FullName)) { throw 'Unexpected archive entry' }
     }
     # Journal ownership before extraction. An explicit resume verifies the
@@ -31,14 +40,25 @@ try {
         Write-ControlJson @{operationId=$spec.operationId;archiveSha256=$spec.archiveSha256} (Join-Path $destination '.winboat-owner.json')
     }
     foreach ($entry in $entries) {
-        $path = Assert-ControlPath (Join-Path $destination $entry.FullName) $destination
+        $path = [IO.Path]::GetFullPath((Join-Path $destination $entry.FullName))
         $file = $expected[$entry.FullName]
-        if ((Test-Path -LiteralPath $path) -and (Get-Item -LiteralPath $path).Length -eq $file.size -and (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLower() -eq $file.sha256) { continue }
+        if(Test-Path -LiteralPath $path) {
+            $existing=Get-Item -LiteralPath $path -Force
+            if($existing.Attributes -band [IO.FileAttributes]::ReparsePoint) {throw 'Reparse point in snapshot file'}
+            if($existing.Length -eq $file.size -and (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLower() -eq $file.sha256) {continue}
+        }
         New-Item -ItemType Directory -Path (Split-Path $path -Parent) -Force | Out-Null
         [IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $path, $true)
         Assert-ControlFile $path $file.sha256 $file.size
     }
-    foreach ($file in $spec.files) { Assert-ControlFile (Join-Path $destination $file.path) $file.sha256 $file.size }
+    Assert-ControlTree $destination $spec.files
+    foreach ($file in $spec.files) {
+        $path = Join-Path $destination $file.path
+        # ZIP stores local times without a timezone. Source identity comes
+        # from contents; do not let a host/guest timezone difference make
+        # Meson refuse a source as being in the future. Also covers resume.
+        (Get-Item -LiteralPath $path).LastWriteTimeUtc = [DateTime]'1980-01-01T00:00:00Z'
+    }
     $spec | Add-Member NoteProperty destination $destination
     $spec | Add-Member NoteProperty observed ([DateTime]::UtcNow.ToString('o'))
     Write-ControlJson $spec (Join-Path $destination '.winboat-snapshot.json')

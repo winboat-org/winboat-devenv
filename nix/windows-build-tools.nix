@@ -16,6 +16,9 @@ cross.stdenv.mkDerivation {
   enableParallelBuilding = true;
   dontStrip = true;
   postInstall = ''
+    # WIDL resolves its relocated ../include directory on Windows. Carry the
+    # matching IDL/header closure instead of depending on a host store prefix.
+    cp -r ../../mingw-w64-headers/include $out/include
     mkdir -p $out/share/licenses/widl
     cp -r ../../COPYING* $out/share/licenses/widl/
   '';

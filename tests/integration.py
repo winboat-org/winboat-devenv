@@ -72,7 +72,7 @@ class Fixtures(unittest.TestCase):
             for index, path in enumerate(paths):
                 child = children.get(path)
                 url, sha = (self.urls[child], self.shas[child]) if child else (self.third_url, third_sha)
-                if name == "dxvk" and path == "subprojects/dxbc-spirv":
+                if name in {"dxvk", "dxil-spirv"} and path == "subprojects/dxbc-spirv":
                     url, sha = shader_url, shader_sha
                 modules += f'[submodule "m{index}"]\n\tpath = {path}\n\turl = {url}\n'
                 self.g(work, "update-index", "--add", "--cacheinfo", "160000", sha, path)
@@ -463,6 +463,8 @@ class Fixtures(unittest.TestCase):
         missing_target = rpc('tools/call', {'name': 'devbox_build', 'arguments': {'target': 'unknown-target', 'background': False}})['result']
         self.assertTrue(missing_target['isError'])
         self.assertEqual(missing_target['structuredContent']['error'], self.wb('devbox', 'build', '--target', 'unknown-target', check=False)['error'])
+        bad_dependencies = rpc('tools/call', {'name': 'devbox_build', 'arguments': {'target': 'helios-development-package', 'dependencyManifests': 'manifest.json'}})
+        self.assertEqual(bad_dependencies['error']['code'], -32602)
         invalid_cdi = rpc('tools/call', {'name': 'devbox_cdi_prepare', 'arguments': {'renderNode': '/dev/dri/not-a-node'}})['result']
         self.assertTrue(invalid_cdi['isError'])
         self.assertEqual(invalid_cdi['structuredContent']['error'],
@@ -562,6 +564,26 @@ class Fixtures(unittest.TestCase):
         self.assertEqual(record["revision"], head)
         self.assertIsNone(record["diffSha256"])
         self.assertEqual((exported / "data.csv").read_bytes(), (path / "data.csv").read_bytes())
+
+    def test_selected_shader_snapshot_excludes_unused_gitlinks_and_requires_headers(self):
+        self.wb("repo", "sync", "--repo", "dxil-spirv")
+        path = self.path("dxil-spirv")
+        ws = __import__('types').SimpleNamespace(repos=MANIFEST['repositories'])
+        selected = builds.selected_gitlinks(ws, "dxil-spirv")
+        self.assertIn("subprojects/dxbc-spirv/submodules/spirv_headers", selected)
+        record = builds._export(path, self.base / "selected-shader", "release", self.shas['dxil-spirv'], gitlinks=selected)
+        self.assertTrue((self.base / 'selected-shader/subprojects/dxbc-spirv/submodules/spirv_headers/file.txt').is_file())
+        # An unrelated uninitialized gitlink remains provenance, never an input.
+        extra = self.g(path, 'rev-parse', 'HEAD').stdout.strip()
+        self.g(path, 'update-index', '--add', '--cacheinfo', '160000', extra, 'unused-tools')
+        self.g(path, 'commit', '-m', 'declare unused shader tools')
+        exported = self.base / 'unused-excluded'
+        record = builds._export(path, exported, 'release', gitlinks=selected)
+        self.assertFalse((exported / 'unused-tools').exists())
+        self.assertFalse(next(item for item in record['gitlinks'] if item['path']=='unused-tools')['materialized'])
+        (path / 'subprojects/dxbc-spirv/submodules/spirv_headers/.git').unlink()
+        with self.assertRaises(Failure):
+            builds._export(path, self.base / 'missing-selected', 'release', gitlinks=selected)
 
     def test_artifact_verification_rejects_tampering_and_extra_files(self):
         artifact = self.base / "artifact"

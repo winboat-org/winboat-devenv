@@ -46,7 +46,18 @@ def plan(ws, name, configuration="release", mode="release"):
     return result
 
 
-def _export(path, destination, mode, expected=None, recursive=False):
+def selected_gitlinks(ws, component):
+    """Flatten the declared shader/header closure, including managed children."""
+    config = ws.repos[component]["submodules"]
+    paths = set(config["paths"])
+    paths.update(item["parent"] + "/" + item["path"] for item in config.get("nested", []))
+    for name, repo in ws.repos.items():
+        if repo["parent"] == component and repo["submodulePath"] in config["paths"]:
+            paths.update(repo["submodulePath"] + "/" + child for child in selected_gitlinks(ws, name))
+    return paths
+
+
+def _export(path, destination, mode, expected=None, gitlinks=()):
     """Copy Git-owned contents only; never compile in or mutate the checkout."""
     head = git(path, "rev-parse", "HEAD").stdout.strip()
     if expected and mode == "release" and head != expected:
@@ -72,10 +83,11 @@ def _export(path, destination, mode, expected=None, recursive=False):
         if filemode == "160000":
             # Component shader/header modules are governed by their gitlinks.
             # Managed dependencies are separate snapshots, not recursively copied.
-            if recursive:
+            if name in gitlinks:
                 if not (source / ".git").exists():
                     raise Failure("required shader/header gitlink is uninitialized", source=str(source), revision=oid)
-                children.append({"path": name, **_export(source, dest, mode, oid, recursive=True)})
+                selected = {item[len(name)+1:] for item in gitlinks if item.startswith(name + "/")}
+                children.append({"path": name, **_export(source, dest, mode, oid, gitlinks=selected)})
             else:
                 children.append({"path": name, "revision": oid, "materialized": False})
             continue
@@ -174,7 +186,7 @@ def _execute(ws, name, configuration, mode, operation_id):
             path = ws.validate_checkout(component)
             exported = directory / "sources" / component
             identity = _export(path, exported, mode, ws.repos[component]["pin"]["rev"],
-                               recursive=component in {"dxvk", "vkd3d-proton"})
+                               gitlinks=selected_gitlinks(ws, component) if component in {"dxvk", "vkd3d-proton", "dxil-spirv"} else ())
             source_records[component] = {"path": str(exported), "canonicalUrl": ws.repos[component]["url"],
                                          "declaredPin": ws.repos[component]["pin"]["rev"], **identity}
             source_records[component]["narHash"] = run([os.environ["WB_NIX"], "hash", "path", "--sri", exported]).stdout.strip()

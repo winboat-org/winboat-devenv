@@ -83,8 +83,9 @@ def pin_transaction(ws, updates, expected, operation_id, defer=False):
         staged_oid = git(ws.root, "hash-object", "-w", "--stdin", input=staged_text).stdout.strip()
         if os.environ.get("WB_TEST_FAIL_PIN_COMMIT") == "1":
             raise Failure("injected pin-commit failure")
+        kind = "publication" if all(fields.get("provenance") == "verified-push" for fields in updates.values()) else "source pin"
         commit = scoped_commit(ws.root, {"nix/pins.nix": ("100644", committed_oid)},
-                               "chore(pins): record verified publication " + operation_id,
+                               "chore(pins): record verified " + kind + " " + operation_id,
                                {"nix/pins.nix": ("100644", staged_oid)}, {"nix/pins.nix": index})
         return {"deferred": False, "rootCommit": commit}
 

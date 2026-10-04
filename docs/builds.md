@@ -42,14 +42,16 @@ assuming a parent checkout location. Root adapters compose these interfaces.
 | `WBFreeRDP` | Forked native client/library outputs, licenses and debug symbols |
 | `dxvk-engine-x64/x86`, `vkd3d-engine-x64/x86` | Nix-evaluated guest dispatch plans for clang-cl/MSVC COFF engine archives with `/MT`; no MinGW substitution |
 | `helios-guest-x64/x86` | Durable guest build plans; KMD is x64 only, UMD11/UMD12 have x64/x86 contracts |
-| `mesa-guest-x64/x86` | Guest MinGW ICD plans, static C++ dependencies and explicit paired protocol input |
-| `winboat`, `electron`, `clvk-helios` | Explicit adapter/input contracts; missing fixed dependency closures fail closed |
+| `mesa-guest-x64/x86` | Native clang-cl/MSVC `/MT` candidates and generated paired protocol headers |
+| `clvk-helios` | Native MSVC `/MT` candidate with pinned LLVM/clspv, native loaders and x64/x86 smoke programs |
+| `helios-development-package` | Composes verified guest component artifacts, original install scripts, licenses, symbols and provenance |
+| `winboat`, `electron` | Explicit adapter/input contracts; missing fixed dependency closures fail closed |
 
 The engine archive names and compatibility headers follow the component's
 current UMD link inputs. Guest plans retain LLVM 22.1.8, MSVC v143, matched
 SDK/WDK 10.0.26100.0, bindgen 0.72 and Rust nightly-2026-07-14 requirements.
 They specify the local `C:\WinBoatDev\src` mirror, `C:\WinBoatDev\build`, local
-Cargo outputs and durable elevated `build` tasks. Stage 4's DXVK controller binds
+Cargo outputs and durable elevated `build` tasks. Stage 4's controller binds
 and executes those commands in a named guest; other incomplete contracts still
 fail with code 3. See [Windows control](windows-control.md). No guest install or loaded-state evidence
 is produced by these plans. Meson/Ninja command templates use named tokens

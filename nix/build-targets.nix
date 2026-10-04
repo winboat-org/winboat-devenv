@@ -101,15 +101,16 @@ in
       "umd12"
       "pdb"
     ];
-    mesa-guest-x64 =
-      guest [ "mesa-helios" "venus-protocol" ] "windows-x86_64-mingw-static-cxx-runtime"
-        [
-          "vulkan_virtio.dll"
-          "opengl32.dll"
-          "icd-json"
-          "pdb"
-        ];
-    mesa-guest-x86 = guest [ "mesa-helios" "venus-protocol" ] "windows-x86-mingw-static-cxx-runtime" [
+    helios-development-package = guest [ "helios" ] "windows-x64-wow64-development-package" [
+      "bundle/manifest.json"
+    ];
+    mesa-guest-x64 = guest [ "mesa-helios" "venus-protocol" "helios" ] "windows-x86_64-msvc-mt" [
+      "vulkan_virtio.dll"
+      "opengl32.dll"
+      "icd-json"
+      "pdb"
+    ];
+    mesa-guest-x86 = guest [ "mesa-helios" "venus-protocol" "helios" ] "windows-x86-msvc-mt" [
       "vulkan_virtio.dll"
       "opengl32.dll"
       "icd-json"
@@ -133,7 +134,7 @@ in
         inherit (import ./adapters/electron.nix) reason inputContract;
       };
     clvk-helios =
-      (guest [ "clvk-helios" ] "windows-msvc" [
+      (guest [ "clvk-helios" "helios" ] "windows-x86_64-msvc-mt" [
         "clvk.dll"
         "clspv"
         "OpenCL-loader"

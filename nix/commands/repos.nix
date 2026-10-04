@@ -24,7 +24,11 @@ let
           "devbox.nix"
           "windows-payloads.nix"
           "windows-build-tools.nix"
+          "windows-rust-deps.nix"
+          "windows-utilities.nix"
+          "windows-component-inputs.nix"
           "scripts/devbox-run.py"
+          "scripts/windows-win-flex.py"
           "windows/Bootstrap.ps1"
           "windows/Autologin.ps1"
           "windows/Provision.ps1"
@@ -37,10 +41,13 @@ let
           "windows/Task.ps1"
           "windows/Snapshot.ps1"
           "windows/GuestBuild.ps1"
+          "windows/ExportArtifact.ps1"
           "windows/Registry.ps1"
+          "windows/Graphics.ps1"
           "windows/LoadedIdentity.cs"
           "windows/Install.ps1"
           "windows/Rollback.ps1"
+          "windows/Restore-PowerShell.ps1"
           "adapters/venus-protocol.nix"
           "adapters/freerdp.nix"
           "adapters/winboat.nix"
@@ -85,6 +92,10 @@ let
     export WB_BUILD_TARGETS=${buildTargets}
     export WB_BUILD_EXPRESSION=${buildOperations}/build.nix
     export WB_DISPATCH_EXPRESSION=${buildOperations}/dispatch.nix
+    export WB_WINDOWS_TOOLS_EXPRESSION=${buildOperations}/windows-build-tools.nix
+    export WB_WINDOWS_RUST_EXPRESSION=${buildOperations}/windows-rust-deps.nix
+    export WB_WINDOWS_UTILITIES_EXPRESSION=${buildOperations}/windows-utilities.nix
+    export WB_WINDOWS_COMPONENT_EXPRESSION=${buildOperations}/windows-component-inputs.nix
     export WB_DEVBOX_EXPRESSION=${buildOperations}/devbox.nix
     export WB_DEVBOX_PAYLOADS=${buildOperations}/windows
     export WB_XORRISO=${pkgs.xorriso}/bin/xorriso

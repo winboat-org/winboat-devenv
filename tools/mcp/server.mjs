@@ -5,6 +5,7 @@ import readline from 'node:readline';
 // Repository, build and installation behavior belongs to shared operations.
 const string = { type: 'string', minLength: 1 };
 const bool = { type: 'boolean' };
+const strings = { type: 'array', items: string, minItems: 1 };
 const selection = { subset: { type: 'string', enum: ['all', 'helios', 'winboat', 'winboat-accel'] },
   repos: { type: 'array', items: string, minItems: 1 } };
 const definitions = [
@@ -41,7 +42,9 @@ const definitions = [
   ['devbox_install', 'Install an exact verified package as a durable SYSTEM transaction preserving prior state. Resume uses its original ID and manifest. Installer success alone does not verify loaded identities.', ['devbox', 'install'],
     { name: string, manifest: string, resume: string, rollback: string, fixture: bool, failureAfterCopy: bool, background: bool }],
   ['devbox_build', 'Use the Nix component recipe on a verified local mirror, or collect a completed guest build after a host/client interruption.', ['devbox', 'build'],
-    { name: string, target: string, collect: string, configuration: {type:'string',enum:['release','debug']}, mode: {type:'string',enum:['release','development']}, background: bool }],
+    { name: string, target: string, collect: string, dependencyManifests: strings, configuration: {type:'string',enum:['release','debug']}, mode: {type:'string',enum:['release','development']}, background: bool }],
+  ['devbox_smoke', 'Run native and WoW64 graphics workloads as the interactive desktop user and compare actual mapped DLL code with an exact installation transaction.', ['devbox', 'smoke'],
+    { name: string, transaction: string, background: bool }],
   ...['status', 'cancel', 'resume'].map(action =>
     [`devbox_job_${action}`, `Observe or recover the exact durable Windows task; status retains native exit/reboot codes and bounded logs.`, ['devbox', 'job', action], { name: string, id: string }, ['id']]),
   ['devbox_cdi_prepare', 'Generate and validate private NVIDIA CDI using the Nix-pinned vendor toolkit for rootless Podman; never writes system configuration.', ['devbox', 'cdi', 'prepare'], { renderNode: string }],
@@ -100,11 +103,12 @@ function command(tool, args) {
     iso: '--iso', isoSha256: '--iso-sha256', index: '--index', edition: '--edition', locale: '--locale',
     start: '--start', confirm: '--confirm', rebuildImage: '--rebuild-image', force: '--force', runtime: '--runtime', timeout: '--timeout',
     renderNode: '--render-node', graphicsProvider: '--graphics-provider', cdiDevice: '--cdi-device' };
-  Object.assign(flags, { purpose: '--purpose', script: '--script', direct: '--direct', resume: '--resume', rollback: '--rollback', collect: '--collect', fixture: '--fixture', failureAfterCopy: '--failure-after-copy' });
+  Object.assign(flags, { purpose: '--purpose', script: '--script', direct: '--direct', resume: '--resume', rollback: '--rollback', collect: '--collect', fixture: '--fixture', failureAfterCopy: '--failure-after-copy', transaction: '--transaction' });
   for (const [key, value] of Object.entries(args)) {
     if (key === 'background') continue;
     if (key === 'target') { if(tool.name==='devbox_build') argv.push('--target',value); else argv.splice(1, 0, value); continue; }
     if (key === 'arguments') { for (const item of value) argv.push('--argument=' + item); continue; }
+    if (key === 'dependencyManifests') { for (const item of value) argv.push('--dependency-manifest', item); continue; }
     if (key === 'repos' || key === 'paths') {
       for (const item of value) argv.push(key === 'repos' ? '--repo' : '--path', item);
     } else if (typeof value === 'boolean') {
@@ -112,7 +116,7 @@ function command(tool, args) {
     } else argv.push(flags[key], value);
   }
   if (['repo_sync', 'repo_push', 'repo_verify', 'build_run'].includes(tool.name) && args.background !== false && !args.plan) argv.push('--background');
-  if (['devbox_create', 'devbox_up', 'devbox_down', 'devbox_restart', 'devbox_guest_status', 'devbox_mirror', 'devbox_install', 'devbox_build', 'devbox_registry_show', 'devbox_registry_reconcile', 'devbox_registry_verify'].includes(tool.name) && args.background !== false) argv.push('--background');
+  if (['devbox_create', 'devbox_up', 'devbox_down', 'devbox_restart', 'devbox_guest_status', 'devbox_mirror', 'devbox_install', 'devbox_build', 'devbox_smoke', 'devbox_registry_show', 'devbox_registry_reconcile', 'devbox_registry_verify'].includes(tool.name) && args.background !== false) argv.push('--background');
   return argv;
 }
 

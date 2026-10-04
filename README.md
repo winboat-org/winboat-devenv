@@ -8,11 +8,14 @@ and a headless Windows development VM running the Helios QEMU fork.
 **Stages 1–3 passed their measured native/cross and current-host devbox checks:**
 repository/MCP operations, six composable component recipes, isolated native
 graphics builds, a Windows DLL cross-build and immutable artifact manifests.
-Stage 4 is in progress: real DXVK x64/x86 MSVC builds, shared CLI/MCP Windows
+Stage 4 is in progress: real DXVK/vkd3d x64/x86 MSVC builds, shared CLI/MCP Windows
 tasks and transaction recovery have passed on a fresh guest. Full KMD/UMD,
 Mesa/CLVK installation and loaded-stack acceptance remain pending. See the
-[Windows evidence](docs/evidence/stage-04-control.json). WinBoat/Electron/CLVK
-adapters expose their remaining fixed dependency inputs. Stage 3's
+[Windows evidence](docs/evidence/stage-04-control.json) and
+[native checkpoint](docs/evidence/stage-04-native.json). UMD x86 and the baseline
+fixture's resident kernel-code comparison passed. Helios/Mesa/CLVK candidates
+have Nix-declared offline inputs; WinBoat/Electron still need their complete
+fixed dependency closures. Stage 3's
 host lifecycle, unmodified blank-disk creation, all 14 installed tools,
 post-reboot autologin, signing/driver load and local mirror build checks passed.
 NVIDIA devboxes now use Nix-pinned rootless Podman with workspace-private,

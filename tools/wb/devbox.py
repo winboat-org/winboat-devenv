@@ -721,6 +721,32 @@ def status(ws, name, rt=None):
     return result
 
 
+def qmp_observe(directory, command, arguments=None):
+    if command not in {'query-cpus-fast', 'memsave'}:
+        raise Failure('unsupported read-only QMP observation', 2)
+    try:
+        with socket.socket(socket.AF_UNIX) as client:
+            client.settimeout(15); client.connect(str(directory / 'qmp.sock'))
+            with client.makefile('rwb') as stream:
+                greeting = json.loads(stream.readline())
+                for identifier, request in [('capabilities', {'execute': 'qmp_capabilities'}),
+                                            ('observation', {'execute': command, 'arguments': arguments or {}})]:
+                    stream.write(json.dumps(dict(request, id=identifier)).encode() + b'\n'); stream.flush()
+                    for _ in range(100):
+                        reply = json.loads(stream.readline())
+                        if reply.get('id') != identifier:
+                            continue
+                        if 'error' in reply:
+                            raise Failure('QMP observation failed', 76, response=reply)
+                        if identifier == 'observation':
+                            return {'greeting': greeting, 'response': reply['return']}
+                        break
+                    else:
+                        raise Failure('QMP observation exceeded event bound', 76)
+    except (OSError, ValueError) as exc:
+        raise Failure('QMP observation unavailable', 76, error=str(exc)) from exc
+
+
 def qmp_powerdown(directory):
     try:
         with socket.socket(socket.AF_UNIX) as client:
@@ -878,7 +904,7 @@ def viewer(ws, name, action, operation_id):
 
 
 def dispatch(ws, args, operation_id):
-    if args.action in {"run", "job", "mirror", "registry", "install", "build"}:
+    if args.action in {"run", "job", "mirror", "registry", "install", "build", "smoke"}:
         from . import windows
         return windows.dispatch(ws, args, operation_id)
     if args.action == "cdi":

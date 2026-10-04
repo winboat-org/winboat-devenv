@@ -9,6 +9,7 @@ $state = if(Test-Path $statePath) {Read-ControlJson $statePath} else {
 }
 if($state.manifestSha256 -ne $spec.manifestSha256) {throw 'Resume manifest differs from the original transaction'}
 New-Item -ItemType Directory -Path $transaction -Force | Out-Null
+if($spec.PSObject.Properties['requestedManifest']) {$state | Add-Member -Force NoteProperty requestedManifest $spec.requestedManifest}
 Write-ControlJson $state $statePath
 try {
     Assert-ControlFile $spec.archive $spec.archiveSha256 $spec.archiveSize
@@ -69,9 +70,12 @@ try {
         # Invoke the exact manifested legacy package script through this shared
         # operation, preserving its SYSTEM task, rollback snapshots and 3010
         # status contract. No root CI compiler or second MCP binary is used.
-        $installer=Join-Path $bundle 'payload\Install-Helios.ps1'
+        $installer=Join-Path $bundle 'Install-Helios.ps1'
         $state.state='installing';Write-ControlJson $state $statePath
-        & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $installer -Automatic -ReplaceViogpudo
+        $arguments=@('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',$installer,'-Automatic','-ReplaceViogpudo')
+        $existing=if(Test-Path 'C:\ProgramData\Helios\install-state.json') {Read-ControlJson 'C:\ProgramData\Helios\install-state.json'} else {$null}
+        if($existing -and $existing.packageId -ne $manifest.packageId) {$arguments+='-Repair'}
+        & powershell.exe @arguments
         $state.exitCode=$LASTEXITCODE
         $state.state=if($LASTEXITCODE -in @(3010,1641)) {'reboot-required'} elseif($LASTEXITCODE) {'partial'} else {'installed'}
         Write-ControlJson $state $statePath

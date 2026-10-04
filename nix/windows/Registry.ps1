@@ -10,6 +10,7 @@ if ($Mode -eq 'show') {
 Add-Type -Path (Join-Path $env:WINBOAT_CONTROL_ROOT 'LoadedIdentity.cs')
 $previous = if (Test-Path $registryPath) {Read-ControlJson $registryPath} else {$null}
 $entries = [Collections.Generic.List[object]]::new()
+$observationErrors=[Collections.Generic.List[object]]::new()
 $transactions=@(Get-ChildItem (Join-Path $root 'transactions') -Filter 'transaction.json' -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {Read-ControlJson $_.FullName})
 function Add-ObservedFile([string]$Path, [string]$Role, [string]$Architecture='unknown', [string]$ExpectedHash='', $Provenance=$null) {
     $desired=if($ExpectedHash){@{sha256=$ExpectedHash.ToLower()}}else{$null}
@@ -20,7 +21,23 @@ function Add-ObservedFile([string]$Path, [string]$Role, [string]$Architecture='u
     $file = Get-Item -LiteralPath $Path
     $hash = (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLower()
     $state = if ($ExpectedHash) {if($hash -eq $ExpectedHash.ToLower()) {'verified'} else {'drift'}} else {'unknown'}
-    $entries.Add(@{role=$Role;path=$file.FullName;sha256=$hash;size=$file.Length;version=$file.VersionInfo.FileVersion;architecture=$Architecture;desired=$desired;built=$null;staged=$null;installed=$state;provenance=$Provenance;loaded=@()})
+    $actualArchitecture='unknown'
+    if($file.Extension -in @('.dll','.sys','.exe')) {
+        $stream=[IO.File]::Open($file.FullName,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::ReadWrite)
+        $reader=[IO.BinaryReader]::new($stream)
+        try {
+            if($reader.ReadUInt16() -ne 0x5a4d) {throw 'Missing DOS image signature'}
+            [void]$stream.Seek(60,[IO.SeekOrigin]::Begin);$pe=$reader.ReadInt32()
+            if($pe -lt 64 -or $pe+6 -gt $stream.Length) {throw 'Invalid PE header offset'}
+            [void]$stream.Seek($pe,[IO.SeekOrigin]::Begin)
+            if($reader.ReadUInt32() -ne 0x4550) {throw 'Missing PE image signature'}
+            $actualArchitecture=switch($reader.ReadUInt16()) {0x8664 {'x64'};0x14c {'x86'};default {'unknown'}}
+            if($Architecture -in @('x64','x86') -and $Architecture -ne $actualArchitecture) {$state='drift'}
+        } catch {$state='unknown';$observationErrors.Add(@{role=$Role;path=$Path;state='unknown';error=$_.ToString()})}
+        finally {$reader.Dispose();$stream.Dispose()}
+    }
+    $built=if($ExpectedHash -and $Provenance) {@{sha256=$ExpectedHash.ToLower();provenance=$Provenance}} else {$null}
+    $entries.Add(@{role=$Role;path=$file.FullName;sha256=$hash;size=$file.Length;version=$file.VersionInfo.FileVersion;architecture=$actualArchitecture;expectedArchitecture=$Architecture;desired=$desired;built=$built;staged=if($built){@{manifestSha256=$Provenance.manifestSha256}}else{$null};installed=$state;provenance=$Provenance;loaded=@()})
 }
 foreach($transaction in $transactions) {
     if($transaction.state -eq 'rolled-back') {continue}
@@ -33,8 +50,35 @@ foreach($transaction in $transactions) {
     }
 }
 $provisioning = Read-ControlJson (Join-Path $root 'provisioning.json')
+$lockPath=Join-Path $root 'provision.lock.json'
+if ((Get-FileHash $lockPath -Algorithm SHA256).Hash.ToLower() -ne $provisioning.lockSha256) {throw 'Provisioning lock differs from its recorded identity'}
+. (Join-Path $env:WINBOAT_CONTROL_ROOT 'Toolchain.ps1')
+$observedTools=@()
+foreach($tool in (Read-ControlJson $lockPath).tools) {
+    if($tool.status -ne 'locked') {continue}
+    $version=$null;$errorMessage=$null;$status='unknown';$global:LASTEXITCODE=0
+    try {
+        $version=((& ([ScriptBlock]::Create($tool.probe))) | Out-String).Trim()
+        $status=if($LASTEXITCODE -or $version -cne $tool.version) {'drift'} else {'verified'}
+    } catch {$errorMessage=$_.ToString()}
+    $observedTools+=@{id=$tool.id;desired=$tool.version;installed=$version;state=$status;error=$errorMessage;observed=[DateTime]::UtcNow.ToString('o')}
+    if($status -ne 'verified') {$observationErrors.Add(@{role='provisioning-tool';id=$tool.id;state=$status;desired=$tool.version;observed=$version;error=$errorMessage})}
+}
 $installStatePath = Join-Path $env:ProgramData 'Helios\install-state.json'
 $installState = if (Test-Path $installStatePath) {Get-Content -Raw $installStatePath | ConvertFrom-Json} else {$null}
+$requestedPackage=$null
+$packageProvenance=$null
+$packageTransactions=@($transactions | Where-Object {
+    $_.PSObject.Properties['requestedManifest'] -and $_.requestedManifest.PSObject.Properties['packageId'] -and
+    $_.state -ne 'rolled-back'
+} | Sort-Object observed -Descending)
+$desiredTransaction=if($packageTransactions.Count) {$packageTransactions[0]} else {$null}
+$matchingTransactions=@($packageTransactions | Where-Object {$installState -and $_.requestedManifest.packageId -eq $installState.packageId})
+if($matchingTransactions.Count) {
+    $requestedPackage=$matchingTransactions[0].requestedManifest
+    $packageProvenance=@{operationId=$matchingTransactions[0].operationId;manifestSha256=$matchingTransactions[0].manifestSha256;
+        sources=$requestedPackage.source;artifacts=if($requestedPackage.PSObject.Properties['artifacts']) {$requestedPackage.artifacts} else {@()}}
+}
 $devices = @(Get-CimInstance Win32_PnPSignedDriver | Where-Object { $_.DeviceID -like 'PCI\VEN_1AF4&DEV_1050*' })
 $drivers = @(Get-CimInstance Win32_SystemDriver | Where-Object { $_.Name -match '(?i)helios|wbdev-test' } | Select-Object Name,State,PathName,StartMode)
 $registration = @{}
@@ -65,7 +109,10 @@ foreach ($view in @([Microsoft.Win32.RegistryView]::Registry64,[Microsoft.Win32.
     } finally {$hive.Dispose()}
 }
 foreach ($device in $devices) {
-    if($device.InfName) {Add-ObservedFile (Join-Path 'C:\Windows\INF' $device.InfName) 'active-INF' 'x64'}
+    if($device.InfName) {
+        $hash=if($installState -and $device.InfName -eq $installState.activeInf) {$installState.activeInfSha256} else {''}
+        Add-ObservedFile (Join-Path 'C:\Windows\INF' $device.InfName) 'active-INF' 'x64' $hash $packageProvenance
+    }
     $deviceKey = Get-ItemProperty -LiteralPath ('HKLM:\SYSTEM\CurrentControlSet\Enum\' + $device.DeviceID) -ErrorAction SilentlyContinue
     if ($deviceKey -and $deviceKey.PSObject.Properties['Driver']) {
         $classPath='HKLM:\SYSTEM\CurrentControlSet\Control\Class\' + $deviceKey.Driver
@@ -81,10 +128,14 @@ foreach ($device in $devices) {
                         if($matching.Count -eq 1) {$expectedHash=$matching[0].sha256}
                     }
                     $architecture=if($name -match 'WoW|Wow') {'x86'} else {'x64'}
-                    Add-ObservedFile $path $name $architecture $expectedHash
+                    Add-ObservedFile $path $name $architecture $expectedHash $packageProvenance
                     if($name -eq 'UserModeDriverName') {
                         $store=Split-Path $path -Parent
-                        foreach($file in Get-ChildItem $store -File | Where-Object Extension -in @('.sys','.inf','.cat')) {Add-ObservedFile $file.FullName 'DriverStore-package' 'x64'}
+                        foreach($file in Get-ChildItem $store -File | Where-Object Extension -in @('.sys','.inf','.cat')) {
+                            $expected=@(if($requestedPackage) {$requestedPackage.files | Where-Object path -eq ('payload/driver/'+$file.Name)})
+                            $hash=if($expected.Count -eq 1) {$expected[0].sha256} else {''}
+                            Add-ObservedFile $file.FullName 'DriverStore-package' 'x64' $hash $packageProvenance
+                        }
                     }
                 }
             }
@@ -93,16 +144,34 @@ foreach ($device in $devices) {
     }
 }
 if($installState) {
-    if($installState.PSObject.Properties['runtimeFiles']) {foreach($file in $installState.runtimeFiles) {Add-ObservedFile $file.path 'Helios-runtime' 'unknown' $file.sha256}}
+    if($installState.PSObject.Properties['runtimeFiles']) {
+        $runtime=Join-Path $installState.installRoot 'runtime'
+        foreach($file in $installState.runtimeFiles) {
+            $hash=$file.sha256
+            if($requestedPackage) {
+                if(-not $file.path.StartsWith($runtime+'\',[StringComparison]::OrdinalIgnoreCase)) {throw 'Runtime file escaped the managed installation'}
+                $relative='payload/'+$file.path.Substring($runtime.Length+1).Replace('\','/')
+                $expected=@($requestedPackage.files | Where-Object path -eq $relative)
+                $hash=if($expected.Count -eq 1) {$expected[0].sha256} else {''}
+            }
+            Add-ObservedFile $file.path 'Helios-runtime' 'unknown' $hash $packageProvenance
+        }
+    }
     # Package paths and hashes belong to installed-state evidence, separately
     # from active DriverStore/PnP registration and mapped process code.
 }
 foreach($architecture in @('x64','x86')) {
     $systemDirectory=if($architecture -eq 'x64') {'C:\Windows\System32'} else {'C:\Windows\SysWOW64'}
-    foreach($file in @('vulkan-1.dll','OpenCL.dll')) {Add-ObservedFile (Join-Path $systemDirectory $file) 'Khronos-loader' $architecture}
+    foreach($file in @('vulkan-1.dll','OpenCL.dll')) {
+        $relative='payload/loaders/'+$(if($architecture -eq 'x86') {'x86/'} else {''})+$file
+        $expected=@(if($requestedPackage) {$requestedPackage.files | Where-Object path -eq $relative})
+        $hash=if($expected.Count -eq 1) {$expected[0].sha256} else {''}
+        Add-ObservedFile (Join-Path $systemDirectory $file) 'Khronos-loader' $architecture $hash $packageProvenance
+    }
 }
 $mapped=[Collections.Generic.List[object]]::new()
-$observationErrors=[Collections.Generic.List[object]]::new()
+$kernelModules=@()
+try {$kernelModules=@([WinBoatKernelModule]::Query())} catch {$observationErrors.Add(@{role='kernel-module-discovery';state='unknown';error=$_.ToString()})}
 foreach($process in Get-Process) {
     try {
         foreach($module in $process.Modules) {
@@ -129,9 +198,40 @@ function RegistrationIdentity($Object) {
     return $rows -join "`n"
 }
 if($previous -and $previous.PSObject.Properties['registrations']) {
-    if((RegistrationIdentity $previous.registrations) -ne (RegistrationIdentity $registration)) {$observationErrors.Add(@{role='registration';state='drift';previousObservation=$previous.observed})}
+    if((RegistrationIdentity $previous.registrations) -ne (RegistrationIdentity $registration)) {
+        $authorizedChange=$requestedPackage -and (-not $previous.PSObject.Properties['requestedPackage'] -or
+            -not $previous.requestedPackage -or $previous.requestedPackage.packageId -ne $requestedPackage.packageId)
+        $observationErrors.Add(@{role='registration';state=if($authorizedChange){'changed-by-installation'}else{'drift'};
+            previousObservation=$previous.observed;provenance=if($authorizedChange){$packageProvenance}else{$null}})
+    }
 }
-$value=@{schemaVersion=1;observed=[DateTime]::UtcNow.ToString('o');bootTime=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o');provisioning=$provisioning;entries=@($entries.ToArray());devices=$devices;systemDrivers=$drivers;registrations=$registration;certificates=$certificates;loadedImages=@($mapped.ToArray());observationErrors=@($observationErrors.ToArray());installState=$installState;transactions=$transactions;state=if($drift.Count -or @($observationErrors | Where-Object state -eq 'drift').Count){'drift'} else {'observed'};loadedKernelIdentity='unknown-requires-kernel-image-evidence';installedVerified=$false;loadedVerified=$false}
+$installedVerified=$false
+$installationCheck=@{state='unknown';exitCode=$null;output=$null}
+if($requestedPackage) {
+    # Preserve the original installer verification contract, then independently
+    # reconcile native/WoW64 paths and hashes above. A manually copied install
+    # state cannot acquire the requested source identity without its transaction.
+    $script=Join-Path $env:ProgramData 'Helios\Verify-Helios.ps1'
+    foreach($name in @('Verify-Helios.ps1','Helios-PackageCommon.ps1')) {
+        $expected=@($requestedPackage.files | Where-Object path -eq $name)
+        if($expected.Count -ne 1) {throw 'Installed verification script lacks package provenance'}
+        Assert-ControlFile (Join-Path $env:ProgramData "Helios\$name") $expected[0].sha256 $expected[0].size
+    }
+    $output=(& powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $script 2>&1 | Out-String)
+    $installationCheck=@{state=if($LASTEXITCODE) {'failed'} else {'verified'};exitCode=$LASTEXITCODE;output=$output}
+    $certificateVerified=@($certificates | Where-Object Thumbprint -eq $requestedPackage.signing.thumbprint).Count -eq 2
+    $desiredVerified=$desiredTransaction -and $desiredTransaction.state -eq 'installed' -and
+        $desiredTransaction.operationId -eq $matchingTransactions[0].operationId
+    $installedVerified=$desiredVerified -and $LASTEXITCODE -eq 0 -and $certificateVerified -and $drift.Count -eq 0 -and @($observedTools | Where-Object state -ne 'verified').Count -eq 0
+}
+$value=@{schemaVersion=1;observed=[DateTime]::UtcNow.ToString('o');bootTime=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o');provisioning=$provisioning;observedTools=$observedTools;entries=@($entries.ToArray());devices=$devices;systemDrivers=$drivers;registrations=$registration;certificates=$certificates;loadedImages=@($mapped.ToArray());kernelModules=$kernelModules;observationErrors=@($observationErrors.ToArray());installState=$installState;requestedPackage=$requestedPackage;packageProvenance=$packageProvenance;installationCheck=$installationCheck;transactions=$transactions;state=if($drift.Count -or @($observationErrors | Where-Object state -eq 'drift').Count){'drift'} else {'observed'};loadedKernelIdentity='unknown-requires-kernel-image-evidence';installedVerified=$installedVerified;loadedVerified=$false}
+$graphics=@(Get-ChildItem (Join-Path $root 'jobs') -Recurse -File -Filter 'graphics-result.json' | ForEach-Object {Read-ControlJson $_.FullName} | Where-Object {
+    $_.state -eq 'passed' -and $requestedPackage -and $_.packageId -eq $requestedPackage.packageId -and
+    $_.manifestSha256 -eq $packageProvenance.manifestSha256 -and $_.bootTime -eq $value.bootTime
+} | Sort-Object observed -Descending)
+$value.graphics=if($graphics.Count) {$graphics[0]} else {$null}
+$value.desiredPackage=if($desiredTransaction) {$desiredTransaction.requestedManifest} else {$null}
+$value.desiredTransaction=if($desiredTransaction) {@{operationId=$desiredTransaction.operationId;state=$desiredTransaction.state;manifestSha256=$desiredTransaction.manifestSha256}} else {$null}
 Write-ControlJson $value $registryPath
 Write-ControlJson $value (Join-Path $env:WINBOAT_JOB_ROOT 'registry-result.json')
-if($Mode -eq 'verify') {exit 76} # Full kernel/stack verification is still required.
+if($Mode -eq 'verify' -and -not $installedVerified) {exit 76}

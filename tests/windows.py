@@ -1,9 +1,12 @@
 """Windows transport boundaries; live acceptance is a separate guest run."""
 import json
+import os
 from pathlib import Path
 import tempfile
+import struct
 from types import SimpleNamespace
 import unittest
+import zipfile
 from unittest.mock import patch
 
 from wb import windows
@@ -73,6 +76,182 @@ class WindowsTests(unittest.TestCase):
             with self.assertRaises(Failure) as error:
                 windows.wait(self.ws, "one", "op-"+"a"*32)
             self.assertEqual(error.exception.code, 3010)
+
+    def test_full_install_refuses_incomplete_package_before_guest_side_effects(self):
+        files = []
+        for name in ['Install-Helios.ps1','Uninstall-Helios.ps1','Verify-Helios.ps1','Helios-PackageCommon.ps1']:
+            path = self.root/name; path.write_text('exit 0')
+            files.append({'path': name, 'size': path.stat().st_size, 'sha256': digest(path)})
+        manifest = self.root/'manifest.json'
+        manifest.write_text(json.dumps({'schemaVersion': 1, 'architecture': 'x64', 'applicationArchitectures': ['x64','x86'],
+            'signing': {'mode': 'test','certificate': 'certificate/test.cer'}, 'source': {'helios': 'a'*40}, 'files': files}))
+        with patch.object(windows, 'submit') as submit, self.assertRaises(Failure) as error:
+            windows.install(self.ws, 'one', manifest, 'op-'+'b'*32)
+        self.assertEqual(error.exception.code, 2)
+        self.assertIn('payload/driver/helios_kmd_render.sys', error.exception.details['missing'])
+        submit.assert_not_called()
+
+    def test_tool_mirror_reuse_requires_same_guest_exact_files_and_success(self):
+        store=self.root/'fixture-tool'; store.mkdir()
+        tool=store/'tool.exe'; tool.write_bytes(b'fixture executable')
+        built=[{'drvPath': 'fixture-only.drv', 'outputs': {'out': str(store)}}]
+        previous=self.ws.state/'windows-tools'/('op-'+'c'*32); previous.mkdir(parents=True)
+        (previous/'nix-build.json').write_text(json.dumps(built))
+        snapshot=previous/'snapshot.json'
+        snapshot.write_text(json.dumps({'files': [{'path': 'tool.exe','sha256': digest(tool),'size': tool.stat().st_size}]}))
+        guest=self.root/'guest'; original=guest/'windows-jobs'/previous.name/'job.json'; original.parent.mkdir(parents=True)
+        job={'guestIdentity':'one','metadata': {'toolKind':'utilities'},
+            'transfers': [{'remote': 'C:\\fixture\\snapshot.json','sha256':digest(snapshot)}]}
+        original.write_text(json.dumps(job))
+        environment={'WB_NIX': 'fixture-nix','WB_WINDOWS_UTILITIES_EXPRESSION':'fixture.nix','WB_NIXPKGS':'fixture-only','WB_DEVBOX_PAYLOADS':str(self.root/'payloads')}
+        with patch.dict(os.environ,environment), patch.object(windows,'connection',return_value=(guest,{'identity':'one'})), \
+             patch.object(windows.subprocess,'run',return_value=SimpleNamespace(returncode=0,stdout=json.dumps(built))), \
+             patch.object(windows,'run',return_value=SimpleNamespace(stdout='fixture-only')), \
+             patch.object(windows,'job',return_value={'state':'succeeded'}), patch.object(windows,'submit') as submit, \
+             patch.object(windows,'wait'):
+            reused=windows.mirror_build_tools(self.ws,'one','utilities')
+            self.assertEqual(reused['operationId'],previous.name)
+            self.assertTrue(reused['reusedVerifiedMirror'])
+            submit.assert_not_called()
+            job['guestIdentity']='another'; original.write_text(json.dumps(job))
+            fresh=windows.mirror_build_tools(self.ws,'one','utilities')
+            self.assertNotEqual(fresh['operationId'],previous.name)
+            submit.assert_called_once()
+            submit.reset_mock(); job['guestIdentity']='one'; original.write_text(json.dumps(job))
+            tool.write_bytes(b'changed fixture executable')
+            fresh=windows.mirror_build_tools(self.ws,'one','utilities')
+            self.assertNotEqual(fresh['operationId'],previous.name)
+            submit.assert_called_once()
+
+    def artifact(self, members):
+        archive = self.root / "artifact.zip"
+        files = []
+        with zipfile.ZipFile(archive, "w") as zipped:
+            for path, content in members:
+                zipped.writestr(path, content)
+                files.append({"path": path, "size": len(content), "sha256": __import__("hashlib").sha256(content).hexdigest()})
+        return archive, files
+
+    def kernel_fixture(self):
+        image = bytearray(1024)
+        image[:2] = b'MZ'; struct.pack_into('<I', image, 60, 64)
+        image[64:68] = b'PE\0\0'
+        struct.pack_into('<HH', image, 68, 0x8664, 2)
+        struct.pack_into('<H', image, 84, 240)
+        struct.pack_into('<H', image, 88, 0x20b)
+        struct.pack_into('<Q', image, 112, 0x140000000)
+        struct.pack_into('<I', image, 144, 0x4000)
+        struct.pack_into('<II', image, 240, 0x3000, 12)
+        image[328:333] = b'.text'
+        struct.pack_into('<IIII', image, 336, 16, 0x1000, 16, 512)
+        struct.pack_into('<I', image, 364, 0x60000020)
+        image[368:374] = b'.reloc'
+        struct.pack_into('<IIII', image, 376, 12, 0x3000, 12, 768)
+        struct.pack_into('<I', image, 404, 0x42000040)
+        struct.pack_into('<Q', image, 512, 0x140001234)
+        image[520:528] = b'code1234'
+        struct.pack_into('<IIHH', image, 768, 0x1000, 12, 0xa000, 0)
+        return image
+
+    def test_kernel_mapping_normalizes_relocations_and_detects_replaced_sys(self):
+        original = self.kernel_fixture()
+        relocated = bytearray(original[512:528])
+        base = 0xfffff80100000000
+        struct.pack_into('<Q', relocated, 0, base+0x1234)
+        def read(rva, size, section):
+            return original[:size] if rva == 0 else relocated
+        result = windows.mapped_kernel_identity(original, base, read)
+        self.assertEqual(result['state'], 'mapped-code-matches')
+        changed = bytearray(original); changed[525] ^= 1
+        self.assertEqual(windows.mapped_kernel_identity(changed, base, read)['state'], 'stale-mapped-image')
+        with self.assertRaises(Failure):
+            windows.mapped_kernel_identity(original, base, lambda *args: b'')
+
+    def test_kernel_mapping_refuses_unsupported_executable_relocations(self):
+        image = self.kernel_fixture()
+        struct.pack_into('<H', image, 776, 0x3000)
+        with self.assertRaises(Failure):
+            windows.mapped_kernel_identity(image, 0xfffff80100000000,
+                lambda rva,size,section: image[:size] if rva == 0 else image[512:528])
+
+    def test_archive_complete_table_and_resume_preserve_existing_files(self):
+        archive, files = self.artifact([("package/test.dll", b"image"), ("licenses/NOTICE", b"notice")])
+        destination = self.root / "export" / "files"
+        windows.extract_artifact(archive, destination, files)
+        image = destination / "package/test.dll"
+        original = image.stat().st_mtime_ns
+        windows.extract_artifact(archive, destination, files)
+        self.assertEqual(image.stat().st_mtime_ns, original)
+        image.write_bytes(b"manual drift")
+        with self.assertRaises(Failure):
+            windows.extract_artifact(archive, destination, files)
+        self.assertEqual(image.read_bytes(), b"manual drift")
+
+    def test_windows_archive_separators_match_canonical_file_table(self):
+        archive, files = self.artifact([(r"package\test.dll", b"image")])
+        files[0]["path"] = "package/test.dll"
+        destination = self.root / "files"
+        windows.extract_artifact(archive, destination, files)
+        self.assertEqual((destination / "package/test.dll").read_bytes(), b"image")
+
+    def test_source_links_materialize_without_cycles_or_escape(self):
+        source = self.root / "source"
+        (source / "bin").mkdir(parents=True)
+        (source / "bin/tool.py").write_text("build source")
+        (source / "ci").mkdir()
+        (source / "ci/bin").symlink_to("../bin", target_is_directory=True)
+        files, links = windows.windows_source_files(source)
+        self.assertEqual({path for path, _ in files}, {"bin/tool.py", "ci/bin/tool.py"})
+        self.assertEqual(links, [{"path": "ci/bin", "target": "../bin", "materialized": "directory"}])
+        (source / "bin/cycle").symlink_to("..", target_is_directory=True)
+        with self.assertRaises(Failure):
+            windows.windows_source_files(source)
+        (source / "bin/cycle").unlink()
+        (source / "outside").symlink_to(self.root, target_is_directory=True)
+        with self.assertRaises(Failure):
+            windows.windows_source_files(source)
+
+    def test_archive_table_errors_fail_before_publishing(self):
+        for members, table in [
+            ([("../escape", b"x")], [{"path": "safe", "size": 1, "sha256": "0"*64}]),
+            ([("safe", b"x"), ("unexpected", b"x")], [{"path": "safe", "size": 1, "sha256": "0"*64}]),
+            ([("safe", b"x")], [{"path": "missing", "size": 1, "sha256": "0"*64}]),
+            ([("safe", b"x"), ("SAFE", b"x")], [{"path": "safe", "size": 1, "sha256": "0"*64}]),
+            ([("safe", b"x")], [{"path": "safe", "size": 2, "sha256": "0"*64}]),
+        ]:
+            archive, _ = self.artifact(members)
+            destination = self.root / "files"
+            with self.subTest(members=members), self.assertRaises(Failure):
+                windows.extract_artifact(archive, destination, table)
+            self.assertFalse(destination.exists())
+
+    def test_archive_corruption_retains_partial_outside_artifact(self):
+        archive, files = self.artifact([("package/test.dll", b"wrong")])
+        files[0]["sha256"] = "0"*64
+        destination = self.root / "export" / "files"
+        with self.assertRaises(Failure):
+            windows.extract_artifact(archive, destination, files)
+        self.assertFalse((destination / "package/test.dll").exists())
+        self.assertEqual(len(list(destination.parent.glob("artifact.partial-*"))), 1)
+        self.assertEqual(list(destination.rglob("*dll")), [])
+
+    def test_archive_and_destination_symlinks_are_refused(self):
+        archive, files = self.artifact([("package/test.dll", b"image")])
+        destination = self.root / "export" / "files"
+        destination.mkdir(parents=True)
+        external = self.root / "external"
+        external.mkdir()
+        (destination / "package").symlink_to(external, target_is_directory=True)
+        with self.assertRaises(Failure):
+            windows.extract_artifact(archive, destination, files)
+        self.assertEqual(list(external.iterdir()), [])
+        link = zipfile.ZipInfo("package/test.dll")
+        link.create_system = 3
+        link.external_attr = (0o120777 << 16)
+        with zipfile.ZipFile(archive, "w") as zipped:
+            zipped.writestr(link, b"image")
+        with self.assertRaises(Failure):
+            windows.extract_artifact(archive, self.root / "symlink-export", files)
 
 
 if __name__ == "__main__":

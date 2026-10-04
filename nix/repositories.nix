@@ -84,8 +84,24 @@ in
         };
       };
     dxil-spirv =
-      nested "dxil-spirv" "${heliosRoot}/vkd3d-proton-helios/subprojects/dxil-spirv" [ ] "vkd3d-proton"
-        "subprojects/dxil-spirv";
+      (nested "dxil-spirv" "${heliosRoot}/vkd3d-proton-helios/subprojects/dxil-spirv" [ ] "vkd3d-proton"
+        "subprojects/dxil-spirv"
+      )
+      // {
+        submodules = {
+          mode = "selected";
+          paths = [
+            "third_party/spirv-headers"
+            "subprojects/dxbc-spirv"
+          ];
+          nested = [
+            {
+              parent = "subprojects/dxbc-spirv";
+              path = "submodules/spirv_headers";
+            }
+          ];
+        };
+      };
     # Current gitlink ownership is Helios. Stage 7 moves it to Mesa together
     # with the build consumers and the layout version, as requested.
     venus-protocol =
@@ -94,7 +110,18 @@ in
     winboat = repo "winboat" "repos/winboat" [ ];
     WBFreeRDP = repo "WBFreeRDP" "repos/WBFreeRDP" [ ];
     electron = repo "electron" "repos/electron" [ ];
-    clvk-helios = repo "clvk-helios" "repos/clvk-helios" [ ];
+    clvk-helios = (repo "clvk-helios" "repos/clvk-helios" [ ]) // {
+      submodules = {
+        mode = "selected";
+        paths = [
+          "external/clspv"
+          "external/OpenCL-Headers"
+          "external/SPIRV-Headers"
+          "external/SPIRV-LLVM-Translator"
+          "external/SPIRV-Tools"
+        ];
+      };
+    };
   };
   subsets = rec {
     helios = [
