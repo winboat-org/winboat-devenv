@@ -6,7 +6,11 @@ limitation. This restores the original scaffold request. An MSVC ABI requirement
 alone is not such a limitation. Native candidate evidence below remains valid
 for those artifacts, but does not establish that cross-compilation is impossible.
 The corrected no-symbol native CLVK retry was cancelled before compilation at
-the user's direction; host cross backend and symbol-policy validation are pending.
+the user's direction; component cross backends and symbol-policy validation are pending.
+The [MSVC cross foundation](../evidence/stage-04-msvc-cross.json) now passed:
+locked Linux Clang/LLD and the existing verified EWDK build static-CRT x64/x86
+C++ executables, both of which also ran successfully in Windows. This proves
+the toolchain, while complete dependency builds and Stage 4 acceptance remain pending.
 
 Stage 4 is now in progress. Start continuation with
 [Windows control](../windows-control.md) and the

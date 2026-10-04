@@ -55,6 +55,12 @@ in
     export WB_LIVE_COMMAND=${commands.wb}/bin/wb
     exec ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python3 ${../tests/windows-live.py} "$@"
   '';
+  scripts.wb-msvc-cross-live.exec = ''
+    ${commands.environment}
+    exec ${
+      pkgs.python3.withPackages (ps: [ ps.pyyaml ])
+    }/bin/python3 ${../tests/msvc-cross-live.py} "$@"
+  '';
   scripts.wb-windows-check.exec = ''
     exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
   '';

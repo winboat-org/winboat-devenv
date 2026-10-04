@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "stage": 4,
+  "state": "foundation-passed-component-builds-pending",
+  "buildPolicy": "Host cross-compilation first; devbox builds require a concrete documented blocker.",
+  "compiler": "Locked Linux Clang/LLD 22.1.8, targeting the MSVC ABI with static CRT",
+  "sysroot": {
+    "derivation": "/nix/store/xc7rcvc22zx9nk0lmhzbykvr63ila2v6-winboat-msvc-14.44.35207-sdk-10.0.26100.0-sysroot.drv",
+    "output": "/nix/store/0g7ycyr5k2l69720v9lhj3wx1wccz60p-winboat-msvc-14.44.35207-sdk-10.0.26100.0-sysroot",
+    "ewdkSha256": "9f48251dd24ad31aac206d8256e95bda5f90a9783982c45a8aafeb9054562379",
+    "msvcToolset": "14.44.35207",
+    "sdkDirectory": "10.0.26100.0",
+    "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408"
+  },
+  "probe": {
+    "derivation": "/nix/store/q3hkgfdkq134wzkgy3gba0w3wmd5bzfp-winboat-msvc-cross-x64-x86-probe.drv",
+    "output": "/nix/store/r9q0rjca2ql55zvi56lx7y7h4j0114kq-winboat-msvc-cross-x64-x86-probe",
+    "hostBuildState": "passed",
+    "architectureAndStaticCrtChecks": "passed",
+    "windowsOperationId": "op-aa11bb4022f9470ba4fc865c3e9ec0fc",
+    "windowsExecution": "verified transfer followed by durable SYSTEM task from a local job directory",
+    "windowsRuntimeState": "passed",
+    "results": [
+      { "architecture": "x64", "pointerBits": 64, "result": 42 },
+      { "architecture": "x86", "pointerBits": 32, "result": 42 }
+    ]
+  },
+  "localChecks": "devenv test passed",
+  "limitations": [
+    "The probe proves the MSVC cross toolchain foundation, not CLVK or other dependency builds.",
+    "Full component cross-build, installation and loaded-state Stage 4 acceptance remain pending."
+  ]
+}

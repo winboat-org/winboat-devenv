@@ -72,6 +72,14 @@ artifact collection, export hashing and compression. PDBs inside a preserved
 package directory return through its complete directory copy; other PDBs are
 collected separately, avoiding a second copy over packaged symbols.
 
+The [MSVC cross foundation](evidence/stage-04-msvc-cross.json) passed Linux
+compilation/linking and Windows execution for x64 and x86 C++ executables using
+the locked EWDK headers and static CRT. `nix/msvc-sysroot.nix` extracts those
+inputs from the already verified provisioning payload; its header overlay and
+library aliases accommodate Windows case-insensitive lookup on Linux. Component
+cross backends still need their own build and runtime acceptance. Select devbox
+compilation only after documenting a concrete cross-compilation blocker.
+
 DXVK and vkd3d have measured native x64/x86 backends. Windows WIDL is built by
 the locked Nixpkgs MinGW compiler and mirrored with its matching headers. vkd3d
 enumerates seven required archives; its core archive already contains the full
