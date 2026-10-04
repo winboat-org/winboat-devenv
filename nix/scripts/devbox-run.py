@@ -147,15 +147,17 @@ nvram = state / 'nvram.fd'
 if not nvram.exists():
     raise RuntimeError('NVRAM must be initialized by wb devbox create')
 qemu = stack / 'bin/qemu-system-x86_64'
-command = [str(qemu), '-name', 'WB-DEVBOX', '-machine', 'q35,accel=kvm,smm=on',
+command = [str(qemu), '-name', 'WB-DEVBOX', '-machine', 'q35,accel=kvm,smm=on,memory-backend=wb-ram',
            '-cpu', 'host', '-smp', str(settings['cpus']), '-m', str(settings['memoryMiB']),
+           '-object', 'memory-backend-memfd,id=wb-ram,share=on,size=' + str(settings['memoryMiB']) + 'M',
            '-L', str(firmware), '-nodefaults', '-no-user-config',
            '-drive', 'if=pflash,format=raw,readonly=on,file=' + str(firmware / 'edk2-x86_64-secure-code.fd'),
            '-drive', 'if=pflash,format=raw,file=/state/nvram.fd',
            '-drive', 'if=none,id=os,format=qcow2,file=/state/disk.qcow2',
            '-device', 'ich9-ahci,id=ahci', '-device', 'ide-hd,drive=os,bus=ahci.0',
            '-chardev', 'socket,id=tpm,path=/state/tpm.sock', '-tpmdev', 'emulator,id=tpm,chardev=tpm',
-           '-device', 'tpm-tis,tpmdev=tpm', '-device', 'virtio-vga-gl',
+           '-device', 'tpm-tis,tpmdev=tpm',
+           '-device', 'virtio-vga-gl,id=wb-gpu,blob=on,venus=on,hostmem=8G,max_hostmem=8G',
            '-display', 'egl-headless,rendernode=' + settings['renderNode'],
            '-vnc', '0.0.0.0:0', '-qmp', 'unix:/state/qmp.sock,server=on,wait=off',
            '-device', 'qemu-xhci', '-device', 'usb-tablet',
@@ -209,6 +211,27 @@ with (state / 'qemu.log').open('a') as log:
                         if 'return' in response:
                             identity['qmp'] = response['return']
                             break
+                    # Observe the actual device contract required by Helios,
+                    # rather than inferring it from the launcher arguments.
+                    identity['guestGraphics'] = {}
+                    for path, property_name, expected_value in [
+                        ('/machine/peripheral/wb-gpu', 'blob', True),
+                        ('/machine/peripheral/wb-gpu', 'venus', True),
+                        ('/machine/peripheral/wb-gpu', 'hostmem', 8 * 1024**3),
+                        ('/objects/wb-ram', 'share', True),
+                    ]:
+                        request = {'execute': 'qom-get', 'arguments': {'path': path, 'property': property_name}}
+                        stream.write(json.dumps(request).encode() + b'\n'); stream.flush()
+                        while True:
+                            response = json.loads(stream.readline())
+                            if 'error' in response:
+                                raise RuntimeError('Helios graphics property observation failed: ' + str(response))
+                            if 'return' in response:
+                                actual_value = response['return']
+                                if actual_value != expected_value:
+                                    raise RuntimeError('Helios graphics property differs: ' + property_name)
+                                identity['guestGraphics'][property_name] = actual_value
+                                break
                     stream.close()
                 # Only the initial installation boot receives keys. Later starts
                 # boot the persistent disk and cannot replay an unattended wipe.
