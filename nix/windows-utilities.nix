@@ -22,6 +22,9 @@ let
 in
 pkgs.runCommand "winboat-windows-utilities" { nativeBuildInputs = [ pkgs.unzip ]; } ''
   mkdir -p $out/bin $out/python $out/share/licenses
+  cp ${
+    pkgs.writeText "python-environment.json" (builtins.toJSON { PYTHONDONTWRITEBYTECODE = "1"; })
+  } $out/environment.json
   unzip -q ${cmake} -d cmake
   cp -r cmake/cmake-4.0.3-windows-x86_64/. $out/
   unzip -q ${parsers} -d parsers

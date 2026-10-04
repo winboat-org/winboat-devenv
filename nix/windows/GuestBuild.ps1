@@ -1,5 +1,7 @@
 param([Parameter(Mandatory)][string]$Specification)
 . (Join-Path $env:WINBOAT_CONTROL_ROOT 'Control.ps1')
+# Python generators must leave verified source and utility mirrors unchanged.
+$env:PYTHONDONTWRITEBYTECODE='1'
 $spec = Get-Content -Raw -LiteralPath $Specification | ConvertFrom-Json
 $sourceRoot = Assert-ControlPath $spec.sourceRoot 'C:\WinBoatDev\src'
 $buildRoot = Assert-ControlPath $spec.buildRoot 'C:\WinBoatDev\build'
@@ -12,6 +14,11 @@ $prerequisites = @(if ($spec.PSObject.Properties.Name -contains 'prerequisites')
 foreach ($prerequisite in $prerequisites) {
     $root = Assert-ControlPath $prerequisite.root 'C:\WinBoatDev\src'
     Assert-ControlTree $root $prerequisite.files
+    if($prerequisite.kind -eq 'utilities') {
+        $environment=Read-ControlJson (Join-Path $root 'environment.json')
+        if($environment.PYTHONDONTWRITEBYTECODE -ne '1') {throw 'Python utility mirror must disable bytecode writes'}
+        $env:PYTHONDONTWRITEBYTECODE=$environment.PYTHONDONTWRITEBYTECODE
+    }
     if (-not $prerequisite.PSObject.Properties['kind'] -or $prerequisite.kind -eq 'widl') {
         $env:PATH = (Join-Path $root 'bin') + ';' + $env:PATH
     }

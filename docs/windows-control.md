@@ -102,6 +102,10 @@ the original Git/NAR snapshot identity and a separate link table. Escaping links
 cycles and Windows path aliases fail before transfer. WinFlexBison runs with a
 private temporary directory per invocation so concurrent generators cannot share
 its fixed intermediate filenames.
+Python generators disable bytecode writes through the declared utility input
+and the shared build environment. An extra cache file still fails the complete
+input-tree check; retries use a fresh utility closure instead of permitting or
+removing unexpected files from a previously verified mirror.
 
 The [retained acceptance evidence](evidence/stage-04-control.json) records real
 clean-pinned DXVK x64 through CLI and x86 through MCP, with matching returned
