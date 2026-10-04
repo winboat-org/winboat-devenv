@@ -6,14 +6,14 @@
   schemaVersion = 1;
   repositories = {
     helios = {
-      rev = "59181c06c9b4c8b54d09071f06fb702213a8cb6b";
+      rev = "5617cf5cdd7a548ea96f54e93c7163a57268d685";
       ref = "refs/heads/master";
-      provenance = "stage-04-cross-local-unpublished";
+      provenance = "stage-04-egl-local-unpublished";
     };
     qemu-helios = {
-      rev = "2544a0bb2b11992fe31d043961ed507fe581f31f";
+      rev = "e81b51e1188a39e7041c4e06117b6bdf45becdd1";
       ref = "refs/heads/helios-11.1.1";
-      provenance = "stage-03-local-unpublished";
+      provenance = "stage-04-egl-local-unpublished";
     };
     dxvk = {
       rev = "e73ee9d0da9628e5f444b2e002e0079fd96ae3d3";
