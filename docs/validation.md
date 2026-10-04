@@ -244,5 +244,10 @@ another task reads them. Native candidate failures and retries remain retained.
 preserved. Different existing capacities and invalid values were refused.
 The earlier guest's disk and Windows recovery partition remain intact after
 clean shutdown. The per-guest override leaves local defaults and both locks
-unchanged; Windows provisioning and full-stack acceptance on this guest are
-still pending.
+unchanged. This guest subsequently passed all 14 installed-tool probes,
+autologin and the signed fixture load after its signing reboot. PowerShell's
+same-version MSI repair left update settings enabled and was refused by the
+postcheck. A preserved-MSI reinstall verified the product opt-out, unchanged
+executable hash and unchanged global update-service identities/flags. An MCP
+repeat then left those settings intact without running MSI maintenance.
+Full-stack build/install/loaded acceptance remains pending.

@@ -194,6 +194,11 @@ cached provisioning success cannot hide a later tool update. The scoped
 preserves the previous package, and restores the selected version. Its MSI
 options opt this product out of Microsoft Update without changing the machine's
 global update configuration; see the [publisher's option definitions](https://learn.microsoft.com/en-us/powershell/scripting/install/microsoft-update-faq?view=powershell-7.6).
+When the installed version already matches, it repairs the exact MSI's update
+options if necessary. If repair retains the installed update component, it
+reinstalls that preserved product with the selected MSI. Receipts retain the
+product settings and global update service identities before and after;
+an ineffective opt-out fails verification.
 
 The mapped-image reader compares executable sections with the selected DLL,
 normalizing PE base relocations. A replaced file can report `stale-mapped-image`

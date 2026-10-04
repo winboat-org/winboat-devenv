@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "stage": 4,
-  "status": "creation-capacity-verified",
+  "status": "creation-capacity-and-baseline-verified",
   "guestIdentity": "0cc110b3acc843639a93f8fd6d41e193",
   "diskGiB": 512,
   "hostManifestSha256": "e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1",
@@ -19,6 +19,32 @@
     "testCount": 60,
     "powershellAndCsharpChecks": "passed"
   },
+  "windowsBaseline": {
+    "phase": "verified",
+    "verifiedTools": 14,
+    "signedFixtureDriverLoaded": true,
+    "effectiveTestSigning": true,
+    "certificateThumbprint": "2E9B7C4079FFC951D678F8AC3793745618532D3F",
+    "requestedReboots": 2,
+    "startupTaskRuns": 3,
+    "recordedProvisioningFailures": 0,
+    "automaticLogin": "LSA secret; enabled; local account password nonexpiring"
+  },
+  "powerShellMaintenance": {
+    "desiredVersion": "7.6.0",
+    "msiSha256": "ce60d76319739b52b281c744144cd8e942aed9cda02483ce9bd732e140f75982",
+    "executableSha256BeforeAndAfter": "7851e9d67e141bcebc0cc37086579fde0b5f0a47297bd2d446eace5d4b8e75c1",
+    "retainedIneffectiveRepairOperation": "op-d11200397f414fc29512c7959d732255",
+    "ineffectiveRepairExitCode": 1,
+    "verifiedPreservedMsiReinstallOperation": "op-52a9fa0cb186430e9a0dc565560c823f",
+    "mcpUnchangedSettingsRepeatOperation": "op-e39fbc79a67b405cb6b3075d79f1d7bd",
+    "effectiveUseMuValue": null,
+    "savedUseMu": "0",
+    "savedEnableMu": "0",
+    "globalUpdateServiceIdentitiesAndFlagsUnchanged": true,
+    "originalMsiPreserved": true,
+    "rebootRequired": false
+  },
   "preservation": {
     "previousGuestCleanShutdown": true,
     "previousDiskAndRecoveryPartitionRetained": true,
@@ -27,7 +53,7 @@
     "locksChanged": false
   },
   "limits": [
-    "Creation capacity and CLI/MCP retry guards are verified; the new guest's Windows baseline is pending.",
+    "Creation capacity, CLI/MCP retry guards and the new guest's Windows baseline are verified.",
     "Complete clean stack builds, installation and loaded graphics acceptance remain pending."
   ]
 }
