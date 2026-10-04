@@ -6,6 +6,7 @@ $spec = Get-Content -Raw -LiteralPath $Specification | ConvertFrom-Json
 $sourceRoot = Assert-ControlPath $spec.sourceRoot 'C:\WinBoatDev\src'
 $buildRoot = Assert-ControlPath $spec.buildRoot 'C:\WinBoatDev\build'
 $snapshot = Get-Content -Raw -LiteralPath (Join-Path $sourceRoot '.winboat-snapshot.json') | ConvertFrom-Json
+Write-Output ("WinBoat build: verifying source tree ({0} files)" -f @($snapshot.files).Count)
 Assert-ControlTree $sourceRoot $snapshot.files
 $inventory = Get-Content -Raw -LiteralPath 'C:\ProgramData\WinBoatDev\provisioning.json' | ConvertFrom-Json
 if ($inventory.phase -ne 'verified' -or $inventory.lockSha256 -ne $spec.provisionLockSha256) { throw 'Guest provisioning inventory is not the selected verified toolchain' }
@@ -13,6 +14,7 @@ Import-ControlBuildEnvironment $spec.architecture
 $prerequisites = @(if ($spec.PSObject.Properties.Name -contains 'prerequisites') {$spec.prerequisites})
 foreach ($prerequisite in $prerequisites) {
     $root = Assert-ControlPath $prerequisite.root 'C:\WinBoatDev\src'
+    Write-Output ("WinBoat build: verifying {0} prerequisite ({1} files)" -f $prerequisite.kind,@($prerequisite.files).Count)
     Assert-ControlTree $root $prerequisite.files
     if($prerequisite.kind -eq 'utilities') {
         $environment=Read-ControlJson (Join-Path $root 'environment.json')
@@ -25,6 +27,7 @@ foreach ($prerequisite in $prerequisites) {
 }
 foreach($dependency in $spec.componentDependencies) {
     $root=Assert-ControlPath $dependency.root 'C:\WinBoatDev\build'
+    Write-Output ("WinBoat build: verifying {0} dependency ({1} files)" -f $dependency.target,@($dependency.files).Count)
     Assert-ControlTree $root $dependency.files
 }
 $env:LIBCLANG_PATH = 'C:\WinBoatDev\tools\LLVM\bin'
@@ -49,6 +52,7 @@ if (@($prerequisites | Where-Object { -not $_.PSObject.Properties['kind'] -or $_
     $toolchain['widl.exe'] = @{path=$widl.Source;sha256=(Get-FileHash $widl.Source -Algorithm SHA256).Hash.ToLower();version=$version}
 }
 New-Item -ItemType Directory -Path $buildRoot -Force | Out-Null
+Write-Output ("WinBoat build: executing {0}" -f $spec.target)
 foreach ($command in $spec.commands) {
     $program = $command[0]
     $arguments = @($command | Select-Object -Skip 1)
@@ -56,6 +60,7 @@ foreach ($command in $spec.commands) {
     if ($LASTEXITCODE) { exit $LASTEXITCODE }
 }
 $output = Join-Path $buildRoot 'artifact'
+Write-Output 'WinBoat build: collecting artifacts, symbols and notices'
 New-Item -ItemType Directory -Path $output | Out-Null
 $images = @()
 foreach ($relative in $spec.outputs) {
@@ -100,7 +105,20 @@ foreach ($source in $spec.sources.PSObject.Properties) {
         'The source snapshot has no declared root/protocol license. Distribution requires owner license clarification.' | Set-Content (Join-Path $destination 'NOTICE')
     }
 }
-Get-ChildItem $buildRoot -Recurse -File -Filter '*.pdb' | Where-Object { -not $_.FullName.StartsWith($output + '\') } | ForEach-Object {
+$preservedDirectories = @(if ($spec.PSObject.Properties['preserveDirectories']) {
+    foreach ($relative in $spec.preserveDirectories) {
+        Assert-ControlPath (Join-Path $buildRoot $relative) $buildRoot
+    }
+})
+Get-ChildItem $buildRoot -Recurse -File -Filter '*.pdb' | Where-Object {
+    if ($_.FullName.StartsWith($output + '\', [StringComparison]::OrdinalIgnoreCase)) { return $false }
+    foreach ($directory in $preservedDirectories) {
+        # The complete directory copy below retains these exact PDBs. Avoid
+        # copying large symbol files individually and then overwriting them.
+        if ($_.FullName.StartsWith($directory + '\', [StringComparison]::OrdinalIgnoreCase)) { return $false }
+    }
+    return $true
+} | ForEach-Object {
     $relative=$_.FullName.Substring($buildRoot.Length+1)
     $destination=Join-Path $output $relative
     New-Item -ItemType Directory -Path (Split-Path $destination -Parent) -Force | Out-Null
@@ -134,11 +152,15 @@ if ($spec.target -match '^helios-guest-') {
     }
 }
 $toolchain | ConvertTo-Json -Depth 12 | Set-Content (Join-Path $output 'toolchain.json') -Encoding UTF8
-$files = @(Get-ChildItem $output -Recurse -File | Sort-Object FullName | ForEach-Object {
+$exportFiles = @(Get-ChildItem $output -Recurse -File | Sort-Object FullName)
+Write-Output ("WinBoat build: hashing export ({0} files)" -f $exportFiles.Count)
+$files = @($exportFiles | ForEach-Object {
     @{path=$_.FullName.Substring($output.Length+1).Replace('\','/');sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower();size=$_.Length}
 })
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive=Join-Path $buildRoot 'artifact.zip'
+Write-Output 'WinBoat build: compressing verified export'
 [IO.Compression.ZipFile]::CreateFromDirectory($output,$archive,[IO.Compression.CompressionLevel]::Optimal,$false)
 $archiveFile=Get-Item $archive
+Write-Output ("WinBoat build: hashing archive ({0} bytes)" -f $archiveFile.Length)
 Write-ControlJson @{schemaVersion=1;operationId=$spec.operationId;sourceRoot=$sourceRoot;buildRoot=$buildRoot;output=$output;files=$files;toolchain=$toolchain;archive=@{path=$archive;sha256=(Get-FileHash $archive -Algorithm SHA256).Hash.ToLower();size=$archiveFile.Length};state='built';installed=$false;loaded=$false} (Join-Path $env:WINBOAT_JOB_ROOT 'build-result.json')

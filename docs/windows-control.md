@@ -67,6 +67,10 @@ commands as a durable SYSTEM task. It returns hash/size-verified archives,
 available PDBs, tool observations and license notices in manifest schema 1.
 `build verify` checks the returned export. `--collect` resumes interrupted host
 artifact collection from a succeeded guest build without compiling again.
+Guest stdout reports source/prerequisite/dependency verification, execution,
+artifact collection, export hashing and compression. PDBs inside a preserved
+package directory return through its complete directory copy; other PDBs are
+collected separately, avoiding a second copy over packaged symbols.
 
 DXVK and vkd3d have measured native x64/x86 backends. Windows WIDL is built by
 the locked Nixpkgs MinGW compiler and mirrored with its matching headers. vkd3d
