@@ -26,9 +26,9 @@
       provenance = "stage-02-local-unpublished";
     };
     mesa-helios = {
-      rev = "8d653f8eeae01750ccad377ce68216823ea998fb";
+      rev = "4aa49189a28ab25e83012d093e5c7b38185304a5";
       ref = "refs/heads/main";
-      provenance = "stage-02-local-unpublished";
+      provenance = "explicit-verified-pin";
     };
     vkd3d-proton = {
       rev = "e9468e1b6d71fbe7a45013f2bb28b8b611758caa";
