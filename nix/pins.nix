@@ -31,9 +31,9 @@
       provenance = "stage-02-local-unpublished";
     };
     vkd3d-proton = {
-      rev = "56bc6cfcf1fc36c2ce213d903d04591077abc52f";
+      rev = "2771ebe5db3fa01bb716b2856864921ab4e0f213";
       ref = "refs/heads/master";
-      provenance = "stage-02-local-unpublished";
+      provenance = "explicit-verified-pin";
     };
     dxil-spirv = {
       rev = "f4651bd076a2613728823ec289abc121a348a48a";
