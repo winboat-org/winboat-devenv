@@ -286,5 +286,21 @@
         }
       }
     ]
+  },
+  "priorInventoryFixture": {
+    "operationId": "op-28d6edbfc3464d1384ebc4355bf97aea",
+    "state": "succeeded",
+    "exitCode": 0,
+    "principal": "NT AUTHORITY\\SYSTEM",
+    "sessionId": 0,
+    "bootTime": "2026-10-04T09:27:59.5000000Z",
+    "checks": {
+      "state": "passed",
+      "originalBytesRetained": true,
+      "originalAbsenceRetained": true,
+      "changedPathsRefused": true,
+      "schemaVersion": 1,
+      "changedBackupRefused": true
+    }
   }
 }

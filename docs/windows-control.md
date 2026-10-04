@@ -155,6 +155,10 @@ preserves prior registry/legacy install snapshots and invokes that exact legacy
 package installer as SYSTEM, retaining its unattended/reboot protocol. It does
 not compile an installer or assemble a release bundle. Full-stack execution of
 this path remains an acceptance gate.
+The transaction journals original file existence as well as snapshot hashes.
+Resume verifies retained backups and never treats state created by the first
+installation attempt as a prior installation. The native recovery fixture
+checks original bytes, original absence and changed-backup/path refusal.
 
 `--fixture` accepts a manifest with `fixtureId` and a hashed `fixture.dll`, scoped
 to `C:\WinBoatDev\fixtures\<fixtureId>` and its matching registry key. It supports

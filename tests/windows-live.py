@@ -144,6 +144,7 @@ class Acceptance:
         workspace = Workspace(self.root, {"stateRoot": self.args.state_root})
         for script, result_name, inputs in [
             ('WindowsTreeFixture.ps1', 'tree-fixture.json', {}),
+            ('WindowsPriorInventoryFixture.ps1', 'prior-inventory-fixture.json', {}),
             ('WindowsSnapshotFixture.ps1', 'snapshot-fixture-result.json',
              {'Snapshot.ps1': Path(os.environ['WB_DEVBOX_PAYLOADS'])/'Snapshot.ps1'}),
         ]:

@@ -15,10 +15,8 @@ try {
     Assert-ControlFile $spec.archive $spec.archiveSha256 $spec.archiveSize
     # Before any installation side effect preserve actual inventory and legacy
     # rollback snapshots. Resume never replaces the original restore point.
-    foreach($path in @('C:\ProgramData\WinBoatDev\stack-registry.json','C:\ProgramData\Helios\install-state.json')) {
-        $backup=Join-Path $transaction ([IO.Path]::GetFileName($path)+'.prior')
-        if((Test-Path $path) -and -not (Test-Path $backup)) {Copy-Item -LiteralPath $path -Destination $backup}
-    }
+    Save-ControlPriorInventory $state $transaction $statePath @(
+        'C:\ProgramData\WinBoatDev\stack-registry.json','C:\ProgramData\Helios\install-state.json')
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     if(-not (Test-Path $bundle)) {[IO.Compression.ZipFile]::ExtractToDirectory($spec.archive,$bundle)}
     $manifestPath=Join-Path $bundle 'manifest.json'

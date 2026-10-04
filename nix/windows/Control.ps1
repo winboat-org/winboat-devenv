@@ -50,6 +50,38 @@ function Assert-ControlFile([string]$Path, [string]$Sha256, [long]$Size) {
     if ($file.Length -ne $Size -or (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLower() -ne $Sha256) { throw "Verified file changed: $Path" }
 }
 
+function Save-ControlPriorInventory($State, [string]$Transaction, [string]$StatePath, [string[]]$Paths) {
+    if ($State.PSObject.Properties['priorInventory']) {
+        if (@($State.priorInventory).Count -ne $Paths.Count -or
+            @(Compare-Object @($State.priorInventory | ForEach-Object path) $Paths).Count) {
+            throw 'Resume inventory paths differ from the original transaction'
+        }
+        foreach ($prior in $State.priorInventory) {
+            if ($prior.existed) {
+                [void](Assert-ControlPath $prior.backup $Transaction)
+                Assert-ControlFile $prior.backup $prior.sha256 $prior.size
+            }
+        }
+        return
+    }
+    $inventory = @()
+    foreach ($path in $Paths) {
+        $backup = Assert-ControlPath (Join-Path $Transaction ([IO.Path]::GetFileName($path)+'.prior')) $Transaction
+        $existed = Test-Path -LiteralPath $path -PathType Leaf
+        $hash = $null; $size = 0
+        if ($existed) {
+            [void](Assert-ControlPath $path (Split-Path $path -Parent))
+            $hash = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLower()
+            $size = (Get-Item -LiteralPath $path).Length
+            if (-not (Test-Path -LiteralPath $backup)) { Copy-Item -LiteralPath $path -Destination $backup }
+            Assert-ControlFile $backup $hash $size
+        } elseif (Test-Path -LiteralPath $backup) { throw 'Unjournaled prior inventory conflicts with an absent original file' }
+        $inventory += @{path=$path;existed=[bool]$existed;backup=$backup;sha256=$hash;size=$size}
+    }
+    $State | Add-Member NoteProperty priorInventory $inventory
+    Write-ControlJson $State $StatePath
+}
+
 function Assert-ControlTree([string]$Directory,$Files) {
     [void](Assert-ControlPath $Directory (Split-Path $Directory -Parent))
     foreach($child in Get-ChildItem -LiteralPath $Directory -Directory -Recurse -Force) {
