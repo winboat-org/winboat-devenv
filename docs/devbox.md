@@ -46,6 +46,13 @@ the guest's durable inventory over key-authenticated SSH. Its `verified` phase
 requires the tool probes, a signing reboot, effective BCD and signed fixture load.
 An incomplete provision lock or failed native installer cannot produce that phase.
 
+For large native compiler builds and repeated acceptance runs, choose capacity
+when creating the guest: `create --disk-gib 512` (MCP `devbox_create.diskGiB`).
+The bounded range is 64–2048 GiB; the configured default remains 128 GiB.
+The override belongs to that named guest and does not change local defaults.
+An existing guest refuses a different explicit capacity. Create a new named
+guest to preserve the previous disk and its Windows recovery partition.
+
 The default image selection prefers Enterprise/EnterpriseS. `--edition` or
 `devbox.edition` selects an exact edition ID; non-Enterprise selection also
 requires an explicit image index.

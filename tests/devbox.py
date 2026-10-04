@@ -49,6 +49,14 @@ class DevboxTests(unittest.TestCase):
             devbox.load(self.ws, "one")
 
     def test_unattended_identity_image_partition_and_escaped_password(self):
+        config = {"diskGiB": 128, "cpus": 4, "memoryMiB": 8192}
+        self.assertEqual(devbox.creation_resources(config), (128, 4, 8192))
+        self.assertEqual(devbox.creation_resources(config, 512), (512, 4, 8192))
+        self.assertEqual(config["diskGiB"], 128)
+        self.assertEqual(devbox.creation_resources({}), (128, 4, 8192))
+        for size in [True, 63, 2049, "512"]:
+            with self.subTest(size=size), self.assertRaises(Failure):
+                devbox.creation_resources(config, size)
         root = ET.fromstring(devbox.answer_xml('example<&"secret', 2, "en-US"))
         ns = {"u": "urn:schemas-microsoft-com:unattend"}
         self.assertEqual(root.find(".//u:ComputerName", ns).text, "WB-DEVBOX")

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "stage": 4,
+  "status": "creation-capacity-verified",
+  "guestIdentity": "0cc110b3acc843639a93f8fd6d41e193",
+  "diskGiB": 512,
+  "hostManifestSha256": "e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1",
+  "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+  "cliCreateJob": "op-0867d0615ece4987b382781a61325c9f",
+  "cliCreateOperation": "op-241fe1acbc0c4707b7562109444d1cd5",
+  "mcp": {
+    "boundedIntegerSchema": true,
+    "invalidCapacityRefusedBeforeExecution": true,
+    "differentExistingCapacityRefused": true,
+    "sameCapacityRetryPreservedIdentity": true
+  },
+  "localValidation": {
+    "devenvTest": "passed",
+    "testCount": 60,
+    "powershellAndCsharpChecks": "passed"
+  },
+  "preservation": {
+    "previousGuestCleanShutdown": true,
+    "previousDiskAndRecoveryPartitionRetained": true,
+    "existingGuestsResized": false,
+    "localDefaultsChanged": false,
+    "locksChanged": false
+  },
+  "limits": [
+    "Creation capacity and CLI/MCP retry guards are verified; the new guest's Windows baseline is pending.",
+    "Complete clean stack builds, installation and loaded graphics acceptance remain pending."
+  ]
+}

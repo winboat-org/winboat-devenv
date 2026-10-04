@@ -427,6 +427,15 @@ def allocate_ports(ws, directory, config):
     return result
 
 
+def creation_resources(config, disk_gib=None):
+    disk_gib = config.get("diskGiB", 128) if disk_gib is None else disk_gib
+    cpus, memory = config.get("cpus", 4), config.get("memoryMiB", 8192)
+    if any(type(value) is not int or value < lower or value > upper for value, lower, upper in
+           [(disk_gib, 64, 2048), (cpus, 2, 128), (memory, 4096, 524288)]):
+        raise Failure("invalid devbox disk/cpu/memory limits", 2)
+    return disk_gib, cpus, memory
+
+
 def create(ws, args, operation_id):
     config = dict(settings(ws))
     if getattr(args, "runtime", None):
@@ -442,11 +451,7 @@ def create(ws, args, operation_id):
     selected = media(ws, iso, args.iso_sha256 or config.get("isoSha256"), args.index, args.edition or config.get("edition"), args.locale)
     provision = provision_lock(ws)
     directory = location(ws, args.name)
-    disk_gib = config.get("diskGiB", 128)
-    cpus, memory = config.get("cpus", 4), config.get("memoryMiB", 8192)
-    if any(type(value) is not int or value < lower or value > upper for value, lower, upper in
-           [(disk_gib, 64, 2048), (cpus, 2, 128), (memory, 4096, 524288)]):
-        raise Failure("invalid devbox disk/cpu/memory limits", 2)
+    disk_gib, cpus, memory = creation_resources(config, getattr(args, "disk_gib", None))
     with locked(ws.state / "locks/devboxes.lock"):
         owner_id = owner(ws, create=True)
         if (directory / "devbox.json").exists():
@@ -455,6 +460,8 @@ def create(ws, args, operation_id):
             retained_runtime = record.get('runtime', {}).get('kind') or record.get('runtimePreference', {}).get('containerRuntime')
             if requested_runtime and requested_runtime != retained_runtime:
                 raise Failure('existing devbox has another runtime selection; use a new name', 2)
+            if getattr(args, "disk_gib", None) is not None and record["diskGiB"] != disk_gib:
+                raise Failure("existing devbox has another disk capacity; use a new name", 2)
             for key, argument in [('renderNode', 'render_node'), ('graphicsProvider', 'graphics_provider'), ('cdiDevice', 'cdi_device')]:
                 requested = getattr(args, argument, None)
                 if requested and requested != record.get('graphicsPreference', {}).get(key):

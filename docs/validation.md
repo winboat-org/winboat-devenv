@@ -238,3 +238,11 @@ The Windows input fixtures also passed full-tree integrity checks, extraction
 and resumed repair, extra-file/junction refusal and shared control publication.
 Concurrent control jobs reuse verified scripts instead of reopening them while
 another task reads them. Native candidate failures and retries remain retained.
+
+[Creation capacity evidence](evidence/stage-04-capacity.json) records a fresh
+512 GiB guest prepared through CLI and retried through MCP with its identity
+preserved. Different existing capacities and invalid values were refused.
+The earlier guest's disk and Windows recovery partition remain intact after
+clean shutdown. The per-guest override leaves local defaults and both locks
+unchanged; Windows provisioning and full-stack acceptance on this guest are
+still pending.

@@ -119,6 +119,7 @@ def parser():
             command.add_argument("--edition")
             command.add_argument("--locale", default="en-US")
         if name == "create":
+            command.add_argument("--disk-gib", type=int)
             command.add_argument("--runtime", choices=["docker", "podman"])
             command.add_argument("--render-node")
             command.add_argument("--graphics-provider", choices=["auto", "mesa", "nvidia-cdi"])

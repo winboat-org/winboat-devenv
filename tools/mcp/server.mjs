@@ -52,6 +52,7 @@ const definitions = [
     { iso: string, isoSha256: { type: 'string', pattern: '^[0-9a-f]{64}$' }, index: { type: 'integer', minimum: 1 }, edition: string, locale: string }, ['iso']],
   ['devbox_create', 'Prepare an isolated devbox; start is explicit and execution uses shared Nix operations.', ['devbox', 'create'],
     { name: string, iso: string, isoSha256: { type: 'string', pattern: '^[0-9a-f]{64}$' }, manifest: string,
+      diskGiB: { type: 'integer', minimum: 64, maximum: 2048 },
       runtime: { type: 'string', enum: ['docker', 'podman'] },
       renderNode: string, graphicsProvider: { type: 'string', enum: ['auto', 'mesa', 'nvidia-cdi'] }, cdiDevice: string,
       index: { type: 'integer', minimum: 1 }, edition: string, locale: string, start: bool, background: bool }],
@@ -102,7 +103,7 @@ function command(tool, args) {
     configuration: '--configuration', mode: '--mode', plan: '--plan', manifest: '--manifest',
     iso: '--iso', isoSha256: '--iso-sha256', index: '--index', edition: '--edition', locale: '--locale',
     start: '--start', confirm: '--confirm', rebuildImage: '--rebuild-image', force: '--force', runtime: '--runtime', timeout: '--timeout',
-    renderNode: '--render-node', graphicsProvider: '--graphics-provider', cdiDevice: '--cdi-device' };
+    renderNode: '--render-node', graphicsProvider: '--graphics-provider', cdiDevice: '--cdi-device', diskGiB: '--disk-gib' };
   Object.assign(flags, { purpose: '--purpose', script: '--script', direct: '--direct', resume: '--resume', rollback: '--rollback', collect: '--collect', fixture: '--fixture', failureAfterCopy: '--failure-after-copy', transaction: '--transaction' });
   for (const [key, value] of Object.entries(args)) {
     if (key === 'background') continue;
