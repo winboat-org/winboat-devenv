@@ -6,9 +6,9 @@
   schemaVersion = 1;
   repositories = {
     helios = {
-      rev = "93bb6e4afbd1153d6e8b875d8fa144a8bec4d80a";
+      rev = "82c9ebfb1b529648a6f212a0123f1c237eedc6da";
       ref = "refs/heads/master";
-      provenance = "stage-03-local-unpublished";
+      provenance = "explicit-verified-pin";
     };
     qemu-helios = {
       rev = "2544a0bb2b11992fe31d043961ed507fe581f31f";
