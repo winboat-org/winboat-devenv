@@ -173,6 +173,9 @@ agree across the repeats; installed and loaded bytes must match each repeat's
 own artifact manifest. This mode is implemented but full live acceptance is
 still pending. It uses host cross builds for seven dependency targets and the
 documented Windows WDK backend for primary Helios.
+The suite also performs a final activation reboot after installation succeeds:
+automatic provisioning can install the replacement during the earlier removal
+reboot, and OpenGL's adapter registration takes effect in a subsequent boot.
 The input fixtures verify whole-tree hashes, missing/extra files, escaping paths
 and junction refusal, then exercise snapshot extraction and resumed repair.
 

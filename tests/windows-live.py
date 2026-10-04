@@ -157,6 +157,19 @@ class Acceptance:
                     'devbox', 'install', '--name', self.args.name, '--resume', transaction, allowed=(0, 3010, 1641))
                 assert installed['result']['bootTime'] != boot, installed
             assert installed['exitCode'] == 0, installed
+            # Automatic provisioning may have installed the replacement during
+            # the removal reboot. Activate those new display/ICD registrations
+            # in a subsequent boot before measuring the loaded graphics stack.
+            execute('stack-activation-restart', 'devbox_restart', {'name': self.args.name, 'timeout': 180},
+                    'devbox', 'restart', '--name', self.args.name, '--timeout', '180')
+            for _ in range(60):
+                status = (self.tool('devbox_job_status', {'name': self.args.name, 'id': transaction}) if via_mcp else
+                          self.cli('stack-activation-reconnect', 'devbox', 'job', 'status', '--name', self.args.name, '--id', transaction))
+                if status.get('result', {}).get('operationId') == transaction:
+                    break
+                time.sleep(5)
+            else:
+                raise AssertionError('Full-stack guest reconnect failed after activation reboot')
             smoke = execute('stack-smoke', 'devbox_smoke', {'name': self.args.name, 'transaction': transaction},
                             'devbox', 'smoke', '--name', self.args.name, '--transaction', transaction)
             graphics = smoke['result']
