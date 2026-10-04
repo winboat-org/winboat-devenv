@@ -95,7 +95,11 @@ Pass repeated `--dependency-manifest <artifact-manifest>` arguments to select
 already verified builds explicitly; omitted dependencies build through the same
 recipes. MCP exposes the equivalent `dependencyManifests` array. Selection checks
 the guest identity, source revisions, configuration and required outputs, then
-the guest rechecks every artifact byte. The returned install manifest is
+the shared guest wrapper verifies dependency trees and the bytes consumed by
+the package. PDBs remain in their original component artifacts and are referenced
+by manifest identity; packaging checks their tree/size metadata without copying
+or rehashing them. The composer does not repeat the wrapper's content check.
+The returned install manifest is
 `files/bundle/manifest.json`. This development bundle preserves the legacy
 installer contract; the prebuilt installer migration remains a later stage.
 

@@ -20,6 +20,11 @@ if (Test-Path (Join-Path $Directory 'Control.ps1')) {
         $actual = Invoke-ControlPayload $fixture @('-Value',$value,'-Seconds','480','-Flag') | ConvertFrom-Json
         if ($actual.value -cne $value -or $actual.seconds -ne 480 -or -not $actual.flag) { throw 'Encoded payload argument binding changed data' }
         Write-Host 'Verified literal script argument binding'
+        Write-ControlJson @() $fixture
+        if (([IO.File]::ReadAllText($fixture)).Trim() -ne '[]') { throw 'Empty JSON array lost its shape' }
+        Write-ControlJson @(@{path='one'}) $fixture
+        if (([IO.File]::ReadAllText($fixture)).TrimStart()[0] -ne '[') { throw 'Single JSON array lost its shape' }
+        Write-Host 'Verified empty and single-element JSON arrays'
     } finally { Remove-Item -LiteralPath $fixture -Force }
 }
 

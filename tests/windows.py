@@ -82,6 +82,19 @@ class WindowsTests(unittest.TestCase):
                 windows.wait(self.ws, "one", "op-"+"a"*32)
             self.assertEqual(error.exception.code, 3010)
 
+    def test_empty_image_receipt_recovers_package_without_accepting_native_outputs(self):
+        path = self.root / 'images.json'
+        path.write_bytes(b'')
+        self.assertEqual(windows.read_image_inspections(path, 'helios-development-package', ['bundle/manifest.json']), [])
+        self.assertEqual(path.read_bytes(), b'')
+        for target, outputs in [('helios-guest-x64', ['package/driver.sys']),
+                                ('helios-development-package', ['package/driver.sys'])]:
+            with self.subTest(target=target), self.assertRaises(Failure) as error:
+                windows.read_image_inspections(path, target, outputs)
+            self.assertEqual(error.exception.code, 74)
+        path.write_text('[]')
+        self.assertEqual(windows.read_image_inspections(path, 'helios-development-package', ['bundle/manifest.json']), [])
+
     def test_full_install_refuses_incomplete_package_before_guest_side_effects(self):
         files = []
         for name in ['Install-Helios.ps1','Uninstall-Helios.ps1','Verify-Helios.ps1','Helios-PackageCommon.ps1']:

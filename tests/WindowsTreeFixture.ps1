@@ -27,5 +27,23 @@ New-Item -ItemType Directory -Path $outside | Out-Null
 New-Item -ItemType Junction -Path (Join-Path $root 'linked') -Target $outside | Out-Null
 Assert-Refused 'junction' {Assert-ControlTree $root @($file)}
 $refused+='junction'
-Write-ControlJson @{schemaVersion=1;state='passed';verifiedOriginal=$true;refused=$refused} (Join-Path $env:WINBOAT_JOB_ROOT 'tree-fixture.json')
+$symbolRoot=Join-Path $build 'separate-symbols'
+New-Item -ItemType Directory -Path $symbolRoot | Out-Null
+$runtime=Join-Path $symbolRoot 'runtime.dll'
+$symbol=Join-Path $symbolRoot 'runtime.pdb'
+[IO.File]::WriteAllText($runtime,'runtime bytes')
+[IO.File]::WriteAllText($symbol,'symbol bytes')
+$symbolFiles=@(Get-ChildItem $symbolRoot -File | ForEach-Object {
+    @{path=$_.Name;sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower();size=$_.Length}
+})
+[IO.File]::WriteAllText($symbol,'unused bytes')
+Assert-Refused 'strict-symbol-hash' {Assert-ControlTree $symbolRoot $symbolFiles}
+Assert-ControlTree $symbolRoot $symbolFiles -SkipSymbolHashes
+[IO.File]::WriteAllText($runtime,'changed bytes')
+Assert-Refused 'runtime-hash-with-separate-symbols' {Assert-ControlTree $symbolRoot $symbolFiles -SkipSymbolHashes}
+[IO.File]::WriteAllText($runtime,'runtime bytes')
+[IO.File]::WriteAllText($symbol,'different-sized symbol')
+Assert-Refused 'symbol-size' {Assert-ControlTree $symbolRoot $symbolFiles -SkipSymbolHashes}
+$refused+=@('strict-symbol-hash','runtime-hash-with-separate-symbols','symbol-size')
+Write-ControlJson @{schemaVersion=1;state='passed';verifiedOriginal=$true;separateSymbolPolicy=$true;refused=$refused} (Join-Path $env:WINBOAT_JOB_ROOT 'tree-fixture.json')
 @{state='passed';refused=$refused}|ConvertTo-Json -Compress

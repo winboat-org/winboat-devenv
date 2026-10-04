@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 
 function Write-ControlJson($Value, [string]$Path) {
     $temporary = $Path + '.' + [Guid]::NewGuid().ToString('N') + '.tmp'
-    [IO.File]::WriteAllText($temporary, ($Value | ConvertTo-Json -Depth 30), [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText($temporary, (ConvertTo-Json -InputObject $Value -Depth 30), [Text.UTF8Encoding]::new($false))
     try {
         for ($attempt = 0; $attempt -lt 40; $attempt++) {
             try {
@@ -82,7 +82,7 @@ function Save-ControlPriorInventory($State, [string]$Transaction, [string]$State
     Write-ControlJson $State $StatePath
 }
 
-function Assert-ControlTree([string]$Directory,$Files) {
+function Assert-ControlTree([string]$Directory,$Files,[switch]$SkipSymbolHashes) {
     [void](Assert-ControlPath $Directory (Split-Path $Directory -Parent))
     foreach($child in Get-ChildItem -LiteralPath $Directory -Directory -Recurse -Force) {
         if($child.Attributes -band [IO.FileAttributes]::ReparsePoint) {throw 'Reparse point in verified input tree'}
@@ -92,7 +92,15 @@ function Assert-ControlTree([string]$Directory,$Files) {
         if(-not $expected.Add($file.path.Replace('/','\'))) {throw 'Duplicate input tree file'}
         $path=[IO.Path]::GetFullPath((Join-Path $Directory $file.path))
         if(-not $path.StartsWith($Directory.TrimEnd('\')+'\',[StringComparison]::OrdinalIgnoreCase)) {throw 'Verified input path escaped its tree'}
-        Assert-ControlFile $path $file.sha256 $file.size
+        if($SkipSymbolHashes -and [IO.Path]::GetExtension($path) -eq '.pdb') {
+            # A runtime package references the retained component symbols but
+            # neither consumes nor copies their bytes. Keep exact tree/size
+            # checks without rehashing those unused debugging artifacts.
+            $actual=Get-Item -LiteralPath $path -Force
+            if(($actual.Attributes -band [IO.FileAttributes]::ReparsePoint) -or $actual.Length -ne $file.size) {
+                throw "Retained symbol metadata changed: $path"
+            }
+        } else {Assert-ControlFile $path $file.sha256 $file.size}
     }
     foreach($file in Get-ChildItem -LiteralPath $Directory -File -Recurse -Force) {
         $relative=$file.FullName.Substring($Directory.Length+1)

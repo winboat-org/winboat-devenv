@@ -486,6 +486,7 @@ def build(ws, name, target, configuration, mode, operation_id, dependency_manife
                      "commands": commands, "outputs": recipe["outputs"], "outputArchitectures": recipe.get("outputArchitectures", {}),
                      "prerequisites": prerequisites, "componentDependencies": component_dependencies,
                      "preserveDirectories": recipe.get("preserveDirectories", []),
+                     "symbolStorage": recipe.get("symbolStorage", "artifact"),
                      "provisionLockSha256": observed["lockSha256"]}
     local = ws.state / "windows-builds" / operation_id
     write_json(local / "build.json", specification)
@@ -553,6 +554,26 @@ def extract_artifact(archive, destination, files):
                 if path.is_symlink() or not path.is_file() or digest(path) != file["sha256"] or path.stat().st_size != file["size"]:
                     raise Failure("artifact collection refuses a concurrent divergent file", 74)
             partial.unlink()
+
+
+def read_image_inspections(path, target, outputs):
+    if not path.exists():
+        return []
+    text = path.read_text(encoding="utf-8-sig")
+    # The earlier PowerShell writer enumerated an empty array into no output.
+    # Package-only builds have no directly declared native image to inspect.
+    # Retain that original file and recover its collection without rebuilding.
+    native = {".a", ".lib", ".dll", ".sys", ".exe"}
+    if not text.strip() and target == "helios-development-package" and not any(
+            Path(output).suffix.lower() in native for output in outputs):
+        return []
+    try:
+        images = json.loads(text)
+    except ValueError as error:
+        raise Failure("invalid Windows image inspection receipt", 74, path=str(path)) from error
+    if not isinstance(images, list):
+        raise Failure("Windows image inspection receipt must be an array", 74, path=str(path))
+    return images
 
 
 def collect_build(ws, name, operation_id, receipt, plan, local, sources, configuration, mode):
@@ -627,7 +648,7 @@ def collect_build(ws, name, operation_id, receipt, plan, local, sources, configu
                 "componentDependencies": json.loads((local / "build.json").read_text()).get("componentDependencies", []),
                 "state": "built", "installed": False, "loaded": False}
     images_path = export / "files" / "images.json"
-    manifest["images"] = json.loads(images_path.read_text(encoding="utf-8-sig")) if images_path.exists() else []
+    manifest["images"] = read_image_inspections(images_path, plan["target"], plan["dispatch"]["outputs"])
     manifest["imageVerification"] = "architecture-and-crt-inspected" if manifest["images"] else "unavailable-in-earlier-operation"
     manifest["embeddedSymbols"] = [file["path"] for file in manifest["images"] if file.get("embeddedCodeView")]
     manifest["recipe"] = {"rootRevision": git(ws.root, "rev-parse", "HEAD").stdout.strip(),

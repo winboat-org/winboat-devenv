@@ -25,10 +25,12 @@ foreach ($prerequisite in $prerequisites) {
         $env:PATH = (Join-Path $root 'bin') + ';' + $env:PATH
     }
 }
+$separateSymbols=$spec.PSObject.Properties['symbolStorage'] -and $spec.symbolStorage -eq 'component-artifacts'
+if($separateSymbols -and $spec.target -ne 'helios-development-package') {throw 'Separate symbol references require a package build'}
 foreach($dependency in $spec.componentDependencies) {
     $root=Assert-ControlPath $dependency.root 'C:\WinBoatDev\build'
     Write-Output ("WinBoat build: verifying {0} dependency ({1} files)" -f $dependency.target,@($dependency.files).Count)
-    Assert-ControlTree $root $dependency.files
+    Assert-ControlTree $root $dependency.files -SkipSymbolHashes:$separateSymbols
 }
 $env:LIBCLANG_PATH = 'C:\WinBoatDev\tools\LLVM\bin'
 $env:RUSTUP_TOOLCHAIN = 'nightly-2026-07-14'
