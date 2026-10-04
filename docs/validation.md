@@ -209,7 +209,7 @@ The local suite passes 59 tests plus PowerShell parsing, mapped-image C#
 compilation and literal argument binding. Live tests are opt-in and excluded
 from ordinary CI. Earlier failures are retained, including an x86 shader tool
 loading a 32-bit CRT into its 64-bit process and a receipt reader sharing race;
-corrected runs passed. Full KMD/UMD/Mesa/CLVK build/install, kernel loaded-image
+corrected runs passed. Clean full-stack build/install, kernel loaded-image
 identity and interactive graphics smoke remain pending. Registry verification
 returns code 76 for that incomplete gate. No stage approval or publication is
 claimed; the original development VM and external source trees are preserved.
@@ -217,7 +217,12 @@ claimed; the original development VM and external source trees are preserved.
 [The native checkpoint](evidence/stage-04-native.json) records clean-pinned
 vkd3d x64 through CLI and x86 through MCP: seven static engine/shader archives,
 native architecture and static CRT checks, generated headers, two PDBs and
-15 license notices per architecture. Native UMD x86 returned both DLLs, fresh
+15 license notices per architecture. The complete Helios candidate returned
+its test-signed KMD SYS/INF/CAT, all four UMD DLLs, 176 PDBs and 481 license
+notices. Matched Inf2Cat passed without errors or warnings, and all five native
+images passed architecture/static CRT inspection. This development snapshot
+predates the local recipe checkpoint; clean pinned repeats are still required.
+Native UMD x86 returned both DLLs, fresh
 bindgen output and 56 PDBs, using a recorded development snapshot. Existing
 compiler and stale cached-binding warnings were retained; fresh native layout
 assertions remained enabled. The baseline signing fixture's kernel `.text`

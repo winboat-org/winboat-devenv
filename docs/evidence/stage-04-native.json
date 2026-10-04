@@ -223,6 +223,94 @@
       },
       "installed": false,
       "loaded": false
+    },
+    {
+      "target": "helios-guest-x64",
+      "manifest": "out/guest/op-1fc4308694d44fa5bf16135743fe2fc9/manifest.json",
+      "manifestSha256": "285d9af70c37cebd40ae71c77c279c62fcd2b4bd0f5dce6085d1a583a12fad4d",
+      "operationId": "op-1fc4308694d44fa5bf16135743fe2fc9",
+      "mode": "development",
+      "configuration": "release",
+      "files": 672,
+      "licenses": 481,
+      "pdbFiles": 176,
+      "images": [
+        {
+          "staticCrtVerified": true,
+          "path": "package/helios_umd32.dll",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/helios_umd12_32.dll",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/helios_umd.dll",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/helios_umd12.dll",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "package/helios_kmd_render.sys",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        }
+      ],
+      "sources": {
+        "helios": {
+          "revision": "b84ed182ba68974cb495b53bad74200409d6367f",
+          "diffSha256": "f6e6e1d2bd149085c6c4b596dc03c8ed627930fac674405b834fbbed85f827ce",
+          "snapshotSha256": "8cd369f4875d2b2e61c19e354750d736e1a345bba7acadc44ec6f5175e5cbc7d",
+          "narHash": "sha256-Gzh64aAcUfJt05dov2wKKsFxZ+WCXlQnh28RbNdhaoc=",
+          "untracked": [
+            "nix/Build-Guest.ps1",
+            "nix/Package-Guest.ps1"
+          ]
+        },
+        "dxvk": {
+          "revision": "8587b949ef80dc4f5a00450ab8ce5e4cd404e3aa",
+          "diffSha256": null,
+          "snapshotSha256": "2b0be8f7ed2a33b6b46e6e01f89c348ee22b6490e828530717958054032f243c",
+          "narHash": "sha256-uCtFWNqLnH0jVBYLIBvGXVD7ekc3N9UOxDGIoSYDets=",
+          "untracked": []
+        },
+        "vkd3d-proton": {
+          "revision": "e9468e1b6d71fbe7a45013f2bb28b8b611758caa",
+          "diffSha256": null,
+          "snapshotSha256": "a36039c5e8234f3fe5762542c739f010bce0199fe05be5b555ab82cbad2b9f9e",
+          "narHash": "sha256-9Mu6B7Hcg/z+VlNVqnD0VMj5V7D3N8QngK/YEU97EmY=",
+          "untracked": []
+        },
+        "dxil-spirv": {
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "diffSha256": null,
+          "snapshotSha256": "855461b94b76b099a53fc26adcb21f2d4c9a9ecc0320dd563d5bc39eec6baa66",
+          "narHash": "sha256-XolWbgNvzZSegN2cEKLFc6QiAn3NlVUl7Ahg8STPVoE=",
+          "untracked": []
+        }
+      },
+      "installed": false,
+      "loaded": false,
+      "notes": [
+        "KMD SYS/CAT and all four UMD variants built; matched Inf2Cat completed without errors or warnings.",
+        "Existing Rust compiler and cached-binding warnings are retained; fresh bindgen layout assertions remain enabled.",
+        "Development snapshot predates local recipe commit 1df7213584808457f044de925d66d26359542215; clean pinned stack acceptance remains pending."
+      ]
     }
   ],
   "kernelFixture": {
@@ -253,7 +341,7 @@
   "limits": [
     "UMD x86 is a development source snapshot, with fresh bindgen layout assertions enabled and existing compiler/cached-binding warnings retained.",
     "Kernel evidence concerns the Stage 3 independent signing fixture. Helios loaded identity is not established.",
-    "Full x64 KMD/UMD, Mesa and CLVK native acceptance, clean CLI/MCP stack repeats and installation remain pending.",
+    "Mesa and CLVK native acceptance, clean CLI/MCP stack repeats, full installation and loaded identities remain pending.",
     "All checkpoints and pins remain local and unpublished."
   ],
   "inputFixtures": {
