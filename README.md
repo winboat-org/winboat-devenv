@@ -27,6 +27,12 @@ vendor-generated CDI. The host supplies its graphics driver and device access;
 the workspace supplies the toolkit and hooks. See [devbox usage](docs/devbox.md)
 and [validation](docs/validation.md) for runtime-specific checks and limits.
 
+The Stage 4 QEMU EGL fallback crash is fixed and the task-owned acceptance guest
+has explicitly upgraded to the new clean host artifact. Its startup verified
+loaded host images and NVIDIA Vulkan availability; isolated-overlay health and
+shutdown passed. Fresh CLI/MCP full-stack graphics checks are still pending.
+See [runtime evidence](docs/evidence/stage-04-runtime.json).
+
 ## Start here
 
 Install Git, Nix and devenv using their official instructions; no distro or

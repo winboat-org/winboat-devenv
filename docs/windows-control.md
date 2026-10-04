@@ -103,9 +103,9 @@ prepared Stage 3 provisioning lock. CLVK's LLVM/Clang dependencies use optimized
 code without debug information; the recipe checks their actual compile commands
 and requires zero compiler PDBs in `package/llvm-symbol-policy.json`. CLVK and
 loader runtime symbols remain in their component artifacts.
-Mesa's cross candidate uses the existing clang-cl
+Mesa's cross build uses the existing clang-cl
 compatibility path with `/MT`, regenerates the paired Venus headers, and retains
-them in its artifact. Full candidate acceptance remains pending.
+them in its artifact. Full loaded-stack acceptance remains pending.
 
 `helios-development-package` assembles the existing script-driven development
 bundle from Helios x64 (including its four UMDs), Mesa x64/x86 and CLVK/loaders.
@@ -171,7 +171,8 @@ transaction after required reboots, and checks 12 mapped DLLs, 13 interactive
 graphics workloads and the actual resident kernel code. Source identities must
 agree across the repeats; installed and loaded bytes must match each repeat's
 own artifact manifest. This mode is implemented but full live acceptance is
-still pending. It requires all selected native backends to pass their gates.
+still pending. It uses host cross builds for seven dependency targets and the
+documented Windows WDK backend for primary Helios.
 The input fixtures verify whole-tree hashes, missing/extra files, escaping paths
 and junction refusal, then exercise snapshot extraction and resumed repair.
 

@@ -18,6 +18,13 @@ loads passed for CLVK and both loader architectures. The primary driver relink
 and zero-PDB bundle composition passed; clean release repeats and full
 installation/graphics checks remain pending;
 see [cross evidence](../evidence/stage-04-cross.json).
+The host EGL fallback crash was reproduced and fixed. An isolated disk overlay
+passed Helios/PnP and interactive desktop health plus zero-exit shutdown; it did
+not establish visual acceptance. The task-owned acceptance guest explicitly
+upgraded its stopped QEMU artifact while retaining the previous image/closure
+and guest identity. New startup verified loaded host images and NVIDIA Vulkan
+availability. Fresh CLI/MCP installation and graphics repeats remain pending;
+see [runtime evidence](../evidence/stage-04-runtime.json).
 Prerequisites: Stages 2 and 3.
 
 ## Outcome

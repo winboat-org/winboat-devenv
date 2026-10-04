@@ -15,6 +15,10 @@ Host MSVC cross builds now pass for DXVK, vkd3d and Mesa x64/x86, plus CLVK,
 loaders and probes. CLVK retains runtime symbols while LLVM/Clang generate none.
 Verified Windows imports and CLVK/loader DLL loads passed; full stack graphics
 acceptance remains pending. See [cross evidence](../evidence/stage-04-cross.json).
+The QEMU EGL fallback fix passed isolated-overlay boot and shutdown diagnostics.
+The acceptance guest's explicit host upgrade verified loaded images and native
+Vulkan availability; fresh CLI/MCP full-stack checks remain pending. See
+[runtime evidence](../evidence/stage-04-runtime.json).
 
 | Stage | Scope | Prerequisites | Status |
 | --- | --- | --- | --- |

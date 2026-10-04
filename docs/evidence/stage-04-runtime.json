@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "stage": 4,
+  "state": "runtime-diagnostic-passed",
+  "observedAt": "2026-10-04T18:39:13.731225+00:00",
+  "fullComponentAcceptance": false,
+  "crash": {
+    "signal": "SIGABRT",
+    "hostPid": 1607210,
+    "stack": [
+      "abort",
+      "egl_provider_resolver",
+      "epoxy_eglCreateImageKHR",
+      "egl_dmabuf_import_texture",
+      "egl_scanout_dmabuf",
+      "virtio_gpu_update_dmabuf",
+      "virgl_cmd_set_scanout_blob"
+    ],
+    "diagnosis": "The EGL fallback entered libepoxy without a current EGL context after the Vulkan import attempt.",
+    "corePreserved": true,
+    "symbolizedBacktrace": {
+      "path": "docs/user/stage04-qemu-crash-symbolized.log",
+      "sha256": "c688524a22a21904a90eb8d4c22ee7d42dd6b2347f8cf87a0b081d559143efdb"
+    },
+    "probeWithoutContext": {
+      "path": "docs/user/stage04-egl-context-released-2.json",
+      "sha256": "59ac2ca4b250d7890a2047f193b8eedb25e1844508986871aa6e96dff83a3eb7",
+      "exitCode": 139
+    },
+    "probeWithContext": {
+      "path": "docs/user/stage04-egl-context-bound-2.json",
+      "sha256": "5de4440c3515c169e8c5cfe5a19fade31e6142f032136cb6172c27c6f50afdea",
+      "exitCode": 0,
+      "eglError": "0x300c"
+    },
+    "fix": "Bind the display context again before EGL fallback and restore actual caller context state on exit."
+  },
+  "diagnosticOverlay": {
+    "originalDiskMountedReadOnly": true,
+    "separateNvramAndTpm": true,
+    "health": {
+      "path": "docs/user/stage04-egl-diagnostic-2-windows-health.json",
+      "sha256": "561ff86fde2b8626cb3a3cce39393cc4195c055f24c07ff655cf44e2e1a868c3"
+    },
+    "video": [
+      {
+        "Name": "Helios vGPU",
+        "Status": "OK",
+        "ConfigManagerErrorCode": 0,
+        "CurrentHorizontalResolution": 1280,
+        "CurrentVerticalResolution": 800
+      }
+    ],
+    "desktop": [
+      {
+        "Name": "dwm",
+        "Id": 1196,
+        "SessionId": 1
+      },
+      {
+        "Name": "explorer",
+        "Id": 5004,
+        "SessionId": 1
+      }
+    ],
+    "shutdown": {
+      "path": "docs/user/stage04-egl-diagnostic-2-shutdown.json",
+      "sha256": "1fcf6cd450083790fc805037bebec91dcc89d414142ab85e53c95dfa5c272d11",
+      "exitCode": 0,
+      "containerExitCode": 0
+    },
+    "qmpAcpiOnly": "timed-out",
+    "qmpScreenshot": "no surface",
+    "visualAcceptance": false
+  },
+  "hostMigration": {
+    "operationId": "op-fd2bccc7ed6b455d8e63f107905ae9f0",
+    "state": "prepared",
+    "receipt": {
+      "path": "docs/user/stage04-host-migration-live-result.json",
+      "sha256": "7cfc7038cb76045fcefbf10ed3b951bedf7eac058787c692ca9999974174cf7e"
+    },
+    "guestIdentity": "0cc110b3acc843639a93f8fd6d41e193",
+    "previousManifestSha256": "e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1",
+    "selectedManifest": {
+      "path": "out/native/op-65d4c969d69c4307b2d382bfc1655b84/manifest.json",
+      "sha256": "4c7a1d98775fb253026d536ab8bc575258c82e2fcbb655447489762e5887fb68"
+    },
+    "selectedSources": {
+      "qemu-helios": {
+        "canonicalUrl": "https://github.com/winboat-org/qemu-helios.git",
+        "declaredPin": "e81b51e1188a39e7041c4e06117b6bdf45becdd1",
+        "revision": "e81b51e1188a39e7041c4e06117b6bdf45becdd1",
+        "diffSha256": null,
+        "snapshotSha256": "04e0c8677a336560c1ae8b7d7951b9224d7aed5b50b26f81aa58b6dc81fd46ec",
+        "gitlinks": [
+          {
+            "path": "roms/QemuMacDrivers",
+            "revision": "90c488d5f4a407342247b9ea869df1c2d9c8e266",
+            "materialized": false
+          },
+          {
+            "path": "roms/SLOF",
+            "revision": "47457c9078a217150aa1634f2657e6804fbde467",
+            "materialized": false
+          },
+          {
+            "path": "roms/edk2",
+            "revision": "4dfdca63a93497203f197ec98ba20e2327e4afe4",
+            "materialized": false
+          },
+          {
+            "path": "roms/ipxe",
+            "revision": "4bd064de239dab2426b31c9789a1f4d78087dc63",
+            "materialized": false
+          },
+          {
+            "path": "roms/openbios",
+            "revision": "e5ac46dd24e6216c36aa80462af25457e7029440",
+            "materialized": false
+          },
+          {
+            "path": "roms/opensbi",
+            "revision": "74434f255873d74e56cc50aa762d1caf24c099f8",
+            "materialized": false
+          },
+          {
+            "path": "roms/qboot",
+            "revision": "8ca302e86d685fa05b16e2b208888243da319941",
+            "materialized": false
+          },
+          {
+            "path": "roms/qemu-palcode",
+            "revision": "99d9b4dcf27d7fbcbadab71bdc88ef6531baf6bf",
+            "materialized": false
+          },
+          {
+            "path": "roms/seabios",
+            "revision": "b52ca86e094d19b58e2304417787e96b940e39c6",
+            "materialized": false
+          },
+          {
+            "path": "roms/seabios-hppa",
+            "revision": "6d6a72c218f6bf6b0e0b6a8bd26c5c67ba3ad2e0",
+            "materialized": false
+          },
+          {
+            "path": "roms/skiboot",
+            "revision": "785a5e3070a86e18521e62fe202b87209de30fa2",
+            "materialized": false
+          },
+          {
+            "path": "roms/u-boot",
+            "revision": "840658b093976390e9537724f802281c9c8439f5",
+            "materialized": false
+          },
+          {
+            "path": "roms/u-boot-sam460ex",
+            "revision": "1e5f4a1607cc6713d27ffe48dd9de84e69cfc1c2",
+            "materialized": false
+          },
+          {
+            "path": "roms/vbootrom",
+            "revision": "1c8e9510b22c5b0fd7d7753f08042a4bcbd2939d",
+            "materialized": false
+          },
+          {
+            "path": "tests/lcitool/libvirt-ci",
+            "revision": "5176e136ab11e275eb9f57c3d5c80e77af6507cb",
+            "materialized": false
+          },
+          {
+            "path": "third_party/Vulkan-Headers",
+            "revision": "8864cdc896bbc2a9b6eb36b3218fc9ef57908d77",
+            "materialized": false
+          }
+        ],
+        "untracked": [],
+        "narHash": "sha256-/1xp1UCoiiVIuMSUOeLOSb/EU7Yr/zC78NG0WXYLpX0="
+      },
+      "virglrenderer": {
+        "canonicalUrl": "https://github.com/winboat-org/virglrenderer.git",
+        "declaredPin": "8668479d681f47ade80808c9d3fc1457540d7d58",
+        "revision": "8668479d681f47ade80808c9d3fc1457540d7d58",
+        "diffSha256": null,
+        "snapshotSha256": "15a72bdd05a46a98173bc94160106086fef7b1aae95176c2d332dfe5a576865a",
+        "gitlinks": [],
+        "untracked": [],
+        "narHash": "sha256-jR/ptS1By5/JyzdZ19PurYibw+Q1O37Cyieo4XQpa6c="
+      },
+      "venus-protocol": {
+        "canonicalUrl": "https://github.com/winboat-org/venus-protocol.git",
+        "declaredPin": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+        "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+        "diffSha256": null,
+        "snapshotSha256": "9b3f933fefa680fa5acdd91867b8b57126c63d8b9176053656bb54640d4182fc",
+        "gitlinks": [],
+        "untracked": [],
+        "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s="
+      }
+    },
+    "preserved": [
+      "previous record",
+      "previous image",
+      "complete previous runtime closure",
+      "disk",
+      "NVRAM",
+      "TPM",
+      "SSH keys",
+      "signing identity"
+    ],
+    "unchanged": [
+      "renderer source identity",
+      "Venus protocol source identity",
+      "provisioning lock"
+    ],
+    "upOperationId": "op-0aa4da905a474139a860c64aa1dd9f75",
+    "upReceipt": {
+      "path": "docs/user/stage04-migrated-host-up-result.json",
+      "sha256": "7bba81398c7cd7aa5ef777080b2df51d58e66abe84eb5efcd497545479100468"
+    },
+    "loadedHostVerified": true,
+    "hostStack": "/nix/store/crq7c5xxg8572k5mr3nn0z5am8q29788-winboat-host-stack",
+    "hostVulkan": {
+      "state": "available",
+      "physicalDevices": 1,
+      "apiVersion": 4206592
+    },
+    "guestGraphics": {
+      "blob": true,
+      "venus": true,
+      "hostmem": 8589934592,
+      "share": true
+    }
+  },
+  "compilerCache": {
+    "path": "docs/user/stage04-compiler-cache-proof-2.json",
+    "sha256": "61069a75ae92588b4ddd0d56003eeef09799fb8821512eac5017b066579677fe",
+    "compilerDerivation": "/nix/store/g97hvdmw9dsms7lmnnzjmbs7xrrlakqc-clvk-helios-msvc-cross-compiler-release.drv",
+    "scope": "Evaluation only. Same compiler for baseline, changed Windows payload, and changed Helios documentation. Full artifact remains tied to its source identity."
+  },
+  "localValidation": {
+    "tests": 67,
+    "powerShellAndCSharpChecks": "passed",
+    "log": {
+      "path": "docs/user/stage04-host-migration-local-tests.log",
+      "sha256": "f2d30f1b80e0853f3420f4f0fff88b88d8501a6a166278357e90879afb27d8e2"
+    },
+    "mcpIntegrationTests": 27,
+    "mcpLog": {
+      "path": "docs/user/stage04-host-migration-mcp-tests.log",
+      "sha256": "1f98730b7cab279ec05c0c685c9bf5e390be3237e4317fe1f881360798757cdf"
+    }
+  },
+  "limits": [
+    "Fresh CLI/MCP full-stack installation and graphics acceptance remain pending.",
+    "QMP screenshot returned no surface; no visual acceptance is claimed.",
+    "Source checkpoints and pins remain local and unpublished.",
+    "Original development guest retains its original host artifact."
+  ]
+}

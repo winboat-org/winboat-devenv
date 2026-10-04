@@ -13,8 +13,17 @@ Verified imports and Windows loads of CLVK/OpenCL/both Vulkan loaders passed;
 MCP also selected the host Mesa recipe. These are development snapshots.
 Primary Helios relinking with cross engines and lean composition also passed.
 The install bundle has zero PDBs and 232,427,853 bytes of runtime files; runtime
-symbols remain in component artifacts. Clean pinned repeats, installation and
-loaded-stack graphics acceptance remain pending.
+symbols remain in component artifacts. An earlier clean CLI stack built and
+installed; the fresh CLI/MCP repeats now use the corrected QEMU and parent pins.
+Loaded-stack graphics acceptance remains pending. The QEMU DMA-BUF fallback
+crash was reproduced and fixed with explicit EGL context restoration. An isolated
+disk overlay booted with Helios PnP status 0, an interactive desktop and native
+Vulkan scanout, then shut down with a zero container exit. Its QMP screenshot
+reported `no surface`, so it establishes diagnostic health rather than visual
+acceptance. The task-owned acceptance guest was explicitly migrated to the new
+clean host artifact; its old record, image and full runtime closure remain
+retained. The original development guest remains on its original artifact. See
+[runtime evidence](../evidence/stage-04-runtime.json).
 The pinned windows-drivers-rs build scripts explicitly reject Linux hosts;
 Helios UMD12's Linux path supports checking rather than DLL linking. This
 documented primary-driver build limitation retains the devbox for that build.
@@ -87,18 +96,26 @@ Runtime bindings preserve the original store/daemon identity of each guest.
 Podman import scratch follows the selected state filesystem; Docker's daemon
 needs its own image-load/store capacity. Do not prune unrelated state to retry.
 
-Use the corrected clean release manifest explicitly:
-out/native/op-1c1559be28eb44628591806633633add/manifest.json
-SHA256 e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1
-QEMU 2544a0bb2b11992fe31d043961ed507fe581f31f; parent/pins are local/unpublished.
+Use the current corrected clean release manifest explicitly:
+out/native/op-65d4c969d69c4307b2d382bfc1655b84/manifest.json
+SHA256 4c7a1d98775fb253026d536ab8bc575258c82e2fcbb655447489762e5887fb68
+QEMU e81b51e1188a39e7041c4e06117b6bdf45becdd1;
+Helios parent 5617cf5cdd7a548ea96f54e93c7163a57268d685.
+These pins are local/unpublished. The preceding corrected artifact remains
+retained under op-1c1559be28eb44628591806633633add, SHA256
+e4eb6a4d99d70f1f1d3477168d4cee32ba6d47deb2c8ff9cefabbe4aa1f75cf1.
 EGL resources must be released before GBM destruction. The old Intel artifact
 segfaulted during shutdown; the corrected release's diskless Intel control exits
 normally and 105 QEMU unit tests pass, with three documented skips. A clean
 shutdown now requires an actual zero container exit, not just an SSH/ACPI ack.
 Verified guests use authenticated SSH shutdown; timeout preserves a running VM.
-The original development VM retains the old artifact. Use a new named guest for
-the corrected artifact/private NVIDIA path until an explicit verified migration
-exists, and preserve the original disk, keys and signing identity.
+The original development VM retains the old artifact. A new named guest remains
+the default for a changed host stack. Explicit `wb devbox migrate-host` now
+supports a stopped, owned guest's QEMU-only upgrade: it requires a clean release
+manifest, unchanged renderer/protocol pairing, retained old image/closure and
+successful image preparation before selecting the new artifact. It preserves
+disk, NVRAM, TPM, keys and signing identity; startup must independently prove
+loaded images. This path was used only for the task-owned acceptance guest.
 
 The exact Stage 2 host-stack manifest/closure is retained, including QEMU,
 renderer/server, seven GL module images, firmware/data, headers, symbols,
