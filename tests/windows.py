@@ -4,6 +4,9 @@ import os
 from pathlib import Path
 import tempfile
 import struct
+import shutil
+import subprocess
+from contextlib import nullcontext
 from types import SimpleNamespace
 import unittest
 import zipfile
@@ -211,6 +214,33 @@ class WindowsTests(unittest.TestCase):
         with self.assertRaises(Failure):
             windows.windows_source_files(source)
 
+    def test_release_dependency_refuses_stale_pin_and_new_worktree_changes(self):
+        repository = self.root/'repository'
+        repository.mkdir()
+        def git(*arguments):
+            return subprocess.check_output(['git', '-C', str(repository), *arguments], text=True)
+        git('init', '-q')
+        (repository/'source.txt').write_text('source')
+        git('add', 'source.txt')
+        git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'fixture')
+        revision = git('rev-parse', 'HEAD').strip()
+        workspace = SimpleNamespace(paths={'fixture': repository}, repos={'fixture': {'pin': {'rev': revision}}},
+                                    repo_locks=lambda sources: nullcontext())
+        manifest = {'sources': {'fixture': {'revision': revision}}}
+        with patch.dict(os.environ, {'WB_REAL_GIT': shutil.which('git')}):
+            windows.validate_dependency_sources(workspace, manifest, 'release')
+            (repository/'source.txt').write_text('changed')
+            with self.assertRaises(Failure):
+                windows.validate_dependency_sources(workspace, manifest, 'release')
+            windows.validate_dependency_sources(workspace, manifest, 'development')
+            git('checkout', '--', 'source.txt')
+            (repository/'untracked.txt').write_text('new source')
+            with self.assertRaises(Failure):
+                windows.validate_dependency_sources(workspace, manifest, 'release')
+            (repository/'untracked.txt').unlink()
+            workspace.repos['fixture']['pin']['rev'] = '0'*40
+            with self.assertRaises(Failure):
+                windows.validate_dependency_sources(workspace, manifest, 'release')
     def test_archive_table_errors_fail_before_publishing(self):
         for members, table in [
             ([("../escape", b"x")], [{"path": "safe", "size": 1, "sha256": "0"*64}]),

@@ -16,6 +16,10 @@ foreach ($prerequisite in $prerequisites) {
         $env:PATH = (Join-Path $root 'bin') + ';' + $env:PATH
     }
 }
+foreach($dependency in $spec.componentDependencies) {
+    $root=Assert-ControlPath $dependency.root 'C:\WinBoatDev\build'
+    Assert-ControlTree $root $dependency.files
+}
 $env:LIBCLANG_PATH = 'C:\WinBoatDev\tools\LLVM\bin'
 $env:RUSTUP_TOOLCHAIN = 'nightly-2026-07-14'
 $env:RUST_TOOLCHAIN = $env:RUSTUP_TOOLCHAIN

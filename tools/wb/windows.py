@@ -365,6 +365,19 @@ def mirror_build_tools(ws, name, kind="widl"):
     return result
 
 
+def validate_dependency_sources(ws, manifest, mode):
+    sources = manifest['sources']
+    if set(sources) - set(ws.paths):
+        raise Failure('dependency names an unknown source repository', 2)
+    with ws.repo_locks(sources):
+        for source, snapshot in sources.items():
+            if git(ws.paths[source], 'rev-parse', 'HEAD').stdout.strip() != snapshot['revision']:
+                raise Failure('dependency source revision differs from the selected checkout', 2, source=source)
+            if mode == 'release' and (ws.repos[source]['pin']['rev'] != snapshot['revision']
+                    or git(ws.paths[source], 'status', '--porcelain=v1', '--untracked-files=all').stdout):
+                raise Failure('release dependency requires a clean checkout at its declared pin', 2, source=source)
+
+
 def build(ws, name, target, configuration, mode, operation_id, dependency_manifests=()):
     from . import builds
     plan = builds.plan(ws, target, configuration, mode)
@@ -401,9 +414,7 @@ def build(ws, name, target, configuration, mode, operation_id, dependency_manife
         if component_target in selected_dependencies:
             manifest_path, manifest = selected_dependencies.pop(component_target)
             current = builds.plan(ws, component_target, configuration, mode)
-            for source, snapshot in manifest['sources'].items():
-                if git(ws.paths[source], 'rev-parse', 'HEAD').stdout.strip() != snapshot['revision']:
-                    raise Failure('dependency source revision differs from the selected checkout', 2, source=source)
+            validate_dependency_sources(ws, manifest, mode)
             if current['dispatch']['outputs'] != json.loads((ws.state/'windows-builds'/manifest['artifactId']/'build.json').read_text())['outputs']:
                 raise Failure('dependency outputs differ from the selected recipe', 2)
         else:
