@@ -6,9 +6,12 @@ Stage 4 is now in progress. Start continuation with
 verified transfer/mirrors, real DXVK x64/x86, mapped-image fixtures and install
 recovery passed. Native KMD, all four UMD variants and Mesa's x64/x86 ICDs have
 also built. CLVK and its loaders/smoke binaries now passed native architecture
-and static CRT checks, with all 171 PDBs and notices returned. Package composition,
-clean pinned stack repeats, full installation, kernel identity and interactive
-graphics acceptance remain required. The original
+and static CRT checks, with all 171 PDBs and notices returned. The first development
+package also composed and exported successfully. The replacement recipe disables
+LLVM/Clang debug information, keeps runtime PDBs in component artifacts and omits
+them from the install bundle. Its native rebuild and composition checks remain
+pending, followed by clean pinned stack repeats, full installation, kernel
+identity and interactive graphics acceptance. The original
 handoff below still defines the baseline and preservation boundaries. Current
 guest/state selections and retained failure receipts are in ignored local notes.
 The [native checkpoint](../evidence/stage-04-native.json) additionally records

@@ -85,7 +85,11 @@ Nix supplies offline Cargo inputs from all three component
 locks, Windows CMake/WinFlexBison and pure Python build modules, and CLVK's exact
 LLVM/header/loader sources. Their file tables, derivations, hashes and licenses
 remain in the artifact evidence. These extra build inputs do not change the
-prepared Stage 3 provisioning lock. Mesa's candidate uses the existing clang-cl
+prepared Stage 3 provisioning lock. CLVK's LLVM/Clang dependencies use optimized
+code without debug information; the recipe checks their actual compile commands
+and requires zero compiler PDBs in `package/llvm-symbol-policy.json`. CLVK and
+loader runtime symbols remain in their component artifacts.
+Mesa's candidate uses the existing clang-cl
 compatibility path with `/MT`, regenerates the paired Venus headers, and retains
 them in its artifact. Full candidate acceptance remains pending.
 

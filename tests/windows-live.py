@@ -118,6 +118,15 @@ class Acceptance:
             assert verified['exitCode'] == 0, verified
             manifest_path = artifact_path.parent / 'files' / 'bundle' / 'manifest.json'
             manifest = json.loads(manifest_path.read_text(encoding='utf-8-sig'))
+            assert manifest['symbolStorage'] == 'component-artifacts', manifest['symbolStorage']
+            assert not any(f['path'].lower().endswith('.pdb') for f in manifest['files'])
+            compiler = next(d for d in artifact['componentDependencies'] if d['target'] == 'clvk-helios')
+            policy_path = artifact_path.parent.parent / compiler['artifactId'] / 'files' / 'package' / 'llvm-symbol-policy.json'
+            compiler_policy = json.loads(policy_path.read_text(encoding='utf-8-sig'))
+            assert compiler_policy['debugSymbols'] is False and compiler_policy['pdbFiles'] == 0, compiler_policy
+            assert compiler_policy['compilerCommandsChecked'] > 0, compiler_policy
+            self.record(surface + '-symbol-policy', {'runtimeBundlePdbFiles': 0, 'compiler': compiler_policy,
+                'componentManifestSha256': compiler['manifestSha256']})
             if previous_sources is not None:
                 assert manifest['source'] == previous_sources, manifest['source']
             previous_sources = manifest['source']

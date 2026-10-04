@@ -650,7 +650,7 @@
     "selectedHeliosIdentity": null
   },
   "checks": {
-    "localTests": 60,
+    "localTests": 61,
     "fullInstalledStack": false,
     "fullLoadedStack": false,
     "interactiveGraphics": false
@@ -728,5 +728,40 @@
       }
     ],
     "fullComponentAcceptance": false
+  },
+  "packageCandidate": {
+    "mode": "development",
+    "configuration": "release",
+    "manifest": "out/guest/op-bb3f817db34f47079bea1b7dfaf5762e/manifest.json",
+    "manifestSha256": "ff3ebf72fbccf606c5209142ae013809a5c6162d9b5a550d7354306a555611e1",
+    "operationId": "op-bb3f817db34f47079bea1b7dfaf5762e",
+    "collectorOperationId": "op-8dd406bef9854b0f9d6c764295144dc8",
+    "bundleManifestSha256": "b7a35f5a1b52f66cc20bcae2619cc9486193be36d5385d229285c0445b1b7c30",
+    "files": 13991,
+    "bytes": 10207107413,
+    "pdbFiles": 373,
+    "installed": false,
+    "loaded": false,
+    "notes": [
+      "Original development composition retains compiler and runtime symbols. It predates the no-LLVM/Clang-symbol and separate-runtime-symbol recipe policies.",
+      "Guest composition passed; initial host export failed parsing its zero-byte image receipt. Official recollection succeeded without rebuilding dependencies; both receipts are preserved.",
+      "Replacement compiler build and symbol-free runtime composition remain pending."
+    ]
+  },
+  "separateSymbolsFixture": {
+    "operationId": "op-918541cf55c8462e9d283b5672523d4c",
+    "state": "passed",
+    "exitCode": 0,
+    "checks": [
+      "extra-file",
+      "changed-file",
+      "escaping-file",
+      "junction",
+      "strict-symbol-hash",
+      "runtime-hash-with-separate-symbols",
+      "symbol-size"
+    ],
+    "appliesTo": "Only the package component-artifacts policy skips unused symbol content hashes; default tree verification remains strict.",
+    "unusedSymbolHashesSkipped": true
   }
 }
