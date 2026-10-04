@@ -6,9 +6,9 @@
   schemaVersion = 1;
   repositories = {
     helios = {
-      rev = "8572260ae90850f496da13393037215979f0dc4c";
+      rev = "0f2ff4a5fe047d59cca68d3bd1603d1b082f25dc";
       ref = "refs/heads/master";
-      provenance = "stage-04-installer-local-unpublished";
+      provenance = "stage-04-win32-abi-local-unpublished";
     };
     qemu-helios = {
       rev = "e81b51e1188a39e7041c4e06117b6bdf45becdd1";
@@ -26,9 +26,9 @@
       provenance = "stage-02-local-unpublished";
     };
     mesa-helios = {
-      rev = "48003fe5ce933381ea3609a654e86a2a24b87f71";
+      rev = "59cfd87f49b3f65b382a86af33a7efbb2bd24789";
       ref = "refs/heads/main";
-      provenance = "stage-04-cross-local-unpublished";
+      provenance = "stage-04-win32-abi-local-unpublished";
     };
     vkd3d-proton = {
       rev = "aff0927cab46c700a6edd78a3b1621fa9e109f18";
