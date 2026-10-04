@@ -73,8 +73,10 @@ the locked Nixpkgs MinGW compiler and mirrored with its matching headers. vkd3d
 enumerates seven required archives; its core archive already contains the full
 shader dependency union, so there is no additional archive merge.
 
-Helios, Mesa and CLVK currently require explicit `--mode development` for their
-native candidates. Nix supplies offline Cargo inputs from all three component
+Helios's KMD and all four UMD variants passed native build acceptance, so its
+backends now allow clean pinned release builds. Mesa, CLVK and the package
+composer still require explicit `--mode development` for native candidates.
+Nix supplies offline Cargo inputs from all three component
 locks, Windows CMake/WinFlexBison and pure Python build modules, and CLVK's exact
 LLVM/header/loader sources. Their file tables, derivations, hashes and licenses
 remain in the artifact evidence. These extra build inputs do not change the

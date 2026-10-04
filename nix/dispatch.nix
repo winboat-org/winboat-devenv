@@ -35,6 +35,8 @@ selected
     "dxvk-engine-x86"
     "vkd3d-engine-x64"
     "vkd3d-engine-x86"
+    "helios-guest-x64"
+    "helios-guest-x86"
   ];
 }
 // pkgs.lib.optionalAttrs (selected.backend == "devbox") {
