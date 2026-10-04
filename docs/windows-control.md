@@ -126,6 +126,8 @@ devenv shell -- wb-windows-live --name <guest> --state-root <state-root> \
   --component-only --native --build-target dxvk-engine-x86 --reboot
 devenv shell -- wb-windows-live --name <guest> --state-root <state-root> \
   --component-only --input-fixtures
+devenv shell -- wb-windows-live --name <guest> --state-root <state-root> \
+  --component-only --full-stack
 ```
 
 The first checks CLI/MCP task purpose, cancellation/resume, script tampering,
@@ -135,6 +137,14 @@ component build/manifest verification and a restart-required fixture. `--reboot`
 restarts the named guest; omit it for checks that preserve its current boot.
 Receipts remain under the selected state's `windows-acceptance/<id>` directory.
 These checks neither create nor destroy a VM.
+`--full-stack` builds the complete stack from clean pinned sources through CLI,
+then builds it again through MCP, without reusing candidate artifacts. Each
+repeat verifies the export, installs its exact manifest, resumes the original
+transaction after required reboots, and checks 12 mapped DLLs, 13 interactive
+graphics workloads and the actual resident kernel code. Source identities must
+agree across the repeats; installed and loaded bytes must match each repeat's
+own artifact manifest. This mode is implemented but full live acceptance is
+still pending. It requires all selected native backends to pass their gates.
 The input fixtures verify whole-tree hashes, missing/extra files, escaping paths
 and junction refusal, then exercise snapshot extraction and resumed repair.
 

@@ -25,6 +25,7 @@ class Acceptance:
         self.results = []
         self.counter = 0
         self.mcp = None
+        self.stack_results = []
 
     def record(self, label, result):
         self.results.append({"label": label, "observed": time.time(), "receipt": result})
@@ -66,6 +67,100 @@ class Acceptance:
                 return value
             time.sleep(5)
         raise AssertionError("Guest task did not reach a terminal receipt")
+
+    def host_operation(self, submitted, via_mcp=False, allowed=(0,)):
+        """Retain detached-worker completion, including full native reboot codes."""
+        assert submitted['exitCode'] == 0, submitted
+        identifier = submitted['result']['jobId']
+        while True:
+            response = (self.tool('job_status', {'id': identifier}) if via_mcp else
+                        self.cli('host-job-status', 'job', 'status', '--id', identifier))
+            assert response['exitCode'] == 0, response
+            job = response['result']
+            if job['state'] not in {'queued', 'running'}:
+                assert job['state'] in {'succeeded', 'failed'}, job
+                operation = job.get('operation')
+                # Host process exit codes truncate 3010. The operation receipt
+                # preserves the real native code and original transaction ID.
+                assert operation and operation['exitCode'] in allowed, job
+                return operation
+            time.sleep(20)
+
+    def full_stack(self):
+        previous_sources = None
+        for via_mcp in (False, True):
+            surface = 'mcp' if via_mcp else 'cli'
+            def execute(label, tool, arguments, *cli_args, allowed=(0,)):
+                started = (self.tool(tool, {**arguments, 'background': True}) if via_mcp else
+                           self.cli(surface + '-' + label, *cli_args, '--background'))
+                return self.host_operation(started, via_mcp, allowed)
+
+            # Each surface builds the full stack through the same Nix recipes.
+            # No development snapshots or implicit candidate reuse are accepted.
+            built = execute('stack-build', 'devbox_build',
+                {'name': self.args.name, 'target': 'helios-development-package', 'mode': 'release'},
+                'devbox', 'build', '--name', self.args.name,
+                '--target', 'helios-development-package', '--mode', 'release')
+            artifact_path = Path(built['result']['manifest'])
+            artifact = json.loads(artifact_path.read_text())
+            assert artifact['mode'] == 'release', artifact
+            def clean_sources(record):
+                for source in record['sources'].values():
+                    assert not source.get('diffSha256') and not source.get('untracked'), source
+                for dependency in record.get('componentDependencies', []):
+                    clean_sources(dependency)
+            clean_sources(artifact)
+            if via_mcp:
+                verified = self.tool('build_verify', {'manifest': str(artifact_path)})
+            else:
+                verified = self.cli('cli-stack-export-verify', 'build', 'verify', '--manifest', str(artifact_path))
+            assert verified['exitCode'] == 0, verified
+            manifest_path = artifact_path.parent / 'files' / 'bundle' / 'manifest.json'
+            manifest = json.loads(manifest_path.read_text(encoding='utf-8-sig'))
+            if previous_sources is not None:
+                assert manifest['source'] == previous_sources, manifest['source']
+            previous_sources = manifest['source']
+            manifest_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+            installed = execute('stack-install', 'devbox_install',
+                {'name': self.args.name, 'manifest': str(manifest_path)},
+                'devbox', 'install', '--name', self.args.name, '--manifest', str(manifest_path),
+                allowed=(0, 3010, 1641))
+            transaction = installed['result']['operationId']
+            for _ in range(3):
+                if installed['exitCode'] == 0:
+                    break
+                boot = installed['result']['bootTime']
+                execute('stack-restart', 'devbox_restart', {'name': self.args.name, 'timeout': 180},
+                        'devbox', 'restart', '--name', self.args.name, '--timeout', '180')
+                # Wait for authenticated SSH before resuming the original task.
+                for _ in range(60):
+                    status = (self.tool('devbox_job_status', {'name': self.args.name, 'id': transaction}) if via_mcp else
+                              self.cli('stack-reconnect', 'devbox', 'job', 'status', '--name', self.args.name, '--id', transaction))
+                    if status.get('exitCode') == 0 and status.get('result'):
+                        break
+                    time.sleep(5)
+                else:
+                    raise AssertionError('Full-stack guest reconnect failed after reboot')
+                installed = execute('stack-resume', 'devbox_install', {'name': self.args.name, 'resume': transaction},
+                    'devbox', 'install', '--name', self.args.name, '--resume', transaction, allowed=(0, 3010, 1641))
+                assert installed['result']['bootTime'] != boot, installed
+            assert installed['exitCode'] == 0, installed
+            smoke = execute('stack-smoke', 'devbox_smoke', {'name': self.args.name, 'transaction': transaction},
+                            'devbox', 'smoke', '--name', self.args.name, '--transaction', transaction)
+            graphics = smoke['result']
+            assert graphics['state'] == 'passed' and graphics['sessionId'] > 0, graphics
+            assert graphics['manifestSha256'] == manifest_hash, graphics
+            assert len(graphics['mappedImages']) == 12 and len(graphics['workloads']) == 13, graphics
+            observed = execute('stack-registry', 'devbox_registry_verify', {'name': self.args.name},
+                               'devbox', 'registry', 'verify', '--name', self.args.name)['result']
+            assert observed['installedVerified'] and observed['loadedVerified'], observed
+            assert observed['loadedKernelIdentity'] == 'mapped-code-matches', observed
+            assert observed['packageProvenance']['manifestSha256'] == manifest_hash, observed
+            self.stack_results.append({'surface': surface, 'artifactManifest': str(artifact_path),
+                'manifestSha256': manifest_hash, 'transactionId': transaction,
+                'registryOperationId': observed['operationId'], 'bootTime': observed['bootTime'],
+                'componentBuildsReused': False, 'installedVerified': True, 'loadedVerified': True})
+            self.record(surface + '-full-stack-passed', self.stack_results[-1])
 
     def run(self):
         if self.args.component_only:
@@ -129,11 +224,14 @@ class Acceptance:
             assert verified["exitCode"] == 0 and not verified["result"]["loaded"], verified
         if self.args.reboot:
             self.reboot_fixture()
+        if self.args.full_stack:
+            self.full_stack()
 
     def finish(self):
         summary = {"schemaVersion": 1, "state": "passed", "durationSeconds": self.args.seconds,
                    "eightMinuteDurability": not self.args.component_only and self.args.seconds >= 480, "receipts": str(self.directory / "receipts.json"),
-                   "fullComponentAcceptance": False}
+                   "fullComponentAcceptance": len(self.stack_results) == 2,
+                   "stackRepeats": self.stack_results}
         (self.directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
         print(json.dumps(summary), flush=True)
 
@@ -258,6 +356,7 @@ def main():
     parser.add_argument("--reboot", action='store_true', help='Reboot this explicitly named guest to recover a restart-required fixture install')
     parser.add_argument("--component-only", action='store_true', help='Run only the selected native/component/reboot checks, skipping the control suite')
     parser.add_argument("--input-fixtures", action='store_true', help='Verify input trees and snapshot extraction/resume boundaries on Windows')
+    parser.add_argument("--full-stack", action='store_true', help='Build clean pinned full stacks through CLI then MCP, install/reboot, and verify interactive graphics and loaded identities')
     args = parser.parse_args()
     if not 1 <= args.seconds <= 600:
         parser.error("seconds must be between 1 and 600")
