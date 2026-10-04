@@ -13,7 +13,17 @@ $result=@{schemaVersion=1;state='running';transactionId=$spec.transactionId;mani
     observed=[DateTime]::UtcNow.ToString('o');mappedImages=@();workloads=@()}
 $resultPath=Join-Path $env:WINBOAT_JOB_ROOT 'graphics-result.json'
 Write-ControlJson $result $resultPath
+function Copy-GraphicsFile([string]$Source,[string]$Destination,[string]$PackagePath) {
+    $expected=@($spec.manifest.files | Where-Object path -eq $PackagePath)
+    if($expected.Count -ne 1) {throw "Selected package lacks $PackagePath"}
+    Assert-ControlFile $Source $expected[0].sha256 $expected[0].size
+    Copy-Item -LiteralPath $Source -Destination $Destination -ErrorAction Stop
+    Assert-ControlFile $Destination $expected[0].sha256 $expected[0].size
+    return @{path=$Destination;sourcePath=$Source;packagePath=$PackagePath;sha256=$expected[0].sha256;size=$expected[0].size}
+}
 try {
+    $smokeRoot=Join-Path $env:WINBOAT_JOB_ROOT 'graphics-smoke'
+    New-Item -ItemType Directory -Path $smokeRoot -ErrorAction Stop | Out-Null
     foreach($architecture in @('x64','x86')) {
         $relative=if($architecture -eq 'x86') {'x86\'} else {''}
         $systemDirectory=if($architecture -eq 'x86') {'SysWOW64'} else {'System32'}
@@ -21,7 +31,7 @@ try {
         $slots=@($classKey.GetValue($registration,$null))
         if($slots.Count -ne 4) {throw 'Four architecture-specific Direct3D registration slots are required'}
         $images=@(
-            @{path=Join-Path $env:SystemRoot "$systemDirectory\vulkan-1.dll";package='payload/loaders/'+$relative.Replace('\','/')+'vulkan-1.dll'},
+            @{path=Join-Path $runtime "loaders\${relative}vulkan-1.dll";package='payload/loaders/'+$relative.Replace('\','/')+'vulkan-1.dll'},
             @{path=$slots[0];package='payload/driver/'+[IO.Path]::GetFileName($slots[0])},
             @{path=$slots[3];package='payload/driver/'+[IO.Path]::GetFileName($slots[3])},
             @{path=Join-Path $runtime "mesa\${relative}vulkan_virtio.dll";package='payload/mesa/'+$relative.Replace('\','/')+'vulkan_virtio.dll'},
@@ -29,7 +39,7 @@ try {
         )
         if($architecture -eq 'x64') {
             $images+=@(
-                @{path=Join-Path $env:SystemRoot 'System32\OpenCL.dll';package='payload/loaders/OpenCL.dll'},
+                @{path=Join-Path $runtime 'loaders\OpenCL.dll';package='payload/loaders/OpenCL.dll'},
                 @{path=Join-Path $runtime 'opencl\clvk.dll';package='payload/opencl/clvk.dll'}
             )
         }
@@ -70,7 +80,15 @@ foreach($image in $spec.images) {
         # the mapped-image observation above. Vulkan is restricted to this ICD.
         $env:VK_ICD_FILENAMES=if($architecture -eq 'x86') {$state.vulkanManifestX86} else {$state.vulkanManifest}
         $env:VK_DRIVER_FILES=$env:VK_ICD_FILENAMES
-        $smoke=Join-Path $runtime "smoke\$relative"
+        # The installer preserves pre-existing global SDK loaders. Place the
+        # selected package's loaders beside its unchanged programs so Windows
+        # resolves their imports to the verified package rather than System32.
+        $smoke=Join-Path $smokeRoot $architecture
+        New-Item -ItemType Directory -Path $smoke -ErrorAction Stop | Out-Null
+        $loaders=@(Copy-GraphicsFile (Join-Path $runtime "loaders\${relative}vulkan-1.dll") (Join-Path $smoke 'vulkan-1.dll') ('payload/loaders/'+$relative.Replace('\','/')+'vulkan-1.dll'))
+        if($architecture -eq 'x64') {
+            $loaders+=Copy-GraphicsFile (Join-Path $runtime 'loaders\OpenCL.dll') (Join-Path $smoke 'OpenCL.dll') 'payload/loaders/OpenCL.dll'
+        }
         $workloads=@(
             @{name='vulkan';file='vulkan-smoke.exe';arguments=@()},
             @{name='vulkan-wsi';file='vulkan-wsi-probe.exe';arguments=@('2')},
@@ -82,12 +100,17 @@ foreach($image in $spec.images) {
         if($architecture -eq 'x64') {$workloads+=@{name='opencl';file='opencl-smoke.exe';arguments=@()}}
         foreach($workload in $workloads) {
             $path=Join-Path $smoke $workload.file
-            $expected=@($spec.manifest.files | Where-Object path -eq ('payload/smoke/'+$relative.Replace('\','/')+$workload.file))
-            if($expected.Count -ne 1) {throw 'Unmanifested graphics program'}
-            Assert-ControlFile $path $expected[0].sha256 $expected[0].size
-            $output=(& $path @($workload.arguments) 2>&1 | Out-String)
-            $code=$LASTEXITCODE
-            $result.workloads+=@{name=$workload.name;architecture=$architecture;path=$path;sha256=$expected[0].sha256;
+            $program=Copy-GraphicsFile (Join-Path $runtime "smoke\$relative$($workload.file)") $path ('payload/smoke/'+$relative.Replace('\','/')+$workload.file)
+            foreach($loader in $loaders) {Assert-ControlFile $loader.path $loader.sha256 $loader.size}
+            # Windows PowerShell 5 wraps native stderr in ErrorRecords. Retain
+            # those diagnostics and judge the program by its actual exit code.
+            $savedPreference=$ErrorActionPreference
+            try {
+                $ErrorActionPreference='Continue'
+                $output=(& $path @($workload.arguments) 2>&1 | Out-String)
+                $code=$LASTEXITCODE
+            } finally {$ErrorActionPreference=$savedPreference}
+            $result.workloads+=@{name=$workload.name;architecture=$architecture;path=$path;sourcePath=$program.sourcePath;packagePath=$program.packagePath;sha256=$program.sha256;loaders=$loaders;
                 arguments=$workload.arguments;exitCode=$code;output=$output;observed=[DateTime]::UtcNow.ToString('o')}
             Write-ControlJson $result $resultPath
             if($code) {throw "Graphics workload $($workload.name) $architecture failed with exit $code"}

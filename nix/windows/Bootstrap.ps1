@@ -6,6 +6,7 @@ New-Item -ItemType Directory -Path $root -Force | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'Cannot protect provisioning state' }
 & powercfg.exe /hibernate off
 if ($LASTEXITCODE -ne 0) { throw 'Cannot disable hybrid shutdown for durable startup tasks' }
+& (Join-Path $PSScriptRoot 'PowerPolicy.ps1')
 foreach ($file in @('Provision.ps1', 'Autologin.ps1', 'Toolchain.ps1', 'Mirror.ps1', 'BuildFixture.ps1', 'TestDriver.c', 'provision.lock.json', 'authorized_keys',
                     'share-password', 'ssh_host_ed25519_key', 'ssh_host_ed25519_key.pub')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $file) -Destination (Join-Path $root $file) -Force

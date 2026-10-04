@@ -109,6 +109,40 @@ class WindowsTests(unittest.TestCase):
         self.assertIn('payload/driver/helios_kmd_render.sys', error.exception.details['missing'])
         submit.assert_not_called()
 
+    def test_graphics_staging_preserves_exclusive_job_creation_and_guest_boundary(self):
+        guest = self.root/'guest'
+        transaction, operation = 'op-'+'a'*32, 'op-'+'b'*32
+        original = guest/'windows-jobs'/transaction/'job.json'
+        original.parent.mkdir(parents=True)
+        installation = {'guestIdentity': 'one', 'metadata': {'kind': 'install',
+            'manifestSha256': 'c'*64, 'requested': {'packageId': 'complete-test-package'}}}
+        original.write_text(json.dumps(installation))
+        def submit(ws, name, identifier, script, purpose, arguments, inputs, metadata):
+            self.assertEqual(purpose, 'desktop')
+            self.assertEqual(arguments, [windows.ROOT+'\\jobs\\'+operation+'\\graphics.json'])
+            # Enforce the real submitter's exclusive directory creation.
+            (guest/'windows-jobs'/identifier).mkdir(exist_ok=False)
+            specification = json.loads(inputs['graphics.json'].read_text())
+            self.assertEqual(specification['manifest'], installation['metadata']['requested'])
+            self.assertEqual(specification['transactionId'], transaction)
+            self.assertEqual(metadata['manifestSha256'], 'c'*64)
+        def download(ws, name, remote, path):
+            path.write_text(json.dumps({'state': 'passed', 'sessionId': 1}))
+        args = SimpleNamespace(action='smoke', name='one', transaction=transaction)
+        with patch.dict(os.environ, {'WB_DEVBOX_PAYLOADS': str(self.root)}), \
+             patch.object(windows, 'connection', return_value=(guest, {'identity': 'one'})), \
+             patch.object(windows, 'submit', side_effect=submit) as submitted, \
+             patch.object(windows, 'wait', return_value={'state': 'succeeded', 'exitCode': 0}), \
+             patch.object(windows, 'download', side_effect=download):
+            result = windows.dispatch(self.ws, args, operation)
+            self.assertEqual(result['exitCode'], 0)
+            self.assertEqual(result['sessionId'], 1)
+            installation['guestIdentity'] = 'another'
+            original.write_text(json.dumps(installation))
+            with self.assertRaises(Failure):
+                windows.dispatch(self.ws, args, 'op-'+'d'*32)
+            self.assertEqual(submitted.call_count, 1)
+
     def test_tool_mirror_reuse_requires_same_guest_exact_files_and_success(self):
         store=self.root/'fixture-tool'; store.mkdir()
         tool=store/'tool.exe'; tool.write_bytes(b'fixture executable')

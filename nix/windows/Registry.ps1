@@ -168,7 +168,13 @@ foreach($architecture in @('x64','x86')) {
         $relative='payload/loaders/'+$(if($architecture -eq 'x86') {'x86/'} else {''})+$file
         $expected=@(if($requestedPackage) {$requestedPackage.files | Where-Object path -eq $relative})
         $hash=if($expected.Count -eq 1) {$expected[0].sha256} else {''}
-        Add-ObservedFile (Join-Path $systemDirectory $file) 'Khronos-loader' $architecture $hash $packageProvenance
+        if($installState -and $expected.Count -eq 1) {
+            $privatePath=Join-Path $installState.installRoot ('runtime\'+$relative.Substring('payload/'.Length).Replace('/','\'))
+            Add-ObservedFile $privatePath 'Helios-package-loader' $architecture $hash $packageProvenance
+        }
+        # Global loaders may belong to an existing SDK. The installer preserves
+        # them; their presence cannot acquire the selected package's provenance.
+        Add-ObservedFile (Join-Path $systemDirectory $file) 'Khronos-global-loader' $architecture
     }
 }
 $mapped=[Collections.Generic.List[object]]::new()

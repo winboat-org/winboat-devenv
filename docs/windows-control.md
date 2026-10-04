@@ -230,6 +230,16 @@ reinstalls that preserved product with the selected MSI. Receipts retain the
 product settings and global update service identities before and after;
 an ineffective opt-out fails verification.
 
+The package installs its own Vulkan x64/x86 and OpenCL x64 loaders under
+`runtime/loaders`; the original installer preserves pre-existing global SDK
+loaders. Registry reconciliation verifies the private loaders against the exact
+package and records global loaders separately with unknown package provenance.
+Interactive smoke observes the private loaders' mapped code, then stages the
+unchanged package programs with hash-verified app-local loaders in the operation's
+owned directory. Every workload retains the executable and loader identities,
+arguments, native output and exit code. Native stderr is diagnostic output;
+a nonzero native exit still fails the smoke.
+
 The mapped-image reader compares executable sections with the selected DLL,
 normalizing PE base relocations. A replaced file can report `stale-mapped-image`
 while its older code remains in a process. Unreadable images remain unknown.

@@ -777,7 +777,7 @@ def dispatch(ws, args, operation_id):
         original = json.loads((directory/'windows-jobs'/job_id(args.transaction)/'job.json').read_text())
         if original['guestIdentity'] != record['identity'] or original['metadata'].get('kind') != 'install' or original['metadata']['requested'].get('fixtureId'):
             raise Failure('graphics smoke requires this guest\'s complete package installation transaction', 2)
-        local = directory/'windows-jobs'/operation_id
+        local = ws.state/'windows-graphics'/operation_id
         specification = {'schemaVersion': 1, 'transactionId': args.transaction, 'manifestSha256': original['metadata']['manifestSha256'],
                          'manifest': original['metadata']['requested']}
         write_json(local/'graphics.json', specification)
