@@ -10,7 +10,7 @@ import time
 import zipfile
 
 from . import devbox
-from .common import Failure, digest, git, identity, run, write_json
+from .common import Failure, digest, git, identity, locked, run, write_json
 
 ROOT = r"C:\ProgramData\WinBoatDev"
 PURPOSES = {"build", "install", "desktop", "system"}
@@ -113,9 +113,24 @@ def payloads(ws, name):
     files = [source / name for name in ["Control.ps1", "Task.ps1", "LoadedIdentity.cs", "Toolchain.ps1"]]
     identity = __import__("hashlib").sha256("".join(digest(p) for p in files).encode()).hexdigest()
     remote = ROOT + "\\control\\" + identity
-    invoke(ws, name, "$ErrorActionPreference='Stop'; New-Item -ItemType Directory -Path " + literal(remote) + " -Force | Out-Null")
-    for path in files:
-        upload(ws, name, path, remote + "\\" + path.name)
+    _, guest = connection(ws, name)
+    # Concurrent builds share this content-addressed bundle. Publish it once;
+    # reopening a script being read by Windows can fail with a sharing error.
+    with locked(ws.state/'locks'/('windows-control-'+guest['identity']+'.lock')):
+        names = ','.join(literal(path.name) for path in files)
+        script = ("$ErrorActionPreference='Stop'; $root="+literal(remote)+"; "
+                  "New-Item -ItemType Directory -Path $root -Force | Out-Null; "
+                  "@{files=@(foreach($name in @("+names+")) {$path=Join-Path $root $name; "
+                  "if(Test-Path -LiteralPath $path -PathType Leaf) {@{name=$name;size=(Get-Item $path).Length;"
+                  "sha256=(Get-FileHash $path -Algorithm SHA256).Hash.ToLower()}}})} | ConvertTo-Json -Depth 5 -Compress")
+        existing = {entry['name']: entry for entry in json.loads(invoke(ws, name, script).stdout.lstrip('\ufeff'))['files']}
+        for path in files:
+            entry = existing.get(path.name)
+            if entry:
+                if entry['sha256'] != digest(path) or entry['size'] != path.stat().st_size:
+                    raise Failure('published Windows control bundle changed', 74, path=path.name)
+                continue
+            upload(ws, name, path, remote + "\\" + path.name)
     return remote
 
 
@@ -285,13 +300,14 @@ def mirror_build_tools(ws, name, kind="widl"):
     directory = ws.state / "windows-tools" / operation_id
     directory.mkdir(parents=True)
     expression = {"widl": "WB_WINDOWS_TOOLS_EXPRESSION", "cargo": "WB_WINDOWS_RUST_EXPRESSION",
-                  "utilities": "WB_WINDOWS_UTILITIES_EXPRESSION", "clvk": "WB_WINDOWS_COMPONENT_EXPRESSION"}[kind]
+                  "utilities": "WB_WINDOWS_UTILITIES_EXPRESSION", "clvk": "WB_WINDOWS_COMPONENT_EXPRESSION",
+                  "mesa": "WB_WINDOWS_COMPONENT_EXPRESSION"}[kind]
     command = [os.environ["WB_NIX"], "build", "--json", "--out-link", str(directory / "result"),
                "--file", os.environ[expression], "--argstr", "nixpkgsPath", os.environ["WB_NIXPKGS"]]
     if kind == "cargo":
         command += ["--argstr", "sourcePath", str(ws.validate_checkout("helios"))]
-    if kind == "clvk":
-        command += ["--argstr", "sourcePath", str(ws.validate_checkout("clvk-helios"))]
+    if kind in {"clvk", "mesa"}:
+        command += ["--argstr", "sourcePath", str(ws.validate_checkout("clvk-helios" if kind == 'clvk' else 'mesa-helios'))]
     with (directory / "build.log").open("w") as log:
         proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=log, text=True)
     if proc.returncode:
@@ -426,7 +442,7 @@ def build(ws, name, target, configuration, mode, operation_id, dependency_manife
             'componentDependencies': manifest.get('componentDependencies', []), 'prerequisites': manifest.get('prerequisites', []),
             'root': r'C:\WinBoatDev\build'+'\\'+manifest['artifactId']+'\\artifact'})
     if target.startswith("mesa-guest"):
-        prerequisites = [mirror_build_tools(ws, name, "utilities")]
+        prerequisites = [mirror_build_tools(ws, name, "utilities"), mirror_build_tools(ws, name, "mesa")]
     if target == "clvk-helios":
         prerequisites = [mirror_build_tools(ws, name, "utilities"), mirror_build_tools(ws, name, "clvk")]
     if target == 'helios-development-package':

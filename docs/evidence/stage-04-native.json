@@ -245,7 +245,7 @@
     "selectedHeliosIdentity": null
   },
   "checks": {
-    "localTests": 58,
+    "localTests": 59,
     "fullInstalledStack": false,
     "fullLoadedStack": false,
     "interactiveGraphics": false

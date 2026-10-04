@@ -6,6 +6,8 @@ import tempfile
 import struct
 import shutil
 import subprocess
+import time
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
 from types import SimpleNamespace
 import unittest
@@ -241,6 +243,34 @@ class WindowsTests(unittest.TestCase):
             workspace.repos['fixture']['pin']['rev'] = '0'*40
             with self.assertRaises(Failure):
                 windows.validate_dependency_sources(workspace, manifest, 'release')
+
+    def test_concurrent_control_publication_never_reopens_verified_scripts(self):
+        source = self.root/'payloads'
+        source.mkdir()
+        for name in ['Control.ps1','Task.ps1','LoadedIdentity.cs','Toolchain.ps1']:
+            (source/name).write_text(name)
+        guest_files, opening = {}, set()
+        def invoke(*arguments):
+            return SimpleNamespace(stdout=json.dumps({'files': list(guest_files.values())}))
+        def upload(ws, name, path, remote):
+            if path.name in opening or path.name in guest_files:
+                raise Failure('script already open', 74)
+            opening.add(path.name)
+            time.sleep(0.02)
+            guest_files[path.name] = {'name':path.name,'sha256':windows.digest(path),'size':path.stat().st_size}
+            opening.remove(path.name)
+        with patch.dict(os.environ, {'WB_DEVBOX_PAYLOADS':str(source)}), \
+                patch.object(windows, 'connection', return_value=(self.root, {'identity':'1'*32})), \
+                patch.object(windows, 'invoke', side_effect=invoke), patch.object(windows, 'upload', side_effect=upload) as transfer:
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                results = list(pool.map(lambda ignored: windows.payloads(self.ws,'one'), range(2)))
+            self.assertEqual(results[0], results[1])
+            self.assertEqual(transfer.call_count, 4)
+            guest_files['Toolchain.ps1']['sha256'] = '0'*64
+            with self.assertRaises(Failure):
+                windows.payloads(self.ws,'one')
+            self.assertEqual(transfer.call_count, 4)
+
     def test_archive_table_errors_fail_before_publishing(self):
         for members, table in [
             ([("../escape", b"x")], [{"path": "safe", "size": 1, "sha256": "0"*64}]),

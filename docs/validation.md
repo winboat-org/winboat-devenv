@@ -205,7 +205,7 @@ inspection fields. Independent native DLL/PDB fixtures built for x64 and x86;
 actual loaded code matched, became stale after replacing the disk file, and
 matched again after unloading/reloading in both process architectures.
 
-The local suite passes 58 tests plus PowerShell parsing, mapped-image C#
+The local suite passes 59 tests plus PowerShell parsing, mapped-image C#
 compilation and literal argument binding. Live tests are opt-in and excluded
 from ordinary CI. Earlier failures are retained, including an x86 shader tool
 loading a 32-bit CRT into its 64-bit process and a receipt reader sharing race;
@@ -223,3 +223,7 @@ compiler and stale cached-binding warnings were retained; fresh native layout
 assertions remained enabled. The baseline signing fixture's kernel `.text`
 bytes matched its SYS through the VM's QMP memory reader. This kernel proof
 concerns that independent fixture; it does not establish Helios installation.
+The Windows input fixtures also passed full-tree integrity checks, extraction
+and resumed repair, extra-file/junction refusal and shared control publication.
+Concurrent control jobs reuse verified scripts instead of reopening them while
+another task reads them. Native candidate failures and retries remain retained.

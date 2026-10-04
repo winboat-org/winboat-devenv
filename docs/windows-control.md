@@ -30,6 +30,8 @@ Use `--argument=<value>` once per token, including tokens such as `-Seconds`.
 MCP accepts an `arguments` array. Quotes and metacharacters remain data.
 
 Receipts retain principal, session, boot time and the actual child exit code.
+Shared control scripts are published under a per-guest lock and reused only
+after their complete hash/size table matches, avoiding concurrent sharing errors.
 Codes 3010/1641 remain `reboot-required`, not success. Unix process exit codes
 truncate large Windows codes; consumers must use the JSON `exitCode`. stdout and
 stderr are separate durable logs; status returns at most 65,536 bytes per log.

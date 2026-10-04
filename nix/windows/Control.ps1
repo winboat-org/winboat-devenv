@@ -5,6 +5,7 @@ param(
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+# Shared control bundles are verified before use and published once per guest.
 
 function Write-ControlJson($Value, [string]$Path) {
     $temporary = $Path + '.' + [Guid]::NewGuid().ToString('N') + '.tmp'
@@ -101,7 +102,8 @@ function Import-ControlBuildEnvironment([ValidateSet('x64','x86')][string]$Archi
     $platform = 'amd64'
     $batch = Join-Path $env:WINBOAT_JOB_ROOT ('environment-' + $Architecture + '.cmd')
     @('@echo off',('call "' + $setup + '" ' + $platform + ' >nul'),'@echo off','if errorlevel 1 exit /b %errorlevel%','set') | Set-Content -LiteralPath $batch -Encoding ASCII
-    $environment = & cmd.exe /d /c $batch
+    $systemDirectory=Join-Path $env:SystemRoot 'System32'
+    $environment = & (Join-Path $systemDirectory 'cmd.exe') /d /c $batch
     if ($LASTEXITCODE) { throw 'Portable EWDK environment setup failed' }
     foreach ($line in $environment) {
         if ($line -match '^([^=]+)=(.*)$') { [Environment]::SetEnvironmentVariable($matches[1],$matches[2],'Process') }
@@ -127,8 +129,9 @@ function Import-ControlBuildEnvironment([ValidateSet('x64','x86')][string]$Archi
     $rustBin = 'C:\WinBoatDev\tools\cargo\bin'
     if (-not (Test-Path -LiteralPath (Join-Path $rustBin 'cargo.exe'))) { throw 'The verified native Rust toolchain is missing' }
     $env:VSCMD_ARG_TGT_ARCH = $Architecture
-    $env:PATH = 'C:\WinBoatDev\tools\Git\cmd;C:\WinBoatDev\tools\LLVM\bin;C:\WinBoatDev\tools\Python;C:\WinBoatDev\tools\Python\Scripts;C:\WinBoatDev\tools\Ninja;' + $rustBin + ';' + $compiler + ';' + (Join-Path $kits "bin\$kit\x64") + ';' + (Join-Path $vulkan 'Bin') + ';' + $env:PATH
-    $env:PATH = (($env:PATH -split ';' | Where-Object { $_ -notmatch '(?i)msys[^;]*[\\/]usr[\\/]bin|[\\/]bin[\\/]Hostx86[\\/]' }) -join ';')
+    $systemPath=@($systemDirectory,$env:SystemRoot,(Join-Path $systemDirectory 'Wbem'),(Join-Path $systemDirectory 'WindowsPowerShell\v1.0')) -join ';'
+    $env:PATH = 'C:\WinBoatDev\tools\Git\cmd;C:\WinBoatDev\tools\LLVM\bin;C:\WinBoatDev\tools\Python;C:\WinBoatDev\tools\Python\Scripts;C:\WinBoatDev\tools\Ninja;' + $rustBin + ';' + $compiler + ';' + (Join-Path $kits "bin\$kit\x64") + ';' + (Join-Path $vulkan 'Bin') + ';' + $systemPath + ';' + $env:PATH
+    $env:PATH = (($env:PATH -split ';' | Where-Object { $_ -and $_ -notmatch '(?i)msys[^;]*[\\/]usr[\\/]bin|[\\/]bin[\\/]Hostx86[\\/]' } | Select-Object -Unique) -join ';')
 }
 
 function Read-ControlRequest([string]$Directory, [string]$Hash, [bool]$VerifyInputs=$true) {
