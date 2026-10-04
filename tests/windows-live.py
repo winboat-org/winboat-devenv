@@ -146,7 +146,10 @@ class Acceptance:
                 for _ in range(60):
                     status = (self.tool('devbox_job_status', {'name': self.args.name, 'id': transaction}) if via_mcp else
                               self.cli('stack-reconnect', 'devbox', 'job', 'status', '--name', self.args.name, '--id', transaction))
-                    if status.get('exitCode') == 0 and status.get('result'):
+                    # A completed SSH observation preserves the original native
+                    # reboot code until this same transaction is resumed.
+                    if (status.get('exitCode') in {0, 3010, 1641}
+                            and status.get('result', {}).get('operationId') == transaction):
                         break
                     time.sleep(5)
                 else:
