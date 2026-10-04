@@ -37,6 +37,8 @@ selected
     "vkd3d-engine-x86"
     "helios-guest-x64"
     "helios-guest-x86"
+    "mesa-guest-x64"
+    "mesa-guest-x86"
   ];
 }
 // pkgs.lib.optionalAttrs (selected.backend == "devbox") {

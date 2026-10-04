@@ -311,6 +311,148 @@
         "Existing Rust compiler and cached-binding warnings are retained; fresh bindgen layout assertions remain enabled.",
         "Development snapshot predates local recipe commit 1df7213584808457f044de925d66d26359542215; clean pinned stack acceptance remains pending."
       ]
+    },
+    {
+      "target": "mesa-guest-x64",
+      "manifest": "out/guest/op-617abe492c404136a51b6263bae5f4ce/manifest.json",
+      "manifestSha256": "d1d9f4b9a9b5404fe662ea1b5ea35e4418de0aeb416dcaa932c0aea2a382556f",
+      "operationId": "op-617abe492c404136a51b6263bae5f4ce",
+      "mode": "development",
+      "configuration": "release",
+      "files": 4401,
+      "licenses": 4350,
+      "pdbFiles": 5,
+      "images": [
+        {
+          "staticCrtVerified": true,
+          "path": "mesa/src/virtio/vulkan/vulkan_virtio.dll",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "mesa/src/gallium/targets/wgl/libgallium_wgl.dll",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "mesa/src/gallium/targets/libgl-gdi/opengl32.dll",
+          "embeddedCodeView": false,
+          "architecture": "x64",
+          "machine": "IMAGE_FILE_MACHINE_AMD64"
+        }
+      ],
+      "sources": {
+        "mesa-helios": {
+          "revision": "8d653f8eeae01750ccad377ce68216823ea998fb",
+          "diffSha256": "6786fced05a4492d2e8b1123458bdd0fa7d6ebf974cb758c4d9142ec076f86cc",
+          "snapshotSha256": "99a0f1a9e3c2305244e05ee91abd22465945b4f89de42939d8f5ede8eece2446",
+          "narHash": "sha256-P9FvZh6fw5Nj3Oums1wZ7rfp4EzqNuGNnG8w5mf5jrY=",
+          "untracked": [
+            "nix/Build-Guest.ps1",
+            "nix/windows-inputs.nix"
+          ]
+        },
+        "venus-protocol": {
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "diffSha256": null,
+          "snapshotSha256": "9b3f933fefa680fa5acdd91867b8b57126c63d8b9176053656bb54640d4182fc",
+          "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s=",
+          "untracked": []
+        },
+        "helios": {
+          "revision": "b84ed182ba68974cb495b53bad74200409d6367f",
+          "diffSha256": "f6e6e1d2bd149085c6c4b596dc03c8ed627930fac674405b834fbbed85f827ce",
+          "snapshotSha256": "8cd369f4875d2b2e61c19e354750d736e1a345bba7acadc44ec6f5175e5cbc7d",
+          "narHash": "sha256-Gzh64aAcUfJt05dov2wKKsFxZ+WCXlQnh28RbNdhaoc=",
+          "untracked": [
+            "nix/Build-Guest.ps1",
+            "nix/Package-Guest.ps1"
+          ]
+        }
+      },
+      "installed": false,
+      "loaded": false,
+      "protocolDriverFiles": 40,
+      "notes": [
+        "All three native ICD DLLs passed architecture and static CRT inspection; original compiler/linker warnings remain retained.",
+        "Development source snapshot predates local Mesa recipe commit 4aa49189a28ab25e83012d093e5c7b38185304a5.",
+        "Guest build passed; initial host collection refused an empty .NET directory entry. Corrected collection verified every file without recompiling."
+      ]
+    },
+    {
+      "target": "mesa-guest-x86",
+      "manifest": "out/guest/op-95dcf5bf89c24879ad9dc987c8c675fe/manifest.json",
+      "manifestSha256": "cc44d3593c42bb980c5bc68fb4efa64b6cac3fce782ce56f28c87fe499d8754c",
+      "operationId": "op-95dcf5bf89c24879ad9dc987c8c675fe",
+      "mode": "development",
+      "configuration": "release",
+      "files": 4401,
+      "licenses": 4350,
+      "pdbFiles": 5,
+      "images": [
+        {
+          "staticCrtVerified": true,
+          "path": "mesa/src/virtio/vulkan/vulkan_virtio.dll",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "mesa/src/gallium/targets/wgl/libgallium_wgl.dll",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        },
+        {
+          "staticCrtVerified": true,
+          "path": "mesa/src/gallium/targets/libgl-gdi/opengl32.dll",
+          "embeddedCodeView": false,
+          "architecture": "x86",
+          "machine": "IMAGE_FILE_MACHINE_I386"
+        }
+      ],
+      "sources": {
+        "mesa-helios": {
+          "revision": "8d653f8eeae01750ccad377ce68216823ea998fb",
+          "diffSha256": "6786fced05a4492d2e8b1123458bdd0fa7d6ebf974cb758c4d9142ec076f86cc",
+          "snapshotSha256": "99a0f1a9e3c2305244e05ee91abd22465945b4f89de42939d8f5ede8eece2446",
+          "narHash": "sha256-P9FvZh6fw5Nj3Oums1wZ7rfp4EzqNuGNnG8w5mf5jrY=",
+          "untracked": [
+            "nix/Build-Guest.ps1",
+            "nix/windows-inputs.nix"
+          ]
+        },
+        "venus-protocol": {
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "diffSha256": null,
+          "snapshotSha256": "9b3f933fefa680fa5acdd91867b8b57126c63d8b9176053656bb54640d4182fc",
+          "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s=",
+          "untracked": []
+        },
+        "helios": {
+          "revision": "b84ed182ba68974cb495b53bad74200409d6367f",
+          "diffSha256": "f6e6e1d2bd149085c6c4b596dc03c8ed627930fac674405b834fbbed85f827ce",
+          "snapshotSha256": "8cd369f4875d2b2e61c19e354750d736e1a345bba7acadc44ec6f5175e5cbc7d",
+          "narHash": "sha256-Gzh64aAcUfJt05dov2wKKsFxZ+WCXlQnh28RbNdhaoc=",
+          "untracked": [
+            "nix/Build-Guest.ps1",
+            "nix/Package-Guest.ps1"
+          ]
+        }
+      },
+      "installed": false,
+      "loaded": false,
+      "protocolDriverFiles": 40,
+      "notes": [
+        "All three native ICD DLLs passed architecture and static CRT inspection; original compiler/linker warnings remain retained.",
+        "Development source snapshot predates local Mesa recipe commit 4aa49189a28ab25e83012d093e5c7b38185304a5.",
+        "Guest build passed; initial host collection refused an empty .NET directory entry. Corrected collection verified every file without recompiling."
+      ]
     }
   ],
   "kernelFixture": {
@@ -341,7 +483,7 @@
   "limits": [
     "UMD x86 is a development source snapshot, with fresh bindgen layout assertions enabled and existing compiler/cached-binding warnings retained.",
     "Kernel evidence concerns the Stage 3 independent signing fixture. Helios loaded identity is not established.",
-    "Mesa and CLVK native acceptance, clean CLI/MCP stack repeats, full installation and loaded identities remain pending.",
+    "CLVK native acceptance, clean CLI/MCP stack repeats, full installation and loaded identities remain pending.",
     "All checkpoints and pins remain local and unpublished."
   ],
   "inputFixtures": {

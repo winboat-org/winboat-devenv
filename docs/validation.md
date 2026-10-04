@@ -222,6 +222,12 @@ its test-signed KMD SYS/INF/CAT, all four UMD DLLs, 176 PDBs and 481 license
 notices. Matched Inf2Cat passed without errors or warnings, and all five native
 images passed architecture/static CRT inspection. This development snapshot
 predates the local recipe checkpoint; clean pinned repeats are still required.
+Mesa x64 and x86 each returned the Venus, Zink WGL and OpenGL frontend DLLs,
+five PDBs, 40 generated protocol files and retained license notices. All six
+DLLs passed architecture/static CRT inspection. Initial collection refused an
+empty .NET ZIP directory entry; the corrected collector verified the original
+archives without recompiling. These are development snapshots, with compiler
+and linker warnings retained; installed/loaded graphics proof is pending.
 Native UMD x86 returned both DLLs, fresh
 bindgen output and 56 PDBs, using a recorded development snapshot. Existing
 compiler and stale cached-binding warnings were retained; fresh native layout
