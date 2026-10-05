@@ -13,7 +13,7 @@ let
     };
     lockSha256 = spec.provisionLockSha256;
   };
-  supervisor = pkgs.writeText "winboat-devbox-run.py" (builtins.readFile ./scripts/devbox-run.py);
+  supervisor = pkgs.writeText "winboat-devbox-run.mjs" (builtins.readFile ./scripts/devbox-run.mjs);
   vulkanProbe = import ./host-vulkan-probe.nix { inherit pkgs; };
   launch = pkgs.writeShellScriptBin "winboat-devbox" ''
     export WB_STACK=${stack}
@@ -24,10 +24,16 @@ let
     export WB_MESA=${pkgs.mesa}
     # The injected NVIDIA Vulkan ICD uses GLX even for headless Vulkan. Its
     # unpatched vendor ELF needs these Nix libraries on the runtime search path.
-    export WB_GRAPHICS_LIBRARIES=${pkgs.lib.makeLibraryPath [ pkgs.libglvnd pkgs.libx11 pkgs.libxext ]}
+    export WB_GRAPHICS_LIBRARIES=${
+      pkgs.lib.makeLibraryPath [
+        pkgs.libglvnd
+        pkgs.libx11
+        pkgs.libxext
+      ]
+    }
     export WB_VULKAN_PROBE=${vulkanProbe}/bin/winboat-host-vulkan-probe
     export WB_WINDOWS_PAYLOADS=${payloads}
-    exec ${pkgs.python3}/bin/python3 ${supervisor}
+    exec ${pkgs.nodejs}/bin/node ${supervisor}
   '';
 in
 assert spec.schemaVersion == 1;

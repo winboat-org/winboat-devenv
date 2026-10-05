@@ -1,6 +1,15 @@
 # Stage 5 — Agent-driven developer experience
 
-Status: planned. Prerequisites: Stages 1 and 4.
+Status: Codex command-environment refresh implemented; full client/workflow
+acceptance remains planned. Prerequisites: Stages 1 and 4.
+
+`wb-codex-config` renders checkout-specific configuration from locked Nix
+definitions. Its local command hook checks devenv's dependency cache before
+each Bash execution, then publishes a generation for the command shell.
+See [configuration](../../config/README.md). This slice does not establish the
+multi-client, guest-operation or contributor-workflow acceptance below.
+The refresh hook and host control plane now use Node.js. Generated Codex MCP
+settings launch the Nix `wb` application directly, with no additional shell entry.
 
 ## Outcome
 
@@ -17,6 +26,15 @@ current official client documentation; do not replace user-global settings or
 silently disable trust/approval controls. Configure startup/tool timeouts and
 bounded result output for real workloads. A tool's presence in configuration is
 not proof that it initialized or exposes the expected schema.
+
+Agents use the advertised WinBoat MCP tools by default for workspace operations.
+Use the CLI for explicit CLI requests, CLI/shell integration checks or operations
+without an MCP equivalent. Inspect missing or stale connections and report the
+limitation before falling back. Run shell commands directly in the activated
+or refreshed locked environment; explicit `devenv shell -- <command>` entry is
+needed when that environment is absent. Codex command refresh runs before Bash
+execution and does not restart existing MCP processes; reconnect them after Nix
+execution or schema changes.
 
 Use generated workspace-local SSH config/keys and the command-layer purpose
 semantics for guest access. Support remote Windows build hosts via explicit

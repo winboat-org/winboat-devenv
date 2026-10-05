@@ -20,10 +20,10 @@ a paired graphics pin or claim the seeds represent a validated stack.
 Implement the repo-like tool in Nix with setup/doctor, list/status/plan/sync,
 single-repo and helios/winboat/winboat-accel/all selectors, explicit checkpoints,
 pin updates, fork mode and Git push interception scoped to the Nix environment.
-Include native auto-activation setup/doctor support for Bash, Zsh, Fish and
-Nushell with per-checkout devenv allow, existing shell config preserved, and
-the tracked .envrc retained for direnv/editor users. Verify directory entry,
-subdirectory retention, exit deactivation and untrusted/relocated checkouts.
+Assume Nix, devenv and native auto-activation are already installed and configured.
+Setup prepares workspace configuration/state only; do not inspect or modify
+host shell startup files. Use native hooks without .envrc or direnv, and leave
+checkout trust to devenv. Do not build an interactive activation test harness.
 Use the manifest's dependency closure and current nested layout. Include the
 managed DXIL-SPIRV/Venus dependencies. Never recursively sync all QEMU submodules.
 The requested Venus-in-Mesa layout is a later migration; preserve current

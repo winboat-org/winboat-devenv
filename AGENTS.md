@@ -5,10 +5,25 @@ stage in `docs/stages/README.md` before changing code. `CLAUDE.md` imports this
 file. Environment/shared integration docs live here; component internals stay
 in their repositories. Put personal machine notes in ignored `docs/user/`.
 
-Use the locked devenv shell for execution. Initial Nix/devenv installation, Git
-initialization and pure Nix checks are bootstrap exceptions. If inputs cannot be
-fetched, report the blocked check; Nix parsing is not shell, build, VM or CI
-validation. Do not manufacture lockfiles or source hashes.
+Use WinBoat MCP tools by default for workspace, repository, build, devbox and
+job operations. Discover the tools exposed in the current session. Use the
+`wb` CLI for explicit CLI requests, CLI/shell integration checks or operations
+without an MCP equivalent. If an expected MCP tool is missing or stale, inspect
+the connection and report the limitation rather than silently bypassing it.
+
+All execution uses the locked devenv environment. Assume Nix, devenv and native
+auto-activation are already installed and configured; no direnv, `.envrc` or
+host hook installation is needed. Run shell commands directly when native
+activation or the generated Codex refresh supplies the environment. Use
+`devenv shell -- <command>` only when that environment is absent, such as in CI.
+Generate Codex settings with `wb-codex-config`; merge existing project settings
+and restart Codex to load them. Its hook checks devenv's dependency cache before
+each Bash command. Running commands and MCP servers retain their environment;
+restart/reconnect the relevant server after Nix execution or MCP schema changes.
+Initial Nix/devenv installation, Git initialization and pure Nix checks are
+bootstrap exceptions. If inputs cannot be fetched, report the blocked check;
+Nix parsing is not shell, build, VM or CI validation. Do not manufacture lockfiles
+or source hashes.
 
 The scaffold session authorizes the initial scaffold and its commit.
 Implementation is split into later stages. Complete a requested stage through

@@ -13,6 +13,7 @@
 /result
 /result-*
 /node_modules/
+/tools/node_modules/
 __pycache__/
 *.pyc
 /local.json

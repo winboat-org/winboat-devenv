@@ -3,9 +3,10 @@
 | Document | Purpose |
 | --- | --- |
 | [Architecture](architecture.md) | Workspace, command, devbox and artifact contracts |
-| [Automatic activation](auto-activation.md) | Native shell hooks and direnv/editor integration |
+| [Automatic activation](auto-activation.md) | Native activation, Codex command refresh and explicit execution when needed |
+| [Agent configuration](../config/README.md) | Locked Codex settings, MCP defaults and server restart requirements |
 | [Repositories](repositories.md) | Inventory, subsets, pins, fork and submodule policy |
-| [Workspace control plane](workspace.md) | Setup, sync, scoped publication, forks and durable MCP jobs |
+| [Workspace control plane](workspace.md) | MCP tool mapping, CLI usage, setup, scoped publication and durable jobs |
 | [Builds](builds.md) | Native/cross targets, Windows dispatch and immutable artifact contracts |
 | [Devbox](devbox.md) | Persistent container/VM lifecycle, media, image identities, provisioning and viewer |
 | [Stages](stages/README.md) | Sequenced implementation and acceptance gates |

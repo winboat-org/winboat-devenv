@@ -30,11 +30,40 @@ the imported scaffold history and unrelated external reference work are retained
 
 Native interactive activation is owned by devenv. At the maintainer's request,
 the PTY activation harness and activation-specific regression tests were removed;
-they are not part of `devenv test`. Setup/doctor still supply native hooks and
-delegate trust to devenv. An exploratory native Fish check exposed an unquoted
+they are not part of `devenv test`. Nix, devenv and native auto-activation are
+preconfigured prerequisites. An exploratory native Fish check exposed an unquoted
 initialization path when the workspace contains spaces. No upstream patch is
-retained. See [activation](auto-activation.md) for explicit execution/direnv use.
+retained. See [activation](auto-activation.md) for native hooks and explicit execution.
 Interactive entry/exit behavior across all shells is not claimed as validated.
+
+On 2026-10-05, removed `.envrc`, the direnv shell dependency and the obsolete
+direnv doctor fields so native hooks own automatic activation. The updated
+locked shell, `wb doctor --json`, checkout trust, Nix formatting and whitespace
+checks passed.
+
+The same follow-up assumes Nix, devenv and native auto-activation are already
+configured. Removed hook setup/diagnostics, CLI/MCP activation options, shell
+templates and the extra shell packages used by that setup. `wb setup` retains
+workspace configuration/state preparation. The two existing setup and MCP
+integration tests passed, along with Nix formatting and Node syntax checks.
+
+Codex command refresh is now declared in `nix/codex.nix` and rendered by
+`wb-codex-config`, using the same unchanged lock. The live integration check
+on 2026-10-05 changed an imported Nix file, verified updated and removed
+exports in new command shells, and verified identical PATH in nested shells.
+Invalid Nix produced an explicit hook denial and preserved the last successful
+environment. The original input was restored and refreshed afterward. Nix
+configuration build/formatting, generated Bash syntax and Python syntax passed.
+The generated local settings replace the earlier private cached-shell loader;
+no host watcher service was installed. Existing Codex sessions require a restart
+to load these settings; actual callbacks in this already-running session and
+the rest of Stage 5 client/workflow acceptance are not claimed by this check.
+
+The connected WinBoat MCP server's `repo_status` call also succeeded on
+2026-10-05 with all twelve managed checkouts clean. Agent guidance now uses MCP
+for routine workspace operations and CLI calls for explicit requests, CLI/shell
+checks or operations without an MCP equivalent. This status call establishes
+the current connection's repository inspection, not full Stage 5 acceptance.
 
 Source reachability and clean synchronization establish a reproducible source
 snapshot, not component/build/graphics compatibility. Stage 1 compiled no component,
@@ -293,3 +322,60 @@ generate fresh locked-WDK bindings with layout assertions enabled. The original
 development guest, old host images/closures, guest identities, keys/media and
 external reference repositories remain preserved. WinBoat/Electron closures,
 publication and later CI/installer/tooling migration retain their separate scope.
+
+## Native Node control-plane rewrite (2026-10-06)
+
+[Migration evidence](evidence/node-control-plane-migration.json) records the
+replacement of the Python `wb` backend, detached workers, container supervisor,
+Codex refresh and test runners with native Node.js modules. The CLI and all 45
+typed MCP tools dispatch the same Nix-packaged operations. The genuine Nix and
+Windows provisioning locks and all 12 managed source pins are unchanged. Exact
+npm dependencies and integrity hashes come from `tools/package-lock.json` through
+Nix `importNpmLock`. Compiler helpers and Windows PowerShell payloads remain
+owned by the component/build recipes.
+
+| Check | Result | Measured scope |
+| --- | --- | --- |
+| `wb-test` | 31 passed | Real local Git publication, concurrent receipts/pins, detached jobs, CLI/MCP parity, artifact identity/verification and command refresh |
+| `wb-devbox-test` | 20 passed | Media, creation recovery, guest identity/disk preservation, runtime selection, CDI and shutdown boundaries |
+| `wb-windows-test` | 20 passed | Durable control, literal arguments, native exit codes, installation recovery, kernel-memory identity and streaming archive integrity |
+| `wb-windows-check` | Passed | 18 PowerShell payloads, mapped-image C# compilation, literal argument binding, JSON arrays and all locked install/probe payloads |
+| Live Windows control through CLI and stdio MCP | Passed | Disconnected jobs, SYSTEM/interactive sessions, native 42/3010 exits, cancellation/resume, literal arguments, tamper refusal, fixture install/recovery and inventory drift |
+| Live large requests and Windows input fixtures | Passed | Requests above 20 KiB, complete mirrors, snapshot inputs, verified transfer/extraction and repair |
+| `wb build venus-protocol`, CLI/MCP verification | Passed | Real Nix component build; all 86 artifact files verified; source snapshot and NAR identities equal the retained Python-built artifact |
+| Node supervisor Nix execution closure | Built | The actual closure selects Node 24.20.0 and the new `.mjs` entry point; replacement container boot remains untested |
+| Generated Codex configuration | Passed | Private Node refresh hook and absolute Nix `wb` MCP launcher; other settings preserved; connected server observed running the Node CLI |
+| Managed repository inspection | Passed | All 12 checkouts clean and exactly pinned after the live checks |
+
+The live control run used a 12-second durability task. Eight-minute durability,
+full stack rebuild/install/graphics acceptance, another host and second-account
+boot were not repeated. Synthetic kernel-memory tests passed; this migration's
+live registry fixture does not establish resident Helios code identity. Existing
+Stage 4 evidence remains a historical acceptance record, and full Stage 5 client
+workflows remain pending.
+
+The existing guest retained its original container image, disk, credentials,
+NVRAM and host artifact. Its old Python supervisor returned QEMU status `-11`
+(container status `245`) during shutdown. The systemd core record confirms
+SIGSEGV in Mesa Iris `util_vma_heap_free`, reached through EGL/display cleanup.
+The Node CLI returned failure and preserved the stopped guest rather than
+claiming clean shutdown. This is an unresolved runtime failure; the new Node
+supervisor has not been substituted into that guest. The failed receipt and core
+metadata are retained with the migration evidence.
+
+The first live startup also caught a legacy manifest ordering incompatibility:
+Python paths sort by components, while JavaScript full-path sorting differs for
+names such as `firmware/a` and `firmware-old/a`. The corrected component walk
+verified the original 1,118-file host manifest without rebuilding it; a regression
+test covers ordering and escaped Unicode identity. A first Windows fixture run
+against the stopped guest failed before the successful live repeats. The durable
+runner now claims a queued job before opening its output; its regression check
+verifies that refusing a duplicate runner preserves the completed result and
+journal. All 31 integration/refresh tests passed again after that change. The
+updated absolute MCP launcher was tested in a fresh client; an already running
+Codex server retains its previous closure until reconnection. After the owner's
+MCP restart, the connected process was confirmed running the final Node source,
+including the receipt-preservation fix. Connected MCP calls verified all 12 clean,
+pinned repositories and all 86 component artifact files. No component source
+changes or pushes were made. Validation preceded the maintainer-requested
+workspace commit.

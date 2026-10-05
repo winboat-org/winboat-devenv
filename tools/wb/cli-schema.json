@@ -1,0 +1,1454 @@
+{
+  "options": {
+    "--workspace": {
+      "dest": "workspace",
+      "required": false,
+      "default": null,
+      "choices": null,
+      "type": "string",
+      "multiple": false,
+      "boolean": false
+    },
+    "--json": {
+      "dest": "json",
+      "required": false,
+      "default": false,
+      "choices": null,
+      "type": "string",
+      "multiple": false,
+      "boolean": true
+    },
+    "--repositories-root": {
+      "dest": "repositories_root",
+      "required": false,
+      "default": null,
+      "choices": null,
+      "type": "string",
+      "multiple": false,
+      "boolean": false
+    },
+    "--state-root": {
+      "dest": "state_root",
+      "required": false,
+      "default": null,
+      "choices": null,
+      "type": "string",
+      "multiple": false,
+      "boolean": false
+    },
+    "--out-root": {
+      "dest": "out_root",
+      "required": false,
+      "default": null,
+      "choices": null,
+      "type": "string",
+      "multiple": false,
+      "boolean": false
+    }
+  },
+  "positionals": [],
+  "commands": {
+    "setup": {
+      "options": {},
+      "positionals": [],
+      "commands": {}
+    },
+    "doctor": {
+      "options": {
+        "--subset": {
+          "dest": "subset",
+          "required": false,
+          "default": null,
+          "choices": null,
+          "type": "string",
+          "multiple": false,
+          "boolean": false
+        },
+        "--repo": {
+          "dest": "repo",
+          "required": false,
+          "default": [],
+          "choices": null,
+          "type": "string",
+          "multiple": true,
+          "boolean": false
+        },
+        "--remote": {
+          "dest": "remote",
+          "required": false,
+          "default": false,
+          "choices": null,
+          "type": "string",
+          "multiple": false,
+          "boolean": true
+        }
+      },
+      "positionals": [],
+      "commands": {}
+    },
+    "repo": {
+      "options": {},
+      "positionals": [],
+      "commands": {
+        "list": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "status": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "plan": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "sync": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "verify": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "checkpoint": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--path": {
+              "dest": "path",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--message": {
+              "dest": "message",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "pin": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--rev": {
+              "dest": "rev",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--ref": {
+              "dest": "ref",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--source-url": {
+              "dest": "source_url",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--defer-checkpoint": {
+              "dest": "defer_checkpoint",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "push": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--remote": {
+              "dest": "remote",
+              "required": false,
+              "default": "origin",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--source": {
+              "dest": "source",
+              "required": false,
+              "default": "HEAD",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--force-with-lease": {
+              "dest": "force_with_lease",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--dry-run": {
+              "dest": "dry_run",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--defer-checkpoint": {
+              "dest": "defer_checkpoint",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "fork": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--namespace": {
+              "dest": "namespace",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--apply": {
+              "dest": "apply",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "branch": {
+          "options": {
+            "--subset": {
+              "dest": "subset",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "reconcile": {
+          "options": {
+            "--operation": {
+              "dest": "operation",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        }
+      },
+      "commandDest": "action"
+    },
+    "build": {
+      "options": {
+        "--plan": {
+          "dest": "plan",
+          "required": false,
+          "default": false,
+          "choices": null,
+          "type": "string",
+          "multiple": false,
+          "boolean": true
+        },
+        "--configuration": {
+          "dest": "configuration",
+          "required": false,
+          "default": "release",
+          "choices": ["release", "debug"],
+          "type": "string",
+          "multiple": false,
+          "boolean": false
+        },
+        "--mode": {
+          "dest": "mode",
+          "required": false,
+          "default": "release",
+          "choices": ["release", "development"],
+          "type": "string",
+          "multiple": false,
+          "boolean": false
+        },
+        "--background": {
+          "dest": "background",
+          "required": false,
+          "default": false,
+          "choices": null,
+          "type": "string",
+          "multiple": false,
+          "boolean": true
+        },
+        "--manifest": {
+          "dest": "manifest",
+          "required": false,
+          "default": null,
+          "choices": null,
+          "type": "string",
+          "multiple": false,
+          "boolean": false
+        },
+        "--name": {
+          "dest": "name",
+          "required": false,
+          "default": "default",
+          "choices": null,
+          "type": "string",
+          "multiple": false,
+          "boolean": false
+        }
+      },
+      "positionals": [
+        {
+          "dest": "target",
+          "required": false,
+          "default": "list",
+          "choices": null,
+          "type": "string",
+          "multiple": false,
+          "boolean": false,
+          "optional": true
+        }
+      ],
+      "commands": {}
+    },
+    "devbox": {
+      "options": {},
+      "positionals": [],
+      "commands": {
+        "capabilities": {
+          "options": {},
+          "positionals": [],
+          "commands": {}
+        },
+        "run": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--purpose": {
+              "dest": "purpose",
+              "required": true,
+              "default": null,
+              "choices": ["build", "install", "desktop", "system"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--script": {
+              "dest": "script",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--argument": {
+              "dest": "argument",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--direct": {
+              "dest": "direct",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "job": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--id": {
+              "dest": "id",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [
+            {
+              "dest": "job_action",
+              "required": true,
+              "default": null,
+              "choices": ["status", "cancel", "resume"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false,
+              "optional": false
+            }
+          ],
+          "commands": {}
+        },
+        "mirror": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--repo": {
+              "dest": "repo",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--mode": {
+              "dest": "mode",
+              "required": false,
+              "default": "release",
+              "choices": ["release", "development"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "registry": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [
+            {
+              "dest": "registry_action",
+              "required": true,
+              "default": null,
+              "choices": ["show", "verify", "reconcile"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false,
+              "optional": false
+            }
+          ],
+          "commands": {}
+        },
+        "install": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--manifest": {
+              "dest": "manifest",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--resume": {
+              "dest": "resume",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--rollback": {
+              "dest": "rollback",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--fixture": {
+              "dest": "fixture",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--failure-after-copy": {
+              "dest": "failure_after_copy",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "build": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--target": {
+              "dest": "target",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--collect": {
+              "dest": "collect",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--dependency-manifest": {
+              "dest": "dependency_manifest",
+              "required": false,
+              "default": [],
+              "choices": null,
+              "type": "string",
+              "multiple": true,
+              "boolean": false
+            },
+            "--configuration": {
+              "dest": "configuration",
+              "required": false,
+              "default": "release",
+              "choices": ["release", "debug"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--mode": {
+              "dest": "mode",
+              "required": false,
+              "default": "release",
+              "choices": ["release", "development"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "smoke": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--transaction": {
+              "dest": "transaction",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "cdi": {
+          "options": {},
+          "positionals": [],
+          "commands": {
+            "prepare": {
+              "options": {
+                "--render-node": {
+                  "dest": "render_node",
+                  "required": false,
+                  "default": null,
+                  "choices": null,
+                  "type": "string",
+                  "multiple": false,
+                  "boolean": false
+                }
+              },
+              "positionals": [],
+              "commands": {}
+            }
+          },
+          "commandDest": "cdi_action"
+        },
+        "media": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--iso": {
+              "dest": "iso",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--iso-sha256": {
+              "dest": "iso_sha256",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--index": {
+              "dest": "index",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
+            },
+            "--edition": {
+              "dest": "edition",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--locale": {
+              "dest": "locale",
+              "required": false,
+              "default": "en-US",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "create": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--iso": {
+              "dest": "iso",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--iso-sha256": {
+              "dest": "iso_sha256",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--index": {
+              "dest": "index",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
+            },
+            "--edition": {
+              "dest": "edition",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--locale": {
+              "dest": "locale",
+              "required": false,
+              "default": "en-US",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--disk-gib": {
+              "dest": "disk_gib",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
+            },
+            "--runtime": {
+              "dest": "runtime",
+              "required": false,
+              "default": null,
+              "choices": ["docker", "podman"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--render-node": {
+              "dest": "render_node",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--graphics-provider": {
+              "dest": "graphics_provider",
+              "required": false,
+              "default": null,
+              "choices": ["auto", "mesa", "nvidia-cdi"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--cdi-device": {
+              "dest": "cdi_device",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--manifest": {
+              "dest": "manifest",
+              "required": false,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--start": {
+              "dest": "start",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "up": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--rebuild-image": {
+              "dest": "rebuild_image",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "down": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--force": {
+              "dest": "force",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--timeout": {
+              "dest": "timeout",
+              "required": false,
+              "default": 120,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "restart": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--timeout": {
+              "dest": "timeout",
+              "required": false,
+              "default": 120,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "status": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "logs": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "destroy": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--confirm": {
+              "dest": "confirm",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "guest-status": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "viewer": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [
+            {
+              "dest": "viewer_action",
+              "required": true,
+              "default": null,
+              "choices": ["open", "close", "status"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false,
+              "optional": false
+            }
+          ],
+          "commands": {}
+        },
+        "migrate-host": {
+          "options": {
+            "--name": {
+              "dest": "name",
+              "required": false,
+              "default": "default",
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--manifest": {
+              "dest": "manifest",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        }
+      },
+      "commandDest": "action"
+    },
+    "job": {
+      "options": {},
+      "positionals": [],
+      "commands": {
+        "status": {
+          "options": {
+            "--id": {
+              "dest": "id",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "cancel": {
+          "options": {
+            "--id": {
+              "dest": "id",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "resume": {
+          "options": {
+            "--id": {
+              "dest": "id",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "run": {
+          "options": {
+            "--id": {
+              "dest": "id",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        }
+      },
+      "commandDest": "action"
+    },
+    "mcp": {
+      "options": {},
+      "positionals": [],
+      "commands": {}
+    }
+  },
+  "commandDest": "family"
+}

@@ -8,6 +8,12 @@ adds the shared devbox lifecycle, exact-closure container and verified Windows
 development baseline. Component Windows build/install acceptance belongs to
 Stage 4.
 
+The host control plane uses native Node.js ES modules, including durable workers,
+Windows transport, the container supervisor and command-environment refresh.
+Nix declares execution and installs dependencies from the checked-in npm lock;
+the typed MCP proxy dispatches the same application as the CLI. Component build
+recipes and guest PowerShell payloads retain their Nix ownership.
+
 ## Workspace and configuration
 
 The repository root is discovered, with `repos/` for managed checkouts,
@@ -37,12 +43,21 @@ files and distro hooks do not participate. The host kernel driver, matching
 userspace and device permissions remain discovered external inputs. See
 [devbox usage](devbox.md) for the contract and measured acceptance scope.
 
-Native devenv hooks activate the trusted workspace when entering its directory
-and deactivate on exit. Onboarding supports Bash, Zsh, Fish and Nushell, reports
-missing hook setup and performs `devenv allow` during explicit activation setup.
-Trust remains local to each checkout. The tracked `.envrc` supports direnv-based
-editors; use one activation mechanism per shell. Noninteractive execution invokes
-the Nix environment explicitly and does not depend on prompt hooks.
+Nix, devenv and native auto-activation are preconfigured host prerequisites.
+Native hooks activate the trusted workspace on entry and deactivate on exit.
+The workspace does not install hooks or inspect or modify host startup files.
+Trust remains local to each checkout. Native hooks are the sole automatic
+activation mechanism; no `.envrc` is provided. Shell commands run directly in an
+activated or refreshed locked environment. Noninteractive execution without
+that environment enters it explicitly with `devenv shell -- <command>`.
+
+Codex command refresh is declared in `nix/codex.nix`. Its generated project
+configuration uses the locked devenv CLI and a local `PreToolUse` hook to check
+the native dependency cache before each Bash command. Shell exports published
+atomically under ignored `.devenv/` are derived state; Nix files and the committed
+lock remain their source. Failed refreshes block the pending command. Existing
+commands and MCP processes keep their environment until restarted. No host
+service or user-global configuration is installed.
 
 ## Control plane
 
@@ -50,6 +65,14 @@ Use one `wb` command surface for setup, repository operations, builds, devbox
 lifecycle, jobs, inventory and bundling. Commands and their execution environment
 are Nix-defined. PowerShell payloads are shared checked-in files invoked by
 those commands, never divergent shell and MCP implementations.
+
+Agents invoke the advertised WinBoat MCP tools for routine control-plane work.
+The CLI serves terminal users, CI, explicit CLI requests and CLI/shell integration
+checks, plus operations without an MCP tool. Discover the current tool schema;
+investigate a missing or stale MCP connection before using a CLI fallback.
+After Nix execution definitions, locked inputs or MCP schemas change, restart
+or reconnect the affected server before relying on its tools. Codex's Bash
+refresh does not update a running MCP process.
 
 The MCP server is Node.js (TypeScript is acceptable), running over stdio by
 default. It validates typed arguments and invokes the same Nix command through

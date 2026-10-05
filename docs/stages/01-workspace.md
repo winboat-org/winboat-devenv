@@ -4,7 +4,10 @@ Status: implemented; repository/MCP acceptance passed. Prerequisite: Stage 0.
 No VM or component changes were made. See [validation](../validation.md) and
 [workspace usage](../workspace.md). Interactive activation test coverage was
 excluded at the maintainer's request; native hooks use unmodified upstream
-devenv, with its Fish path-with-spaces limitation documented.
+devenv, with its Fish path-with-spaces limitation documented. Automatic activation
+uses native hooks only; the duplicate direnv path and dependency were removed.
+Nix, devenv and native auto-activation are preconfigured prerequisites; shell
+hook installation and diagnostics have been removed from setup/doctor.
 
 ## Outcome
 
@@ -24,10 +27,10 @@ available through a minimal Node MCP control-plane server.
 2. Implement configuration schema/precedence and discovery. `wb setup` prepares
    ignored state/config idempotently, with no implicit clone or VM start.
    `wb doctor` reports tools, pin reachability, checkout state, capabilities and
-   remedies in human/JSON output. Native automatic activation is part of setup:
-   provide/diagnose Bash, Zsh, Fish and Nushell hooks, run `devenv allow` during
-   explicit activation setup, and preserve existing shell configuration. Retain
-   `.envrc` for direnv/editor users. See `docs/auto-activation.md`. Paths with
+   remedies in human/JSON output. Assume Nix, devenv and native auto-activation
+   are installed and configured. Setup prepares workspace state only; do not
+   inspect or modify host shell configuration. Use native hooks without `.envrc`
+   or direnv. See `docs/auto-activation.md`. Paths with
    spaces and arbitrary host usernames
    must work. Adopt an external checkout only by explicit local configuration;
    validate ownership/remotes/layout and preserve its working/index state.
@@ -92,11 +95,13 @@ for testing wrapper semantics. Test single/all/subset selection, dependency
 closure, parent placement, selective submodules, dirty/index/conflict protection,
 fork remotes and no mutation on shell entry. Compare preserved file/index hashes.
 
-Native activation remains upstream behavior. Setup/doctor preserve existing
-configuration and delegate trust to devenv; the optional hook and direnv paths
-are documented. Per the maintainer's validation scope, do not maintain a PTY
-activation regression suite or patch devenv to satisfy one. Agents/CI use
-explicit Nix execution in noninteractive shells.
+Native activation and checkout trust remain upstream behavior, outside
+workspace setup/doctor. Existing host shell configuration is assumed ready.
+Per the maintainer's validation scope, do not maintain a PTY
+activation regression suite or patch devenv to satisfy one. Agents use the
+advertised WinBoat MCP tools for routine operations. CLI/shell integration
+checks run directly in the activated or refreshed environment; noninteractive
+execution without that environment enters the locked shell explicitly.
 
 Exercise ordinary Git delegation and actual successful/failed/dry-run/no-op/
 explicit-refspec pushes. Confirm a successful managed push records its remote

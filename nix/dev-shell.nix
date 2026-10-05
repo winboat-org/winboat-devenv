@@ -10,6 +10,21 @@ let
   manifestFile = pkgs.writeText "winboat-repositories.json" (builtins.toJSON manifest);
   commands = import ./commands/repos.nix { inherit pkgs inputs; };
   devenvCli = inputs.devenv-cli.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  testSources = pkgs.runCommand "winboat-test-sources" { } ''
+    mkdir -p "$out/tools" "$out/tests" "$out/nix/scripts"
+    ln -s ${commands.operationSources}/wb "$out/tools/wb"
+    ln -s ${commands.operationSources}/node_modules "$out/tools/node_modules"
+    cp ${../tests/helpers.mjs} "$out/tests/helpers.mjs"
+    cp ${../tests/integration.mjs} "$out/tests/integration.mjs"
+    cp ${../tests/devbox.mjs} "$out/tests/devbox.mjs"
+    cp ${../tests/windows.mjs} "$out/tests/windows.mjs"
+    cp ${../tests/live-common.mjs} "$out/tests/live-common.mjs"
+    cp ${../tests/windows-live.mjs} "$out/tests/windows-live.mjs"
+    cp ${../tests/msvc-cross-live.mjs} "$out/tests/msvc-cross-live.mjs"
+    cp ${../tests/cross-artifact-live.mjs} "$out/tests/cross-artifact-live.mjs"
+    cp ${../tests/refresh.mjs} "$out/tests/refresh.mjs"
+    cp ${./scripts/codex-refresh.mjs} "$out/nix/scripts/codex-refresh.mjs"
+  '';
 in
 {
   packages =
@@ -19,53 +34,44 @@ in
       jq
       ripgrep
       nodejs
-      python3
       nix
       nixfmt
       shellcheck
       bashInteractive
-      zsh
-      fish
-      nushell
-      direnv
     ])
     ++ [ devenvCli ];
   # scripts outrank the Git package on PATH; the wrapper uses an absolute Git.
   scripts.wb.exec = ''exec ${commands.wb}/bin/wb "$@"'';
   scripts.git.exec = ''exec ${commands.git}/bin/git "$@"'';
   scripts.wb-test.exec = ''
+    ${commands.environment}
     export WB_REAL_GIT=${pkgs.git}/bin/git
     export WB_MANIFEST_FILE=${manifestFile}
     export WB_TEST_SOURCE="$WB_WORKSPACE_ROOT"
     export WB_TEST_COMMAND=${commands.wb}/bin/wb
     export WB_TEST_GIT=${commands.git}/bin/git
-    export PYTHONPATH=${../tools}
-    exec ${pkgs.python3}/bin/python3 ${../tests/integration.py} "$@"
+    exec ${pkgs.nodejs}/bin/node --test "$@" ${testSources}/tests/integration.mjs ${testSources}/tests/refresh.mjs
   '';
   scripts.wb-devbox-test.exec = ''
-    export PYTHONPATH=${../tools}
-    exec ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python3 ${../tests/devbox.py} "$@"
+    ${commands.environment}
+    exec ${pkgs.nodejs}/bin/node --experimental-test-module-mocks --test ${testSources}/tests/devbox.mjs "$@"
   '';
   scripts.wb-windows-test.exec = ''
-    export PYTHONPATH=${../tools}
-    exec ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python3 ${../tests/windows.py}
+    ${commands.environment}
+    exec ${pkgs.nodejs}/bin/node --experimental-test-module-mocks --test ${testSources}/tests/windows.mjs "$@"
   '';
   scripts.wb-windows-live.exec = ''
     ${commands.environment}
     export WB_LIVE_COMMAND=${commands.wb}/bin/wb
-    exec ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python3 ${../tests/windows-live.py} "$@"
+    exec ${pkgs.nodejs}/bin/node ${testSources}/tests/windows-live.mjs "$@"
   '';
   scripts.wb-msvc-cross-live.exec = ''
     ${commands.environment}
-    exec ${
-      pkgs.python3.withPackages (ps: [ ps.pyyaml ])
-    }/bin/python3 ${../tests/msvc-cross-live.py} "$@"
+    exec ${pkgs.nodejs}/bin/node ${testSources}/tests/msvc-cross-live.mjs "$@"
   '';
   scripts.wb-cross-artifact-live.exec = ''
     ${commands.environment}
-    exec ${
-      pkgs.python3.withPackages (ps: [ ps.pyyaml ])
-    }/bin/python3 ${../tests/cross-artifact-live.py} "$@"
+    exec ${pkgs.nodejs}/bin/node ${testSources}/tests/cross-artifact-live.mjs "$@"
   '';
   scripts.wb-windows-check.exec = ''
     exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"

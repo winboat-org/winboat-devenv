@@ -28,17 +28,22 @@ development guest remains preserved. See [runtime evidence](docs/evidence/stage-
 Acceptance covers this development environment and its measured workloads.
 Driver conformance, another physical host, second-account Windows boot and
 canonical publication remain unverified. WinBoat/Electron still need their
-complete fixed dependency closures. Stages 5–7 remain planned.
+complete fixed dependency closures. Stage 5 has Codex command refresh;
+its remaining client/workflow acceptance and Stages 6–7 remain planned.
 
 ## Start here
 
-Install Git, Nix and devenv using their official instructions; no distro or
-system configuration is assumed. The scaffold was initialized with devenv
-2.4.0. [devenv getting started](https://devenv.sh/getting-started/) describes
-installation and shell commands.
+Nix, devenv and native auto-activation must already be installed and configured.
+Enter the trusted checkout to activate its locked environment. This workspace
+does not install shell hooks or modify host startup files; see
+[activation](docs/auto-activation.md) for checkout trust and explicit execution.
+
+Agents use the connected WinBoat MCP tools for routine workspace operations,
+including setup, repository status, builds, devbox control and jobs. See the
+[MCP tool mapping](docs/workspace.md#mcp-and-durable-jobs). The following CLI
+examples are for terminal use, CI and checks of CLI behavior.
 
 ```sh
-devenv shell
 wb setup
 wb doctor --json
 wb repo plan --subset helios
@@ -48,9 +53,14 @@ wb repo branch --repo helios --name development
 ```
 
 Use the committed lock; `devenv update` is an explicit dependency refresh. Use
-`devenv shell -- wb ...` for noninteractive commands. Optional
-[native activation](docs/auto-activation.md) uses `wb setup --activation <shell>`;
-direnv-based editors/shells can use the tracked `.envrc` and `direnv allow`.
+commands directly in an activated or refreshed shell. `devenv shell -- wb ...`
+supplies the environment when it is absent, such as in CI. Codex can refresh
+its Bash command environment automatically using `wb-codex-config`; see
+[agent configuration](config/README.md). Restart Codex after merging its
+settings and reconnect MCP servers after changing their execution environment.
+The workspace uses devenv's native hooks without direnv or `.envrc`.
+The CLI, MCP proxy, durable jobs, devbox supervisor and Codex refresh run on the
+same locked Node.js runtime. Nix installs their pinned npm dependencies.
 Shell entry does not clone repositories, commit files, start a VM or install a
 driver.
 

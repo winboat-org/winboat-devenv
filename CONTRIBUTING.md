@@ -4,10 +4,16 @@ Begin with the active [stage](docs/stages/README.md) and the
 [workspace contracts](docs/architecture.md). This repository owns environment
 tooling, cross-repository orchestration and release assembly.
 
-Use `devenv shell` or `devenv shell -- <command>` for routine work. Bootstrap
-requires Git, Nix and devenv; virtualization and a container runtime are separate
-prerequisites discovered by `wb doctor`. Shell entry must not
-install host packages or change system configuration.
+Nix, devenv and native auto-activation are preconfigured prerequisites. Enter
+the trusted checkout and run commands directly in its locked environment.
+Use `devenv shell -- <command>` when the execution environment is absent, such
+as in CI. Codex can refresh Bash commands using the Nix-generated project
+[configuration](config/README.md); no direnv or host hook setup is needed.
+Agents use WinBoat MCP for routine workspace operations. CLI requests,
+CLI/shell integration checks and operations without an MCP equivalent use
+`wb` directly. Virtualization and a container runtime are separate prerequisites
+discovered by `wb doctor`. Shell entry must not install host packages or change
+system configuration.
 
 Commit at meaningful checkpoints: a validated command family, build target,
 provisioning phase or documentation contract. Prefer `feat(scope): ...`,

@@ -1,4 +1,8 @@
 # Merge into .codex/config.toml; start Codex in this workspace.
+# For locked MCP launchers and automatic command refresh, merge the output of
+# wb-codex-config instead. This example supplies MCP configuration only.
+# Agents use the connected winboat tools for routine operations. See
+# docs/workspace.md for CLI equivalents and command-environment requirements.
 [mcp_servers.devenv]
 command = "devenv"
 args = ["mcp"]

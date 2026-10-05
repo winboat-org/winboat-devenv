@@ -80,8 +80,8 @@ and keys. Use the unchanged genuine devenv.lock and locked shell. Do not refresh
 inputs, push, recursively initialize QEMU gitlinks, remove win-mcp/submodules or
 compile installer/component binaries in root release CI.
 
-Shared operations live in tools/wb/devbox.py and Nix-declared devbox.nix,
-scripts/devbox-run.py and windows/*.ps1. Node is a typed command proxy for the
+Shared operations live in tools/wb/devbox.mjs and Nix-declared devbox.nix,
+scripts/devbox-run.mjs and windows/*.ps1. Node is a typed command proxy for the
 same wb application. Keep component build/install execution in shared
 Nix-declared Windows payloads, with durable jobs/receipts and CLI/MCP parity.
 Stage 2's Windows dispatch plans have not executed component builds yet.

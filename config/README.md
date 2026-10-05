@@ -1,10 +1,8 @@
 # Configuration
 
-`shell/` contains native devenv auto-activation fragments for Bash, Zsh and Fish.
-Load the applicable hook once during shell setup and allow this checkout with
-`devenv allow`. [Activation documentation](../docs/auto-activation.md) also covers
-Nushell and direnv/editor integration. These are portable templates; host startup
-files and the per-user trust database remain outside tracked configuration.
+Nix, devenv and native auto-activation are existing host prerequisites.
+Shell startup files and the per-user trust database remain outside this
+workspace's configuration; see [activation](../docs/auto-activation.md).
 
 `defaults.json` supplies tracked Stage 1 settings. `wb setup` creates ignored
 `local.json` at the workspace root if absent; existing settings are preserved.
@@ -31,13 +29,48 @@ versions and input status belong in `provision.lock.json`; unresolved inputs do
 not count as a verified guest baseline. Fork overrides stay
 local unless preparing an explicit fork-specific pin change.
 
-`.mcp.json` registers devenv's stdio MCP and the Stage 1 `winboat` server for
-Claude Code. `agents/codex.toml.example` has equivalent Codex configuration.
-The workspace server launches with `devenv shell -- wb mcp`; no npm installation
-is required. Start clients in this workspace. Project Codex configuration lives in ignored
-`.codex/config.toml` when writable; merge existing config instead of replacing
-it. Both servers use the locked Nix environment for workspace commands.
+`.mcp.json` registers devenv's stdio MCP and the `winboat` server for Claude Code.
+Agents use WinBoat MCP for routine workspace, repository, build, devbox and job
+operations. Discover the tools advertised by the current connection; see the
+[tool mapping](../docs/workspace.md#mcp-and-durable-jobs). Use the CLI for
+CLI/shell integration checks, explicit CLI requests and operations without an
+MCP equivalent. Inspect and report an unavailable or stale connection before
+using a fallback.
+
+`wb-codex-config` prints the locked Codex configuration for the current
+checkout, including MCP servers and automatic command-environment
+refresh. Merge its output into an existing `.codex/config.toml`; for a new
+configuration, create `.codex/` and save the output there. Regenerate it after
+moving the checkout or updating the locked devenv CLI.
+`agents/codex.toml.example` is the minimal MCP-only alternative.
+The generated Codex server entry launches the absolute Nix `wb` application
+directly. Minimal MCP templates use `devenv shell -- wb mcp` when the client does
+not already have the environment. Nix installs the pinned Node dependencies;
+no manual npm installation is required. Once connected,
+agents invoke MCP tools directly. Start clients in this workspace. Project
+Codex configuration lives in ignored `.codex/config.toml` when writable; merge
+existing config instead of replacing it. Both servers use the locked Nix
+environment for workspace commands.
 The samples neither register an absent devbox server nor change approval policy.
+
+The generated Codex `PreToolUse` hook checks devenv's own evaluation cache
+before each Bash command. Refresh occurs at command start when devenv detects
+a change to its recorded inputs, including imported/read files, Nix
+configuration and the lock. Successful exports are published atomically
+under ignored `.devenv/codex/`; command shells apply the current generation and
+restore removed variables using the locked CLI's environment-diff helpers.
+Nested shells using the same generation retain their existing environment.
+A failed refresh denies the command instead of executing with stale tools.
+Run shell commands directly after the hook supplies their environment.
+Restart Codex after merging its configuration. Existing running commands and
+MCP processes keep their environment until restarted; restart/reconnect the
+affected server after changing its Nix execution definitions, locked inputs
+or MCP schemas.
+
+This integration uses supported local Codex command hooks. Cloud orchestration
+does not support project command hooks, including when execution is local; use
+explicit locked devenv execution in that mode. See the official
+[hook support and configuration](https://learn.chatgpt.com/docs/hooks).
 
 Formats follow the official [Codex MCP docs](https://developers.openai.com/codex/mcp/)
 and [Claude Code MCP docs](https://code.claude.com/docs/en/mcp).

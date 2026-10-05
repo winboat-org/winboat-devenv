@@ -9,9 +9,8 @@ const strings = { type: 'array', items: string, minItems: 1 };
 const selection = { subset: { type: 'string', enum: ['all', 'helios', 'winboat', 'winboat-accel'] },
   repos: { type: 'array', items: string, minItems: 1 } };
 const definitions = [
-  ['workspace_status', 'Inspect the workspace and activation prerequisites.', ['doctor'], selection],
-  ['workspace_setup', 'Prepare local state; activation is an explicit option.', ['setup'],
-    { activation: { type: 'string', enum: ['bash', 'zsh', 'fish', 'nu'] }, shellConfig: string }],
+  ['workspace_status', 'Inspect workspace capabilities and source state.', ['doctor'], selection],
+  ['workspace_setup', 'Prepare local workspace configuration and state.', ['setup'], {}],
   ...['list', 'status', 'plan'].map(action => [`repo_${action}`, `Repository ${action}.`, ['repo', action], selection]),
   ['repo_verify', 'Verify pinned source objects and development refs.', ['repo', 'verify'], { ...selection, background: bool }],
   ['repo_sync', 'Sync exact source pins; defaults to a durable background job.', ['repo', 'sync'], { ...selection, background: bool }],
@@ -98,7 +97,7 @@ function validate(value, schema, path = 'arguments') {
 
 function command(tool, args) {
   const argv = [...tool.command];
-  const flags = { subset: '--subset', activation: '--activation', shellConfig: '--shell-config', message: '--message',
+  const flags = { subset: '--subset', message: '--message',
     revision: '--rev', ref: '--ref', sourceUrl: '--source-url', remote: '--remote', source: '--source',
     namespace: '--namespace', name: '--name', operation: '--operation', id: '--id',
     forceWithLease: '--force-with-lease', dryRun: '--dry-run', deferCheckpoint: '--defer-checkpoint', apply: '--apply',

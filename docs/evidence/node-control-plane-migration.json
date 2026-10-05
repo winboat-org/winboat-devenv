@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-06",
+  "scope": "Native Node.js host control-plane rewrite",
+  "runtime": {
+    "node": "24.20.0",
+    "npmDependencies": {
+      "lock": "tools/package-lock.json",
+      "sha256": "c909299e22b6fa31f6ebf17402f3d8337324c7d90dffc21ead9d36270eb1d22a"
+    }
+  },
+  "locks": {
+    "devenv.lock": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "config/provision.lock.json": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408"
+  },
+  "tests": {
+    "integrationAndRefresh": {
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0,
+      "log": {
+        "path": ".state/node-migration/integration.log",
+        "sha256": "288b131ef5f22bf25db2516ecc61e026c0fc4323caa2cb4fed345bcf9891c62a"
+      },
+      "duplicateRunnerPreservesReceipt": true
+    },
+    "devbox": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "log": {
+        "path": ".state/node-migration/devbox.log",
+        "sha256": "099e23a330aaa184f4b7b4bedbc41199775675baed04fa5a48730b751de07d08"
+      }
+    },
+    "windows": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "log": {
+        "path": ".state/node-migration/windows.log",
+        "sha256": "e18b3218f19bcba2ea0250feea2cb7500ae683b77dea3ba850e80019c861f1ef"
+      }
+    },
+    "windowsPayloads": {
+      "parsed": 18,
+      "passed": true,
+      "log": {
+        "path": ".state/node-migration/powershell.log",
+        "sha256": "ac3748555f66a67d34c3652774286d243db2214a90411195f44cdb9c31daaf58"
+      }
+    }
+  },
+  "liveWindows": [
+    {
+      "kind": "largeRequestsAndInputFixtures",
+      "id": "924504fd1bdf44a6a20ddbb5ab666adb",
+      "state": "passed",
+      "durationSeconds": 12,
+      "eightMinuteDurability": false,
+      "fullComponentAcceptance": false,
+      "summary": {
+        "path": ".state/node-migration/largeRequestsAndInputFixtures-summary.json",
+        "sha256": "63cf186fd9d7b8619de05dccbec85a83a8c11286e094933ac79d66af2f953a6e"
+      },
+      "receipts": {
+        "path": ".state/node-migration/largeRequestsAndInputFixtures-receipts.json",
+        "sha256": "cd0dc71f88d07ad29875c1b50127f3db6121f83bd4cff7e76b093a4c4b24334a"
+      }
+    },
+    {
+      "kind": "control",
+      "id": "05a28401fbba4bb0b3553ef37893cc13",
+      "state": "passed",
+      "durationSeconds": 12,
+      "eightMinuteDurability": false,
+      "fullComponentAcceptance": false,
+      "summary": {
+        "path": ".state/node-migration/control-summary.json",
+        "sha256": "e50f4001342040acb8afe197ad0da45408a8fd9ec8c19fff3d61feebb89ed76d"
+      },
+      "receipts": {
+        "path": ".state/node-migration/control-receipts.json",
+        "sha256": "b612929a8874a1700ec410dbf0b8556a1d6da4582086cd5d95ee67db68c93bca"
+      }
+    }
+  ],
+  "componentBuild": {
+    "target": "venus-protocol",
+    "operationId": "op-4325ee18fd0a46d28a99b4bb25dae75b",
+    "state": "succeeded",
+    "manifest": {
+      "path": "/media/rupansh/wdblack/winboat-stage04-artifacts/native/op-4325ee18fd0a46d28a99b4bb25dae75b/manifest.json",
+      "sha256": "fee7a6c753d312b9b69553e535cd24806eb5bc3024a68633b78651f278ada34c"
+    },
+    "source": {
+      "canonicalUrl": "https://github.com/winboat-org/venus-protocol.git",
+      "declaredPin": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+      "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+      "diffSha256": null,
+      "snapshotSha256": "9b3f933fefa680fa5acdd91867b8b57126c63d8b9176053656bb54640d4182fc",
+      "gitlinks": [],
+      "untracked": [],
+      "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s="
+    },
+    "receipt": {
+      "path": ".state/node-migration/build.json",
+      "sha256": "53733e38b4580ff3f5b25cae74619fe004db6daaadcf590e7dd8c1a8fe8f804c"
+    },
+    "verification": {
+      "path": ".state/node-migration/build-verify.json",
+      "sha256": "5f8f0f1b928122a0a5b8d7b163dea9a13f346cc605b051b295ecfb83540732ff"
+    },
+    "filesVerified": 86,
+    "sourceIdentityMatchesRetainedPythonArtifact": true
+  },
+  "supervisor": {
+    "executionClosure": "/nix/store/2cncv656wsybhmjykmb7cx6qdw3in5sf-winboat-devbox",
+    "entryPoint": "nix/scripts/devbox-run.mjs",
+    "closureBuilt": true,
+    "replacementContainerBooted": false,
+    "receipt": {
+      "path": ".state/node-migration/supervisor-build.json",
+      "sha256": "e705d385042ad49a1af25ef28f4d1eea05d923ab6ebded6ed09c02e9c212c84e"
+    }
+  },
+  "codex": {
+    "configurationGenerated": true,
+    "otherSettingsPreserved": true,
+    "hook": "nix/scripts/codex-refresh.mjs",
+    "winboatLauncher": "absolute Nix wb application",
+    "connectedNodeCliObserved": true,
+    "toolsExposed": 45,
+    "freshConfiguredLaunch": {
+      "command": "/nix/store/fj7z15rdjbnlzj63q863lvkca8zlq5y0-wb/bin/wb",
+      "operationId": "op-2950c1b8481b492187c09a343ca47a70",
+      "repositories": 12,
+      "allCleanAndPinned": true
+    },
+    "connectedMcpArtifactVerification": {
+      "operationId": "op-03a8748c46e44036bca3bfa5d356c823",
+      "state": "verified",
+      "filesVerified": 86
+    },
+    "latestLauncherRequiresClientReconnect": false,
+    "reconnectedClientVerification": {
+      "observedAt": "2026-10-05T22:29:01.134Z",
+      "nodeRuntime": "24.20.0",
+      "pid": 199140,
+      "source": "/nix/store/xglbcnnpv7hlymsx4wkcl9qmv5wjhd9d-winboat-operation-sources/wb/cli.mjs",
+      "finalJobsSourceMatchesWorkingTree": true,
+      "repositoryStatus": {
+        "operationId": "op-fe3a80302fb649e68fa928e2e919fbef",
+        "state": "succeeded",
+        "repositories": 12,
+        "allCleanAndPinned": true
+      },
+      "artifactVerification": {
+        "operationId": "op-ead1d181d9814473989819acdb8ccf7c",
+        "state": "verified",
+        "filesVerified": 86
+      }
+    }
+  },
+  "retainedGuest": {
+    "name": "development",
+    "identity": "9a579891fb1244e1b3fe348f702809ff",
+    "image": {
+      "id": "b0981b821da8ca968c979b988189fb124561116451375394e27e9f21b8c9b596",
+      "archiveSha256": "5333903aded47ad83f2f7adcfd87b8ea52af6738f84793b9118d1f3ae4852674",
+      "output": "/nix/store/15isszssps5pb73qv1ms0in8f60wlqp1-winboat-devbox.tar.gz",
+      "derivation": "/nix/store/2gjkdpfc7a3z08v7h5c48rfgd57wya75-winboat-devbox.tar.gz.drv",
+      "lockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+      "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+      "hostStack": "/nix/store/6hijgp1wvqyq7vp5j46q8lih7kz672h6-winboat-host-stack",
+      "manifestSha256": "02ae3e7a900c01899e9a948d0b8cab2456e9aae26eb2b3837d2d36412dca6e19"
+    },
+    "state": "stopped",
+    "hostExitCode": -11,
+    "containerExitCode": 245,
+    "cleanShutdown": false,
+    "diskPreserved": true,
+    "imageMigrated": false,
+    "shutdownReceipt": {
+      "path": ".state/node-migration/shutdown.json",
+      "sha256": "80960093a2343b5be3299aeb63ceeb122b6236caa5c7542191ec0bcbab0e42b6"
+    },
+    "logs": {
+      "path": ".state/node-migration/shutdown-logs.json",
+      "sha256": "8d06e7117ca77dbb416a3b6900ba4238f67a28adb29750fb0a305b65da44d64f"
+    },
+    "crash": {
+      "pid": 60822,
+      "signal": "SIGSEGV",
+      "frame": "util_vma_heap_free",
+      "library": "libgallium-26.2.2.so",
+      "callPath": [
+        "iris_destroy_context",
+        "eglReleaseThread",
+        "egl_cleanup",
+        "qemu_display_cleanup",
+        "qemu_cleanup"
+      ],
+      "coreMetadata": {
+        "path": ".state/node-migration/shutdown-core-info.txt",
+        "sha256": "64e5f124586c69f94d7939ad96a9dd571020303ef11ca757a803d3268dcdf00d"
+      }
+    }
+  },
+  "limits": [
+    "Replacement container image with the Node supervisor has not been booted.",
+    "Retained QEMU/Mesa cleanup crash prevents a clean-shutdown claim.",
+    "Eight-minute durability and full graphics build/install/loaded acceptance were not repeated.",
+    "Live fixture registry observation is not resident Helios kernel identity proof.",
+    "Another host, second-account Windows boot and full Stage 5 client workflows remain pending."
+  ],
+  "preservation": {
+    "managedCheckouts": 12,
+    "allCleanAndPinned": true,
+    "componentSourcesChanged": false,
+    "commitsCreatedDuringValidation": false,
+    "pushed": false
+  }
+}

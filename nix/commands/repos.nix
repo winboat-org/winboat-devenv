@@ -1,6 +1,9 @@
 { pkgs, inputs }:
 let
-  python = pkgs.python3.withPackages (ps: [ ps.pyyaml ]);
+  nodeModules = pkgs.importNpmLock.buildNodeModules {
+    npmRoot = ../../tools;
+    nodejs = pkgs.nodejs;
+  };
   manifest = pkgs.writeText "winboat-repositories.json" (builtins.toJSON (import ../manifest.nix));
   buildTargets = pkgs.writeText "winboat-build-targets.json" (
     builtins.toJSON (import ../build-targets.nix)
@@ -37,7 +40,7 @@ let
           "windows-rust-deps.nix"
           "windows-utilities.nix"
           "windows-component-inputs.nix"
-          "scripts/devbox-run.py"
+          "scripts/devbox-run.mjs"
           "scripts/windows-win-flex.py"
           "windows/Bootstrap.ps1"
           "windows/PowerPolicy.ps1"
@@ -78,7 +81,7 @@ let
   );
   devenv = inputs.devenv-cli.packages.${pkgs.stdenv.hostPlatform.system}.default;
   operationSources = pkgs.runCommand "winboat-operation-sources" { } (
-    "mkdir -p $out/wb $out/mcp\n"
+    "mkdir -p $out/wb $out/mcp\nln -s ${nodeModules}/node_modules $out/node_modules\n"
     +
       pkgs.lib.concatMapStringsSep "\n"
         (
@@ -88,18 +91,22 @@ let
           } "$out/${name}"''
         )
         [
-          "wb/__init__.py"
-          "wb/__main__.py"
-          "wb/activation.py"
-          "wb/builds.py"
-          "wb/devbox.py"
-          "wb/graphics.py"
-          "wb/windows.py"
-          "wb/common.py"
-          "wb/jobs.py"
-          "wb/publication.py"
-          "wb/repos.py"
-          "wb/workspace.py"
+          "package.json"
+          "package-lock.json"
+          "wb/cli.mjs"
+          "wb/cli-schema.json"
+          "wb/builds.mjs"
+          "wb/devbox.mjs"
+          "wb/graphics.mjs"
+          "wb/windows.mjs"
+          "wb/archives.mjs"
+          "wb/qmp.mjs"
+          "wb/common.mjs"
+          "wb/lock-holder.mjs"
+          "wb/jobs.mjs"
+          "wb/publication.mjs"
+          "wb/repos.mjs"
+          "wb/workspace.mjs"
           "mcp/server.mjs"
         ]
   );
@@ -108,6 +115,7 @@ let
     export WB_MANIFEST_FILE=${manifest}
     export WB_DEVENV=${devenv}/bin/devenv
     export WB_NODE=${pkgs.nodejs}/bin/node
+    export WB_FLOCK=${pkgs.util-linux}/bin/flock
     export WB_MCP_SERVER=${operationSources}/mcp/server.mjs
     export WB_OPERATION_SOURCES=${operationSources}
     export WB_BUILD_TARGETS=${buildTargets}
@@ -123,10 +131,18 @@ let
     export WB_WIMLIB=${pkgs.wimlib}/bin/wimlib-imagex
     export WB_7ZIP=${pkgs._7zz}/bin/7zz
     export WB_DOCKER=${pkgs.docker-client}/bin/docker
-    export WB_NVIDIA_CTK=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit}/bin/nvidia-ctk"}
-    export WB_NVIDIA_CDI_HOOK=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-cdi-hook"}
-    export WB_NVIDIA_TOOLKIT_ROOT=${pkgs.lib.optionalString pkgs.stdenv.isLinux "${pkgs.nvidia-container-toolkit}"}
-    export WB_GRAPHICS_LIBRARIES=${pkgs.lib.optionalString pkgs.stdenv.isLinux (pkgs.lib.makeLibraryPath [ pkgs.libglvnd pkgs.libx11 pkgs.libxext ])}
+    export WB_NVIDIA_CTK=${pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux "${pkgs.nvidia-container-toolkit}/bin/nvidia-ctk"}
+    export WB_NVIDIA_CDI_HOOK=${pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-cdi-hook"}
+    export WB_NVIDIA_TOOLKIT_ROOT=${pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux "${pkgs.nvidia-container-toolkit}"}
+    export WB_GRAPHICS_LIBRARIES=${
+      pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux (
+        pkgs.lib.makeLibraryPath [
+          pkgs.libglvnd
+          pkgs.libx11
+          pkgs.libxext
+        ]
+      )
+    }
     export WB_PODMAN=${pkgs.podman}/bin/podman
     export WB_CONTAINER_HOOKS_DIR=${pkgs.emptyDirectory}
     export WB_CONTAINER_POLICY=${
@@ -147,14 +163,12 @@ let
     export WB_OBJDUMP=${pkgs.binutils}/bin/objdump
     export WB_READELF=${pkgs.binutils}/bin/readelf
     export WB_COMMAND="$0"
-    export PYTHONPATH=${operationSources}
   '';
   command =
     name: arguments:
     pkgs.writeShellApplication {
       inherit name;
       runtimeInputs = [
-        python
         pkgs.nodejs
         pkgs.git
         pkgs.openssh
@@ -162,12 +176,12 @@ let
         devenv
       ];
       text = environment + ''
-        exec ${python}/bin/python3 -m wb ${arguments} "$@"
+        exec ${pkgs.nodejs}/bin/node ${operationSources}/wb/cli.mjs ${arguments} "$@"
       '';
     };
 in
 {
-  inherit environment;
+  inherit environment operationSources;
   wb = command "wb" "";
   git = command "git" "git-wrapper";
 }

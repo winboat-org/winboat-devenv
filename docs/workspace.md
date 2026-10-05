@@ -1,14 +1,23 @@
 # Workspace control plane
 
 Stage 1 supplies `wb` and a shell-scoped Git wrapper from
-`nix/commands/repos.nix`. Python implements the shared operations; Node validates
-MCP arguments and invokes that same Nix application with argument arrays. No npm
-installation is needed. The Nix lock supplies Node, Python, Git and devenv.
+`nix/commands/repos.nix`. Native Node.js ES modules implement the CLI, repository
+operations, artifact handling, devbox lifecycle, Windows transport and durable
+workers. The typed Node MCP proxy invokes the same Nix application with argument
+arrays. Nix installs the exact dependencies from `tools/package-lock.json`; no
+manual npm installation is needed. The locked Node runtime is shared by both
+interfaces, the container supervisor and Codex command refresh.
+
+Agents use the advertised WinBoat MCP tools for routine operations. The CLI
+examples below document terminal and CI usage, explicit CLI requests and
+CLI/shell integration checks. Both interfaces invoke the same Nix-defined
+operations; the [tool mapping](#mcp-and-durable-jobs) identifies common calls.
+Run commands directly in the activated or refreshed environment; use
+`devenv shell -- <command>` when that environment is absent.
 
 ## Prepare and inspect
 
 ```sh
-devenv shell
 wb setup
 wb doctor --json
 wb repo list --subset helios
@@ -19,7 +28,7 @@ wb repo verify --subset all --background --json
 
 `setup` creates ignored local configuration/state idempotently. Shell entry,
 list, status and plan do not clone, commit, start a VM or install host packages.
-Doctor reports capabilities, hook/trust diagnostics and source evidence; use
+Doctor reports capabilities, tool availability and source evidence; use
 `--remote` for a new remote check. KVM/container/display observations are separate
 from Stage 3 VM readiness.
 
@@ -153,9 +162,35 @@ test transports belong in ignored `workspace.remotes` configuration.
 
 ## MCP and durable jobs
 
-`devenv shell -- wb mcp` starts the Node stdio server. It supports initialize,
-tools/list, typed tools/call and versioned JSON/structured results. Only JSON-RPC
-goes to stdout; diagnostics go to stderr. Launch configurations are described in
+Use the connected `winboat` MCP server for agent workspace operations. Discover
+its current tools and argument schema before invoking them. Common equivalents
+are:
+
+| MCP tool | CLI operation |
+| --- | --- |
+| `workspace_setup` | `wb setup` |
+| `workspace_status` | `wb doctor` |
+| `repo_list`, `repo_status`, `repo_plan` | `wb repo list`, `wb repo status`, `wb repo plan` |
+| `repo_sync`, `repo_verify` | `wb repo sync`, `wb repo verify` |
+| `build_list`, `build_run`, `build_verify` | `wb build list`, `wb build`, `wb build verify` |
+| `devbox_status`, `devbox_up`, `devbox_down` | `wb devbox status`, `wb devbox up`, `wb devbox down` |
+| `job_status`, `job_cancel`, `job_resume` | `wb job status`, `wb job cancel`, `wb job resume` |
+
+For example, call `repo_status` with `{"subset": "all"}` to inventory managed
+checkouts, or `repo_plan` with `{"repos": ["qemu-helios"]}` for one repository.
+Use `wb` directly when testing its shell/CLI behavior, when the user requests
+CLI execution or when no MCP equivalent exists. Investigate and report a
+missing or stale MCP connection instead of silently replacing its tools with
+shell commands. Restart/reconnect after changes to its Nix execution definitions,
+locked inputs or tool schemas; Bash environment refresh does not update an
+already running server.
+
+The generated Codex configuration launches the absolute Nix `wb` application
+directly; its wrapper supplies the locked operation environment. The minimal
+Claude/MCP templates retain explicit shell entry for clients without an activated
+environment. Agents invoke connected tools directly. The server supports
+initialize, tools/list, typed tools/call and versioned JSON/structured results.
+Only JSON-RPC goes to stdout; diagnostics go to stderr. Launch configurations are described in
 [config/README.md](../config/README.md).
 
 Sync, source verification and publication default to detached durable jobs over
