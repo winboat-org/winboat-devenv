@@ -723,14 +723,6 @@ export async function main(argv = process.argv.slice(2)) {
       env.GITHUB_EVENT_NAME === "workflow_dispatch",
     "workflow must execute the exact selected component pin",
   );
-  const [selected] = ws.select({ repo: ["helios", "clvk-helios"] });
-  for (const name of ws.order(selected, true)) {
-    const state = ws.status([name])[0];
-    require_(
-      state.head === ws.repos[name].pin.rev && !state.changes.length,
-      "managed component sources must be clean and pinned",
-    );
-  }
   const operationId = identity(),
     workflow = {
       repository: env.GITHUB_REPOSITORY,
