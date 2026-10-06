@@ -2,13 +2,15 @@
   "schemaVersion": 1,
   "stage": 6,
   "state": "implemented-local-validation",
-  "observedAt": "2026-10-06T14:15:00.989Z",
+  "observedAt": "2026-10-06T14:20:04.401Z",
   "root": {
     "repository": "https://github.com/winboat-org/winboat-devenv",
-    "head": "a5b2b1822b59fae57cf56d0ac37af6cef71a3b47",
-    "sourceState": "Stage 5 and transport fix checkpointed; Stage 6 root checkpoint being prepared after verified component publication",
-    "committed": false,
-    "pushed": false
+    "sourceState": "required Stage 5 baseline and Stage 6 implementation published; this evidence update descends from the recorded source checkpoint",
+    "committed": true,
+    "pushed": true,
+    "sourceRevision": "db1ffc099570abf258f2730c511e55d06955e025",
+    "ref": "refs/heads/master",
+    "remoteVerified": true
   },
   "locks": {
     "devenv.lock": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
@@ -172,7 +174,7 @@
     "initialManagedHeadsAndPinsPreservedThroughImplementation": true
   },
   "hosted": {
-    "rootRepositoryEmpty": true,
+    "rootRepositoryEmpty": false,
     "rootRepositoryRunners": 0,
     "heliosRepositoryRunners": 0,
     "rootAndHeliosEnvironments": [],
@@ -192,7 +194,9 @@
       "virglrenderer": 0,
       "mesa-helios": 0,
       "vkd3d-proton": 0
-    }
+    },
+    "rootRepositoryEmptyAtInitialInspection": true,
+    "stage06DispatchesPerformed": false
   },
   "runtime": {
     "state": "pending",
@@ -223,7 +227,7 @@
         "revision": "f4651bd076a2613728823ec289abc121a348a48a",
         "remoteVerified": true,
         "transaction": "op-b3087d56ba0943ce9cc8f3b61e07ede5",
-        "state": "deferred",
+        "state": "succeeded",
         "pendingParents": [
           {
             "repository": "vkd3d-proton",
@@ -234,7 +238,13 @@
             "publishedCommit": "62bc83f390548c3072905e8c0d1b1e7094b8d312",
             "publicationOperation": "op-c99e92bb43dd4bb6a4ab5cb7c3021e79"
           }
-        ]
+        ],
+        "rootCommit": "db1ffc099570abf258f2730c511e55d06955e025",
+        "receipt": {
+          "path": "workspace-state:operations/op-b3087d56ba0943ce9cc8f3b61e07ede5.json",
+          "size": 1034,
+          "sha256": "738482f58e23edcfefb37a134daedc79027a83b234b3165555531e23e3ebd475"
+        }
       },
       {
         "repository": "dxvk",
@@ -243,7 +253,7 @@
         "revision": "16d521ca96d8cc6f2670c648465b1c544f29a39d",
         "remoteVerified": true,
         "transaction": "op-780866ff506c4b39ad64ced5d64fec52",
-        "state": "deferred",
+        "state": "succeeded",
         "pendingParents": [
           {
             "repository": "helios",
@@ -254,7 +264,13 @@
             "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
             "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
           }
-        ]
+        ],
+        "rootCommit": "db1ffc099570abf258f2730c511e55d06955e025",
+        "receipt": {
+          "path": "workspace-state:operations/op-780866ff506c4b39ad64ced5d64fec52.json",
+          "size": 1053,
+          "sha256": "47402bf47f46fadf73e0ebad1b761db3f5ba7e05f0c3787b7f1159cf36bd1a33"
+        }
       },
       {
         "repository": "venus-protocol",
@@ -263,7 +279,7 @@
         "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
         "remoteVerified": true,
         "transaction": "op-279e0b0c6514492fa4b0b0dcc6964f67",
-        "state": "deferred",
+        "state": "succeeded",
         "pendingParents": [
           {
             "repository": "helios",
@@ -274,7 +290,13 @@
             "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
             "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
           }
-        ]
+        ],
+        "rootCommit": "db1ffc099570abf258f2730c511e55d06955e025",
+        "receipt": {
+          "path": "workspace-state:operations/op-279e0b0c6514492fa4b0b0dcc6964f67.json",
+          "size": 1028,
+          "sha256": "dc7b409d8f7d4968e2985e863702b27e497470a96c9c1e8342024b7abec99655"
+        }
       },
       {
         "repository": "mesa-helios",
@@ -283,7 +305,7 @@
         "revision": "c75464941107a63440f79ff8570ad866815f6458",
         "remoteVerified": true,
         "transaction": "op-d8e6b6772d64431b8d5e8acb0a5722ee",
-        "state": "deferred",
+        "state": "succeeded",
         "pendingParents": [
           {
             "repository": "helios",
@@ -294,7 +316,13 @@
             "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
             "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
           }
-        ]
+        ],
+        "rootCommit": "db1ffc099570abf258f2730c511e55d06955e025",
+        "receipt": {
+          "path": "workspace-state:operations/op-d8e6b6772d64431b8d5e8acb0a5722ee.json",
+          "size": 1072,
+          "sha256": "ab3fdce28341c554e2d7a9719e556b525111d2bc0c729edcc3de1dd507b2fc7a"
+        }
       },
       {
         "repository": "virglrenderer",
@@ -303,7 +331,7 @@
         "revision": "72a8e2ad9ab1103bb7293e0c47e2991ec9737c03",
         "remoteVerified": true,
         "transaction": "op-e887ac7c773d4e588baba313a759ef6d",
-        "state": "deferred",
+        "state": "succeeded",
         "pendingParents": [
           {
             "repository": "helios",
@@ -314,7 +342,13 @@
             "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
             "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
           }
-        ]
+        ],
+        "rootCommit": "db1ffc099570abf258f2730c511e55d06955e025",
+        "receipt": {
+          "path": "workspace-state:operations/op-e887ac7c773d4e588baba313a759ef6d.json",
+          "size": 1085,
+          "sha256": "94c51a40f4fd5697676f30c614bc6eb946497762da65c15e4d723745176a60ad"
+        }
       },
       {
         "repository": "qemu-helios",
@@ -323,7 +357,7 @@
         "revision": "a5e032cd6f0b5e1ea7889afd131d59b311c2b850",
         "remoteVerified": true,
         "transaction": "op-de132c4e31b443219d00a6e97ad3ac10",
-        "state": "deferred",
+        "state": "succeeded",
         "pendingParents": [
           {
             "repository": "helios",
@@ -334,7 +368,13 @@
             "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
             "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
           }
-        ]
+        ],
+        "rootCommit": "db1ffc099570abf258f2730c511e55d06955e025",
+        "receipt": {
+          "path": "workspace-state:operations/op-de132c4e31b443219d00a6e97ad3ac10.json",
+          "size": 1102,
+          "sha256": "9fe88ac99fc35d406326c722356ea0be312f16ef79420bcbbcc1350c6ff7efb0"
+        }
       },
       {
         "repository": "vkd3d-proton",
@@ -343,7 +383,7 @@
         "revision": "62bc83f390548c3072905e8c0d1b1e7094b8d312",
         "remoteVerified": true,
         "transaction": "op-c99e92bb43dd4bb6a4ab5cb7c3021e79",
-        "state": "deferred",
+        "state": "succeeded",
         "pendingParents": [
           {
             "repository": "helios",
@@ -354,7 +394,13 @@
             "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
             "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
           }
-        ]
+        ],
+        "rootCommit": "db1ffc099570abf258f2730c511e55d06955e025",
+        "receipt": {
+          "path": "workspace-state:operations/op-c99e92bb43dd4bb6a4ab5cb7c3021e79.json",
+          "size": 1093,
+          "sha256": "747b966f1bc80db942dde67f986e06de4a72feea25304e0c9371693d2b5c67f9"
+        }
       },
       {
         "repository": "helios",
@@ -363,8 +409,14 @@
         "revision": "3b2e4c451368e11c528e544e6a3c870b001e817a",
         "remoteVerified": true,
         "transaction": "op-8bb5a5f2fbcb46938e2adff2f954a72a",
-        "state": "deferred",
-        "pendingParents": []
+        "state": "succeeded",
+        "pendingParents": [],
+        "rootCommit": "db1ffc099570abf258f2730c511e55d06955e025",
+        "receipt": {
+          "path": "workspace-state:operations/op-8bb5a5f2fbcb46938e2adff2f954a72a.json",
+          "size": 734,
+          "sha256": "2c084b851f92fe958033f969bbd24436a0e3985f91df891e757b68b25685691b"
+        }
       }
     ],
     "canonicalHistory": "depth-one fetches at the advertised seed refs restored valid bounded histories; all six local tips descend from those refs",
@@ -462,6 +514,22 @@
           "objectVerified": true
         }
       ]
+    },
+    "root": {
+      "repository": "https://github.com/winboat-org/winboat-devenv",
+      "ref": "refs/heads/master",
+      "revision": "db1ffc099570abf258f2730c511e55d06955e025",
+      "remoteVerified": true
+    },
+    "managedStatus": {
+      "operationId": "op-06d70e4cf2a34702a367f742d2756414",
+      "cleanCheckouts": 12,
+      "headsMatchPins": true,
+      "receipt": {
+        "path": "workspace-state:stage06/mcp-repo_status-1791296344029.json",
+        "size": 11104,
+        "sha256": "bed7e1f13a10e6a6f2f1a43c4cd805d5f13e134c644c5b437e36dc00943e93e6"
+      }
     }
   }
 }

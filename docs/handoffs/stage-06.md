@@ -1,6 +1,6 @@
 # Stage 6 handoff
 
-Stage 6 is implemented locally. The supplied remote is configured as
+Stage 6 sources are checkpointed and published. The supplied remote is configured as
 `https://github.com/winboat-org/winboat-devenv.git`. Six repository-owned workflows,
 the root prebuilt-only candidate workflow, migrated installer/shared payloads,
 exact release contracts and `wb bundle` with four typed MCP tools are present.
@@ -13,7 +13,9 @@ is checkpointed in `7e4fcf9`, and `a5b2b18` fixes canonical remote verification
 when Git omits the SSH username from its destination display. All six component
 repositories and their required recipe history are published, with exact remote
 verification and coherent parent gitlinks/pins. The root implementation and
-publication receipts are recorded in the evidence above.
+publication receipts are recorded in the evidence above. Root implementation
+commit `db1ffc0` is published on `master`; all 12 managed checkouts are clean at
+their declared pins. The combined checkpoint passed 113 native checks.
 
 Root and all six components reported zero registered repository runners;
 root/Helios had no configured environments. No runner registration, guest

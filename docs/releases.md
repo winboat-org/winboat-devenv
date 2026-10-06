@@ -7,7 +7,8 @@ scope is recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
 The root remote is `https://github.com/winboat-org/winboat-devenv`. It was verified
 empty before source publication on 2026-10-06. The user subsequently authorized
 checkpoints and pushes; the six component repositories are published at verified
-canonical revisions. No repository runners were registered in root or any of the
+canonical revisions. Root implementation `db1ffc0` is published on `master`.
+No repository runners were registered in root or any of the
 six components, and root/Helios had no configured environments. Hosted acceptance
 still needs prepared runners and their inputs. No release was published.
 

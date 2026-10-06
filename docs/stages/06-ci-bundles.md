@@ -10,7 +10,8 @@ workflows, prebuilt-only root workflow and shared CLI/MCP operations.
 hosted and Windows runtime gates separate. The user authorized source checkpoints
 and pushes after implementation. The six component repositories are published
 at their verified pins; the root checkpoint records the required Stage 5 baseline
-and Stage 6 sources. Release publication remains a separate operation.
+and Stage 6 sources in published implementation `db1ffc0`. Release publication
+remains a separate operation.
 
 The [implementation handoff](../handoffs/stage-06.md) records the Stage 5 baseline,
 current publication boundaries and a next-session prompt for this stage.
