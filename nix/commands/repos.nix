@@ -200,6 +200,13 @@ in
     ];
     text = releaseEnvironment + ''
       export WB_FLOCK=${pkgs.util-linux}/bin/flock
+      if [[ -n "''${GH_TOKEN:-}''${GITHUB_TOKEN:-}" ]]; then
+        credential_index="''${GIT_CONFIG_COUNT:-0}"
+        export "GIT_CONFIG_KEY_''${credential_index}=credential.https://github.com.helper"
+        export "GIT_CONFIG_VALUE_''${credential_index}=!${pkgs.gh}/bin/gh auth git-credential"
+        export GIT_CONFIG_COUNT="$((credential_index + 1))"
+        export GIT_TERMINAL_PROMPT=0
+      fi
       exec ${pkgs.nodejs}/bin/node ${operationSources}/wb/cli.mjs repo sync "$@"
     '';
   };

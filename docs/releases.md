@@ -195,6 +195,10 @@ on each component repository; a repository's `GITHUB_TOKEN` generally does not
 grant cross-repository artifact access. A fine-grained token or GitHub App can
 provide that scope. Do not grant publication permissions to the read token.
 Missing/expired tokens or artifacts are reported, not replaced with another run.
+Source-sync steps supply the same read token. The Nix command configures Git's
+GitHub credential helper for that process, keeping credentials out of URLs and
+leaving the user's Git configuration untouched. Private dependencies require
+Contents read access across repositories even when the build repository is public.
 
 The root workflow uses hosted Ubuntu for input verification/preparation, hosted
 Windows for the shared prebuilt packing script, and hosted Ubuntu for final
