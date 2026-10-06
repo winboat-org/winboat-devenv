@@ -487,22 +487,25 @@ async function windows_release_tool_build(ws, args, operationId) {
   const specPath = path.join(directory, "specification.json");
   write_json(specPath, specification);
   const result = JSON.parse(
-    run([
-      env.WB_NIX,
-      "build",
-      "--no-link",
-      "--json",
-      "--file",
-      args.target === "helios-compatibility"
-        ? env.WB_ADL_COMPATIBILITY_EXPRESSION
-        : env.WB_CATALOG_VERIFIER_EXPRESSION,
-      "--argstr",
-      "nixpkgsPath",
-      env.WB_NIXPKGS,
-      "--argstr",
-      "specification",
-      specPath,
-    ]).stdout,
+    run(
+      [
+        env.WB_NIX,
+        "build",
+        "--no-link",
+        "--json",
+        "--file",
+        args.target === "helios-compatibility"
+          ? env.WB_ADL_COMPATIBILITY_EXPRESSION
+          : env.WB_CATALOG_VERIFIER_EXPRESSION,
+        "--argstr",
+        "nixpkgsPath",
+        env.WB_NIXPKGS,
+        "--argstr",
+        "specification",
+        specPath,
+      ],
+      { stderr: "inherit" },
+    ).stdout,
   )[0];
   write_json(path.join(directory, "nix-build.json"), result);
   const output = path.join(ws.out, "release-components", operationId);

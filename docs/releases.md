@@ -1,7 +1,8 @@
 # Exact component artifacts and release candidates
 
 Stage 6 supplies repository-owned component workflows and a shared verifier and
-packer. Hosted runs and fresh installer acceptance remain pending; the measured
+packer. The complete hosted artifact set, candidate assembly and fresh installer
+acceptance remain pending; the measured
 scope is recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
 
 The root remote is `https://github.com/winboat-org/winboat-devenv`. It was verified
@@ -85,6 +86,12 @@ store, guest state or a development shell. This follows the
 [devenv profiles](https://devenv.sh/profiles/) add configuration to a base;
 using a full development base would still bring its packages into CI. The base
 here supplies the CI commands, and development imports it before adding tools.
+
+The SDK provenance records its locked ISO name and digest without retaining the
+ISO store path in the output closure. Local verifier output closure measurement
+fell from 26.5 GB to 3.62 GB with both x64 tool recipes rebuilt successfully.
+This does not eliminate the 20 GB cold SDK acquisition; a prepared binary cache
+is still needed for consistently lightweight cross-build jobs.
 
 Component source sync selects that component's dependency closure. Root-only
 installer/shim/verifier builds do not clone the graphics stack. Prepared Windows

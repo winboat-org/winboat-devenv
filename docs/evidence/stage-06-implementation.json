@@ -940,5 +940,206 @@
         "operationId": "op-f5da3276d62b41e980c451533739886b"
       }
     }
+  },
+  "hostedExecution": {
+    "observedAt": "2026-10-06T18:54:34.292Z",
+    "state": "partial-hosted-component-proof-root-candidate-not-dispatched",
+    "producerSourceRevision": "727d9d214fb906bdcb318541d38fa007f2a8213a",
+    "sourcePreflightFix": "ab091831a63687e53a5c5e54d3c5bae6b87748a5",
+    "sourceAuthenticationFix": "727d9d214fb906bdcb318541d38fa007f2a8213a",
+    "firstRuns": [
+      {
+        "repository": "winboat-org/qemu-helios",
+        "runId": 37511540322,
+        "conclusion": "failure",
+        "failure": "missing GitHub credential helper during private source sync",
+        "log": {
+          "path": "workspace-state:stage06/qemu-ci-first-failure.log",
+          "size": 2982,
+          "sha256": "03a4cfb7f864ac4643323cc7bdea1ec52675e788474e84fa4bf965808cefc7c9"
+        }
+      },
+      {
+        "repository": "winboat-org/virglrenderer",
+        "runId": 37511531580,
+        "conclusion": "failure",
+        "failure": "missing GitHub credential helper during private source sync",
+        "log": {
+          "path": "workspace-state:stage06/virgl-ci-first-failure.log",
+          "size": 2890,
+          "sha256": "1b72dfba93b0e15da2bc34f1c4132b084a8e4bb917694299d70c450c232a6867"
+        }
+      }
+    ],
+    "virglrenderer": {
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/virglrenderer",
+      "runId": 37512779816,
+      "artifactId": 11436295391,
+      "rootRevision": "727d9d214fb906bdcb318541d38fa007f2a8213a",
+      "componentRevision": "48cbbf401443e96c7e7f2cd113e432c557ebf6a0",
+      "workflow": {
+        "repository": "winboat-org/virglrenderer",
+        "path": ".github/workflows/build-virglrenderer.yml",
+        "runId": 37512779816,
+        "runAttempt": 1,
+        "headSha": "48cbbf401443e96c7e7f2cd113e432c557ebf6a0",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "693f42e70e39804fef7d38e458e4da9887993ad11340df4efac37b87dd4edfad",
+        "size": 75758827
+      },
+      "verifiedMembers": 21,
+      "licenses": [
+        "files/share/licenses/virglrenderer/COPYING"
+      ],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false
+    },
+    "qemu": {
+      "runId": 37512784944,
+      "url": "https://github.com/winboat-org/qemu-helios/actions/runs/37512784944",
+      "conclusion": "failure",
+      "failure": "authenticated repository token cannot read private winboat-org/virglrenderer; repository not found",
+      "requiredInput": "COMPONENT_INPUTS_TOKEN with cross-repository Contents read access",
+      "log": {
+        "path": "workspace-state:stage06/qemu-ci-auth-failure.log",
+        "size": 3113,
+        "sha256": "f853e78db5ceadb78adb7a587b42a56a872194079301b0a46e3f7ad94eb245c5"
+      }
+    },
+    "catalogVerifier": {
+      "runId": 37511546608,
+      "url": "https://github.com/winboat-org/helios/actions/runs/37511546608",
+      "conclusion": "cancelled",
+      "scope": "stopped obsolete build after approximately twenty minutes; captured Nix stderr did not expose exact stalled substep",
+      "coldSdkBytes": 20002537472,
+      "oldOutputClosureBytes": 26512124704,
+      "mediaReferenceFix": {
+        "scope": "local compiled output runtime NAR closure; cold builds still fetch EWDK",
+        "beforeCatalogClosureBytes": 26512124704,
+        "after": [
+          {
+            "role": "compatibility",
+            "derivation": "/nix/store/2qdjr5prmhv5s26cagiwvxvvrmgdd8ap-helios-compatibility-release.drv",
+            "output": "/nix/store/33wcnz8x5f0h8qj0xqcijy630g7sknal-helios-compatibility-release",
+            "narBytes": 6684832,
+            "closureBytes": 3620489912
+          },
+          {
+            "role": "catalogVerifier",
+            "derivation": "/nix/store/hqr5xvmzsfdig23p1cjlsd956q798bjv-helios-catalog-verifier-release.drv",
+            "output": "/nix/store/v14iwm68csd8pdv3w78zm497faqrhlym-helios-catalog-verifier-release",
+            "narBytes": 6727376,
+            "closureBytes": 3620532456
+          }
+        ]
+      },
+      "localRecipeLog": {
+        "path": "workspace-state:stage06/recipes-without-media-reference.log",
+        "size": 2490,
+        "sha256": "9a7e2d5770570edd4229e417d2d3fbdbe9e1c91b138071873c9930aad17a41dc"
+      },
+      "streamedNixStderr": true
+    },
+    "localBundleTests": {
+      "tests": 31,
+      "passed": 31,
+      "failed": 0,
+      "log": {
+        "path": "workspace-state:stage06/bundle-tests-hosted-producer.log",
+        "size": 2408,
+        "sha256": "16267cf06d88891266c9c12849209caaa3a74f0817745e1a76b01adfaaeab529"
+      }
+    },
+    "authenticationPublication": {
+      "dependencyOrdered": true,
+      "forcePush": false,
+      "reconciled": [
+        {
+          "repository": "dxil-spirv",
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "ref": "refs/heads/master",
+          "remoteVerified": true,
+          "transaction": "op-313181446c964857bb47cbbdf5ae078d",
+          "state": "succeeded",
+          "rootCommit": "727d9d214fb906bdcb318541d38fa007f2a8213a"
+        },
+        {
+          "repository": "dxvk",
+          "revision": "6948271578bf2aa6481389a07b5070c95f911952",
+          "ref": "refs/heads/master",
+          "remoteVerified": true,
+          "transaction": "op-2663c547bed647bfb929dfbaf14cc695",
+          "state": "succeeded",
+          "rootCommit": "727d9d214fb906bdcb318541d38fa007f2a8213a"
+        },
+        {
+          "repository": "venus-protocol",
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "ref": "refs/heads/main",
+          "remoteVerified": true,
+          "transaction": "op-440dc6ffbec44f6583b9ee80e65ac4d3",
+          "state": "succeeded",
+          "rootCommit": "727d9d214fb906bdcb318541d38fa007f2a8213a"
+        },
+        {
+          "repository": "mesa-helios",
+          "revision": "aa42464065e0b436516fa7514eeda18a976b462d",
+          "ref": "refs/heads/main",
+          "remoteVerified": true,
+          "transaction": "op-2c1e2f3c68514db09fa2fd0caf53abdd",
+          "state": "succeeded",
+          "rootCommit": "727d9d214fb906bdcb318541d38fa007f2a8213a"
+        },
+        {
+          "repository": "virglrenderer",
+          "revision": "48cbbf401443e96c7e7f2cd113e432c557ebf6a0",
+          "ref": "refs/heads/main",
+          "remoteVerified": true,
+          "transaction": "op-720514ed628d47d58271e2758c9d9df3",
+          "state": "succeeded",
+          "rootCommit": "727d9d214fb906bdcb318541d38fa007f2a8213a"
+        },
+        {
+          "repository": "qemu-helios",
+          "revision": "090446454fbb1a834334c27547a758aa60d1ee6b",
+          "ref": "refs/heads/helios-11.1.1",
+          "remoteVerified": true,
+          "transaction": "op-7b71d2ab690c4164a32b04316d658f04",
+          "state": "succeeded",
+          "rootCommit": "727d9d214fb906bdcb318541d38fa007f2a8213a"
+        },
+        {
+          "repository": "vkd3d-proton",
+          "revision": "3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+          "ref": "refs/heads/master",
+          "remoteVerified": true,
+          "transaction": "op-8451e5679e854766b0d614567998f20a",
+          "state": "succeeded",
+          "rootCommit": "727d9d214fb906bdcb318541d38fa007f2a8213a"
+        },
+        {
+          "repository": "helios",
+          "revision": "fecffde64fd32399a877b452332681ef0db7993e",
+          "ref": "refs/heads/master",
+          "remoteVerified": true,
+          "transaction": "op-0cf84c01c83e49de83f4d08283519a00",
+          "state": "succeeded",
+          "rootCommit": "727d9d214fb906bdcb318541d38fa007f2a8213a"
+        }
+      ]
+    },
+    "rootCandidate": {
+      "dispatched": false,
+      "reason": "no complete thirteen-artifact set or reviewed release-input manifest; Windows installer/driver producer jobs still require their configured Windows build environment",
+      "assembled": false,
+      "installed": false,
+      "loaded": false,
+      "published": false
+    },
+    "guestOperationsExecuted": false
   }
 }

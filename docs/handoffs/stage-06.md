@@ -39,6 +39,19 @@ hosted acceptance status are recorded separately in the implementation evidence.
 The hosted workflow-lint job was removed at the user's request; root CI runs
 only prebuilt candidate assembly.
 
+Hosted producer runs were dispatched. After fixing process-local Git
+authentication and removing the unrelated all-workspace source check,
+virglrenderer run `37512779816` passed and uploaded its exact component artifact.
+QEMU run `37512784944` still cannot read the private virglrenderer dependency
+with its repository token; cross-repository Contents read access is required.
+The first catalog-verifier run was cancelled after twenty minutes in the build
+step. Its captured Nix stderr did not identify the precise stalled substep;
+the producer now streams that stderr. Its cold path requires the locked ISO.
+Local inspection found an unnecessary ISO reference in the output closure. Removing that
+reference reduced its locally measured closure from 26.5 GB to 3.62 GB; cold
+acquisition still needs the locked 20 GB ISO. Assembly has not been dispatched:
+the complete thirteen-artifact set and reviewed release input are still missing.
+
 The original planning prompt below is retained for its full acceptance and
 preservation requirements; the implementation checkpoint above supersedes its
 description of which command families and workflows exist.

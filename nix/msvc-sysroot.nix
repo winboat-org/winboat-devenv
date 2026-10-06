@@ -71,7 +71,7 @@ pkgs.runCommand "winboat-msvc-${tool.msvcToolset}-sdk-${sdk}-sysroot"
         "x86"
       ];
       provisionLockSha256 = builtins.hashFile "sha256" lockFile;
-      input = toString iso;
+      input = payload.file;
     }}
     JSON
   ''
