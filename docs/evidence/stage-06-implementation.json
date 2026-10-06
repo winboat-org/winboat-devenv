@@ -531,5 +531,385 @@
         "sha256": "bed7e1f13a10e6a6f2f1a43c4cd805d5f13e134c644c5b437e36dc00943e93e6"
       }
     }
+  },
+  "ciCorrection": {
+    "state": "validated-local-publication-pending",
+    "observedAt": "2026-10-06T16:23:40.335Z",
+    "workflowFiles": [
+      {
+        "repository": "helios",
+        "path": ".github/workflows/build-helios-drivers.yml",
+        "targets": [
+          "helios-guest-x64"
+        ],
+        "backend": "windows"
+      },
+      {
+        "repository": "helios",
+        "path": ".github/workflows/build-helios-installer.yml",
+        "targets": [
+          "helios-installer"
+        ],
+        "backend": "windows"
+      },
+      {
+        "repository": "helios",
+        "path": ".github/workflows/build-adl-compatibility.yml",
+        "targets": [
+          "helios-compatibility"
+        ],
+        "backend": "cross"
+      },
+      {
+        "repository": "helios",
+        "path": ".github/workflows/build-catalog-verifier.yml",
+        "targets": [
+          "helios-catalog-verifier"
+        ],
+        "backend": "cross"
+      },
+      {
+        "repository": "helios",
+        "path": ".github/workflows/build-clvk-runtime.yml",
+        "targets": [
+          "clvk-helios"
+        ],
+        "backend": "cross"
+      },
+      {
+        "repository": "qemu-helios",
+        "path": ".github/workflows/build-qemu.yml",
+        "targets": [
+          "qemu-helios"
+        ],
+        "backend": "cross"
+      },
+      {
+        "repository": "virglrenderer",
+        "path": ".github/workflows/build-virglrenderer.yml",
+        "targets": [
+          "virglrenderer"
+        ],
+        "backend": "cross"
+      },
+      {
+        "repository": "mesa-helios",
+        "path": ".github/workflows/build-icds.yml",
+        "targets": [
+          "mesa-guest-x64",
+          "mesa-guest-x86"
+        ],
+        "backend": "cross"
+      },
+      {
+        "repository": "dxvk",
+        "path": ".github/workflows/build-dxvk.yml",
+        "targets": [
+          "dxvk-engine-x64",
+          "dxvk-engine-x86"
+        ],
+        "backend": "cross"
+      },
+      {
+        "repository": "vkd3d-proton",
+        "path": ".github/workflows/build-vkd3d-proton.yml",
+        "targets": [
+          "vkd3d-engine-x64",
+          "vkd3d-engine-x86"
+        ],
+        "backend": "cross"
+      }
+    ],
+    "releaseInputSchema": 2,
+    "requiredVariants": 13,
+    "mcpCatalogTools": 55,
+    "componentBuildWorkflows": 10,
+    "rootWorkflows": [
+      ".github/workflows/assemble-release-candidate.yml",
+      ".github/workflows/check-workflows.yml"
+    ],
+    "rootRunners": [
+      "ubuntu-24.04",
+      "windows-2025"
+    ],
+    "rootSelfHosted": false,
+    "composedEnvironment": {
+      "base": "nix/ci-environment.nix",
+      "developmentImportsBase": true,
+      "commands": "nix/ci.nix",
+      "sharedSources": "nix/control-sources.nix",
+      "sharedExecution": "nix/commands/repos.nix",
+      "lockUnchanged": true,
+      "runtimeClosures": {
+        "scope": "runtime NAR closures, not cold builds or peak RSS",
+        "closures": [
+          {
+            "package": "release",
+            "derivation": "/nix/store/42cw6d0g66pxpyf5915lbays4jbpazfq-wb-release.drv",
+            "output": "/nix/store/400ls32njggwhb1hvyqjigr4jg83n0z5-wb-release",
+            "paths": 143,
+            "narBytes": 629587936
+          },
+          {
+            "package": "workflows",
+            "derivation": "/nix/store/7fmmkibf71ffwnny25ckij1sk5f6dkv3-wb-workflow-check.drv",
+            "output": "/nix/store/b0np3hrc65z94kpv04738nr46biqcpar-wb-workflow-check",
+            "paths": 41,
+            "narBytes": 247289168
+          },
+          {
+            "package": "sources",
+            "derivation": "/nix/store/6l1q580q7m7ch2b1pqp0ci3z780xbda4-wb-source-sync.drv",
+            "output": "/nix/store/dgv72zh7y2yvd0gpqkmyjxrnr02rh1nl-wb-source-sync",
+            "paths": 160,
+            "narBytes": 672982720
+          },
+          {
+            "package": "component",
+            "derivation": "/nix/store/w3qljzvwpli6h1j4yp62jp7xyv0z7lvb-wb-component-build.drv",
+            "output": "/nix/store/9x3zcbn9zjxjs22b8qg5q7svcs07rr9r-wb-component-build",
+            "paths": 206,
+            "narBytes": 985195840
+          },
+          {
+            "package": "windowsComponent",
+            "derivation": "/nix/store/s2kk03g8qm5zcap15kzvvi2wz2nx47gw-wb-windows-component-build.drv",
+            "output": "/nix/store/fpfh5fm2ilc4k3fbdy50f18xbnwq78jb-wb-windows-component-build",
+            "paths": 291,
+            "narBytes": 1453057112
+          }
+        ]
+      },
+      "developmentControllerNarBytes": 2640083776,
+      "measurementScope": "runtime NAR closure only; artifact storage, cold realization and peak RAM are unmeasured",
+      "sdkColdBuild": "component cross-builds still need their locked SDK outputs; a cold SDK realization is not proven to fit hosted disk",
+      "nixLimits": {
+        "jobs": 1,
+        "cores": 2
+      },
+      "payloadDecoderMemoryLimitMiB": 128
+    },
+    "definitionTestsRemoved": "literal workflow schema/name/count assertions and configuration inventory copies; actionlint validates the actual workflow files",
+    "packing": "shared prebuilt-only Windows script; prepare/complete revalidate exact inputs and every decoded container member; symbols and native closure members are verified as streams and retained in original ZIP archives",
+    "validation": {
+      "rootWorkflowLint": {
+        "path": "workspace-state:stage06/workflow-lint-root.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "componentWorkflowLint": {
+        "path": "workspace-state:stage06/workflow-lint-components.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "namedRecipes": {
+        "schemaVersion": 1,
+        "state": "passed-local-recipes",
+        "compatibility": {
+          "derivation": "/nix/store/la1nka1fd7r4fgix0kaiw12zqmcwdhpm-helios-compatibility-release.drv",
+          "architecture": "x64",
+          "backend": "linux-msvc-cross",
+          "files": [
+            {
+              "path": "Install-Resolve-Compatibility.ps1",
+              "size": 6604,
+              "sha256": "76091f7c2084b2028370a0c20659b3ea6d0259e5549aa95c093bdb398c5b8d51"
+            },
+            {
+              "path": "README.md",
+              "size": 1744,
+              "sha256": "20ce8386e4b793e6f2ef26a60cda3384a731f269f28003eddfe860aa43960b39"
+            },
+            {
+              "path": "Resolve-CompatibilityCommon.ps1",
+              "size": 6154,
+              "sha256": "eb418675aa7eb6ed34c81f034f53a1ecf8f03f6d6321df1794a99f699f42b899"
+            },
+            {
+              "path": "Uninstall-Resolve-Compatibility.ps1",
+              "size": 1107,
+              "sha256": "b04a01f92674e582f1bb494e6f53317109157b490e304e2aa6051c1ad05c08a7"
+            },
+            {
+              "path": "atiadlxx.dll",
+              "size": 509440,
+              "sha256": "9bf2a46d6fc5dfe427acebbfddcabf7357e193c8499e1681dae29a4cbed3309a"
+            },
+            {
+              "path": "atiadlxx.lib",
+              "size": 4032,
+              "sha256": "dbb7174bb05824af38d4a31f18aeafa1d62f91542f76d142de111ba382954fe5"
+            },
+            {
+              "path": "images.json",
+              "size": 17490,
+              "sha256": "79f40b7f525cc6ef340b362319f2895540042ebf720ca3eb12f0e12de5d33f7b"
+            },
+            {
+              "path": "licenses/NOTICE",
+              "size": 179,
+              "sha256": "7d63fd82be5809b6ee9874c8cedd7f6a7644b07f1830e10ae0a8f0655fd276fb"
+            },
+            {
+              "path": "symbols/atiadlxx.pdb",
+              "size": 6135808,
+              "sha256": "6cc8e345801e0c51367422dcd55965c26236df2a026552a2e6d0b6cfdcaffd60"
+            }
+          ]
+        },
+        "catalogVerifier": {
+          "derivation": "/nix/store/65knj86jn2ysy7zd753cw1crc0b1ifzw-helios-catalog-verifier-release.drv",
+          "architecture": "x64",
+          "backend": "linux-msvc-cross",
+          "files": [
+            {
+              "path": "VerifyCatalog.exe",
+              "size": 505856,
+              "sha256": "cc4590aca83aec1ac8d927ce37e4afebf63bc859888a0f8a5492d0c37b9705b6"
+            },
+            {
+              "path": "images.json",
+              "size": 10653,
+              "sha256": "fc84f6f6bc714321d49d8cde80631d53809c655bbd4733de7a7ca847958a2543"
+            },
+            {
+              "path": "licenses/NOTICE",
+              "size": 83,
+              "sha256": "2e77361b95cfbe46fcea38575f56e4424aeab331b9814b5d3294cf2b9bb3a66a"
+            },
+            {
+              "path": "symbols/VerifyCatalog.pdb",
+              "size": 6209536,
+              "sha256": "c3f43aa247ac3a3129369983b29bc97aaf89252fe26ec48ef38a05f8cac974e5"
+            }
+          ]
+        },
+        "installerDependencies": {
+          "derivation": "/nix/store/0ni6v2lswy71l2wax6ays8iga63c380a-helios-installer-cargo-dependencies.drv",
+          "lockSha256": "a350e2ddb520349fbcc5d7449460f0e9df0f981e475b4b607cafa2666ecfbf51",
+          "files": 1444
+        },
+        "rootSource": "uncommitted local snapshot; not a hosted release artifact"
+      },
+      "namedRecipesLog": {
+        "path": "workspace-state:stage06/named-recipes.log",
+        "size": 2490,
+        "sha256": "7318927bda8a510e65a80139c79a76e808b7f206565653efdf88a88db40b4503"
+      },
+      "releaseCommandMissingInputRefusal": {
+        "path": "workspace-state:stage06/release-cli-refusal.log",
+        "size": 253,
+        "sha256": "f42318728951492d698c37a8961d3f945fbb5413c3b59df4045aee0fc35c0c4e"
+      },
+      "native": {
+        "workspaceAgentRefresh": 38,
+        "devbox": 21,
+        "windows": 22,
+        "bundle": 31,
+        "total": 112,
+        "log": {
+          "path": "workspace-state:validation/native.frcdfeDt.log",
+          "size": 12169,
+          "sha256": "5d0208d18dbd7c0be42d4f428752c30dbcb1acf43e2e893d309c6071e1677670"
+        }
+      },
+      "devenvTest": {
+        "state": "passed-real-validation-task",
+        "task": "winboat:validation",
+        "log": {
+          "path": "workspace-state:stage06/devenv-test-ci-final.log",
+          "size": 299,
+          "sha256": "d460f2e037ca6b6d214288a3339d7da3606528b975e7e63bb95e756c29ef44b7"
+        }
+      },
+      "canonicalObjects": {
+        "state": "succeeded",
+        "operationId": "op-b0fd2543fa754cd29218998fc22e2bcd",
+        "verified": 12
+      }
+    },
+    "hostedWorkflowLint": "pending source push",
+    "hostedComponents": "pending genuine workflow artifacts and prepared Windows producer inputs",
+    "hostedCandidate": "pending exact component artifacts, reviewed release input and real Windows packing",
+    "runtimeAcceptance": "pending fresh installer checks; no guest mutations performed",
+    "sourcePublication": {
+      "operationId": "op-d22d7aab244e42d09124f7c4650f05c0",
+      "dependencyOrdered": true,
+      "forcePush": false,
+      "components": [
+        {
+          "repository": "dxil-spirv",
+          "remote": "https://github.com/winboat-org/dxil-spirv.git",
+          "ref": "refs/heads/master",
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "remoteVerified": true,
+          "transaction": "op-c9270d670a434c9489682551bab16a1b",
+          "state": "deferred"
+        },
+        {
+          "repository": "dxvk",
+          "remote": "https://github.com/winboat-org/dxvk.git",
+          "ref": "refs/heads/master",
+          "revision": "ae529efce05dd5ecbe4b61c2034bbc7c2dd86d0b",
+          "remoteVerified": true,
+          "transaction": "op-0230180f4366457390dc06e65f204756",
+          "state": "deferred"
+        },
+        {
+          "repository": "venus-protocol",
+          "remote": "https://github.com/winboat-org/venus-protocol.git",
+          "ref": "refs/heads/main",
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "remoteVerified": true,
+          "transaction": "op-fa79f5f2a5e04ed3b2048b20a924e1f5",
+          "state": "deferred"
+        },
+        {
+          "repository": "mesa-helios",
+          "remote": "https://github.com/winboat-org/mesa-helios.git",
+          "ref": "refs/heads/main",
+          "revision": "08fb3602f909a52e7afaea8557a83fc7b63a7dbd",
+          "remoteVerified": true,
+          "transaction": "op-ccbd3aacb06d40988378db2507ff35dc",
+          "state": "deferred"
+        },
+        {
+          "repository": "virglrenderer",
+          "remote": "https://github.com/winboat-org/virglrenderer.git",
+          "ref": "refs/heads/main",
+          "revision": "5b38b51172e56801a8d29303ef6fb9ace8935d07",
+          "remoteVerified": true,
+          "transaction": "op-6d61022ffff44e0bab582e6701407ff5",
+          "state": "deferred"
+        },
+        {
+          "repository": "qemu-helios",
+          "remote": "https://github.com/winboat-org/qemu-helios.git",
+          "ref": "refs/heads/helios-11.1.1",
+          "revision": "0289191d800b8c912c39b9c7489477581c948f78",
+          "remoteVerified": true,
+          "transaction": "op-d3bdfc3409ea44749f31ad0f9361305c",
+          "state": "deferred"
+        },
+        {
+          "repository": "vkd3d-proton",
+          "remote": "https://github.com/winboat-org/vkd3d-proton.git",
+          "ref": "refs/heads/master",
+          "revision": "2febdf99504e540544acbf7b65628d5b4dfb4671",
+          "remoteVerified": true,
+          "transaction": "op-65318e5eb1b24b7897e9a023fe07fdac",
+          "state": "deferred"
+        },
+        {
+          "repository": "helios",
+          "remote": "https://github.com/winboat-org/helios.git",
+          "ref": "refs/heads/master",
+          "revision": "2076044a616e54ba6a9917b8eb039f495ee4e1d0",
+          "remoteVerified": true,
+          "transaction": "op-6c9238ce6eae476f9bf681685cc935cd",
+          "state": "deferred"
+        }
+      ]
+    }
   }
 }

@@ -2,6 +2,17 @@
 
 ## Stage 6 local implementation
 
+Workflow and configuration definitions are specifications. Workflow syntax,
+expressions and shell steps are validated by `actionlint`; native tests exercise
+operations such as artifact rejection, source preservation, settings merging,
+publication ordering and job recovery. Definition snapshots, literal inventory
+count checks and workflow-content assertions have been removed.
+
+The hosted handoff tests use actual HLIOSET2 headers and XZ streams to check
+prebuilt stub identity and every decoded payload hash. Altered packing requests,
+receipts, payload bytes and streamed native-closure members fail before candidate
+retention. They exercise transport validation, not real Windows execution.
+
 [Release usage](releases.md) describes the migrated source and exact-input
 CLI/MCP workflows. [Implementation evidence](evidence/stage-06-implementation.json)
 records native tests, real Linux compatibility/catalog-verifier builds and

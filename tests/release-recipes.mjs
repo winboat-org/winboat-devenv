@@ -29,6 +29,7 @@ for (const name of [
   fs.cpSync(path.join(ws.root, name), dest, { recursive: true });
 }
 const spec = {
+    target: "helios-compatibility",
     configuration: "release",
     sourcePath: source,
     narHash: run([env.WB_NIX, "hash", "path", "--sri", source]).stdout.trim(),
@@ -60,7 +61,7 @@ function build(expression, args, logName) {
   }
 }
 const compatibility = build(
-  env.WB_RELEASE_COMPATIBILITY_EXPRESSION,
+  env.WB_ADL_COMPATIBILITY_EXPRESSION,
   ["--argstr", "specification", specPath],
   "compatibility.log",
 );
@@ -69,6 +70,18 @@ if (
   "x64"
 )
   throw Error("Compatibility PE architecture differs");
+write_json(specPath, { ...spec, target: "helios-catalog-verifier" });
+const catalogVerifier = build(
+  env.WB_CATALOG_VERIFIER_EXPRESSION,
+  ["--argstr", "specification", specPath],
+  "catalog-verifier.log",
+);
+if (
+  pe_architecture(
+    path.join(catalogVerifier.outputs.out, "VerifyCatalog.exe"),
+  ) !== "x64"
+)
+  throw Error("Catalog verifier PE architecture differs");
 const installerDependencies = build(
   env.WB_INSTALLER_DEPS_EXPRESSION,
   ["--argstr", "lockFile", path.join(ws.root, "installer/Cargo.lock")],
@@ -85,6 +98,18 @@ const result = {
       .filter(file)
       .map((p) => ({
         path: path.relative(compatibility.outputs.out, p),
+        size: fs.statSync(p).size,
+        sha256: digest(p),
+      })),
+  },
+  catalogVerifier: {
+    derivation: catalogVerifier.drvPath,
+    architecture: "x64",
+    backend: "linux-msvc-cross",
+    files: walk(catalogVerifier.outputs.out)
+      .filter(file)
+      .map((p) => ({
+        path: path.relative(catalogVerifier.outputs.out, p),
         size: fs.statSync(p).size,
         sha256: digest(p),
       })),

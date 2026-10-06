@@ -6,32 +6,32 @@
   schemaVersion = 1;
   repositories = {
     helios = {
-      rev = "3b2e4c451368e11c528e544e6a3c870b001e817a";
+      rev = "2076044a616e54ba6a9917b8eb039f495ee4e1d0";
       ref = "refs/heads/master";
       provenance = "verified-push";
     };
     qemu-helios = {
-      rev = "a5e032cd6f0b5e1ea7889afd131d59b311c2b850";
+      rev = "0289191d800b8c912c39b9c7489477581c948f78";
       ref = "refs/heads/helios-11.1.1";
       provenance = "verified-push";
     };
     dxvk = {
-      rev = "16d521ca96d8cc6f2670c648465b1c544f29a39d";
+      rev = "ae529efce05dd5ecbe4b61c2034bbc7c2dd86d0b";
       ref = "refs/heads/master";
       provenance = "verified-push";
     };
     virglrenderer = {
-      rev = "72a8e2ad9ab1103bb7293e0c47e2991ec9737c03";
+      rev = "5b38b51172e56801a8d29303ef6fb9ace8935d07";
       ref = "refs/heads/main";
       provenance = "verified-push";
     };
     mesa-helios = {
-      rev = "c75464941107a63440f79ff8570ad866815f6458";
+      rev = "08fb3602f909a52e7afaea8557a83fc7b63a7dbd";
       ref = "refs/heads/main";
       provenance = "verified-push";
     };
     vkd3d-proton = {
-      rev = "62bc83f390548c3072905e8c0d1b1e7094b8d312";
+      rev = "2febdf99504e540544acbf7b65628d5b4dfb4671";
       ref = "refs/heads/master";
       provenance = "verified-push";
     };

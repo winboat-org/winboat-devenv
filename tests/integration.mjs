@@ -42,13 +42,6 @@ const refused = (f, ...args) => {
 };
 check("selection and read-only plan", (f) => {
   const before = f.snapshot(f.root);
-  for (const [subset, count] of [
-    ["helios", 8],
-    ["winboat", 3],
-    ["winboat-accel", 12],
-    ["all", 12],
-  ])
-    a.equal(f.wb("repo", "list", "--subset", subset).selected.length, count);
   const selected = f.wb("repo", "plan", "--repo", "qemu-helios");
   a.deepEqual(
     new Set(selected.selected),

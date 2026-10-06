@@ -9,29 +9,42 @@ empty before source publication on 2026-10-06. The user subsequently authorized
 checkpoints and pushes; the six component repositories are published at verified
 canonical revisions. Root implementation `db1ffc0` is published on `master`.
 No repository runners were registered in root or any of the
-six components, and root/Helios had no configured environments. Hosted acceptance
-still needs prepared runners and their inputs. No release was published.
+six components, and root/Helios had no configured environments at inspection.
+Root release CI now uses public hosted runners. The two Windows component
+builds still need their prepared guest/toolchain inputs. No release was published.
 
 ## Production ownership
 
-The six component repositories contain `.github/workflows/stage06-component.yml`.
-The shared template is [ci/stage06-component.yml.in](../ci/stage06-component.yml.in).
-Only manual dispatch runs are enabled. Every run selects a 40-character root
-source revision, an exact component workflow/source revision and `release` or
-`debug`. The workflow SHA must equal the corresponding root source pin.
-Actions are pinned to API-verified commits, not floating tags.
+Each workflow owns one build responsibility. Architecture matrices stay within
+that component. The common execution template is
+[ci/component-build.yml.in](../ci/component-build.yml.in); workflow paths in
+artifact provenance come from GitHub's actual workflow identity.
 
-| Workflow owner | Artifacts |
-| --- | --- |
-| Helios | Signed x64 KMD and native/WoW64 UMDs, migrated installer, compatibility shim and prebuilt catalog verifier, CLVK/loaders/native and WoW64 probes |
-| QEMU | Exact host-stack output, including QEMU executable/modules/data, renderer, paired headers, host smoke and complete Nix closure |
-| DXVK | x64 and x86 MSVC/static-CRT engine archives |
-| virglrenderer | Renderer and paired Venus headers, symbols/licenses and complete closure |
-| Mesa | x64 and x86 Venus/Zink/OpenGL outputs with paired Venus provenance |
-| vkd3d-proton | x64 and x86 MSVC/static-CRT engine outputs and DXIL-SPIRV provenance |
+| Repository | Workflow | Responsibility |
+| --- | --- | --- |
+| helios | `build-helios-drivers.yml` | Signed KMD and native/WoW64 UMDs |
+| helios | `build-helios-installer.yml` | Migrated installer and packer |
+| helios | `build-adl-compatibility.yml` | ADL compatibility shim |
+| helios | `build-catalog-verifier.yml` | Prebuilt catalog membership verifier |
+| helios | `build-clvk-runtime.yml` | CLVK runtime, loaders and probes |
+| qemu-helios | `build-qemu.yml` | QEMU host stack and complete closure |
+| virglrenderer | `build-virglrenderer.yml` | Renderer and paired Venus headers |
+| mesa-helios | `build-icds.yml` | Native and WoW64 Mesa ICDs |
+| dxvk | `build-dxvk.yml` | Native and WoW64 DXVK engines |
+| vkd3d-proton | `build-vkd3d-proton.yml` | Native and WoW64 vkd3d engines |
+
+Manual dispatch selects exact root/component commits and release/debug output.
+Cross jobs use hosted Ubuntu and only their component command and source closure.
+The two builds with the existing Windows toolchain limitation retain their
+prepared guest requirement and Windows component command. No generic workflow
+builds unrelated component roles in one matrix.
 
 Linux cross compilation supplies DXVK, vkd3d, Mesa, CLVK/loaders/probes and the
-compatibility shim. Helios retains the documented Windows WDK build-script
+compatibility shim and catalog verifier. The separate
+[ADL recipe](../nix/build-adl-compatibility.nix) and
+[catalog verifier recipe](../nix/build-catalog-verifier.nix) share only the
+[locked Windows toolchain setup](../nix/windows-release-tool.nix).
+Helios retains the documented Windows WDK build-script
 blocker. The migrated installer also retains its native Windows build entry:
 `build.rs` executes `rc.exe` and uses Windows SDK path discovery. Its Cargo
 dependencies are vendored from the unchanged installer lock through Nix, and
@@ -45,14 +58,36 @@ identities. Missing engines fail before driver compilation; no dependency-build
 fallback is used. CLVK's designated Helios job uses the existing Linux recipe and
 retains its fixed Khronos/LLVM revision table and no-compiler-symbol policy report.
 
-Prepared Linux runners need label `winboat-build`; assembly runners need
-`winboat-assembly`. Nix/devenv and the locked offline EWDK/provisioning inputs
-must already be available. Windows component jobs need a prepared, verified named
-devbox. Runner-local `WB_CI_STATE_ROOT` can point to its private persistent state;
-credentials, keys, media and state are never included in source caches or artifacts.
-Nix derivation caching uses complete immutable source/dependency/toolchain inputs.
-The workflow's source-object cache key includes root/component revisions, locks,
-pins, target and configuration; it contains no guest state.
+## Composed CI environments
+
+[nix/ci.nix](../nix/ci.nix) defines separate release, workflow lint, source sync,
+component and Windows-component packages. [nix/ci-environment.nix](../nix/ci-environment.nix)
+imports that base into the development environment; development adds its devbox,
+agent and editing tools. The same locked packages and shared Node operations are
+used in both paths. CI realizes one package, not the complete development shell:
+
+```sh
+nix build --no-link --print-out-paths --file nix/ci.nix release
+nix build --no-link --print-out-paths --file nix/ci.nix workflows
+nix build --no-link --print-out-paths --file nix/ci.nix component
+```
+
+Measured release command closure is about 630 MB, workflow lint 247 MB,
+compared with 2.64 GB for the development controller. These are runtime NAR
+closure sizes, not cold-build download, build-output, artifact or peak RSS
+measurements. Component compilation still needs its selected SDK/build inputs;
+it does not realize those inputs in the root release jobs. Use immutable Nix
+binary caches for expensive toolchain outputs rather than caching the complete
+store, guest state or a development shell. This follows the
+[Nix CI guidance on binary caches](https://nix.dev/guides/recipes/continuous-integration-github-actions.html).
+[devenv profiles](https://devenv.sh/profiles/) add configuration to a base;
+using a full development base would still bring its packages into CI. The base
+here supplies the CI commands, and development imports it before adding tools.
+
+Component source sync selects that component's dependency closure. Root-only
+installer/shim/verifier builds do not clone the graphics stack. Prepared Windows
+component runners still need the existing locked guest/toolchain inputs. Private
+state, keys and media remain outside source caches and artifacts.
 
 ## Source migration
 
@@ -79,7 +114,9 @@ choose or change an upstream license. Install payloads contain zero PDBs.
 ## Immutable inputs
 
 The three schemas are deliberately distinct: original build manifest schema 1,
-`winboat-component-artifact` schema 1, and `winboat-release-input` schema 1.
+`winboat-component-artifact` schema 1, and `winboat-release-input` schema 2.
+Release-input schema 1 is rejected; regenerate the input from the thirteen
+separately produced variants, including the catalog verifier.
 Normalization retains the original build manifest and explicitly verifies its
 file table, clean source identities, toolchain digest and recipe revision.
 The resulting install manifest retains the existing package schema 1, with
@@ -94,7 +131,7 @@ selection are unsupported. Dirty root sources and unidentified builds are refuse
 
 Create a selection JSON with `schemaVersion: 1`, `rootRevision`, `configuration`
 and an `artifacts` array. Every row has exact `repository`, `artifactId`, `runId`
-and `runAttempt`. Supply all twelve variants listed by `REQUIRED` in
+and `runAttempt`. Supply all thirteen variants listed by `REQUIRED` in
 [the verifier](../tools/wb/bundles.mjs). Artifact metadata and the successful
 workflow are checked using GitHub's API; expired artifacts, fork runs, rerun
 attempt mismatches and archive digest mismatches fail closed.
@@ -108,10 +145,10 @@ wb bundle assemble --manifest <returned-release-input> \
 wb job wait --id <returned-job-id> --timeout 45 --json
 ```
 
-`lock`, `fetch` and `assemble` return durable jobs by default. `verify` is
+`lock`, `fetch`, `prepare`, `complete` and `assemble` return durable jobs by default. `verify` is
 synchronous unless `--background` is supplied. Use `--foreground` for CI or an
 explicit blocking CLI check. MCP tools `bundle_lock`, `bundle_fetch`,
-`bundle_verify` and `bundle_assemble` proxy these same operations; `background:
+`bundle_verify`, `bundle_prepare`, `bundle_complete` and `bundle_assemble` proxy these same operations; `background:
 false` selects foreground execution. Retry IDs, bounded waits and retained
 evidence use the existing job families. Reconnect MCP after loading the updated
 Nix execution closure; the previously connected server retains its old catalog.
@@ -121,8 +158,8 @@ are checked before assembly. Windows packing additionally verifies driver
 resource versions/branding, the catalog signer/certificate, and SHA256 catalog
 membership of all five driver images without modifying the machine trust store.
 It runs the already built packer as a durable SYSTEM task on local guest disk.
-Catalog membership uses the prebuilt `VerifyCatalog.exe` from the Helios
-compatibility artifact; assembly does not compile an interop DLL or probe.
+Catalog membership uses the prebuilt `VerifyCatalog.exe` from its own Helios
+catalog-verifier artifact; assembly does not compile an interop DLL or probe.
 No compiler, signing, catalog generation, dependency fetching or guest install
 runs in this assembly task. A real packed output must pass its `HLIOSET2` footer
 and container digest check before a candidate receipt is published.
@@ -137,7 +174,7 @@ in a candidate receipt.
 
 ## Hosted assembly and publication
 
-The root [candidate workflow](../.github/workflows/release-candidate.yml) only
+The root [candidate workflow](../.github/workflows/assemble-release-candidate.yml) only
 checks out exact inputs, verifies/downloads archives, packs and retains a
 reviewable candidate. It has read permissions and no release publication step.
 It neither compiles components nor runs the installer build script.
@@ -147,8 +184,8 @@ an input manifest cannot contain its own Git commit hash. Build all components
 from one committed source revision, generate/review the release-input JSON, then
 store that JSON in a separate data commit. Root CI checks out the original source
 revision and reads the data commit under ignored `out/review/`. It checks the
-reviewed JSON digest before using it. Configure protected `component-build` and
-`release-candidate` environments to admit only approved maintainer dispatches.
+reviewed JSON digest before using it. Component builds use the `component-build` environment; root candidate jobs
+use ordinary hosted runners and manually reviewed immutable selections.
 PRs/forks never execute these workflows or receive their private runner inputs.
 
 `COMPONENT_INPUTS_TOKEN` needs Contents read for root checkout and Actions read
@@ -157,8 +194,15 @@ grant cross-repository artifact access. A fine-grained token or GitHub App can
 provide that scope. Do not grant publication permissions to the read token.
 Missing/expired tokens or artifacts are reported, not replaced with another run.
 
-Assembly runners supply `WB_CI_STATE_ROOT` and `WB_CI_ASSEMBLY_DEVBOX`. A separate
-publication operation requires owner authorization and a verified candidate.
+The root workflow uses hosted Ubuntu for input verification/preparation, hosted
+Windows for the shared prebuilt packing script, and hosted Ubuntu for final
+verification and retention. It transfers artifacts by exact IDs from that run.
+`wb bundle prepare` creates the hashed packing request; `wb bundle complete`
+re-verifies the exact components, receipt, prebuilt PE stub and every decoded
+container member. Symbols/licenses and host closures are streamed for verification
+and retained inside their original ZIPs instead of expanded to disk. The same
+logic also serves local devbox assembly. Root jobs need no named devbox or private
+state. A separate release publication requires authorization and a verified candidate.
 Source publication proceeds children before parent gitlinks and root pins.
 The required Stage 5 baseline is checkpointed in `7e4fcf9`, followed by the
 publication transport correction in `a5b2b18` and the Stage 6 implementation.

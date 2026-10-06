@@ -1,0 +1,27 @@
+name: Check workflow syntax
+on:
+  push:
+    paths: ['.github/**', 'ci/**', 'nix/ci.nix', 'nix/control-sources.nix', 'nix/locked-packages.nix', 'devenv.lock']
+  pull_request:
+    paths: ['.github/**', 'ci/**', 'nix/ci.nix', 'nix/control-sources.nix', 'nix/locked-packages.nix', 'devenv.lock']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check-workflows:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24
+        with:
+          enable_kvm: false
+          extra_nix_config: |
+            max-jobs = 1
+            cores = 2
+      - name: Validate workflows with the locked lint tools
+        run: |
+          workflow_tools=$(nix build --no-link --print-out-paths --file nix/ci.nix workflows)
+          "$workflow_tools/bin/wb-workflow-check"

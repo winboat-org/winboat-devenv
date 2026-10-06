@@ -1,27 +1,17 @@
 { nixpkgsPath, specification }:
 let
-  spec = builtins.fromJSON (builtins.readFile specification);
-  pkgs = import (builtins.toPath nixpkgsPath) { system = "x86_64-linux"; };
-  src = builtins.path {
-    path = builtins.toPath spec.sourcePath;
-    sha256 = spec.narHash;
-    name = "helios-compatibility-source";
-  };
-  sysroot = import ./msvc-sysroot.nix {
-    inherit pkgs;
-    lockFile = builtins.toPath spec.msvc.lockFile;
-    payloads = if spec.msvc.payloads == null then null else builtins.storePath spec.msvc.payloads;
-  };
-  tools = import ./msvc-cross-tools.nix {
-    inherit pkgs sysroot;
-    architecture = "x64";
-  };
+  common = import ./windows-release-tool.nix { inherit nixpkgsPath specification; };
+  inherit (common)
+    spec
+    pkgs
+    src
+    tools
+    ;
 in
-assert builtins.hashFile "sha256" (builtins.toPath spec.msvc.lockFile) == spec.msvc.lockSha256;
-pkgs.runCommand "helios-compatibility-${spec.configuration}"
-  { nativeBuildInputs = [ pkgs.python3 ]; }
-  ''
-    mkdir -p $out/licenses $out/symbols
+assert spec.target == "helios-compatibility";
+common.build {
+  notice = "Source attribution: winboat-org/helios packaging/windows/compat, migrated to winboat-org/winboat-devenv. See migration/helios-installer-source.json for the exact source identity.";
+  commands = ''
     ${pkgs.python3}/bin/python - ${src} <<'PY'
     import pathlib, re, sys
     root = pathlib.Path(sys.argv[1])
@@ -49,11 +39,7 @@ pkgs.runCommand "helios-compatibility-${spec.configuration}"
     ${tools.linker} /nologo /dll /machine:x64 /debug:full /pdb:$out/symbols/atiadlxx.pdb \
       /out:$out/atiadlxx.dll /def:${src}/packaging/windows/compat/adl-shim/helios-adl-shim.def \
       ${tools.libraryPaths} atiadlxx.obj atiadlxx.res setupapi.lib user32.lib uuid.lib
-    ${tools.compiler} /nologo /c /MT /Z7 /O2 /FoVerifyCatalog.obj ${src}/packaging/windows/verify-catalog.c
-    ${tools.linker} /nologo /machine:x64 /subsystem:console /debug:full /pdb:$out/symbols/VerifyCatalog.pdb \
-      /out:$out/VerifyCatalog.exe ${tools.libraryPaths} VerifyCatalog.obj wintrust.lib crypt32.lib
     cp ${src}/packaging/windows/compat/resolve-compatibility/{Resolve-CompatibilityCommon,Install-Resolve-Compatibility,Uninstall-Resolve-Compatibility}.ps1 $out/
     cp ${src}/packaging/windows/compat/README.md $out/README.md
-    ${pkgs.python3}/bin/python ${./scripts/msvc-cross-inspect.py} "$out" ${pkgs.llvmPackages_22.llvm}/bin/llvm-readobj --architecture=x64 > $out/images.json
-    echo 'Source attribution: winboat-org/helios packaging/windows/compat, migrated to winboat-org/winboat-devenv. See migration/helios-installer-source.json for the exact source identity.' > $out/licenses/NOTICE
-  ''
+  '';
+}

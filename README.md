@@ -59,7 +59,9 @@ wb repo branch --repo helios --name development
 ```
 
 Use the committed lock; `devenv update` is an explicit dependency refresh. Use
-commands directly in an activated or refreshed shell. `devenv shell -- wb ...`
+the individual [CI commands](docs/releases.md#composed-ci-environments) in hosted
+Actions. Development imports that CI base and adds editing, agent and devbox tools.
+Use commands directly in an activated or refreshed shell. `devenv shell -- wb ...`
 supplies the environment when it is absent, such as in CI. Codex can refresh
 its Bash command environment automatically using `wb-codex-config`; see
 [agent configuration](config/README.md). Restart Codex after merging its

@@ -173,7 +173,7 @@ are:
 | `repo_list`, `repo_status`, `repo_plan` | `wb repo list`, `wb repo status`, `wb repo plan` |
 | `repo_sync`, `repo_verify` | `wb repo sync`, `wb repo verify` |
 | `build_list`, `build_run`, `build_verify` | `wb build list`, `wb build`, `wb build verify` |
-| `bundle_lock`, `bundle_fetch`, `bundle_verify`, `bundle_assemble` | `wb bundle lock`, `wb bundle fetch`, `wb bundle verify`, `wb bundle assemble` |
+| `bundle_lock`, `bundle_fetch`, `bundle_verify`, `bundle_prepare`, `bundle_complete`, `bundle_assemble` | `wb bundle lock`, `wb bundle fetch`, `wb bundle verify`, `wb bundle prepare`, `wb bundle complete`, `wb bundle assemble` |
 | `devbox_status`, `devbox_up`, `devbox_down` | `wb devbox status`, `wb devbox up`, `wb devbox down` |
 | `job_status`, `job_cancel`, `job_resume` | `wb job status`, `wb job cancel`, `wb job resume` |
 

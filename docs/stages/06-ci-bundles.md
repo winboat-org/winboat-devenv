@@ -5,7 +5,8 @@ and fresh installer runtime acceptance pending. Prerequisites: Stages 2 and 4.
 Agent setup is useful but not a prerequisite.
 
 [Release usage](../releases.md) describes the exact-input contracts, six component
-workflows, prebuilt-only root workflow and shared CLI/MCP operations.
+repositories with ten responsibility-specific build workflows, the hosted
+prebuilt-only root workflow, composed CI/development tools and shared CLI/MCP operations.
 [Implementation evidence](../evidence/stage-06-implementation.json) keeps local,
 hosted and Windows runtime gates separate. The user authorized source checkpoints
 and pushes after implementation. The six component repositories are published

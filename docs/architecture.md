@@ -14,6 +14,13 @@ Nix declares execution and installs dependencies from the checked-in npm lock;
 the typed MCP proxy dispatches the same application as the CLI. Component build
 recipes and guest PowerShell payloads retain their Nix ownership.
 
+CI tools are composed in `nix/ci.nix` from the genuine lock's root Nixpkgs input.
+`nix/ci-environment.nix` supplies that base to the development environment,
+which adds devbox, agent and editing tools. Hosted jobs realize the release,
+workflow-check or selected component package directly; they do not enter the
+complete development shell. Shared control sources and execution environments
+are defined once and extended for build and devbox capabilities.
+
 ## Workspace and configuration
 
 The repository root is discovered, with `repos/` for managed checkouts,

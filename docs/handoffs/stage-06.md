@@ -1,9 +1,9 @@
 # Stage 6 handoff
 
 Stage 6 sources are checkpointed and published. The supplied remote is configured as
-`https://github.com/winboat-org/winboat-devenv.git`. Six repository-owned workflows,
+`https://github.com/winboat-org/winboat-devenv.git`. Ten build workflows across six repositories,
 the root prebuilt-only candidate workflow, migrated installer/shared payloads,
-exact release contracts and `wb bundle` with four typed MCP tools are present.
+exact release contracts and `wb bundle` with six typed MCP tools are present.
 See [release usage](../releases.md) and
 [implementation evidence](../evidence/stage-06-implementation.json).
 
@@ -22,7 +22,17 @@ root/Helios had no configured environments. No runner registration, guest
 mutations or release publication were performed. The local verifier/transport
 fixtures and real Linux compatibility cross-build remain separate evidence from
 the pending hosted/Windows gates. Reconnect the long-lived MCP server to load
-the 53-tool catalog; publication used fresh locked stdio MCP sessions.
+the 55-tool catalog; publication uses fresh locked stdio MCP sessions.
+
+CI corrections replace the generic public workflow names with names for each
+build responsibility. Root candidate assembly uses hosted Ubuntu/Windows/Ubuntu
+jobs for verification, prebuilt packing and final verification. It consumes
+thirteen component variants, including a separately built catalog verifier.
+CI realizes individual Nix command packages; development imports the same CI
+base and adds its other tools. Redundant workflow/configuration assertion tests
+are removed; actionlint checks workflow syntax and operational tests verify
+artifact validation and the packing handoff. Local closure measurements and
+hosted acceptance status are recorded separately in the implementation evidence.
 
 The original planning prompt below is retained for its full acceptance and
 preservation requirements; the implementation checkpoint above supersedes its

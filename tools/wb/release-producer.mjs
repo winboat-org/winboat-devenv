@@ -300,7 +300,7 @@ export async function seal(
     m.upstream = readJSON(
       path.join(output, "files/package/source-revisions.json"),
     );
-  if (target === "helios-compatibility")
+  if (target === "helios-catalog-verifier")
     m.verifier = {
       interfaceVersion: 1,
       path: "files/VerifyCatalog.exe",
@@ -457,7 +457,7 @@ async function installer_build(ws, args, operationId) {
   write_json(manifestPath, manifest);
   return manifestPath;
 }
-async function compatibility_build(ws, args, operationId) {
+async function windows_release_tool_build(ws, args, operationId) {
   const directory = path.join(ws.state, "release-components", operationId);
   mkdir(directory);
   const source = path.join(directory, "source");
@@ -478,6 +478,7 @@ async function compatibility_build(ws, args, operationId) {
     fs.copyFileSync(safe_file(ws.root, p), dest);
   }
   const specification = {
+    target: args.target,
     configuration: args.configuration,
     sourcePath: source,
     narHash: run([env.WB_NIX, "hash", "path", "--sri", source]).stdout.trim(),
@@ -492,7 +493,9 @@ async function compatibility_build(ws, args, operationId) {
       "--no-link",
       "--json",
       "--file",
-      env.WB_RELEASE_COMPATIBILITY_EXPRESSION,
+      args.target === "helios-compatibility"
+        ? env.WB_ADL_COMPATIBILITY_EXPRESSION
+        : env.WB_CATALOG_VERIFIER_EXPRESSION,
       "--argstr",
       "nixpkgsPath",
       env.WB_NIXPKGS,
@@ -517,7 +520,7 @@ async function compatibility_build(ws, args, operationId) {
     schemaVersion: 1,
     state: "built",
     artifactId: operationId,
-    target: "helios-compatibility",
+    target: args.target,
     configuration: args.configuration,
     mode: "release",
     sources: {
@@ -731,14 +734,19 @@ export async function main(argv = process.argv.slice(2)) {
   const operationId = identity(),
     workflow = {
       repository: env.GITHUB_REPOSITORY,
-      path: ".github/workflows/stage06-component.yml",
+      path: (env.GITHUB_WORKFLOW_REF ?? "")
+        .slice((env.GITHUB_REPOSITORY + "/").length)
+        .split("@")[0],
       runId: Number(env.GITHUB_RUN_ID),
       runAttempt: Number(env.GITHUB_RUN_ATTEMPT),
       headSha: env.GITHUB_SHA,
       event: env.GITHUB_EVENT_NAME,
     };
   require_(
-    Number.isSafeInteger(workflow.runId) &&
+    (env.GITHUB_WORKFLOW_REF ?? "").startsWith(
+      env.GITHUB_REPOSITORY + "/.github/workflows/",
+    ) &&
+      Number.isSafeInteger(workflow.runId) &&
       workflow.runId > 0 &&
       Number.isSafeInteger(workflow.runAttempt) &&
       workflow.runAttempt > 0,
@@ -747,8 +755,10 @@ export async function main(argv = process.argv.slice(2)) {
   let manifestPath;
   if (args.target === "helios-installer")
     manifestPath = await installer_build(ws, args, operationId);
-  else if (args.target === "helios-compatibility")
-    manifestPath = await compatibility_build(ws, args, operationId);
+  else if (
+    ["helios-compatibility", "helios-catalog-verifier"].includes(args.target)
+  )
+    manifestPath = await windows_release_tool_build(ws, args, operationId);
   else if (args.target === "helios-guest-x64") {
     const dependencies = await exact_engines(
       ws,

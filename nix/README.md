@@ -9,8 +9,13 @@ acceptance entry point; it does not install clients or modify approval policies.
 subsets and selected submodules. `pins.nix` owns source object IDs and provenance.
 `manifest.nix` combines them; `checks.nix` validates without fetching packages.
 
-`dev-shell.nix` declares the locked tools, shell-scoped Git wrapper and validation
-commands. `commands/repos.nix` packages the shared Node.js `wb` operations and
+`ci.nix` defines the individual CI command packages. `locked-packages.nix`
+resolves the root nixpkgs input from the existing `devenv.lock`, including its
+content hash. `ci-environment.nix` supplies those commands and base tools to
+the development environment; `dev-shell.nix` adds editing, agent and devbox tools,
+the shell-scoped Git wrapper and validation commands. `control-sources.nix`
+packages the shared Node sources and dependencies once for CI and development.
+`commands/repos.nix` packages the shared Node.js `wb` operations and
 absolute Git/Node/devenv executables. `devbox.nix` imports the exact Stage 2
 closure into a container; `scripts/devbox-run.mjs` owns its runtime entry point
 and `windows/` owns provisioning/mirror/signing payloads. The typed Node stdio proxy
@@ -37,6 +42,13 @@ interfaces live here; component compiler flags belong in their repositories.
 `devenv.lock` locks Nix inputs; it does not replace component pins.
 The CLI and modules are locked to the same upstream devenv revision. No upstream
 patches or replacement shell activation implementation are maintained here.
+
+`build-adl-compatibility.nix` cross-compiles `atiadlxx.dll` and retains the Resolve
+helper scripts. `build-catalog-verifier.nix` cross-compiles `VerifyCatalog.exe`.
+Both use `windows-release-tool.nix` for the locked MSVC SDK, x64 toolchain,
+static-CRT image inspection, PDB directories and source attribution. Component
+workflows run these recipes; the root release command consumes their prebuilt
+artifacts.
 
 Bootstrap-only pure checks, usable before packages can be downloaded:
 

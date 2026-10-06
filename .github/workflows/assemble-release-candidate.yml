@@ -1,0 +1,181 @@
+name: Assemble a prebuilt release candidate
+on:
+  workflow_dispatch:
+    inputs:
+      source_revision:
+        description: Exact root source used by the component builds (40 hex characters)
+        required: true
+        type: string
+      release_input_revision:
+        description: Exact review-data commit containing the release-input JSON
+        required: true
+        type: string
+      release_input_path:
+        description: Reviewed release-input JSON path in the data commit
+        required: true
+        type: string
+      release_input_sha256:
+        description: Reviewed release-input file SHA256
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: candidate-${{ inputs.source_revision }}-${{ inputs.release_input_sha256 }}
+  cancel-in-progress: false
+jobs:
+  verify-inputs:
+    name: Verify component inputs
+    if: github.repository == 'winboat-org/winboat-devenv' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    outputs:
+      preparation-id: ${{ steps.preparation.outputs.artifact-id }}
+    steps:
+      - name: Validate immutable selections
+        env:
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          INPUT_REVISION: ${{ inputs.release_input_revision }}
+          RELEASE_INPUT: ${{ inputs.release_input_path }}
+          RELEASE_INPUT_SHA256: ${{ inputs.release_input_sha256 }}
+        run: |
+          [[ "$SOURCE_REVISION" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$INPUT_REVISION" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$RELEASE_INPUT_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$RELEASE_INPUT" != /* && "$RELEASE_INPUT" != *..* && "$RELEASE_INPUT" != *$'\n'* ]]
+      - name: Checkout exact root source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.source_revision }}
+          persist-credentials: false
+      - name: Checkout exact review data
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.release_input_revision }}
+          path: out/review
+          persist-credentials: false
+      - name: Verify reviewed input identity
+        env:
+          RELEASE_INPUT: ${{ inputs.release_input_path }}
+          RELEASE_INPUT_SHA256: ${{ inputs.release_input_sha256 }}
+        run: printf '%s  %s\n' "$RELEASE_INPUT_SHA256" "out/review/$RELEASE_INPUT" | sha256sum --check --strict
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24
+        with:
+          enable_kvm: false
+          extra_nix_config: |
+            max-jobs = 1
+            cores = 2
+      - name: Realize only the release command
+        run: |
+          release_tools=$(nix build --no-link --print-out-paths --file nix/ci.nix release)
+          printf '%s/bin\n' "$release_tools" >> "$GITHUB_PATH"
+      - name: Verify artifacts and prepare packing inputs
+        env:
+          RELEASE_INPUT: ${{ inputs.release_input_path }}
+          GH_TOKEN: ${{ secrets.COMPONENT_INPUTS_TOKEN || github.token }}
+        run: |
+          wb-release bundle fetch --manifest "out/review/$RELEASE_INPUT" --artifacts-dir out/ci-inputs --foreground --json
+          wb-release bundle prepare --manifest "out/review/$RELEASE_INPUT" --artifacts-dir out/ci-inputs --preparation-dir out/packing --foreground --json
+      - name: Retain verified packing request
+        id: preparation
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: packing-input-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/packing/
+          include-hidden-files: true
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 3
+  pack-installer:
+    name: Pack the prebuilt installer
+    needs: verify-inputs
+    runs-on: windows-2025
+    timeout-minutes: 120
+    outputs:
+      packed-id: ${{ steps.packed.outputs.artifact-id }}
+    steps:
+      - name: Checkout exact shared packing script
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.source_revision }}
+          persist-credentials: false
+      - name: Download this run's verified packing request
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: ${{ needs.verify-inputs.outputs.preparation-id }}
+          path: out/packing
+          merge-multiple: true
+      - name: Run the shared prebuilt-only pack operation
+        shell: pwsh
+        run: |
+          $env:WINBOAT_CONTROL_ROOT = Join-Path $PWD 'nix/windows'
+          $specification = (Resolve-Path 'out/packing/pack-request.json').Path
+          & ./nix/windows/Bundle.ps1 -Specification $specification -Directory (Join-Path $env:RUNNER_TEMP 'winboat-packing')
+          $result = Get-Content -LiteralPath 'out/packing/pack-result.json' -Raw | ConvertFrom-Json
+          New-Item -ItemType Directory -Path 'out/packed' | Out-Null
+          Copy-Item -LiteralPath $result.file.path -Destination 'out/packed/HeliosSetup.exe'
+          Copy-Item -LiteralPath 'out/packing/pack-result.json' -Destination 'out/packed/pack-result.json'
+      - name: Retain packed output and receipt
+        id: packed
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: packed-installer-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/packed/
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 3
+  finalize-candidate:
+    name: Verify and retain the candidate
+    needs: [verify-inputs, pack-installer]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact root source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.source_revision }}
+          persist-credentials: false
+      - name: Download exact packing request
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: ${{ needs.verify-inputs.outputs.preparation-id }}
+          path: out/packing
+          merge-multiple: true
+      - name: Download exact packed output
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: ${{ needs.pack-installer.outputs.packed-id }}
+          path: out/packed
+          merge-multiple: true
+      - name: Recheck reviewed release input
+        env:
+          RELEASE_INPUT_SHA256: ${{ inputs.release_input_sha256 }}
+        run: printf '%s  out/packing/release-input.json\n' "$RELEASE_INPUT_SHA256" | sha256sum --check --strict
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24
+        with:
+          enable_kvm: false
+          extra_nix_config: |
+            max-jobs = 1
+            cores = 2
+      - name: Realize only the release command
+        run: |
+          release_tools=$(nix build --no-link --print-out-paths --file nix/ci.nix release)
+          printf '%s/bin\n' "$release_tools" >> "$GITHUB_PATH"
+      - name: Verify packed payload against exact components
+        env:
+          GH_TOKEN: ${{ secrets.COMPONENT_INPUTS_TOKEN || github.token }}
+        run: |
+          wb-release bundle fetch --manifest out/packing/release-input.json --artifacts-dir out/ci-inputs --foreground --json
+          wb-release bundle complete --manifest out/packing/release-input.json --artifacts-dir out/ci-inputs --preparation-dir out/packing --packed-dir out/packed --foreground --json
+      - name: Retain candidate, provenance and symbols
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: candidate-${{ inputs.source_revision }}-${{ inputs.release_input_sha256 }}
+          path: out/bundles/
+          include-hidden-files: true
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 30

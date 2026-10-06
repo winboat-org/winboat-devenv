@@ -1778,6 +1778,117 @@
           },
           "positionals": [],
           "commands": {}
+        },
+        "prepare": {
+          "options": {
+            "--manifest": {
+              "dest": "manifest",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--artifacts-dir": {
+              "dest": "artifacts_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--foreground": {
+              "dest": "foreground",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--preparation-dir": {
+              "dest": "preparation_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "complete": {
+          "options": {
+            "--manifest": {
+              "dest": "manifest",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--artifacts-dir": {
+              "dest": "artifacts_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--foreground": {
+              "dest": "foreground",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--preparation-dir": {
+              "dest": "preparation_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--packed-dir": {
+              "dest": "packed_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
         }
       },
       "commandDest": "action"

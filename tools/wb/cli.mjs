@@ -124,7 +124,10 @@ export async function dispatch(ws, args, operationId, argv) {
     return evidence.read(ws, args.id, args.offset, args.limit);
   if (args.family === "bundle")
     return !args.foreground &&
-      (args.background || ["assemble", "fetch", "lock"].includes(args.action))
+      (args.background ||
+        ["assemble", "fetch", "lock", "prepare", "complete"].includes(
+          args.action,
+        ))
       ? jobs.start(
           ws,
           [...argv.filter((v) => v !== "--background"), "--foreground"],

@@ -1,10 +1,10 @@
-param([Parameter(Mandatory)][string]$Specification)
+param([Parameter(Mandatory)][string]$Specification, [string]$Directory)
 . (Join-Path $env:WINBOAT_CONTROL_ROOT 'Control.ps1')
 $spec = Read-ControlJson $Specification
 if ($spec.schemaVersion -ne 1 -or $spec.operationId -notmatch '^op-[0-9a-f]{32}$') { throw 'Unsupported pack request' }
 $archive = Join-Path (Split-Path $Specification -Parent) 'stage.zip'
 Assert-ControlFile $archive $spec.archiveSha256 $spec.archiveSize
-$root = 'C:\WinBoatDev\bundles\' + $spec.operationId
+$root = if ($Directory) { [IO.Path]::GetFullPath($Directory) } else { 'C:\WinBoatDev\bundles\' + $spec.operationId }
 if (Test-Path -LiteralPath $root) { throw 'Packing directory already exists; retained for inspection' }
 New-Item -ItemType Directory -Path $root | Out-Null
 Add-Type -AssemblyName System.IO.Compression.FileSystem

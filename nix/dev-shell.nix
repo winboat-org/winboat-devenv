@@ -41,16 +41,11 @@ in
 {
   packages =
     (with pkgs; [
-      git
-      gh
       openssh
       jq
       ripgrep
-      nodejs
       prettier
-      nix
       nixfmt
-      shellcheck
       bashInteractive
     ])
     ++ [ devenvCli ];
@@ -178,10 +173,8 @@ in
       validation_log=$(${pkgs.coreutils}/bin/mktemp "$WB_WORKSPACE_ROOT/.state/validation/native.XXXXXXXX.log")
       exec >"$validation_log" 2>&1
       wb-format-check
+      wb-workflow-check
       wb-check
-      wb-pins helios | jq -e '.repositories | length == 8' >/dev/null
-      wb-pins winboat | jq -e '.repositories | length == 3' >/dev/null
-      wb-pins winboat-accel | jq -e '.repositories | length == 12' >/dev/null
       wb-test
       wb-devbox-test
       wb-windows-test

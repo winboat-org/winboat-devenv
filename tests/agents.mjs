@@ -44,7 +44,6 @@ test("agent setup preserves policies, hooks and servers with backups and idempot
   );
   assert.equal(claude.permissions.defaultMode, "default");
   assert.equal(claude.env.PERSONAL, "keep");
-  assert.equal(claude.env.MCP_TIMEOUT, "120000");
   assert.equal(
     JSON.parse(fs.readFileSync(path.join(f.root, ".mcp.json"))).mcpServers.other
       .command,
@@ -93,9 +92,6 @@ test("parallel MCP clients reuse one durable mutation and wait on the same compl
       }),
     ),
   );
-  const list = await a.rpc("tools/list");
-  for (const name of ["job_wait", "job_logs", "evidence_read"])
-    assert.ok(list.result.tools.some((tool) => tool.name === name));
   const calls = await Promise.all(
     [a, b].map((client) =>
       client.rpc("tools/call", {

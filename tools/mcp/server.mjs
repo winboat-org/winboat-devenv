@@ -14,25 +14,35 @@ const selection = {
   repos: { type: "array", items: string, minItems: 1 },
 };
 const definitions = [
-  ...["verify", "fetch", "assemble", "lock"].map((action) => [
-    `bundle_${action}`,
-    action === "assemble"
-      ? "Verify exact artifacts and run the prebuilt packer in a durable Windows task. No compilation or publication."
-      : `Release input ${action}; exact identities only, no latest-run selection.`,
-    ["bundle", action],
-    {
-      ...(action === "lock" ? { selection: string } : { manifest: string }),
-      artifactsDirectory: string,
-      ...(action === "assemble" ? { name: string } : {}),
-      background: bool,
-      requestId: string,
-    },
-    [
-      action === "lock" ? "selection" : "manifest",
-      "artifactsDirectory",
-      ...(action === "assemble" ? ["name"] : []),
+  ...["verify", "fetch", "prepare", "complete", "assemble", "lock"].map(
+    (action) => [
+      `bundle_${action}`,
+      action === "assemble"
+        ? "Verify exact artifacts and run the prebuilt packer in a durable Windows task. No compilation or publication."
+        : `Release input ${action}; exact identities only, no latest-run selection.`,
+      ["bundle", action],
+      {
+        ...(action === "lock" ? { selection: string } : { manifest: string }),
+        artifactsDirectory: string,
+        ...(action === "assemble" ? { name: string } : {}),
+        ...(["prepare", "complete"].includes(action)
+          ? { preparationDirectory: string }
+          : {}),
+        ...(action === "complete" ? { packedDirectory: string } : {}),
+        background: bool,
+        requestId: string,
+      },
+      [
+        action === "lock" ? "selection" : "manifest",
+        "artifactsDirectory",
+        ...(action === "assemble" ? ["name"] : []),
+        ...(["prepare", "complete"].includes(action)
+          ? ["preparationDirectory"]
+          : []),
+        ...(action === "complete" ? ["packedDirectory"] : []),
+      ],
     ],
-  ]),
+  ),
   [
     "workspace_status",
     "Inspect workspace capabilities and source state.",
@@ -491,6 +501,8 @@ function command(tool, args) {
     limit: "--limit",
     requestId: "--request-id",
     artifactsDirectory: "--artifacts-dir",
+    preparationDirectory: "--preparation-dir",
+    packedDirectory: "--packed-dir",
     selection: "--selection",
   };
   Object.assign(flags, {
@@ -533,6 +545,8 @@ function command(tool, args) {
       "repo_verify",
       "build_run",
       "bundle_assemble",
+      "bundle_prepare",
+      "bundle_complete",
       "bundle_fetch",
       "bundle_lock",
     ].includes(tool.name) &&

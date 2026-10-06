@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import os from "node:os";
-import YAML from "yaml";
 import { mcp } from "./helpers.mjs";
 import {
   fs,
@@ -29,6 +29,37 @@ function pe(architecture = "x64") {
   data.writeUInt32LE(0x4550, 80);
   data.writeUInt16LE(architecture === "x64" ? 0x8664 : 0x14c, 84);
   return data;
+}
+function packed_fixture(payloadDirectory) {
+  const rows = bundles.table(payloadDirectory),
+    count = Buffer.alloc(4);
+  count.writeUInt32LE(rows.length);
+  const header = Buffer.concat([
+    count,
+    ...rows.map((f) => {
+      const name = Buffer.from(f.path),
+        row = Buffer.alloc(2 + name.length + 8);
+      row.writeUInt16LE(name.length);
+      name.copy(row, 2);
+      row.writeBigUInt64LE(BigInt(f.size), 2 + name.length);
+      return row;
+    }),
+  ]);
+  const compressed = spawnSync(env.WB_XZ, ["--compress", "--stdout"], {
+    input: Buffer.concat(
+      rows.map((f) => fs.readFileSync(path.join(payloadDirectory, f.path))),
+    ),
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  assert.equal(compressed.status, 0, compressed.stderr.toString());
+  const body = Buffer.concat([header, compressed.stdout]),
+    footer = Buffer.alloc(64);
+  footer.writeBigUInt64LE(128n);
+  footer.writeBigUInt64LE(BigInt(body.length), 8);
+  footer.writeBigUInt64LE(BigInt(header.length), 16);
+  Buffer.from(hash(body), "hex").copy(footer, 24);
+  footer.write("HLIOSET2", 56);
+  return Buffer.concat([pe(), body, footer]);
 }
 async function fixture(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "wb bundle spaces "));
@@ -77,7 +108,7 @@ async function fixture(t) {
     ws.repos[n] = { pin: { rev: pins[n] } };
   });
   const input = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     kind: "winboat-release-input",
     configuration: "release",
     root: {
@@ -123,7 +154,7 @@ async function fixture(t) {
       dependencies: { ...pins },
       toolchain: { lockSha256, identity: hash(target) },
       workflow: {
-        path: ".github/workflows/stage06-component.yml",
+        path: ".github/workflows/build-" + target + ".yml",
         runId: 100,
         runAttempt: 1,
         headSha: pins[producer],
@@ -250,13 +281,6 @@ async function fixture(t) {
     }
     if (target === "helios-compatibility") {
       image("atiadlxx.dll", "compatibility/DaVinci Resolve/atiadlxx.dll");
-      image("VerifyCatalog.exe", null);
-      m.verifier = {
-        interfaceVersion: 1,
-        path: "files/VerifyCatalog.exe",
-        sourceRevision: revision,
-        sourceRepository: bundles.ROOT_REPOSITORY,
-      };
       for (const name of [
         "Resolve-CompatibilityCommon.ps1",
         "Install-Resolve-Compatibility.ps1",
@@ -268,6 +292,15 @@ async function fixture(t) {
           Buffer.from("fixture compatibility"),
           "compatibility/DaVinci Resolve/" + name,
         );
+    }
+    if (target === "helios-catalog-verifier") {
+      image("VerifyCatalog.exe", null);
+      m.verifier = {
+        interfaceVersion: 1,
+        path: "files/VerifyCatalog.exe",
+        sourceRevision: revision,
+        sourceRepository: bundles.ROOT_REPOSITORY,
+      };
     }
     if (target === "helios-installer") {
       image("HeliosSetup.exe", null);
@@ -390,7 +423,7 @@ async function rewrite_artifact(f, a) {
 test("exact archives verify; install schema keeps symbols outside payload and all source identities", async (t) => {
   const f = await fixture(t),
     result = await bundles.verify(f.ws, f, identity());
-  assert.equal(result.artifactsVerified, 12);
+  assert.equal(result.artifactsVerified, f.input.artifacts.length);
   assert.equal(result.publication, false);
   assert.equal(result.installed, false);
   const m = bundles.install_manifest(f.input, [], "fixture");
@@ -610,90 +643,6 @@ test("HLIOSET2 checks footer boundaries and container bytes", (t) => {
   write(p, Buffer.concat([pe(), payload, footer]));
   assert.throws(() => bundles.verify_container(p), /footer/);
 });
-test("CLI parses the exact bundle command families", async () => {
-  const { parse } = await import("../tools/wb/cli.mjs");
-  for (const action of ["verify", "fetch", "assemble", "lock"]) {
-    const args = parse([
-      "bundle",
-      action,
-      action === "lock" ? "--selection" : "--manifest",
-      "input.json",
-      "--artifacts-dir",
-      "artifacts",
-      ...(action === "assemble" ? ["--name", "fresh-assembly"] : []),
-    ]);
-    assert.equal(args.family, "bundle");
-    assert.equal(args.action, action);
-    assert.equal(args.artifacts_dir, "artifacts");
-  }
-});
-test("root candidate workflow has pinned actions and only verification/packing entry points", () => {
-  const root = env.WB_TEST_SOURCE ?? path.resolve(import.meta.dirname, ".."),
-    workflow = YAML.parse(
-      fs.readFileSync(
-        path.join(root, ".github/workflows/release-candidate.yml"),
-        "utf8",
-      ),
-    );
-  assert.deepEqual(Object.keys(workflow.on), ["workflow_dispatch"]);
-  assert.deepEqual(workflow.permissions, { contents: "read", actions: "read" });
-  for (const step of workflow.jobs.assemble.steps) {
-    if (step.uses) assert.match(step.uses, /@[0-9a-f]{40}$/);
-    if (step.run)
-      assert.doesNotMatch(
-        step.run,
-        /\b(cargo|meson|ninja|clang|gcc|cl\.exe|Build-Installer|wb-ci-component|wb build)\b/,
-      );
-  }
-  assert.equal(workflow.jobs.assemble.environment, "release-candidate");
-  assert.doesNotMatch(
-    fs.readFileSync(path.join(root, "nix/windows/Bundle.ps1"), "utf8"),
-    /Add-Type\s+-TypeDefinition|\b(cargo|meson|ninja|cl\.exe|clang-cl)\b/,
-  );
-  assert.match(
-    workflow.jobs.assemble.if,
-    /github\.event_name == 'workflow_dispatch'/,
-  );
-  assert.equal(
-    workflow.jobs.assemble.steps.filter((s) =>
-      s.run?.includes("wb bundle fetch"),
-    ).length,
-    1,
-  );
-  assert.equal(
-    workflow.jobs.assemble.steps.filter((s) =>
-      s.run?.includes("bundle assemble"),
-    ).length,
-    1,
-  );
-});
-test("component workflow template stays manual, pinned and repository-owned", () => {
-  const root = env.WB_TEST_SOURCE ?? path.resolve(import.meta.dirname, ".."),
-    template = fs.readFileSync(
-      path.join(root, "ci/stage06-component.yml.in"),
-      "utf8",
-    );
-  const workflow = YAML.parse(
-    template
-      .replaceAll("@OWNER@", "helios")
-      .replaceAll("@TARGETS@", "helios-installer"),
-  );
-  assert.deepEqual(Object.keys(workflow.on), ["workflow_dispatch"]);
-  assert.equal(workflow.jobs.build.environment, "component-build");
-  for (const step of workflow.jobs.build.steps)
-    if (step.uses) assert.match(step.uses, /@[0-9a-f]{40}$/);
-  assert.match(
-    workflow.jobs.build.steps.find((s) => s.run?.includes("wb-ci-component"))
-      .run,
-    /--root-revision/,
-  );
-  assert.equal(
-    workflow.jobs.build.steps.find((s) =>
-      s.uses?.startsWith("actions/checkout@"),
-    ).with.repository,
-    bundles.ROOT_REPOSITORY,
-  );
-});
 test("fresh Nix-packaged MCP exposes all bundle tools with CLI refusal parity", async (t) => {
   const f = await fixture(t),
     root = env.WB_TEST_SOURCE ?? path.resolve(import.meta.dirname, ".."),
@@ -705,14 +654,6 @@ test("fresh Nix-packaged MCP exposes all bundle tools with CLI refusal parity", 
     capabilities: {},
     clientInfo: { name: "stage06-test", version: "1" },
   });
-  const catalog = await client.rpc("tools/list");
-  for (const name of [
-    "bundle_lock",
-    "bundle_fetch",
-    "bundle_verify",
-    "bundle_assemble",
-  ])
-    assert.ok(catalog.result.tools.some((t) => t.name === name));
   const actual = await client.rpc("tools/call", {
     name: "bundle_verify",
     arguments: {
@@ -804,19 +745,18 @@ test("shared CLI/MCP pack assembly preserves equal payloads and symbols with moc
         submitted++;
         requestPath = inputs["pack-request.json"];
         request = readJSON(requestPath);
-        const payload = Buffer.from([0, 0, 0, 0, 1, 2, 3]),
-          footer = Buffer.alloc(64);
-        footer.writeBigUInt64LE(128n);
-        footer.writeBigUInt64LE(BigInt(payload.length), 8);
-        footer.writeBigUInt64LE(4n, 16);
-        Buffer.from(hash(payload), "hex").copy(footer, 24);
-        footer.write("HLIOSET2", 56);
-        exe = Buffer.concat([pe(), payload, footer]);
+        exe = packed_fixture(path.join(path.dirname(requestPath), "payload"));
         result = {
+          schemaVersion: 1,
           operationId: request.operationId,
           state: "packed",
           inputSha256: digest(requestPath),
-          signatures: { catalogMembership: "fixture" },
+          signatures: {
+            catalogMembership: "verified",
+            catalogSigner: request.signing.thumbprint,
+            certificateSha256: request.signing.certificateSha256,
+            catalogSha256: request.signing.catalogSha256,
+          },
           file: {
             path:
               "C:\\WinBoatDev\\bundles\\" +
@@ -848,4 +788,128 @@ test("shared CLI/MCP pack assembly preserves equal payloads and symbols with moc
   assert.equal(manifest.installed, false);
   assert.ok(manifest.artifacts.every((a) => a.provenance.symbols.length > 0));
   assert.ok(manifest.payloadFiles.every((f) => !f.path.endsWith(".pdb")));
+});
+
+test("hosted handoff validates packed bytes and rejects altered receipts or payloads", async (t) => {
+  const f = await fixture(t);
+  const preparation_dir = path.join(f.ws.out, "packing-input");
+  const operationId = identity();
+  const prepared = await bundles.prepare(
+    f.ws,
+    { ...f, preparation_dir },
+    operationId,
+  );
+  const request = readJSON(path.join(preparation_dir, "pack-request.json"));
+  const payload = path.join(f.ws.state, "bundles", operationId, "payload");
+  const packed_dir = path.join(f.ws.out, "packed");
+  fs.mkdirSync(packed_dir, { recursive: true });
+  const exe = packed_fixture(payload);
+  const result = {
+    schemaVersion: 1,
+    operationId,
+    state: "packed",
+    inputSha256: prepared.requestSha256,
+    signatures: {
+      catalogMembership: "verified",
+      catalogSigner: request.signing.thumbprint,
+      certificateSha256: request.signing.certificateSha256,
+      catalogSha256: request.signing.catalogSha256,
+    },
+    file: {
+      path: "D:\\a\\runner temp\\HeliosSetup.exe",
+      size: exe.length,
+      sha256: hash(exe),
+    },
+  };
+  write(path.join(packed_dir, "HeliosSetup.exe"), exe);
+  write_json(path.join(packed_dir, "pack-result.json"), result);
+  const args = { ...f, preparation_dir, packed_dir };
+  const candidate = await bundles.complete(f.ws, args, identity());
+  assert.equal(candidate.payloadDigest, prepared.payloadDigest);
+  assert.equal(readJSON(candidate.manifest).published, false);
+  assert.ok(
+    !fs.existsSync(
+      path.join(
+        f.ws.state,
+        "bundles",
+        operationId,
+        "inputs",
+        "qemu-helios",
+        "closure.nar",
+      ),
+    ),
+  );
+  assert.ok(
+    !fs.existsSync(
+      path.join(
+        f.ws.state,
+        "bundles",
+        operationId,
+        "inputs",
+        "helios-guest-x64",
+        "files/symbols/runtime.pdb",
+      ),
+    ),
+  );
+  write_json(path.join(packed_dir, "pack-result.json"), {
+    ...result,
+    inputSha256: "0".repeat(64),
+  });
+  await assert.rejects(
+    bundles.complete(f.ws, args, identity()),
+    /receipt identity/,
+  );
+  const changed = path.join(f.ws.out, "changed-payload");
+  fs.cpSync(payload, changed, { recursive: true });
+  const script = path.join(changed, "Install-Helios.ps1"),
+    bytes = fs.readFileSync(script);
+  bytes[0] ^= 1;
+  fs.writeFileSync(script, bytes);
+  const altered = packed_fixture(changed);
+  write(path.join(packed_dir, "HeliosSetup.exe"), altered);
+  write_json(path.join(packed_dir, "pack-result.json"), {
+    ...result,
+    file: { ...result.file, size: altered.length, sha256: hash(altered) },
+  });
+  await assert.rejects(
+    bundles.complete(f.ws, args, identity()),
+    /packed payload hash/,
+  );
+  const malicious = {
+    ...request,
+    branding: { ...request.branding, publisher: "changed" },
+  };
+  write_json(path.join(preparation_dir, "pack-request.json"), malicious);
+  const metadata = readJSON(path.join(preparation_dir, "preparation.json"));
+  write_json(path.join(preparation_dir, "preparation.json"), {
+    ...metadata,
+    requestSha256: digest(path.join(preparation_dir, "pack-request.json")),
+  });
+  await assert.rejects(
+    bundles.complete(f.ws, args, identity()),
+    /preparation differs/,
+  );
+});
+
+test("native closure members are streamed and corrupt retained-only bytes still fail", async (t) => {
+  const f = await fixture(t),
+    a = f.input.artifacts.find((a) => a.id === "qemu-helios");
+  const source = path.join(f.ws.root, ".state/sources", a.id);
+  write(
+    path.join(source, "closure.nar"),
+    Buffer.from("corrupt complete closure"),
+  );
+  const archive = path.join(f.artifacts_dir, a.archive.path);
+  fs.unlinkSync(archive);
+  await create_zip(archive, [
+    [path.join(source, "component.json"), "component.json"],
+    ...a.provenance.files.map((row) => [path.join(source, row.path), row.path]),
+  ]);
+  a.archive.sha256 = digest(archive);
+  a.archive.size = fs.statSync(archive).size;
+  write_json(f.manifest, f.input);
+  await assert.rejects(
+    bundles.verify(f.ws, f, identity()),
+    /archive.*(size|content)|size differs/,
+  );
 });

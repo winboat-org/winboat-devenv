@@ -1,4 +1,5 @@
 import { read_metadata } from "./release-zip-metadata.mjs";
+import crypto from "node:crypto";
 import {
   fs,
   path,
@@ -35,6 +36,7 @@ export const REQUIRED = [
   "clvk-helios",
   "helios-installer",
   "helios-compatibility",
+  "helios-catalog-verifier",
   "qemu-helios",
   "virglrenderer",
   "dxvk-engine-x64",
@@ -46,6 +48,7 @@ export const OWNERS = {
   "helios-guest-x64": "helios",
   "helios-installer": "helios",
   "helios-compatibility": "helios",
+  "helios-catalog-verifier": "helios",
   "clvk-helios": "clvk-helios",
   "qemu-helios": "qemu-helios",
   virglrenderer: "virglrenderer",
@@ -180,7 +183,7 @@ function root_source(ws, root) {
 }
 export function validate(ws, input) {
   if (
-    input.schemaVersion !== 1 ||
+    input.schemaVersion !== 2 ||
     input.kind !== "winboat-release-input" ||
     !["release", "debug"].includes(input.configuration)
   )
@@ -420,10 +423,23 @@ async function checked_inputs(
     const archive = verify_file(artifactsDirectory, a.archive),
       target = path.join(directory, "inputs", a.id);
     if (exists(target)) fail("bundle operation directory already exists");
-    await extract_artifact(archive, target, [
-      a.manifest,
-      ...a.provenance.files,
-    ]);
+    const retainedPaths = new Set(
+      [
+        a.manifest.path,
+        "build-manifest.json",
+        "files/package/source-revisions.json",
+        "files/package/llvm-symbol-policy.json",
+        "files/HeliosSetup.exe",
+        a.provenance.verifier?.path,
+        ...a.provenance.files.filter((f) => f.payloadPath).map((f) => f.path),
+      ].filter(Boolean),
+    );
+    await extract_artifact(
+      archive,
+      target,
+      [a.manifest, ...a.provenance.files],
+      retainedPaths,
+    );
     if (!equal(readJSON(path.join(target, "component.json")), a.provenance))
       fail("extracted manifest disagrees with exact release input");
     const originalRow = a.provenance.files.find(
@@ -484,6 +500,9 @@ async function checked_inputs(
       if (!a.provenance.files.some((f) => f.path === "files/" + row))
         fail("original license/symbol provenance omitted");
     for (const f of a.provenance.files) {
+      // Other members (symbols, licenses, native closures) were hashed as
+      // streams and stay inside the retained component ZIPs.
+      if (!retainedPaths.has(f.path)) continue;
       const p = verify_file(target, f);
       if (
         /\.(dll|exe|sys)$/i.test(f.path) &&
@@ -565,21 +584,22 @@ async function checked_inputs(
     pe_architecture(path.join(roots[installer.id], packer.path)) !== "x64"
   )
     fail("missing/invalid prebuilt installer");
-  const compatibility = input.artifacts.find(
-    (a) => a.provenance.target === "helios-compatibility",
+  const catalogVerifier = input.artifacts.find(
+    (a) => a.provenance.target === "helios-catalog-verifier",
   );
   if (
-    compatibility.provenance.verifier?.interfaceVersion !== 1 ||
-    compatibility.provenance.verifier?.sourceRevision !== input.root.revision ||
-    compatibility.provenance.verifier?.sourceRepository !== ROOT_REPOSITORY
+    catalogVerifier.provenance.verifier?.interfaceVersion !== 1 ||
+    catalogVerifier.provenance.verifier?.sourceRevision !==
+      input.root.revision ||
+    catalogVerifier.provenance.verifier?.sourceRepository !== ROOT_REPOSITORY
   )
     fail("stale catalog verifier interface/source");
-  const verifierRow = compatibility.provenance.files.find(
-    (f) => f.path === compatibility.provenance.verifier.path,
+  const verifierRow = catalogVerifier.provenance.files.find(
+    (f) => f.path === catalogVerifier.provenance.verifier.path,
   );
   if (
     !verifierRow ||
-    pe_architecture(path.join(roots[compatibility.id], verifierRow.path)) !==
+    pe_architecture(path.join(roots[catalogVerifier.id], verifierRow.path)) !==
       "x64"
   )
     fail("missing/invalid prebuilt catalog verifier");
@@ -589,7 +609,7 @@ async function checked_inputs(
     roots,
     packer: path.join(roots[installer.id], packer.path),
     releaseInputSha256: hash(inputBytes),
-    verifier: path.join(roots[compatibility.id], verifierRow.path),
+    verifier: path.join(roots[catalogVerifier.id], verifierRow.path),
   };
 }
 export async function verify(ws, args, operationId) {
@@ -667,7 +687,7 @@ export function install_manifest(input, files, packageId) {
     files,
   };
 }
-export async function assemble(ws, args, operationId) {
+async function prepare_inputs(ws, args, operationId) {
   const { input, directory, roots, packer, verifier, releaseInputSha256 } =
     await checked_inputs(
       ws,
@@ -681,11 +701,7 @@ export async function assemble(ws, args, operationId) {
     for (const f of a.provenance.files.filter((f) => f.payloadPath)) {
       const p = path.join(payload, f.payloadPath);
       mkdir(path.dirname(p));
-      fs.copyFileSync(
-        verify_file(roots[a.id], f),
-        p,
-        fs.constants.COPYFILE_EXCL,
-      );
+      fs.linkSync(verify_file(roots[a.id], f), p);
       if (digest(p) !== f.sha256) fail("input changed during payload staging");
     }
   for (const script of INSTALL_SCRIPTS) {
@@ -709,11 +725,12 @@ export async function assemble(ws, args, operationId) {
   );
   const stage = path.join(directory, "stage");
   mkdir(stage);
-  fs.copyFileSync(packer, path.join(stage, "HeliosSetup.exe"));
-  fs.copyFileSync(verifier, path.join(stage, "VerifyCatalog.exe"));
+  fs.linkSync(packer, path.join(stage, "HeliosSetup.exe"));
+  fs.linkSync(verifier, path.join(stage, "VerifyCatalog.exe"));
   fs.cpSync(payload, path.join(stage, "payload"), {
     recursive: true,
     errorOnExist: true,
+    mode: fs.constants.COPYFILE_FICLONE,
   });
   const request = {
     schemaVersion: 1,
@@ -736,11 +753,75 @@ export async function assemble(ws, args, operationId) {
     archive,
     request.files.map((f) => [path.join(stage, f.path), f.path]),
   );
-  const guestId = identity(),
-    remote = windows.ROOT + "\\jobs\\" + guestId;
   request.archiveSha256 = digest(archive);
   request.archiveSize = fs.statSync(archive).size;
-  write_json(path.join(directory, "pack-request.json"), request);
+  const requestPath = path.join(directory, "pack-request.json");
+  write_json(requestPath, request);
+  const preparationDirectory = args.preparation_dir
+    ? path.resolve(args.preparation_dir)
+    : path.join(directory, "packing-input");
+  if (
+    exists(preparationDirectory) &&
+    fs.readdirSync(preparationDirectory).length
+  )
+    fail("packing preparation requires a clean directory");
+  mkdir(preparationDirectory);
+  for (const [source, name] of [
+    [archive, "stage.zip"],
+    [requestPath, "pack-request.json"],
+    [path.join(directory, "release-input.json"), "release-input.json"],
+  ])
+    fs.copyFileSync(
+      source,
+      path.join(preparationDirectory, name),
+      fs.constants.COPYFILE_EXCL,
+    );
+  const preparation = {
+    schemaVersion: 1,
+    kind: "winboat-packing-input",
+    operationId,
+    rootRevision: input.root.revision,
+    releaseInputSha256,
+    requestSha256: digest(requestPath),
+    payloadDigest: hash(JSON.stringify(table(payload))),
+  };
+  write_json(path.join(preparationDirectory, "preparation.json"), preparation);
+  return {
+    input,
+    directory,
+    roots,
+    packer,
+    verifier,
+    releaseInputSha256,
+    payload,
+    packageId,
+    archive,
+    request,
+    requestPath,
+    preparationDirectory,
+    preparation,
+  };
+}
+export async function prepare(ws, args, operationId) {
+  const prepared = await prepare_inputs(ws, args, operationId);
+  const receipt = {
+    kind: "bundle-preparation",
+    state: "prepared",
+    exitCode: 0,
+    operationId,
+    preparationDirectory: prepared.preparationDirectory,
+    releaseInputSha256: prepared.releaseInputSha256,
+    requestSha256: prepared.preparation.requestSha256,
+    payloadDigest: prepared.preparation.payloadDigest,
+  };
+  ws.journal(operationId, receipt);
+  return receipt;
+}
+export async function assemble(ws, args, operationId) {
+  const prepared = await prepare_inputs(ws, args, operationId);
+  const { input, directory, request, archive, releaseInputSha256 } = prepared;
+  const guestId = identity(),
+    remote = windows.ROOT + "\\jobs\\" + guestId;
   ws.journal(operationId, {
     kind: "bundle",
     state: "staging",
@@ -768,35 +849,136 @@ export async function assemble(ws, args, operationId) {
   windows.download(ws, args.name, remote + "\\pack-result.json", resultPath);
   const result = readJSON(resultPath);
   if (
-    result.operationId !== operationId ||
-    result.state !== "packed" ||
-    result.inputSha256 !== digest(path.join(directory, "pack-request.json")) ||
-    result.file.path !==
-      "C:\\WinBoatDev\\bundles\\" + operationId + "\\HeliosSetup.exe"
+    result.file?.path !==
+    "C:\\WinBoatDev\\bundles\\" + operationId + "\\HeliosSetup.exe"
   )
-    fail("packer receipt identity mismatch");
+    fail("packer receipt path mismatch");
+  const packedDirectory = path.join(directory, "packed-output");
+  mkdir(packedDirectory);
+  const packed = path.join(packedDirectory, "HeliosSetup.exe");
+  windows.download(ws, args.name, result.file.path, packed, result.file);
+  const receipt = await finish_candidate(
+    ws,
+    args,
+    operationId,
+    prepared,
+    result,
+    packedDirectory,
+    operationId,
+    digest(prepared.requestPath),
+  );
+  receipt.guestJobId = guestId;
+  return receipt;
+}
+export async function complete(ws, args, operationId) {
+  const directory = path.resolve(args.preparation_dir);
+  const metadata = readJSON(safe_file(directory, "preparation.json"));
+  const requestPath = safe_file(directory, "pack-request.json");
+  const request = readJSON(requestPath);
+  if (
+    metadata.schemaVersion !== 1 ||
+    metadata.kind !== "winboat-packing-input" ||
+    !/^op-[0-9a-f]{32}$/.test(metadata.operationId ?? "") ||
+    request.operationId !== metadata.operationId ||
+    metadata.requestSha256 !== digest(requestPath)
+  )
+    fail("packing preparation identity mismatch");
+  const prepared = await prepare_inputs(
+    ws,
+    { ...args, preparation_dir: undefined },
+    operationId,
+  );
+  if (
+    metadata.rootRevision !== prepared.input.root.revision ||
+    metadata.releaseInputSha256 !== prepared.releaseInputSha256 ||
+    digest(safe_file(directory, "release-input.json")) !==
+      prepared.releaseInputSha256 ||
+    metadata.payloadDigest !== prepared.preparation.payloadDigest ||
+    !equal(request.files, prepared.request.files) ||
+    !equal(request.signing, prepared.request.signing) ||
+    !equal(request.branding, prepared.request.branding)
+  )
+    fail("packing preparation differs from verified release inputs");
+  verify_file(directory, {
+    path: "stage.zip",
+    sha256: request.archiveSha256,
+    size: request.archiveSize,
+  });
+  const packedDirectory = path.resolve(args.packed_dir);
+  const result = readJSON(safe_file(packedDirectory, "pack-result.json"));
+  return finish_candidate(
+    ws,
+    args,
+    operationId,
+    prepared,
+    result,
+    packedDirectory,
+    metadata.operationId,
+    metadata.requestSha256,
+  );
+}
+async function finish_candidate(
+  ws,
+  args,
+  operationId,
+  prepared,
+  result,
+  packedDirectory,
+  packingOperationId,
+  requestSha256,
+) {
+  const { input, directory, payload, packageId, releaseInputSha256 } = prepared;
+  const signing = prepared.request.signing;
+  if (
+    result.schemaVersion !== 1 ||
+    result.operationId !== packingOperationId ||
+    result.state !== "packed" ||
+    result.inputSha256 !== requestSha256 ||
+    result.signatures?.catalogMembership !== "verified" ||
+    result.signatures?.catalogSigner !== signing.thumbprint ||
+    result.signatures?.certificateSha256 !== signing.certificateSha256 ||
+    result.signatures?.catalogSha256 !== signing.catalogSha256
+  )
+    fail("packer receipt identity/signature mismatch");
+  const packed = verify_file(packedDirectory, {
+    ...result.file,
+    path: "HeliosSetup.exe",
+  });
+  if (pe_architecture(packed) !== "x64")
+    fail("packed installer architecture mismatch");
+  await verify_packed_payload(packed, table(payload), {
+    size: fs.statSync(prepared.packer).size,
+    sha256: digest(prepared.packer),
+  });
+  root_source(ws, input.root);
   const output = path.join(ws.out, "bundles", operationId);
   mkdir(output);
   const exe = path.join(output, "HeliosSetup.exe");
-  windows.download(ws, args.name, result.file.path, exe, result.file);
-  verify_container(exe);
+  fs.copyFileSync(
+    packed,
+    exe,
+    fs.constants.COPYFILE_EXCL | fs.constants.COPYFILE_FICLONE,
+  );
   fs.cpSync(payload, path.join(output, "payload"), {
     recursive: true,
     errorOnExist: true,
+    mode: fs.constants.COPYFILE_FICLONE,
   });
   const retained = path.join(output, "component-artifacts");
   mkdir(retained);
   for (const a of input.artifacts)
     fs.copyFileSync(
-      safe_file(path.resolve(args.artifacts_dir), a.archive.path),
+      verify_file(path.resolve(args.artifacts_dir), a.archive),
       path.join(retained, a.id + ".zip"),
-      fs.constants.COPYFILE_EXCL,
+      fs.constants.COPYFILE_EXCL | fs.constants.COPYFILE_FICLONE,
     );
   const release = {
     schemaVersion: 1,
     kind: "winboat-release-candidate",
     state: "candidate",
     operationId,
+    packingOperationId,
+    requestSha256,
     packageId,
     root: input.root,
     releaseInputSha256,
@@ -828,7 +1010,7 @@ export async function assemble(ws, args, operationId) {
     state: "succeeded",
     exitCode: 0,
     manifest: path.join(output, "release-manifest.json"),
-    guestJobId: guestId,
+    packingOperationId,
     directory,
   });
   return {
@@ -837,7 +1019,7 @@ export async function assemble(ws, args, operationId) {
     manifest: path.join(output, "release-manifest.json"),
     installer: exe,
     payloadDigest: release.reproducibility.payloadDigest,
-    guestJobId: guestId,
+    packingOperationId,
     installed: false,
     loaded: false,
     published: false,
@@ -878,6 +1060,124 @@ export function verify_container(p) {
       fail("installer container hash mismatch");
   } finally {
     fs.closeSync(fd);
+  }
+}
+
+export async function verify_packed_payload(p, expected, stub) {
+  verify_container(p);
+  const fd = fs.openSync(p, "r");
+  let offset, length, headerLength, entries;
+  try {
+    const footer = Buffer.alloc(64);
+    fs.readSync(fd, footer, 0, 64, fs.statSync(p).size - 64);
+    offset = Number(footer.readBigUInt64LE(0));
+    length = Number(footer.readBigUInt64LE(8));
+    headerLength = Number(footer.readBigUInt64LE(16));
+    if (
+      offset !== stub.size ||
+      headerLength !==
+        4 + expected.reduce((n, f) => n + 10 + Buffer.byteLength(f.path), 0)
+    )
+      fail("packed installer source/header differs from verified inputs");
+    const prefix = Buffer.alloc(offset);
+    if (
+      fs.readSync(fd, prefix, 0, prefix.length, 0) !== prefix.length ||
+      hash(prefix) !== stub.sha256
+    )
+      fail("packed installer stub differs from the prebuilt component");
+    const header = Buffer.alloc(headerLength);
+    if (
+      fs.readSync(fd, header, 0, headerLength, offset) !== headerLength ||
+      header.readUInt32LE(0) !== expected.length
+    )
+      fail("packed payload header differs from verified file set");
+    const known = new Map(expected.map((f) => [f.path, f]));
+    entries = [];
+    let cursor = 4;
+    while (cursor < header.length) {
+      if (cursor + 2 > header.length) fail("truncated packed payload header");
+      const nameLength = header.readUInt16LE(cursor);
+      cursor += 2;
+      if (cursor + nameLength + 8 > header.length)
+        fail("truncated packed payload entry");
+      const name = new TextDecoder("utf-8", { fatal: true }).decode(
+        header.subarray(cursor, cursor + nameLength),
+      );
+      cursor += nameLength;
+      const size = Number(header.readBigUInt64LE(cursor));
+      cursor += 8;
+      const row = known.get(name);
+      if (!row || size !== row.size)
+        fail("packed payload file differs from verified inputs");
+      known.delete(name);
+      entries.push(row);
+    }
+    if (known.size) fail("packed payload omits verified files");
+  } finally {
+    fs.closeSync(fd);
+  }
+  const decoder = spawn(
+    env.WB_XZ,
+    ["--decompress", "--stdout", "--memlimit-decompress=128MiB"],
+    { stdio: ["pipe", "pipe", "pipe"] },
+  );
+  let error = "";
+  decoder.stderr.on("data", (b) => {
+    if (error.length < 8192) error += b;
+  });
+  const exited = new Promise((resolve, reject) => {
+    decoder.once("error", reject);
+    decoder.once("close", (code) =>
+      code
+        ? reject(
+            new Failure("packed payload decompression failed: " + error, 74),
+          )
+        : resolve(),
+    );
+  });
+  // Attach a rejection handler while reading stdout; the final await retains it.
+  exited.catch(() => {});
+  const compressed = fs.createReadStream(p, {
+    start: offset + headerLength,
+    end: offset + length - 1,
+  });
+  compressed.on("error", (e) => decoder.stdin.destroy(e));
+  decoder.stdin.on("error", () => {});
+  compressed.pipe(decoder.stdin);
+  let index = 0,
+    consumed = 0,
+    digestState = crypto.createHash("sha256");
+  const finishEmpty = () => {
+    while (index < entries.length && consumed === entries[index].size) {
+      if (digestState.digest("hex") !== entries[index].sha256)
+        fail("packed payload hash differs from verified inputs");
+      index++;
+      consumed = 0;
+      digestState = crypto.createHash("sha256");
+    }
+  };
+  try {
+    finishEmpty();
+    for await (const chunk of decoder.stdout) {
+      let cursor = 0;
+      while (cursor < chunk.length) {
+        if (index >= entries.length)
+          fail("packed payload contains unexpected bytes");
+        const take = Math.min(
+          entries[index].size - consumed,
+          chunk.length - cursor,
+        );
+        digestState.update(chunk.subarray(cursor, cursor + take));
+        cursor += take;
+        consumed += take;
+        finishEmpty();
+      }
+    }
+    await exited;
+    if (index !== entries.length) fail("packed payload is truncated");
+  } finally {
+    compressed.destroy();
+    if (decoder.exitCode === null) decoder.kill();
   }
 }
 
@@ -980,7 +1280,7 @@ export async function lock(ws, args, operationId) {
     fail("lock requires a clean download directory");
   mkdir(directory);
   const input = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     kind: "winboat-release-input",
     configuration: selection.configuration,
     root: {
@@ -1080,9 +1380,7 @@ export async function lock(ws, args, operationId) {
   return result;
 }
 export async function dispatch(ws, args, operationId) {
-  return { verify, assemble, fetch: fetch_artifacts, lock }[args.action](
-    ws,
-    args,
-    operationId,
-  );
+  return { verify, prepare, complete, assemble, fetch: fetch_artifacts, lock }[
+    args.action
+  ](ws, args, operationId);
 }

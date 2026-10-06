@@ -1,6 +1,7 @@
 import yauzl from "yauzl";
 import yazl from "yazl";
 import { pipeline } from "node:stream/promises";
+import crypto from "node:crypto";
 import {
   fs,
   path,
@@ -56,7 +57,12 @@ export function windows_relative(value) {
       });
   return parts.join("/");
 }
-export async function extract_artifact(archive, destination, files) {
+export async function extract_artifact(
+  archive,
+  destination,
+  files,
+  retainedPaths = null,
+) {
   const table = new Map();
   for (const f of files) {
     const relative = windows_relative(f.path),
@@ -119,6 +125,22 @@ export async function extract_artifact(archive, destination, files) {
     for (const member of members) {
       const f = table.get(windows_relative(member.fileName).toLowerCase()),
         p = path.join(destination, f.path);
+      if (retainedPaths && !retainedPaths.has(f.path)) {
+        const stream = await new Promise((resolve, reject) =>
+          zip.openReadStream(member, (e, s) => (e ? reject(e) : resolve(s))),
+        );
+        const h = crypto.createHash("sha256");
+        let size = 0;
+        for await (const chunk of stream) {
+          size += chunk.length;
+          if (size > f.size)
+            throw new Failure("artifact stream exceeds declared size", 74);
+          h.update(chunk);
+        }
+        if (size !== f.size || h.digest("hex") !== f.sha256)
+          throw new Failure("artifact archive content mismatch", 74);
+        continue;
+      }
       let ancestor = p;
       for (;;) {
         ancestor = path.dirname(ancestor);
