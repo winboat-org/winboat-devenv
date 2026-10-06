@@ -1,8 +1,9 @@
 # Implementation stages
 
 **Stages 2–4 passed their measured current-host acceptance.** The genuine Nix
-and provisioning locks are unchanged. Component commits and parent/child pins
-remain local; canonical publication is pending. WinBoat/Electron fixed dependency
+and provisioning locks are unchanged. The six Helios component repositories and
+their coherent parent/child pins have been published and verified.
+WinBoat/Electron fixed dependency
 closures, another physical host and second-account Windows boot remain pending.
 See [validation](../validation.md) for measured checks and the upstream native
 Fish activation limitation; interactive activation tests were excluded at the
@@ -33,7 +34,7 @@ Stage 5 client workflows.
 | [3](03-devbox.md) | Containerized headless Windows provisioning, shared workspace and viewer | 2 host QEMU/renderer outputs | Podman/NVIDIA current-host acceptance passed; alternate UID preparation passed; corrected-artifact Docker repeat needs daemon space; second account Windows boot/other host pending |
 | [4](04-windows-control.md) | Windows builds, Helios installation, strict inventory, devbox MCP | 2, 3 | Accepted on current host: clean CLI/MCP stack builds, installs, 13 graphics workloads, 12 mapped DLLs and resident kernel code passed; publication/conformance remain separate |
 | [5](05-agents.md) | Claude/Codex setup, SSH/Nix integrations, agent workflows | 1, 4 | Implemented; measured current-host client/protocol, contributor fixtures and build/install/runtime checks passed; interactive client UI/Claude model turns not exercised |
-| [6](06-ci-bundles.md) | Component CI and bundling-only root CI, installer relocation | 2, 4 | Planned |
+| [6](06-ci-bundles.md) | Component CI and bundling-only root CI, installer relocation | 2, 4 | Implemented locally; hosted builds/assembly and fresh installer runtime acceptance pending |
 | [7](07-migration.md) | Retire duplicate tooling/submodules, docs cleanup, fresh-host acceptance | 1–6 | Planned |
 
 Each stage ends with a reviewable checkpoint, concrete validation and an updated

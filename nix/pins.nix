@@ -1,49 +1,49 @@
 # Seed snapshot, 2026-10-02. These are object IDs, not claims about remote HEAD
 # or a working graphics stack. See docs/repositories.md for provenance.
 # Stage 1 resolves named development branches; remote receipts stay separate.
-# Stage 2 recipe pins are verified local objects; canonical publication is pending.
+# Stage 6 published component recipes/workflows; provenance records verified pushes.
 {
   schemaVersion = 1;
   repositories = {
     helios = {
-      rev = "0f2ff4a5fe047d59cca68d3bd1603d1b082f25dc";
+      rev = "3b2e4c451368e11c528e544e6a3c870b001e817a";
       ref = "refs/heads/master";
-      provenance = "stage-04-win32-abi-local-unpublished";
+      provenance = "verified-push";
     };
     qemu-helios = {
-      rev = "e81b51e1188a39e7041c4e06117b6bdf45becdd1";
+      rev = "a5e032cd6f0b5e1ea7889afd131d59b311c2b850";
       ref = "refs/heads/helios-11.1.1";
-      provenance = "stage-04-egl-local-unpublished";
+      provenance = "verified-push";
     };
     dxvk = {
-      rev = "e73ee9d0da9628e5f444b2e002e0079fd96ae3d3";
+      rev = "16d521ca96d8cc6f2670c648465b1c544f29a39d";
       ref = "refs/heads/master";
-      provenance = "stage-04-cross-local-unpublished";
+      provenance = "verified-push";
     };
     virglrenderer = {
-      rev = "8668479d681f47ade80808c9d3fc1457540d7d58";
+      rev = "72a8e2ad9ab1103bb7293e0c47e2991ec9737c03";
       ref = "refs/heads/main";
-      provenance = "stage-02-local-unpublished";
+      provenance = "verified-push";
     };
     mesa-helios = {
-      rev = "59cfd87f49b3f65b382a86af33a7efbb2bd24789";
+      rev = "c75464941107a63440f79ff8570ad866815f6458";
       ref = "refs/heads/main";
-      provenance = "stage-04-win32-abi-local-unpublished";
+      provenance = "verified-push";
     };
     vkd3d-proton = {
-      rev = "aff0927cab46c700a6edd78a3b1621fa9e109f18";
+      rev = "62bc83f390548c3072905e8c0d1b1e7094b8d312";
       ref = "refs/heads/master";
-      provenance = "stage-04-cross-local-unpublished";
+      provenance = "verified-push";
     };
     dxil-spirv = {
       rev = "f4651bd076a2613728823ec289abc121a348a48a";
       ref = "refs/heads/master";
-      provenance = "reference-vkd3d-gitlink";
+      provenance = "verified-push";
     };
     venus-protocol = {
       rev = "fe08e82c3819e8ee3c547b1ea810fde61f46fa78";
       ref = "refs/heads/main";
-      provenance = "reference-helios-gitlink";
+      provenance = "verified-push";
     };
     winboat = {
       rev = "17563cacb82ca31efe5feb12e3968f51951f1085";

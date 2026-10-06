@@ -26,13 +26,16 @@ development guest remains preserved. See [runtime evidence](docs/evidence/stage-
 [devbox usage](docs/devbox.md) and [validation](docs/validation.md).
 
 Acceptance covers this development environment and its measured workloads.
-Driver conformance, another physical host, second-account Windows boot and
-canonical publication remain unverified. WinBoat/Electron still need their
+Driver conformance, another physical host and second-account Windows boot
+remain unverified. WinBoat/Electron still need their
 complete fixed dependency closures. Stage 5 now supplies merged client setup,
 automatic SSH configuration, durable waits, retry IDs and bounded evidence.
 Its measured client/protocol and live build/install/loaded-code checks passed;
 see [Stage 5 evidence](docs/evidence/stage-05-acceptance.json) for client/UI limits.
-Stages 6–7 remain planned.
+Stage 6 now supplies exact component workflows, migrated installer sources and
+a prebuilt-only candidate bundler. Hosted runs and fresh installer runtime
+acceptance remain pending; see [release usage](docs/releases.md). Stage 7 remains
+planned.
 
 ## Start here
 
@@ -68,9 +71,10 @@ Shell entry does not clone repositories, commit files, start a VM or install a
 driver.
 
 Stage 1 fetched all twelve seed objects from canonical repositories. Stage 2
-adds local recipe commits and coherent parent/child pins, verified through
-ignored local remote overrides. Those new commits have not been published;
-canonical reachability remains pending. The locked CLI and modules use
+adds recipe commits and coherent parent/child pins. Stage 6 published the six
+component repositories and verified their exact canonical remote revisions;
+see [implementation evidence](docs/evidence/stage-06-implementation.json).
+The locked CLI and modules use
 unmodified upstream devenv. See [validation](docs/validation.md) for measured
 build checks and the native Fish activation limitation for paths with spaces.
 

@@ -1,7 +1,7 @@
 param([Parameter(Mandatory)][string]$Directory, [Parameter(Mandatory)][string]$ProvisionLock)
 $ErrorActionPreference = 'Stop'
 $failed = $false
-Get-ChildItem -LiteralPath $Directory -Filter '*.ps1' | ForEach-Object {
+Get-ChildItem -LiteralPath $Directory -Filter '*.ps1' -Recurse | ForEach-Object {
     $tokens = $null; $errors = $null
     [void][System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors)
     if ($errors.Count) { $errors | Format-List; $failed = $true } else { Write-Host "Parsed $($_.Name)" }

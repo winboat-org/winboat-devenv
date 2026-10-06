@@ -14,6 +14,25 @@ const selection = {
   repos: { type: "array", items: string, minItems: 1 },
 };
 const definitions = [
+  ...["verify", "fetch", "assemble", "lock"].map((action) => [
+    `bundle_${action}`,
+    action === "assemble"
+      ? "Verify exact artifacts and run the prebuilt packer in a durable Windows task. No compilation or publication."
+      : `Release input ${action}; exact identities only, no latest-run selection.`,
+    ["bundle", action],
+    {
+      ...(action === "lock" ? { selection: string } : { manifest: string }),
+      artifactsDirectory: string,
+      ...(action === "assemble" ? { name: string } : {}),
+      background: bool,
+      requestId: string,
+    },
+    [
+      action === "lock" ? "selection" : "manifest",
+      "artifactsDirectory",
+      ...(action === "assemble" ? ["name"] : []),
+    ],
+  ]),
   [
     "workspace_status",
     "Inspect workspace capabilities and source state.",
@@ -428,6 +447,10 @@ function validate(value, schema, path = "arguments") {
 
 function command(tool, args) {
   const argv = [...tool.command];
+  if (tool.name.startsWith("bundle_") && args.background === false)
+    argv.push("--foreground");
+  if (tool.name === "bundle_verify" && args.background === true)
+    argv.push("--background");
   const flags = {
     subset: "--subset",
     message: "--message",
@@ -467,6 +490,8 @@ function command(tool, args) {
     offset: "--offset",
     limit: "--limit",
     requestId: "--request-id",
+    artifactsDirectory: "--artifacts-dir",
+    selection: "--selection",
   };
   Object.assign(flags, {
     purpose: "--purpose",
@@ -502,9 +527,15 @@ function command(tool, args) {
     } else argv.push(flags[key], value);
   }
   if (
-    ["repo_sync", "repo_push", "repo_verify", "build_run"].includes(
-      tool.name,
-    ) &&
+    [
+      "repo_sync",
+      "repo_push",
+      "repo_verify",
+      "build_run",
+      "bundle_assemble",
+      "bundle_fetch",
+      "bundle_lock",
+    ].includes(tool.name) &&
     args.background !== false &&
     !args.plan
   )

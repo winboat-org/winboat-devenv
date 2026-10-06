@@ -9,6 +9,7 @@
 | [Repositories](repositories.md) | Inventory, subsets, pins, fork and submodule policy |
 | [Workspace control plane](workspace.md) | MCP tool mapping, CLI usage, setup, scoped publication and durable jobs |
 | [Builds](builds.md) | Native/cross targets, Windows dispatch and immutable artifact contracts |
+| [Releases](releases.md) | Exact component workflows, migrated installer and prebuilt-only CLI/MCP/root assembly |
 | [Devbox](devbox.md) | Persistent container/VM lifecycle, media, image identities, provisioning and viewer |
 | [Stages](stages/README.md) | Sequenced implementation and acceptance gates |
 | [Stage 1 handoff](handoffs/stage-01.md) | Original implementation prompt |

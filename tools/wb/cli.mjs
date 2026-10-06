@@ -23,6 +23,7 @@ import * as publication from "./publication.mjs";
 import * as repos from "./repos.mjs";
 import * as agents from "./agents.mjs";
 import * as evidence from "./evidence.mjs";
+import * as bundles from "./bundles.mjs";
 const schema = readJSON(new URL("./cli-schema.json", import.meta.url).pathname);
 const globalNames = Object.keys(schema.options);
 export function parse(argv) {
@@ -121,6 +122,15 @@ export async function dispatch(ws, args, operationId, argv) {
   if (args.family === "agents") return agents.config(ws, args.client);
   if (args.family === "evidence")
     return evidence.read(ws, args.id, args.offset, args.limit);
+  if (args.family === "bundle")
+    return !args.foreground &&
+      (args.background || ["assemble", "fetch", "lock"].includes(args.action))
+      ? jobs.start(
+          ws,
+          [...argv.filter((v) => v !== "--background"), "--foreground"],
+          args.request_id,
+        )
+      : bundles.dispatch(ws, args, operationId);
   if (args.family === "job")
     return {
       status: jobs.status,

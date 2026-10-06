@@ -1597,6 +1597,190 @@
       },
       "positionals": [],
       "commands": {}
+    },
+    "bundle": {
+      "options": {},
+      "positionals": [],
+      "commands": {
+        "verify": {
+          "options": {
+            "--manifest": {
+              "dest": "manifest",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--artifacts-dir": {
+              "dest": "artifacts_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--foreground": {
+              "dest": "foreground",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "fetch": {
+          "options": {
+            "--manifest": {
+              "dest": "manifest",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--artifacts-dir": {
+              "dest": "artifacts_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--foreground": {
+              "dest": "foreground",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "assemble": {
+          "options": {
+            "--manifest": {
+              "dest": "manifest",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--artifacts-dir": {
+              "dest": "artifacts_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--name": {
+              "dest": "name",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--foreground": {
+              "dest": "foreground",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "lock": {
+          "options": {
+            "--selection": {
+              "dest": "selection",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--artifacts-dir": {
+              "dest": "artifacts_dir",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--background": {
+              "dest": "background",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            },
+            "--foreground": {
+              "dest": "foreground",
+              "required": false,
+              "default": false,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": true
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        }
+      },
+      "commandDest": "action"
     }
   },
   "commandDest": "family"

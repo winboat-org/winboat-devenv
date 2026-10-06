@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/winboat-org/helios.git",
+  "revision": "0f2ff4a5fe047d59cca68d3bd1603d1b082f25dc",
+  "paths": [
+    "installer",
+    "packaging/windows",
+    "ci/windows/Build-Installer.ps1",
+    "ci/windows/Initialize-HeliosBuild.ps1",
+    "ci/windows/Build-CompatibilityShims.ps1",
+    "metadata",
+    "kmd_render/driver-version.env"
+  ],
+  "files": [
+    {
+      "sourcePath": "ci/windows/Build-CompatibilityShims.ps1",
+      "destinationPath": "ci/windows/Build-CompatibilityShims.ps1",
+      "gitBlob": "9e6c51dd65f2db2672c386ca6bf78db87ffef452",
+      "size": 5544,
+      "sha256": "883fb3ac61c3b3ab39b385f842cef83b957eb4fd17bd41c380fa8068ab3a6199"
+    },
+    {
+      "sourcePath": "ci/windows/Build-Installer.ps1",
+      "destinationPath": "ci/windows/Build-Installer.ps1",
+      "gitBlob": "fde247222d6ef29e20dd50898e0eb6d76f6270f3",
+      "size": 3114,
+      "sha256": "bab6b04210c72d7372d72a3f7755cc969859e9d006956fcdc2e0fc7afb61958c"
+    },
+    {
+      "sourcePath": "ci/windows/Initialize-HeliosBuild.ps1",
+      "destinationPath": "ci/windows/Initialize-HeliosBuild.ps1",
+      "gitBlob": "c8e8f302a62546143f62e40144b451d987fe6b60",
+      "size": 6589,
+      "sha256": "4e6e5632eafcd7b45bbc5f3bbfb0378f07c76bca430a743f9b2c7a85204b1853"
+    },
+    {
+      "sourcePath": "installer/Cargo.lock",
+      "destinationPath": "installer/Cargo.lock",
+      "gitBlob": "0604cec9f310266175103ed81b07fa3da386ecbc",
+      "size": 5984,
+      "sha256": "a350e2ddb520349fbcc5d7449460f0e9df0f981e475b4b607cafa2666ecfbf51"
+    },
+    {
+      "sourcePath": "installer/Cargo.toml",
+      "destinationPath": "installer/Cargo.toml",
+      "gitBlob": "caba3886dd2e18b5c600baafe9ce0f09877c6b41",
+      "size": 1120,
+      "sha256": "1cbfca7d628e6d352ca994772283d81be8d9a4016c10357d8fc338e15de97c21"
+    },
+    {
+      "sourcePath": "installer/README.md",
+      "destinationPath": "installer/README.md",
+      "gitBlob": "964354045939e01f24b6b95272aa57b35da41d7f",
+      "size": 4014,
+      "sha256": "301b5d1199b2dbbb0d285c78e99563bed44875fe6282e2c4a1ddc696e32b591d"
+    },
+    {
+      "sourcePath": "installer/assets/helios.ico",
+      "destinationPath": "installer/assets/helios.ico",
+      "gitBlob": "9cfa96b5ca0d79f52c54910e333b290381e22f6f",
+      "size": 370070,
+      "sha256": "3a36fe72379d1896e48473c5c2989335be9ee79a073eb4a2327cba634a71fe04"
+    },
+    {
+      "sourcePath": "installer/assets/logo_bg.bmp",
+      "destinationPath": "installer/assets/logo_bg.bmp",
+      "gitBlob": "d86a5c692b6641cc81bb44e92fa9efa27bba5c00",
+      "size": 49206,
+      "sha256": "b78394a539277653e8144692347f593c8c1f1dfff9b8f229232e716895a3801b"
+    },
+    {
+      "sourcePath": "installer/assets/winboat_logo.svg",
+      "destinationPath": "installer/assets/winboat_logo.svg",
+      "gitBlob": "d91bf3634819a92d235924f6c3c3d8c53c29a071",
+      "size": 5471,
+      "sha256": "439466697a4bf7aeec6fd64e6f85f3afa1f83ce488cbec2d7fe7cf7100269435"
+    },
+    {
+      "sourcePath": "installer/build.rs",
+      "destinationPath": "installer/build.rs",
+      "gitBlob": "a801d0613b1d45e552a6b7d129d9a768046c3d12",
+      "size": 3702,
+      "sha256": "a7f0dc639d219699569d4e80759cfd196918575cd7d422ac6380f11099a94f29"
+    },
+    {
+      "sourcePath": "installer/installer.rc",
+      "destinationPath": "installer/installer.rc",
+      "gitBlob": "f6b920b7ae2b1b1624a619e2e90de4828b19753c",
+      "size": 91,
+      "sha256": "cc898c0bb5148f6ffdc081d6f18b2b326ddcace08de8a7d1e17d263ad687eef2"
+    },
+    {
+      "sourcePath": "installer/src/archive.rs",
+      "destinationPath": "installer/src/archive.rs",
+      "gitBlob": "dc490453f19c85f49c3b1ad8f6e970caf7664655",
+      "size": 9431,
+      "sha256": "1874b3549055e3f11f2d30a970d21d4f20f8fd1c1af5625763fd04b7aeef9f96"
+    },
+    {
+      "sourcePath": "installer/src/gui.rs",
+      "destinationPath": "installer/src/gui.rs",
+      "gitBlob": "e39e1dc7d751838c1d5d38ec76c5224dda198859",
+      "size": 42338,
+      "sha256": "1bf4afea8e7a2685c525cdd98ee043fab4a872fec46a510828250d13642dc7b4"
+    },
+    {
+      "sourcePath": "installer/src/installer.manifest",
+      "destinationPath": "installer/src/installer.manifest",
+      "gitBlob": "66b51f80a341cfa729b590dd70d0065e56dd138c",
+      "size": 1454,
+      "sha256": "adeefb2d9229df93e6002ec606dc88168a596c6ca48996c2334acc0531a6163f"
+    },
+    {
+      "sourcePath": "installer/src/main.rs",
+      "destinationPath": "installer/src/main.rs",
+      "gitBlob": "586f54480fedc4f0b61ba0ee2908874c4749238a",
+      "size": 12307,
+      "sha256": "cbb9a6fd7f8a4a3e6bef56603cbfd8e7ea438f0595233e32a6368b5aa6a19efc"
+    },
+    {
+      "sourcePath": "kmd_render/driver-version.env",
+      "destinationPath": "kmd_render/driver-version.env",
+      "gitBlob": "5be3183969f5beade75cfa4361a4d0a11baca754",
+      "size": 1126,
+      "sha256": "8f9d4f91a4a5061392370e554a89fa935dd6d35c75bbda8fb580c6c8c275b6c8"
+    },
+    {
+      "sourcePath": "metadata/README.md",
+      "destinationPath": "metadata/README.md",
+      "gitBlob": "274f15f554b12ff14d3953cd9780049276c433cf",
+      "size": 11078,
+      "sha256": "16f457411b79c5ff88bc96f58ff4646e4057989293e465499557650ef790ecad"
+    },
+    {
+      "sourcePath": "metadata/Read-HeliosMetadata.ps1",
+      "destinationPath": "metadata/Read-HeliosMetadata.ps1",
+      "gitBlob": "ade1b0b12da00a4fde17ef9d3f47569250f95411",
+      "size": 2916,
+      "sha256": "02137547f6ecdb57b85d72a666bc6763ff7f81c2e7699d9becea65de38496236"
+    },
+    {
+      "sourcePath": "metadata/helios.env",
+      "destinationPath": "metadata/helios.env",
+      "gitBlob": "2330d3e644b942de2bbe661d31a3da7f409992c9",
+      "size": 445,
+      "sha256": "acdbee0f7715b2950e2297838b7a12bbdb4661aeba6c583114d8908c6dc53f05"
+    },
+    {
+      "sourcePath": "metadata/helios_branding.h",
+      "destinationPath": "metadata/helios_branding.h",
+      "gitBlob": "ab64ff7e638dd5cc8dcc3e6c656bcd72e03c4830",
+      "size": 163,
+      "sha256": "e97be29e607bfe51128157792d649063133e4dd83febab91a3642b6616bd35cc"
+    },
+    {
+      "sourcePath": "metadata/version.rc.in",
+      "destinationPath": "metadata/version.rc.in",
+      "gitBlob": "a670bc368267ba64bb60281d51b19f2e79dad52c",
+      "size": 689,
+      "sha256": "fc4784057da8f291613d7adcb8bc9ac602480ae2906f48cffddb8bc24ca889a8"
+    },
+    {
+      "sourcePath": "metadata/windows_resource.rs",
+      "destinationPath": "metadata/windows_resource.rs",
+      "gitBlob": "19c83013f20c957320276f9da7f328df57028de4",
+      "size": 8518,
+      "sha256": "92c6d4c0417d8082b4a5f38a1ea5e50ef0341ef004d025dc77e8a5f4468162da"
+    },
+    {
+      "sourcePath": "packaging/windows/Helios-PackageCommon.ps1",
+      "destinationPath": "packaging/windows/Helios-PackageCommon.ps1",
+      "gitBlob": "cf01fd9a2007ec1329a0a47d165b0cfdcfbc9daf",
+      "size": 23231,
+      "sha256": "0ef22b61d47c1c7e6f56b2583384b29f9710abf6fa01b1d15f468a5ee25a8c99"
+    },
+    {
+      "sourcePath": "packaging/windows/Install-Helios.ps1",
+      "destinationPath": "packaging/windows/Install-Helios.ps1",
+      "gitBlob": "934151ab5a38dd9da54cec419957e147f5a2aba4",
+      "size": 27214,
+      "sha256": "4a1d4151bf66d070cc8b4faf61f8be496770ca6bacf854e26d6aadf68bf2c8c3"
+    },
+    {
+      "sourcePath": "packaging/windows/README.md",
+      "destinationPath": "packaging/windows/README.md",
+      "gitBlob": "803d65fba58e07aca288f84ea76088d9a8fae30b",
+      "size": 6670,
+      "sha256": "6fb7805c2689bb577be675d9262c0b90fc0b71829d5ef656dc0513931cf6785f"
+    },
+    {
+      "sourcePath": "packaging/windows/Test-HeliosRegistrySnapshots.ps1",
+      "destinationPath": "packaging/windows/Test-HeliosRegistrySnapshots.ps1",
+      "gitBlob": "5a4647b3adcfed1e6b0a6f215cc511c2e7fbb87f",
+      "size": 9412,
+      "sha256": "1418630d6533ce95ced0ac59436897202d6f9ad2cdb0e2b0d1586c67a831d256"
+    },
+    {
+      "sourcePath": "packaging/windows/Uninstall-Helios.ps1",
+      "destinationPath": "packaging/windows/Uninstall-Helios.ps1",
+      "gitBlob": "b87a957fc034ca605fc1324deafd2bb77b8e8822",
+      "size": 9819,
+      "sha256": "2e92f523770bbe2e4c2e56bd9ef6eada4ab9ba0ab6dbeefcad330da32c2d179d"
+    },
+    {
+      "sourcePath": "packaging/windows/Verify-Helios.ps1",
+      "destinationPath": "packaging/windows/Verify-Helios.ps1",
+      "gitBlob": "a30c56dfbb49aed299e4cf86c38fb4ed7f41e7ba",
+      "size": 12094,
+      "sha256": "7de90520f2961c708adb6213fa3ad26dcb8a9c1399c3b746f686de14f539718c"
+    },
+    {
+      "sourcePath": "packaging/windows/compat/README.md",
+      "destinationPath": "packaging/windows/compat/README.md",
+      "gitBlob": "094542cd422590b0e8063525a770844dd6a353f4",
+      "size": 1744,
+      "sha256": "20ce8386e4b793e6f2ef26a60cda3384a731f269f28003eddfe860aa43960b39"
+    },
+    {
+      "sourcePath": "packaging/windows/compat/adl-shim/README.md",
+      "destinationPath": "packaging/windows/compat/adl-shim/README.md",
+      "gitBlob": "d5867bb69ace79aec205d0844f40d05096177eff",
+      "size": 2214,
+      "sha256": "38ee74ba11806d4e64985a50d64157d073778b7ffcfc7152a3d31327e40e5a57"
+    },
+    {
+      "sourcePath": "packaging/windows/compat/adl-shim/helios-adl-shim.cpp",
+      "destinationPath": "packaging/windows/compat/adl-shim/helios-adl-shim.cpp",
+      "gitBlob": "b5c70195a3054ea279a881f3aa15a8345bfda943",
+      "size": 13706,
+      "sha256": "d5719cdbdb0aa8fc848993012b06e3e39b296bc4a532abb6507b7102824833a3"
+    },
+    {
+      "sourcePath": "packaging/windows/compat/adl-shim/helios-adl-shim.def",
+      "destinationPath": "packaging/windows/compat/adl-shim/helios-adl-shim.def",
+      "gitBlob": "abe660bf41504a01ebe667acc57c44789f0b4494",
+      "size": 375,
+      "sha256": "09593caf4b18e25749e2bd4a747618bd56b8fc96578fcceceea68502040b6b4b"
+    },
+    {
+      "sourcePath": "packaging/windows/compat/resolve-compatibility/Install-Resolve-Compatibility.ps1",
+      "destinationPath": "packaging/windows/compat/resolve-compatibility/Install-Resolve-Compatibility.ps1",
+      "gitBlob": "aaa14d32ea005ce2736b2dfe49a45af55cf7e537",
+      "size": 6604,
+      "sha256": "76091f7c2084b2028370a0c20659b3ea6d0259e5549aa95c093bdb398c5b8d51"
+    },
+    {
+      "sourcePath": "packaging/windows/compat/resolve-compatibility/Resolve-CompatibilityCommon.ps1",
+      "destinationPath": "packaging/windows/compat/resolve-compatibility/Resolve-CompatibilityCommon.ps1",
+      "gitBlob": "f30cb889f58cba8566e4e6499b61e2024ec5fefe",
+      "size": 6154,
+      "sha256": "eb418675aa7eb6ed34c81f034f53a1ecf8f03f6d6321df1794a99f699f42b899"
+    },
+    {
+      "sourcePath": "packaging/windows/compat/resolve-compatibility/Test-Resolve-CompatibilityLifecycle.ps1",
+      "destinationPath": "packaging/windows/compat/resolve-compatibility/Test-Resolve-CompatibilityLifecycle.ps1",
+      "gitBlob": "1993a3b7ef3c9a592e14133b09f8e9ff4e82d276",
+      "size": 3445,
+      "sha256": "e575dabadf6e1718b1f1ab1bc3b33a83ad9c9f90ec359c78e43149297e4d21db"
+    },
+    {
+      "sourcePath": "packaging/windows/compat/resolve-compatibility/Uninstall-Resolve-Compatibility.ps1",
+      "destinationPath": "packaging/windows/compat/resolve-compatibility/Uninstall-Resolve-Compatibility.ps1",
+      "gitBlob": "dd71bf4e8b8f29840e75545590390147dda878be",
+      "size": 1107,
+      "sha256": "b04a01f92674e582f1bb494e6f53317109157b490e304e2aa6051c1ad05c08a7"
+    },
+    {
+      "sourcePath": "packaging/windows/probes/d3d11-smoke.cpp",
+      "destinationPath": "packaging/windows/probes/d3d11-smoke.cpp",
+      "gitBlob": "2bb976a2032b6c90b23a5e24fc1c173b4f3c9b58",
+      "size": 5149,
+      "sha256": "ac1a7a4d18c427ff87497396789d14247dfd28d8662fa6cb69b934bccfcc4b3e"
+    },
+    {
+      "sourcePath": "packaging/windows/probes/opencl-gl-sharing-smoke.cpp",
+      "destinationPath": "packaging/windows/probes/opencl-gl-sharing-smoke.cpp",
+      "gitBlob": "fb01c114c2a57f73441c333317e0a8c151fe889b",
+      "size": 10800,
+      "sha256": "f5578e7074ab5c8775b723cad3b2504dbbea628d7e6a4e59440d969876323f28"
+    },
+    {
+      "sourcePath": "packaging/windows/probes/opencl-smoke.c",
+      "destinationPath": "packaging/windows/probes/opencl-smoke.c",
+      "gitBlob": "20320e8b0b2737dcc226229c9de3312f63f21e9a",
+      "size": 5382,
+      "sha256": "3c05cc319d69938fd17b923e145ef5715d1255f5c4a508680c5727ff3baa7a08"
+    },
+    {
+      "sourcePath": "packaging/windows/probes/opengl-smoke.c",
+      "destinationPath": "packaging/windows/probes/opengl-smoke.c",
+      "gitBlob": "757670dc78b2e2994ca5c928c345281e8078520e",
+      "size": 2014,
+      "sha256": "7cd9f2d5196cc6af7ca8c0ec88ea84d36d7b45861c382cd18dce88cab825826a"
+    },
+    {
+      "sourcePath": "packaging/windows/probes/vulkan-smoke.c",
+      "destinationPath": "packaging/windows/probes/vulkan-smoke.c",
+      "gitBlob": "7f59d0d89f6fb56d448d6aaadd11d141427d147e",
+      "size": 1756,
+      "sha256": "1a9213aacc6426aa961d9d4ce953319a5e91b498ace8a31da9e8e722e0995fd7"
+    }
+  ],
+  "historyBoundary": "52c02799a042ecab25b9e812db9c002ba98ddb7c",
+  "retirement": "original sources retained until Stage 7 migration gates pass",
+  "migrationChanges": {
+    "installer/src/main.rs": "add bounded packer-info metadata interface; archive and install protocol retained",
+    "ci/windows/Build-Installer.ps1": "support verified EWDK environment and local CARGO_TARGET_DIR",
+    "installer/README.md": "document component build ownership and wb bundle assembly"
+  }
+}

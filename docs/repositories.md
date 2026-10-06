@@ -7,12 +7,17 @@ exports the combined manifest, so CLI and MCP never maintain another list.
 Stage 2 adds local recipe commits in the six Helios repositories, updates parent
 gitlinks, and records coherent pins verified through ignored `workspace.remotes`
 overrides to managed clones. The [Stage 2 evidence](evidence/stage-02-validation.json)
-lists these exact commits. Canonical URLs stay unchanged; new commit reachability
-on those remotes is pending. Stage 1's canonical evidence describes the seed,
-not publication of the new recipes.
+lists these exact commits. Canonical URLs stayed unchanged; new commit reachability
+was pending at that checkpoint. Stage 1's canonical evidence describes the seed,
+not publication of the new recipes. Stage 6 subsequently published those recipes
+and the six repository-owned workflows through dependency-ordered Stage 1
+transactions. [Stage 6 evidence](evidence/stage-06-implementation.json) records
+the exact canonical refs, revisions and verification receipts. Historical local
+build evidence retains its original source identities.
 
 The Stage 3 follow-up adds a local QEMU EGL/GBM cleanup correction, its parent
-gitlink/documentation commits and matching pins. These also remain unpublished.
+gitlink/documentation commits and matching pins. These were published with the
+Stage 6 component checkpoints.
 [Runtime evidence](evidence/stage-03-runtime-portability.json) records the
 corrected release artifact and separates local source coherence from canonical
 remote reachability.

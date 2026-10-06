@@ -33,6 +33,8 @@ let
     cp ${../tests/agents-live.mjs} "$out/tests/agents-live.mjs"
     cp ${../tests/agents.mjs} "$out/tests/agents.mjs"
     cp ${../tests/refresh.mjs} "$out/tests/refresh.mjs"
+    cp ${../tests/bundles.mjs} "$out/tests/bundles.mjs"
+    cp ${../tests/release-recipes.mjs} "$out/tests/release-recipes.mjs"
     cp ${./scripts/codex-refresh.mjs} "$out/nix/scripts/codex-refresh.mjs"
   '';
 in
@@ -40,6 +42,7 @@ in
   packages =
     (with pkgs; [
       git
+      gh
       openssh
       jq
       ripgrep
@@ -75,6 +78,20 @@ in
     ${commands.environment}
     exec ${pkgs.nodejs}/bin/node --experimental-test-module-mocks --test ${testSources}/tests/devbox.mjs "$@"
   '';
+  scripts.wb-bundle-test.exec = ''
+    ${commands.environment}
+    export WB_TEST_SOURCE="$WB_WORKSPACE_ROOT"
+    export WB_TEST_COMMAND=${commands.wb}/bin/wb
+    exec ${pkgs.nodejs}/bin/node --experimental-test-module-mocks --test ${testSources}/tests/bundles.mjs "$@"
+  '';
+  scripts.wb-ci-component.exec = ''
+    ${commands.environment}
+    exec ${pkgs.nodejs}/bin/node ${commands.operationSources}/wb/release-producer.mjs "$@"
+  '';
+  scripts.wb-release-recipes-check.exec = ''
+    ${commands.environment}
+    exec ${pkgs.nodejs}/bin/node ${testSources}/tests/release-recipes.mjs "$@"
+  '';
   scripts.wb-windows-test.exec = ''
     ${commands.environment}
     exec ${pkgs.nodejs}/bin/node --experimental-test-module-mocks --test ${testSources}/tests/windows.mjs "$@"
@@ -98,7 +115,9 @@ in
     exec ${pkgs.nodejs}/bin/node ${testSources}/tests/cross-artifact-live.mjs "$@"
   '';
   scripts.wb-windows-check.exec = ''
-    exec ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
+    ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
+    ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/packaging/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
+    ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/ci/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
   '';
   env.WB_WORKSPACE_ROOT = config.devenv.root;
   env.WB_NIXPKGS = toString pkgs.path;
@@ -147,15 +166,28 @@ in
   };
 
   # Shell entry only supplies tools; later mutations need an explicit command.
-  enterTest = ''
-    wb-format-check
-    wb-check
-    wb-pins helios | jq -e '.repositories | length == 8' >/dev/null
-    wb-pins winboat | jq -e '.repositories | length == 3' >/dev/null
-    wb-pins winboat-accel | jq -e '.repositories | length == 12' >/dev/null
-    wb-test
-    wb-devbox-test
-    wb-windows-test
-    wb-windows-check
-  '';
+  # The locked CLI runs the test task graph. Attach validation explicitly so
+  # a successful empty enterTest task cannot stand in for the actual checks.
+  tasks."winboat:validation" = {
+    before = [ "devenv:enterTest" ];
+    after = [ "devenv:enterShell" ];
+    wantedBy = [ "devenv:enterTest" ];
+    exec = ''
+      set -euo pipefail
+      ${pkgs.coreutils}/bin/mkdir -p "$WB_WORKSPACE_ROOT/.state/validation"
+      validation_log=$(${pkgs.coreutils}/bin/mktemp "$WB_WORKSPACE_ROOT/.state/validation/native.XXXXXXXX.log")
+      exec >"$validation_log" 2>&1
+      wb-format-check
+      wb-check
+      wb-pins helios | jq -e '.repositories | length == 8' >/dev/null
+      wb-pins winboat | jq -e '.repositories | length == 3' >/dev/null
+      wb-pins winboat-accel | jq -e '.repositories | length == 12' >/dev/null
+      wb-test
+      wb-devbox-test
+      wb-windows-test
+      wb-bundle-test
+      wb-windows-check
+      ${pkgs.coreutils}/bin/printf '%s\n' "$validation_log" > "$WB_WORKSPACE_ROOT/.state/validation/last-path"
+    '';
+  };
 }

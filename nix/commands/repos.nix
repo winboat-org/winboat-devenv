@@ -29,6 +29,8 @@ let
           "host-smoke.nix"
           "host-vulkan-probe.nix"
           "host-widl.nix"
+          "installer-dependencies.nix"
+          "release-compatibility.nix"
           "scripts/host-smoke.py"
           "scripts/host-vulkan-probe.c"
           "scripts/msvc-sysroot.py"
@@ -61,6 +63,8 @@ let
           "windows/Graphics.ps1"
           "windows/LoadedIdentity.cs"
           "windows/Install.ps1"
+          "windows/Bundle.ps1"
+          "windows/ReleaseComponent.ps1"
           "windows/Rollback.ps1"
           "windows/Restore-PowerShell.ps1"
           "adapters/venus-protocol.nix"
@@ -107,6 +111,9 @@ let
           "wb/jobs.mjs"
           "wb/agents.mjs"
           "wb/evidence.mjs"
+          "wb/bundles.mjs"
+          "wb/release-producer.mjs"
+          "wb/release-zip-metadata.mjs"
           "wb/publication.mjs"
           "wb/repos.mjs"
           "wb/workspace.mjs"
@@ -116,6 +123,10 @@ let
   environment = ''
     export WB_AGENT_RUNTIME=${import ../agent-runtime.nix { inherit pkgs inputs; }}
     export WB_REAL_GIT=${pkgs.git}/bin/git
+    export WB_GH=${pkgs.gh}/bin/gh
+    export WB_NIX_STORE=${pkgs.nix}/bin/nix-store
+    export WB_INSTALLER_DEPS_EXPRESSION=${buildOperations}/installer-dependencies.nix
+    export WB_RELEASE_COMPATIBILITY_EXPRESSION=${buildOperations}/release-compatibility.nix
     export WB_MANIFEST_FILE=${manifest}
     export WB_DEVENV=${devenv}/bin/devenv
     export WB_NODE=${pkgs.nodejs}/bin/node

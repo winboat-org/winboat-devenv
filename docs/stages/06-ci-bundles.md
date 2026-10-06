@@ -1,7 +1,16 @@
 # Stage 6 — Component CI and bundling-only release CI
 
-Status: planned. Prerequisites: Stages 2 and 4. Agent setup is useful but not a
-prerequisite. No workflows are installed by the initial scaffold.
+Status: implemented locally; hosted component/candidate runs, real packed output
+and fresh installer runtime acceptance pending. Prerequisites: Stages 2 and 4.
+Agent setup is useful but not a prerequisite.
+
+[Release usage](../releases.md) describes the exact-input contracts, six component
+workflows, prebuilt-only root workflow and shared CLI/MCP operations.
+[Implementation evidence](../evidence/stage-06-implementation.json) keeps local,
+hosted and Windows runtime gates separate. The user authorized source checkpoints
+and pushes after implementation. The six component repositories are published
+at their verified pins; the root checkpoint records the required Stage 5 baseline
+and Stage 6 sources. Release publication remains a separate operation.
 
 The [implementation handoff](../handoffs/stage-06.md) records the Stage 5 baseline,
 current publication boundaries and a next-session prompt for this stage.

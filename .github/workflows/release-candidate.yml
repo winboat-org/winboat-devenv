@@ -1,0 +1,89 @@
+name: Verify and assemble an exact prebuilt release candidate
+on:
+  workflow_dispatch:
+    inputs:
+      source_revision:
+        description: Exact committed root code/installer source used by all component builds
+        required: true
+        type: string
+      release_input_revision:
+        description: Exact root review-data commit containing the release-input JSON
+        required: true
+        type: string
+      release_input_path:
+        description: Reviewed release-input JSON path inside that data commit
+        required: true
+        type: string
+      release_input_sha256:
+        description: Reviewed release-input file SHA256
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: release-candidate-${{ inputs.source_revision }}-${{ inputs.release_input_sha256 }}
+  cancel-in-progress: false
+jobs:
+  assemble:
+    if: github.repository == 'winboat-org/winboat-devenv' && github.event_name == 'workflow_dispatch'
+    environment: release-candidate
+    runs-on: [self-hosted, linux, x64, winboat-assembly]
+    timeout-minutes: 120
+    steps:
+      - name: Validate immutable selections before loading root code
+        env:
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          INPUT_REVISION: ${{ inputs.release_input_revision }}
+          RELEASE_INPUT: ${{ inputs.release_input_path }}
+          RELEASE_INPUT_SHA256: ${{ inputs.release_input_sha256 }}
+        run: |
+          [[ "$SOURCE_REVISION" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$INPUT_REVISION" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$RELEASE_INPUT_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$RELEASE_INPUT" != /* && "$RELEASE_INPUT" != *..* && "$RELEASE_INPUT" != *$'\n'* ]]
+      - name: Checkout exact shared operations and installer source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, verified 2026-10-06
+        with:
+          ref: ${{ inputs.source_revision }}
+          persist-credentials: false
+          submodules: false
+      - name: Checkout exact review data separately
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, verified 2026-10-06
+        with:
+          ref: ${{ inputs.release_input_revision }}
+          path: out/review
+          persist-credentials: false
+          submodules: false
+      - name: Verify the reviewed input's identity
+        env:
+          RELEASE_INPUT: ${{ inputs.release_input_path }}
+          RELEASE_INPUT_SHA256: ${{ inputs.release_input_sha256 }}
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          INPUT_REVISION: ${{ inputs.release_input_revision }}
+        run: |
+          test "${#SOURCE_REVISION}" = 40
+          test "${#INPUT_REVISION}" = 40
+          test "${#RELEASE_INPUT_SHA256}" = 64
+          printf '%s  %s\n' "$RELEASE_INPUT_SHA256" "out/review/$RELEASE_INPUT" | sha256sum --check --strict
+      - name: Download exact immutable artifacts
+        env:
+          RELEASE_INPUT: ${{ inputs.release_input_path }}
+          GH_TOKEN: ${{ secrets.COMPONENT_INPUTS_TOKEN || github.token }}
+        run: devenv shell -- wb bundle fetch --manifest "out/review/$RELEASE_INPUT" --artifacts-dir out/ci-inputs --foreground --json
+      - name: Verify and pack supplied binaries only
+        env:
+          RELEASE_INPUT: ${{ inputs.release_input_path }}
+        run: |
+          test -n "$WB_CI_ASSEMBLY_DEVBOX"
+          test -n "$WB_CI_STATE_ROOT"
+          devenv shell -- wb --state-root "$WB_CI_STATE_ROOT" bundle assemble --manifest "out/review/$RELEASE_INPUT" --artifacts-dir out/ci-inputs --name "$WB_CI_ASSEMBLY_DEVBOX" --foreground --json
+      - name: Retain the reviewable candidate and all provenance/symbols
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4, verified 2026-10-06
+        with:
+          name: candidate-${{ inputs.source_revision }}-${{ inputs.release_input_sha256 }}
+          path: out/bundles/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
+# No release publication credentials, component compilation or build fallback.

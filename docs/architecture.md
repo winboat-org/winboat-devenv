@@ -194,6 +194,13 @@ checking a filename or version string after its on-disk file was replaced.
 
 ## CI, installer and migration
 
+Stage 6's [release implementation](releases.md) distinguishes original build,
+normalized component, exact release-input, install-package and candidate schemas.
+Four typed bundle tools use the shared Nix-packaged Node operations. Assembly
+verifies supplied bytes and Windows catalog membership, then executes the
+prebuilt packer; it does not build, sign, install or publish components.
+Hosted workflow and fresh installer runtime acceptance remain pending.
+
 Component repositories build and publish immutable, manifested artifacts using
 their Nix entry points or a pinned Windows toolchain. The root release pipeline
 downloads exact component artifacts and an already compiled installer, verifies

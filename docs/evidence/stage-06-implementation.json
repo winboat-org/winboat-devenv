@@ -1,0 +1,467 @@
+{
+  "schemaVersion": 1,
+  "stage": 6,
+  "state": "implemented-local-validation",
+  "observedAt": "2026-10-06T14:15:00.989Z",
+  "root": {
+    "repository": "https://github.com/winboat-org/winboat-devenv",
+    "head": "a5b2b1822b59fae57cf56d0ac37af6cef71a3b47",
+    "sourceState": "Stage 5 and transport fix checkpointed; Stage 6 root checkpoint being prepared after verified component publication",
+    "committed": false,
+    "pushed": false
+  },
+  "locks": {
+    "devenv.lock": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "config/provision.lock.json": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408"
+  },
+  "validation": {
+    "native": {
+      "workspaceAgentRefresh": 38,
+      "devbox": 21,
+      "windows": 22,
+      "bundle": 32,
+      "total": 113,
+      "log": {
+        "path": "workspace-state:validation/native.AX2KhVOk.log",
+        "size": 12216,
+        "sha256": "faf52cf31852d0320b62956394db3acf5018f6804a4c7eb3bc0d534570188fe4"
+      }
+    },
+    "devenvTest": {
+      "state": "passed-real-validation-task",
+      "task": "winboat:validation",
+      "log": {
+        "path": "workspace-state:stage06/devenv-test-publication.log",
+        "size": 299,
+        "sha256": "f936d2e4c37f428573a7de51e4f3ccf7e1775c7e0ee154b7d0949c58d12c0733"
+      },
+      "initialEmptyTask": "retained original successful no-command runs; not native-test proof"
+    },
+    "powerShell": {
+      "state": "passed",
+      "sourcesParsed": 33,
+      "loadedImageObserverCompiled": true
+    },
+    "mcp": {
+      "freshCatalogTools": 53,
+      "bundleTools": 4,
+      "cliRefusalParity": "passed",
+      "currentConnectedCatalog": "prior 49-tool server; reconnect required"
+    },
+    "negativeCases": "missing artifact, wrong commit/configuration/architecture, protocol provenance, corrupt hashes/catalog identity, missing license/symbol files, duplicate payload paths, dirty sources, stale installer interface, symlinks and archive boundaries",
+    "rootAssemblyOwnership": {
+      "state": "static-surface-and-transport-fixtures-verified",
+      "componentCompilation": false,
+      "installerCompilation": false,
+      "verifierCompilation": false,
+      "hostedLogsVerified": false
+    },
+    "payloadComparison": {
+      "state": "passed-mocked-Windows-transport",
+      "realWindowsPackerExercised": false,
+      "byteReproducibilityClaim": false
+    },
+    "publicationRegression": {
+      "state": "passed",
+      "log": {
+        "path": "workspace-state:stage06/publication-regression-final.log",
+        "size": 683,
+        "sha256": "2820b621273598a55d4fc15b4de235de3322cc608d714e274b1be685ea0ea8de"
+      },
+      "checks": "SSH username display normalization, exact canonical remote verification, alternate pushurl refusal, scoped pin writes and post-push reconciliation"
+    }
+  },
+  "recipes": {
+    "state": "passed-local-recipes",
+    "compatibility": {
+      "derivation": "/nix/store/3n9rs4acjwwy9x9nh3y8zca8rdbvwby2-helios-compatibility-release.drv",
+      "architecture": "x64",
+      "backend": "linux-msvc-cross",
+      "files": [
+        {
+          "path": "Install-Resolve-Compatibility.ps1",
+          "size": 6604,
+          "sha256": "76091f7c2084b2028370a0c20659b3ea6d0259e5549aa95c093bdb398c5b8d51"
+        },
+        {
+          "path": "README.md",
+          "size": 1744,
+          "sha256": "20ce8386e4b793e6f2ef26a60cda3384a731f269f28003eddfe860aa43960b39"
+        },
+        {
+          "path": "Resolve-CompatibilityCommon.ps1",
+          "size": 6154,
+          "sha256": "eb418675aa7eb6ed34c81f034f53a1ecf8f03f6d6321df1794a99f699f42b899"
+        },
+        {
+          "path": "Uninstall-Resolve-Compatibility.ps1",
+          "size": 1107,
+          "sha256": "b04a01f92674e582f1bb494e6f53317109157b490e304e2aa6051c1ad05c08a7"
+        },
+        {
+          "path": "VerifyCatalog.exe",
+          "size": 505856,
+          "sha256": "0603a297b9cd77385b72265fbad5ebd9414487c7c46a50d35c36cfe05c602b96"
+        },
+        {
+          "path": "atiadlxx.dll",
+          "size": 509440,
+          "sha256": "02743cf246bf6a835b45d0d999d0bdc7389854c42cfb95fbe64d4dfe5900575b"
+        },
+        {
+          "path": "atiadlxx.lib",
+          "size": 4032,
+          "sha256": "dbb7174bb05824af38d4a31f18aeafa1d62f91542f76d142de111ba382954fe5"
+        },
+        {
+          "path": "images.json",
+          "size": 28137,
+          "sha256": "10a299598102e0b05f5c0409371ce33c5ace0d0b40fd53650dcfeb344eb02012"
+        },
+        {
+          "path": "licenses/NOTICE",
+          "size": 179,
+          "sha256": "7d63fd82be5809b6ee9874c8cedd7f6a7644b07f1830e10ae0a8f0655fd276fb"
+        },
+        {
+          "path": "symbols/VerifyCatalog.pdb",
+          "size": 6209536,
+          "sha256": "41468864f3693a8e801c1c6fb54ae466d56fe6b7e8868155b0a0b50aadea1a4a"
+        },
+        {
+          "path": "symbols/atiadlxx.pdb",
+          "size": 6135808,
+          "sha256": "6f37602c5bb82ffd12f954f54bba534613048dbf552f85492b0cf6b8eec3bf02"
+        }
+      ]
+    },
+    "installerDependencies": {
+      "derivation": "/nix/store/0ni6v2lswy71l2wax6ays8iga63c380a-helios-installer-cargo-dependencies.drv",
+      "lockSha256": "a350e2ddb520349fbcc5d7449460f0e9df0f981e475b4b607cafa2666ecfbf51",
+      "files": 1444
+    },
+    "scope": "genuine Linux MSVC cross compilation and locked vendoring from an uncommitted local source snapshot; not hosted component acceptance",
+    "receipt": {
+      "path": "workspace-state:stage06/recipe-check.log",
+      "size": 1944,
+      "sha256": "f6ff93a153d728e1f99bf8e6f6ce868d2f6c6fd3d671255e41de16686bef29ef"
+    }
+  },
+  "migration": {
+    "filesVerified": 41,
+    "historySha256": "0b30cc6a013f8d22ae3ea98e15ff8b1b072e74f61727c04dc5b59e5eafa69a29",
+    "sourceRevision": "0f2ff4a5fe047d59cca68d3bd1603d1b082f25dc",
+    "importedRef": "refs/heads/master",
+    "historyImportedAndFilesCompared": true,
+    "originalSourcesRetained": true,
+    "archiveFormat": "HLIOSET2",
+    "interfaceVersion": 1,
+    "installProtocol": "shared PowerShell payload; silent/automatic/reboot/repair/update/uninstall retained",
+    "runtimePdbPolicy": "retained in component artifacts; excluded from install payload",
+    "verbatimWhitespace": "original trailing blank lines in installer/build.rs, installer/src/gui.rs and the length-delimited history stream are retained"
+  },
+  "preservation": {
+    "baselineFilesVerifiedUnchanged": 20,
+    "unexpectedChanges": [],
+    "managedHeadAndPinCount": 12,
+    "taskOwnedManagedEdits": "six workflow commits and coherent parent gitlinks published; exact verified revisions recorded in sourcePublication",
+    "locksUnchanged": true,
+    "guestOperationsExecuted": false,
+    "keysMediaOriginalGuestsAndClosures": "no changes requested or made",
+    "originalInstallersWinMcpAndSubmodulesRetained": true,
+    "initialManagedHeadsAndPinsPreservedThroughImplementation": true
+  },
+  "hosted": {
+    "rootRepositoryEmpty": true,
+    "rootRepositoryRunners": 0,
+    "heliosRepositoryRunners": 0,
+    "rootAndHeliosEnvironments": [],
+    "actionsVerified": {
+      "checkout": "11d5960a326750d5838078e36cf38b85af677262",
+      "uploadArtifact": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "cache": "0057852bfaa89a56745cba8c7296529d2fc39830"
+    },
+    "componentRuns": "pending prepared runner access and real workflow dispatches",
+    "cleanExactDownload": "pending real hosted artifacts",
+    "localAndRootCiPackerComparison": "pending prebuilt installer and hosted component artifacts",
+    "rootNoCompilationLogs": "pending hosted candidate run",
+    "componentRepositoryRunners": {
+      "helios": 0,
+      "qemu-helios": 0,
+      "dxvk": 0,
+      "virglrenderer": 0,
+      "mesa-helios": 0,
+      "vkd3d-proton": 0
+    }
+  },
+  "runtime": {
+    "state": "pending",
+    "freshDevbox": false,
+    "unattendedSigningReboot": "pending",
+    "installRebootResume": "pending",
+    "repairUpdate": "pending",
+    "uninstallSnapshots": "pending",
+    "registryDllKernelAndInteractiveVerification": "pending",
+    "installed": false,
+    "loaded": false,
+    "published": false
+  },
+  "stage7Removals": false,
+  "sourcePublication": {
+    "authorization": "user requested checkpoint and push as required",
+    "stage5Baseline": "7e4fcf9da248255eedb88366e51e7f71659d402f",
+    "transportCorrection": "a5b2b1822b59fae57cf56d0ac37af6cef71a3b47",
+    "mcpCatalogTools": 53,
+    "operationId": "op-4fdf08846e214338a0e6379d35c0f160",
+    "dependencyOrdered": true,
+    "forcePush": false,
+    "components": [
+      {
+        "repository": "dxil-spirv",
+        "remote": "https://github.com/winboat-org/dxil-spirv.git",
+        "ref": "refs/heads/master",
+        "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+        "remoteVerified": true,
+        "transaction": "op-b3087d56ba0943ce9cc8f3b61e07ede5",
+        "state": "deferred",
+        "pendingParents": [
+          {
+            "repository": "vkd3d-proton",
+            "commit": "62bc83f390548c3072905e8c0d1b1e7094b8d312",
+            "gitlink": "subprojects/dxil-spirv",
+            "child": "dxil-spirv",
+            "state": "published",
+            "publishedCommit": "62bc83f390548c3072905e8c0d1b1e7094b8d312",
+            "publicationOperation": "op-c99e92bb43dd4bb6a4ab5cb7c3021e79"
+          }
+        ]
+      },
+      {
+        "repository": "dxvk",
+        "remote": "https://github.com/winboat-org/dxvk.git",
+        "ref": "refs/heads/master",
+        "revision": "16d521ca96d8cc6f2670c648465b1c544f29a39d",
+        "remoteVerified": true,
+        "transaction": "op-780866ff506c4b39ad64ced5d64fec52",
+        "state": "deferred",
+        "pendingParents": [
+          {
+            "repository": "helios",
+            "commit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "gitlink": "dxvk-helios",
+            "child": "dxvk",
+            "state": "published",
+            "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
+          }
+        ]
+      },
+      {
+        "repository": "venus-protocol",
+        "remote": "https://github.com/winboat-org/venus-protocol.git",
+        "ref": "refs/heads/main",
+        "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+        "remoteVerified": true,
+        "transaction": "op-279e0b0c6514492fa4b0b0dcc6964f67",
+        "state": "deferred",
+        "pendingParents": [
+          {
+            "repository": "helios",
+            "commit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "gitlink": "venus-protocol",
+            "child": "venus-protocol",
+            "state": "published",
+            "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
+          }
+        ]
+      },
+      {
+        "repository": "mesa-helios",
+        "remote": "https://github.com/winboat-org/mesa-helios.git",
+        "ref": "refs/heads/main",
+        "revision": "c75464941107a63440f79ff8570ad866815f6458",
+        "remoteVerified": true,
+        "transaction": "op-d8e6b6772d64431b8d5e8acb0a5722ee",
+        "state": "deferred",
+        "pendingParents": [
+          {
+            "repository": "helios",
+            "commit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "gitlink": "icd/mesa",
+            "child": "mesa-helios",
+            "state": "published",
+            "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
+          }
+        ]
+      },
+      {
+        "repository": "virglrenderer",
+        "remote": "https://github.com/winboat-org/virglrenderer.git",
+        "ref": "refs/heads/main",
+        "revision": "72a8e2ad9ab1103bb7293e0c47e2991ec9737c03",
+        "remoteVerified": true,
+        "transaction": "op-e887ac7c773d4e588baba313a759ef6d",
+        "state": "deferred",
+        "pendingParents": [
+          {
+            "repository": "helios",
+            "commit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "gitlink": "virglrenderer",
+            "child": "virglrenderer",
+            "state": "published",
+            "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
+          }
+        ]
+      },
+      {
+        "repository": "qemu-helios",
+        "remote": "https://github.com/winboat-org/qemu-helios.git",
+        "ref": "refs/heads/helios-11.1.1",
+        "revision": "a5e032cd6f0b5e1ea7889afd131d59b311c2b850",
+        "remoteVerified": true,
+        "transaction": "op-de132c4e31b443219d00a6e97ad3ac10",
+        "state": "deferred",
+        "pendingParents": [
+          {
+            "repository": "helios",
+            "commit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "gitlink": "qemu-helios",
+            "child": "qemu-helios",
+            "state": "published",
+            "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
+          }
+        ]
+      },
+      {
+        "repository": "vkd3d-proton",
+        "remote": "https://github.com/winboat-org/vkd3d-proton.git",
+        "ref": "refs/heads/master",
+        "revision": "62bc83f390548c3072905e8c0d1b1e7094b8d312",
+        "remoteVerified": true,
+        "transaction": "op-c99e92bb43dd4bb6a4ab5cb7c3021e79",
+        "state": "deferred",
+        "pendingParents": [
+          {
+            "repository": "helios",
+            "commit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "gitlink": "vkd3d-proton-helios",
+            "child": "vkd3d-proton",
+            "state": "published",
+            "publishedCommit": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+            "publicationOperation": "op-8bb5a5f2fbcb46938e2adff2f954a72a"
+          }
+        ]
+      },
+      {
+        "repository": "helios",
+        "remote": "https://github.com/winboat-org/helios.git",
+        "ref": "refs/heads/master",
+        "revision": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+        "remoteVerified": true,
+        "transaction": "op-8bb5a5f2fbcb46938e2adff2f954a72a",
+        "state": "deferred",
+        "pendingParents": []
+      }
+    ],
+    "canonicalHistory": "depth-one fetches at the advertised seed refs restored valid bounded histories; all six local tips descend from those refs",
+    "canonicalVerification": {
+      "operationId": "op-4dd0101153cb4b8f8bb2d6188244330f",
+      "objectsVerified": 12,
+      "receipt": {
+        "path": "workspace-state:stage06/mcp-repo_verify-1791296164278.json",
+        "size": 21810,
+        "sha256": "4204272f010a67efa9def0b23e343163e7be536254a6908ceb4726c66bc3e14a"
+      },
+      "repositories": [
+        {
+          "repository": "WBFreeRDP",
+          "sourceUrl": "https://github.com/winboat-org/WBFreeRDP.git",
+          "revision": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0",
+          "developmentRef": "refs/heads/winboat-3.30",
+          "objectVerified": true
+        },
+        {
+          "repository": "clvk-helios",
+          "sourceUrl": "https://github.com/winboat-org/clvk-helios.git",
+          "revision": "56c626132782bf083a80a6c17f5ca763be0ff8fb",
+          "developmentRef": "refs/heads/main",
+          "objectVerified": true
+        },
+        {
+          "repository": "dxil-spirv",
+          "sourceUrl": "https://github.com/winboat-org/dxil-spirv.git",
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+          "developmentRef": "refs/heads/master",
+          "objectVerified": true
+        },
+        {
+          "repository": "dxvk",
+          "sourceUrl": "https://github.com/winboat-org/dxvk.git",
+          "revision": "16d521ca96d8cc6f2670c648465b1c544f29a39d",
+          "developmentRef": "refs/heads/master",
+          "objectVerified": true
+        },
+        {
+          "repository": "electron",
+          "sourceUrl": "https://github.com/winboat-org/electron.git",
+          "revision": "c328b030fd3357139f66c8a3a84a4384c0136eed",
+          "developmentRef": "refs/heads/winboat-43.2.0",
+          "objectVerified": true
+        },
+        {
+          "repository": "helios",
+          "sourceUrl": "https://github.com/winboat-org/helios.git",
+          "revision": "3b2e4c451368e11c528e544e6a3c870b001e817a",
+          "developmentRef": "refs/heads/master",
+          "objectVerified": true
+        },
+        {
+          "repository": "mesa-helios",
+          "sourceUrl": "https://github.com/winboat-org/mesa-helios.git",
+          "revision": "c75464941107a63440f79ff8570ad866815f6458",
+          "developmentRef": "refs/heads/main",
+          "objectVerified": true
+        },
+        {
+          "repository": "qemu-helios",
+          "sourceUrl": "https://github.com/winboat-org/qemu-helios.git",
+          "revision": "a5e032cd6f0b5e1ea7889afd131d59b311c2b850",
+          "developmentRef": "refs/heads/helios-11.1.1",
+          "objectVerified": true
+        },
+        {
+          "repository": "venus-protocol",
+          "sourceUrl": "https://github.com/winboat-org/venus-protocol.git",
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "developmentRef": "refs/heads/main",
+          "objectVerified": true
+        },
+        {
+          "repository": "virglrenderer",
+          "sourceUrl": "https://github.com/winboat-org/virglrenderer.git",
+          "revision": "72a8e2ad9ab1103bb7293e0c47e2991ec9737c03",
+          "developmentRef": "refs/heads/main",
+          "objectVerified": true
+        },
+        {
+          "repository": "vkd3d-proton",
+          "sourceUrl": "https://github.com/winboat-org/vkd3d-proton.git",
+          "revision": "62bc83f390548c3072905e8c0d1b1e7094b8d312",
+          "developmentRef": "refs/heads/master",
+          "objectVerified": true
+        },
+        {
+          "repository": "winboat",
+          "sourceUrl": "https://github.com/winboat-org/winboat.git",
+          "revision": "17563cacb82ca31efe5feb12e3968f51951f1085",
+          "developmentRef": "refs/heads/main",
+          "objectVerified": true
+        }
+      ]
+    }
+  }
+}

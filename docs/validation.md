@@ -1,5 +1,34 @@
 # Validation
 
+## Stage 6 local implementation
+
+[Release usage](releases.md) describes the migrated source and exact-input
+CLI/MCP workflows. [Implementation evidence](evidence/stage-06-implementation.json)
+records native tests, real Linux compatibility/catalog-verifier builds and
+installer dependency vendoring separately from pending hosted/Windows gates.
+
+The locked CLI initially returned success for an empty `devenv:enterTest` task,
+including after fresh evaluation/task caches. Stage 6 attaches the same validation
+commands to the explicit `winboat:validation` task before `devenv:enterTest`, using
+the supported public task API. Its shell uses strict failure propagation. No
+upstream or lock changes were made. The original empty-task logs are retained;
+only the later actual task run establishes the `devenv test` check.
+
+Release assembly uses prebuilt installer and catalog-verifier binaries. Its
+Windows task loads existing framework assemblies, verifies catalog membership
+and packs supplied bytes; it contains no `Add-Type -TypeDefinition` compilation.
+Local transport fixtures compare payload digests and retain exact symbols and
+component archives. They do not establish real Windows packing, installed or
+loaded identity, hosted CI logs, or final executable reproducibility.
+
+Source publication uses Stage 1 transactions and verified canonical remote SHAs.
+The managed seed clones originally lacked older commit objects; fetching explicit
+depth-one boundaries from canonical refs established valid bounded histories and
+fast-forward ancestry without changing working sources. A real local SSH transport
+fixture covers Git's anonymous destination display, canonical URL verification
+and pin advancement. Alternate destinations remain refused. Stage 5 sources are
+checkpointed in `7e4fcf9`; the publication correction is `a5b2b18`.
+
 Stage 1 repository/MCP acceptance passed on 2026-10-02. Retained
 [validation evidence](evidence/stage-01-validation.json) records the exact lock,
 tool versions, configured MCP launch and live source inventory. The
@@ -171,7 +200,8 @@ Docker repeat still exhausted daemon image-load space after removing the unused
 owned prior image. No host daemon storage configuration or unrelated state was
 changed to force that check through. The existing `development` guest remains
 stopped with its earlier artifact/disk retained; it has not been implicitly
-migrated. Canonical publication of local component commits remains pending.
+migrated. Canonical publication was pending at that measurement; Stage 6 later
+published and verified the component source checkpoints.
 After the final restart, all tools and actual desktop autologin were checked
 again. The test guest then shut down cleanly with a zero container exit and was
 destroyed using its identity guard; its evidence and runtime cache are retained.
@@ -459,4 +489,5 @@ The genuine Nix/provisioning locks and component pins are unchanged. The old
 container supervisor was retained; this check does not prove its replacement's
 fresh-container boot, another physical host, remote Windows host, conformance,
 visual acceptance or canonical publication. WinBoat/Electron closures and
-Stages 6–7 remain separate. Changes remain uncommitted and unpublished.
+Stages 6–7 remain separate. These changes were subsequently checkpointed in
+`7e4fcf9`; Stage 6 evidence records later source publication.
