@@ -15,7 +15,10 @@ repositories and their required recipe history are published, with exact remote
 verification and coherent parent gitlinks/pins. The root implementation and
 publication receipts are recorded in the evidence above. Root implementation
 commit `db1ffc0` is published on `master`; all 12 managed checkouts are clean at
-their declared pins. The combined checkpoint passed 113 native checks.
+their declared pins. That original checkpoint passed 113 native checks.
+CI corrections are published in `13c969d` with all twelve managed checkouts clean
+at their updated pins. The corrected implementation passed 112 operational
+checks and both separate Linux cross-build recipes.
 
 Root and all six components reported zero registered repository runners;
 root/Helios had no configured environments. No runner registration, guest
@@ -30,9 +33,11 @@ jobs for verification, prebuilt packing and final verification. It consumes
 thirteen component variants, including a separately built catalog verifier.
 CI realizes individual Nix command packages; development imports the same CI
 base and adds its other tools. Redundant workflow/configuration assertion tests
-are removed; actionlint checks workflow syntax and operational tests verify
+are removed; actionlint checks workflow syntax locally and operational tests verify
 artifact validation and the packing handoff. Local closure measurements and
 hosted acceptance status are recorded separately in the implementation evidence.
+The hosted workflow-lint job was removed at the user's request; root CI runs
+only prebuilt candidate assembly.
 
 The original planning prompt below is retained for its full acceptance and
 preservation requirements; the implementation checkpoint above supersedes its

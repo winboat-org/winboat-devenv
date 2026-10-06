@@ -68,9 +68,11 @@ used in both paths. CI realizes one package, not the complete development shell:
 
 ```sh
 nix build --no-link --print-out-paths --file nix/ci.nix release
-nix build --no-link --print-out-paths --file nix/ci.nix workflows
 nix build --no-link --print-out-paths --file nix/ci.nix component
 ```
+
+Workflow syntax checking runs locally through `wb-workflow-check`, including
+the local validation task. There is no hosted workflow-lint job.
 
 Measured release command closure is about 630 MB, workflow lint 247 MB,
 compared with 2.64 GB for the development controller. These are runtime NAR

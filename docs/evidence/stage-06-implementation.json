@@ -533,8 +533,8 @@
     }
   },
   "ciCorrection": {
-    "state": "validated-local-publication-pending",
-    "observedAt": "2026-10-06T16:23:40.335Z",
+    "state": "validated-local-sources-published-hosted-component-and-candidate-gates-pending",
+    "observedAt": "2026-10-06T16:31:58.292Z",
     "workflowFiles": [
       {
         "repository": "helios",
@@ -625,8 +625,7 @@
     "mcpCatalogTools": 55,
     "componentBuildWorkflows": 10,
     "rootWorkflows": [
-      ".github/workflows/assemble-release-candidate.yml",
-      ".github/workflows/check-workflows.yml"
+      ".github/workflows/assemble-release-candidate.yml"
     ],
     "rootRunners": [
       "ubuntu-24.04",
@@ -828,7 +827,17 @@
         "verified": 12
       }
     },
-    "hostedWorkflowLint": "pending source push",
+    "hostedWorkflowLint": {
+      "state": "removed-at-user-request",
+      "workflowDisabled": true,
+      "localSyntaxCheckingRetained": true,
+      "previousRun": {
+        "id": 37495946907,
+        "conclusion": "success",
+        "url": "https://github.com/winboat-org/winboat-devenv/actions/runs/37495946907",
+        "scope": "historical syntax check only; workflow subsequently removed"
+      }
+    },
     "hostedComponents": "pending genuine workflow artifacts and prepared Windows producer inputs",
     "hostedCandidate": "pending exact component artifacts, reviewed release input and real Windows packing",
     "runtimeAcceptance": "pending fresh installer checks; no guest mutations performed",
@@ -844,7 +853,8 @@
           "revision": "f4651bd076a2613728823ec289abc121a348a48a",
           "remoteVerified": true,
           "transaction": "op-c9270d670a434c9489682551bab16a1b",
-          "state": "deferred"
+          "state": "succeeded",
+          "rootCommit": "13c969dda75bd16e9cd1dfba51a9503d557e95dd"
         },
         {
           "repository": "dxvk",
@@ -853,7 +863,8 @@
           "revision": "ae529efce05dd5ecbe4b61c2034bbc7c2dd86d0b",
           "remoteVerified": true,
           "transaction": "op-0230180f4366457390dc06e65f204756",
-          "state": "deferred"
+          "state": "succeeded",
+          "rootCommit": "13c969dda75bd16e9cd1dfba51a9503d557e95dd"
         },
         {
           "repository": "venus-protocol",
@@ -862,7 +873,8 @@
           "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
           "remoteVerified": true,
           "transaction": "op-fa79f5f2a5e04ed3b2048b20a924e1f5",
-          "state": "deferred"
+          "state": "succeeded",
+          "rootCommit": "13c969dda75bd16e9cd1dfba51a9503d557e95dd"
         },
         {
           "repository": "mesa-helios",
@@ -871,7 +883,8 @@
           "revision": "08fb3602f909a52e7afaea8557a83fc7b63a7dbd",
           "remoteVerified": true,
           "transaction": "op-ccbd3aacb06d40988378db2507ff35dc",
-          "state": "deferred"
+          "state": "succeeded",
+          "rootCommit": "13c969dda75bd16e9cd1dfba51a9503d557e95dd"
         },
         {
           "repository": "virglrenderer",
@@ -880,7 +893,8 @@
           "revision": "5b38b51172e56801a8d29303ef6fb9ace8935d07",
           "remoteVerified": true,
           "transaction": "op-6d61022ffff44e0bab582e6701407ff5",
-          "state": "deferred"
+          "state": "succeeded",
+          "rootCommit": "13c969dda75bd16e9cd1dfba51a9503d557e95dd"
         },
         {
           "repository": "qemu-helios",
@@ -889,7 +903,8 @@
           "revision": "0289191d800b8c912c39b9c7489477581c948f78",
           "remoteVerified": true,
           "transaction": "op-d3bdfc3409ea44749f31ad0f9361305c",
-          "state": "deferred"
+          "state": "succeeded",
+          "rootCommit": "13c969dda75bd16e9cd1dfba51a9503d557e95dd"
         },
         {
           "repository": "vkd3d-proton",
@@ -898,7 +913,8 @@
           "revision": "2febdf99504e540544acbf7b65628d5b4dfb4671",
           "remoteVerified": true,
           "transaction": "op-65318e5eb1b24b7897e9a023fe07fdac",
-          "state": "deferred"
+          "state": "succeeded",
+          "rootCommit": "13c969dda75bd16e9cd1dfba51a9503d557e95dd"
         },
         {
           "repository": "helios",
@@ -907,9 +923,22 @@
           "revision": "2076044a616e54ba6a9917b8eb039f495ee4e1d0",
           "remoteVerified": true,
           "transaction": "op-6c9238ce6eae476f9bf681685cc935cd",
-          "state": "deferred"
+          "state": "succeeded",
+          "rootCommit": "13c969dda75bd16e9cd1dfba51a9503d557e95dd"
         }
-      ]
+      ],
+      "root": {
+        "repository": "https://github.com/winboat-org/winboat-devenv",
+        "ref": "refs/heads/master",
+        "revision": "13c969dda75bd16e9cd1dfba51a9503d557e95dd",
+        "remoteVerified": true,
+        "scope": "implementation checkpoint; following source revision removes the hosted lint workflow"
+      },
+      "managedStatus": {
+        "cleanCheckouts": 12,
+        "headsMatchPins": true,
+        "operationId": "op-f5da3276d62b41e980c451533739886b"
+      }
     }
   }
 }
