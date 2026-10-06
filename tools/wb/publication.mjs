@@ -307,7 +307,12 @@ export async function push(
       );
   const sourceUrl = ws.repos[name].pin.sourceUrl || ws.repos[name].fetchUrl,
     expanded = git(p, "ls-remote", "--get-url", sourceUrl).stdout.trim();
-  if (destinations[0] !== expanded)
+  // Git's porcelain destination omits authentication information. Compare
+  // that display form while keeping the canonical URL for remote verification.
+  const displayed = expanded
+    .replace(/^([a-z][a-z0-9+.-]*:\/\/)[^/]*@/i, "$1")
+    .replace(/^[^/@:]+@(?=[^/]+:)/, "");
+  if (destinations[0] !== displayed)
     throw new Failure(
       "push destination differs from the pinned source URL; explicitly select the fork with wb repo pin --source-url",
       2,
@@ -319,7 +324,7 @@ export async function push(
     kind: "push",
     state: "prepared",
     repository: name,
-    remote: destinations[0],
+    remote: sourceUrl,
     ref: target,
     pushedRevision: candidate,
     expectedOldPin: ws.repos[name].pin.rev,

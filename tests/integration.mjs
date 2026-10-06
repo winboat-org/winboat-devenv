@@ -185,6 +185,36 @@ check("push exact source rather than checkout HEAD and no-op", (f) => {
   f.wrapper("-C", p, "push", "origin", sha + ":refs/heads/dev");
   a.equal(f.head(f.root), before);
 });
+check(
+  "SSH rewrite preserves canonical identity despite Git's anonymous display",
+  (f) => {
+    const [p, sha] = f.develop();
+    const canonical = "https://fixture.invalid/winboat.git";
+    const transport = "fixture-user@fixture.invalid:" + f.urls.winboat;
+    const ssh = path.join(f.base, "local ssh transport");
+    write(
+      ssh,
+      '#!/bin/sh\nfor transport_arg; do :; done\nexec sh -c "$transport_arg"\n',
+    );
+    fs.chmodSync(ssh, 0o755);
+    f.env.GIT_SSH_COMMAND = "'" + ssh.replaceAll("'", "'\\''") + "'";
+    f.env.GIT_SSH_VARIANT = "ssh";
+    f.env.GIT_CONFIG_COUNT = "2";
+    f.env.GIT_CONFIG_KEY_1 = "url." + transport + ".insteadOf";
+    f.env.GIT_CONFIG_VALUE_1 = canonical;
+    f.local.workspace.remotes.winboat = canonical;
+    f.writeLocal();
+    f.g(p, "remote", "set-url", "origin", canonical);
+    const dry = f.g(p, "push", "--porcelain", "--dry-run", "origin", "dev:dev");
+    a.ok(dry.stdout.includes("To fixture.invalid:" + f.urls.winboat));
+    f.wrapper("-C", p, "push", "origin", "dev:dev");
+    a.equal(f.pinValues().winboat.rev, sha);
+    const receipt = f.receipts().find((r) => r.kind === "push");
+    a.equal(receipt.remote, canonical);
+    a.equal(receipt.remoteVerified, true);
+    a.equal(f.g(f.urls.winboat, "rev-parse", "dev").stdout.trim(), sha);
+  },
+);
 check("failed dry-run tag delete unselected and ambiguous pushes", (f) => {
   const [p] = f.develop(),
     original = fs.readFileSync(f.pins);
