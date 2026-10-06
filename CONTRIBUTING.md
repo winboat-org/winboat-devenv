@@ -4,6 +4,10 @@ Begin with the active [stage](docs/stages/README.md) and the
 [workspace contracts](docs/architecture.md). This repository owns environment
 tooling, cross-repository orchestration and release assembly.
 
+[Agent workflows](docs/agents.md) cover client setup, scoped fork/checkpoint/
+publication, component builds and install/loaded-state verification. Devbox setup
+creates keys, pins the guest host key and derives SSH configuration automatically.
+
 Nix, devenv and native auto-activation are preconfigured prerequisites. Enter
 the trusted checkout and run commands directly in its locked environment.
 Use `devenv shell -- <command>` when the execution environment is absent, such
@@ -14,6 +18,11 @@ CLI/shell integration checks and operations without an MCP equivalent use
 `wb` directly. Virtualization and a container runtime are separate prerequisites
 discovered by `wb doctor`. Shell entry must not install host packages or change
 system configuration.
+
+Use `wb-format` to format Node sources and manifests and `wb-format-check` to
+check them. Both use Prettier from the locked Nix input; explicit file arguments
+limit the scope. Development tools belong in Nix. Invoke `git` on PATH to retain
+the workspace wrapper, and leave devenv's internal state to its CLI.
 
 Commit at meaningful checkpoints: a validated command family, build target,
 provisioning phase or documentation contract. Prefer `feat(scope): ...`,

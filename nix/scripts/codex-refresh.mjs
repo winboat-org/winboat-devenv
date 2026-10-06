@@ -16,7 +16,7 @@ export function refresh(root, devenv) {
   const content = result.stdout;
   if (!content.toString().trim())
     throw new Error("devenv returned an empty environment");
-  const state = path.join(root, ".devenv", "codex");
+  const state = path.join(root, ".state", "codex");
   fs.mkdirSync(state, { recursive: true, mode: 0o700 });
   const generation = crypto.createHash("sha256").update(content).digest("hex"),
     tmp = path.join(state, crypto.randomUUID());

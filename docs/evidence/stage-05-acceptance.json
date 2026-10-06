@@ -1,0 +1,256 @@
+{
+  "schemaVersion": 1,
+  "stage": 5,
+  "state": "accepted-current-host",
+  "observedAt": "2026-10-05T23:54:48.426Z",
+  "scope": "programmatic client/protocol and local contributor/build/install/runtime workflows",
+  "locks": {
+    "devenv.lock": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "config/provision.lock.json": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408"
+  },
+  "clients": {
+    "codex": {
+      "version": "codex-cli 0.160.0",
+      "initialized": true,
+      "toolCalls": "passed",
+      "guestStatus": "succeeded",
+      "launch": "installed app-server without a model turn; explicit per-process generated MCP definitions"
+    },
+    "claude": {
+      "version": "2.1.289 (Claude Code)",
+      "configurationLoaded": true,
+      "connected": true,
+      "pendingApproval": false,
+      "nixConnected": true,
+      "toolTurnExercised": false
+    },
+    "pathContainsSpaces": true,
+    "winboatTools": 49,
+    "nixTools": 8,
+    "commandRefresh": "passed",
+    "exportMode": "0600",
+    "summary": {
+      "path": "workspace-state:stage05/clients-summary.json",
+      "sha256": "8e1ad2f1a6c2c2ea2b5cd85905567153e1874336bf788577232fbe0783858eae",
+      "size": 4663
+    }
+  },
+  "validation": {
+    "native": {
+      "workspaceAgentRefresh": 37,
+      "devbox": 21,
+      "windows": 22,
+      "total": 80
+    },
+    "powerShellPayloads": 19,
+    "powerShellProjectionRegression": "passed",
+    "devenvTest": "passed",
+    "formatting": "passed",
+    "whitespace": "passed",
+    "contributorWorkflow": "real local-bare fork/checkpoint/dependency-first publication fixtures; no organization pushes",
+    "parallelClients": "same explicit retry ID returned one durable job; different arguments refused",
+    "credentials": "generated client files, keys and backups remain ignored/private"
+  },
+  "sources": {
+    "operationId": "op-7cb4f76063c042f4b0798333f5489555",
+    "repositories": [
+      {
+        "repository": "WBFreeRDP",
+        "revision": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "clvk-helios",
+        "revision": "56c626132782bf083a80a6c17f5ca763be0ff8fb",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "dxil-spirv",
+        "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "dxvk",
+        "revision": "e73ee9d0da9628e5f444b2e002e0079fd96ae3d3",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "electron",
+        "revision": "c328b030fd3357139f66c8a3a84a4384c0136eed",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "helios",
+        "revision": "0f2ff4a5fe047d59cca68d3bd1603d1b082f25dc",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "mesa-helios",
+        "revision": "59cfd87f49b3f65b382a86af33a7efbb2bd24789",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "qemu-helios",
+        "revision": "e81b51e1188a39e7041c4e06117b6bdf45becdd1",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "venus-protocol",
+        "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "virglrenderer",
+        "revision": "8668479d681f47ade80808c9d3fc1457540d7d58",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "vkd3d-proton",
+        "revision": "aff0927cab46c700a6edd78a3b1621fa9e109f18",
+        "clean": true,
+        "pinned": true
+      },
+      {
+        "repository": "winboat",
+        "revision": "17563cacb82ca31efe5feb12e3968f51951f1085",
+        "clean": true,
+        "pinned": true
+      }
+    ]
+  },
+  "runtime": {
+    "guest": {
+      "name": "stage04-acceptance-nvidia",
+      "identity": "0cc110b3acc843639a93f8fd6d41e193"
+    },
+    "freshPrimaryBuild": {
+      "jobId": "op-233041c43cc24460a995876d962e411d",
+      "target": "helios-guest-x64",
+      "artifact": {
+        "path": "out/guest/op-737eb12ba663469ea66803d02df3849b/manifest.json",
+        "sha256": "e9da2b0efc5d7af0ae9d49150fc2e3f30d1cf485704bd588ab60462f1fea451f",
+        "size": 2256709
+      }
+    },
+    "dependencyPolicy": "four Linux MSVC engine builds/imports; primary Windows WDK blocker retained; Mesa/CLVK used exact previously verified artifacts",
+    "package": {
+      "jobId": "op-7edb1be23d744c90b14e116c6c93f7dc",
+      "artifact": {
+        "path": "out/guest/op-673dcb12adb54d58804ac872d2b074a8/manifest.json",
+        "sha256": "6f71e0d7f76b921ad942732f6ebdb6c68fa7fba488926284ea3220d1f403ef24",
+        "size": 2616598
+      },
+      "bundle": {
+        "path": "out/guest/op-673dcb12adb54d58804ac872d2b074a8/files/bundle/manifest.json",
+        "sha256": "ca9dc43dccd75c76274a01264ce994ca2ff38d3c826014438df685d5560cd7f2",
+        "size": 5790644
+      }
+    },
+    "installation": {
+      "transactionId": "op-356a98f43b8c47fa8f965af4af7aa6c3",
+      "resumeJobId": "op-8f48c28762014b889c6588a0422bc1cd",
+      "state": "succeeded",
+      "bootTime": "2026-10-06T06:40:22.5000000Z",
+      "installedVerified": true
+    },
+    "graphics": {
+      "state": "passed",
+      "workloads": 13,
+      "mappedImages": 12,
+      "allWorkloadsPassed": true,
+      "allMappingsMatch": true
+    },
+    "registry": {
+      "schemaVersion": 2,
+      "transactionsView": "summary-with-retained-receipts",
+      "installedVerified": true,
+      "loadedVerified": true,
+      "loadedKernelIdentity": "mapped-code-matches",
+      "protocolPairing": {
+        "host": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+        "guest": [
+          "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "fe08e82c3819e8ee3c547b1ea810fde61f46fa78"
+        ],
+        "hostIdentity": {
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+          "snapshotSha256": "9b3f933fefa680fa5acdd91867b8b57126c63d8b9176053656bb54640d4182fc",
+          "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s=",
+          "diffSha256": null
+        },
+        "guestIdentities": [
+          {
+            "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+            "snapshotSha256": "9b3f933fefa680fa5acdd91867b8b57126c63d8b9176053656bb54640d4182fc",
+            "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s=",
+            "diffSha256": null
+          },
+          {
+            "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+            "snapshotSha256": "9b3f933fefa680fa5acdd91867b8b57126c63d8b9176053656bb54640d4182fc",
+            "narHash": "sha256-Bv1QpNM0E6G9MDsYpt0zH/7uqrGAX9r287oYGjwd65s=",
+            "diffSha256": null
+          }
+        ]
+      },
+      "proof": {
+        "path": "selected-state:devboxes/stage04-acceptance-nvidia/windows-jobs/op-78a8d405080e4b24b268d732e618f5d3/registry-result.json",
+        "sha256": "62517afcfe06d6d0e3c0379916223b3f9e8f896c3e69bd43e7f84594bc17f2ff",
+        "size": 8851454
+      }
+    },
+    "shutdown": {
+      "jobId": "op-59c754c22b2d49b7836fb92ab5a14894",
+      "clean": true,
+      "exitCode": 0,
+      "finalState": "stopped"
+    }
+  },
+  "repairs": {
+    "outerArtifactManifestRefusedBeforeGuestChanges": true,
+    "nativeRebootCodePreserved": {
+      "windows": 3010,
+      "unix": 194
+    },
+    "normalShutdownTimedOutThenCompletedCleanly": true,
+    "forcedRebootSubmitted": false,
+    "inventory": {
+      "original": {
+        "path": "selected-state:devboxes/stage04-acceptance-nvidia/windows-jobs/op-d80b071b06824f63b79ff9dd90962e25/registry-result.json",
+        "sha256": "cc46f5048eba9dca877bb0f2e609b0fcf04b98f19cc7771f19e0e3d4aabbc556",
+        "size": 886701521
+      },
+      "perFileProvenanceNormalized": true,
+      "transactionReceiptsPreserved": true,
+      "newSchema": 2
+    },
+    "nativeHexKernelAddressParsing": "validated exact 64-bit hex strings; unavailable observation remains unknown"
+  },
+  "preservation": {
+    "managedPinsChanged": false,
+    "locksChanged": false,
+    "originalDevelopmentGuestChanged": false,
+    "acceptanceGuestIdentityAndImageRetained": true,
+    "legacyInstallerWinMcpSubmodulesRetained": true,
+    "committed": false,
+    "pushed": false
+  },
+  "limitations": [
+    "Interactive client trust UI and Claude model-driven tool turns were not exercised.",
+    "Codex used explicit generated per-process MCP definitions rather than granting the copied checkout trust.",
+    "No additional physical host, remote Windows host, driver conformance or visual acceptance.",
+    "Retained original container supervisor; new supervisor fresh-container boot remains separate.",
+    "WinBoat/Electron closures, canonical publication, Stage 6 CI/bundles and Stage 7 migration remain separate.",
+    "npm audit reported the three existing fast-xml-parser/yaml/yauzl advisories; their baseline pins were preserved."
+  ]
+}

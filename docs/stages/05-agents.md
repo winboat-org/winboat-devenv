@@ -1,15 +1,36 @@
 # Stage 5 — Agent-driven developer experience
 
-Status: Codex command-environment refresh implemented; full client/workflow
-acceptance remains planned. Prerequisites: Stages 1 and 4.
+Status: implemented; measured current-host client/protocol, contributor fixture
+and build/install/runtime checks passed. Prerequisites: Stages 1 and 4.
+
+[Acceptance evidence](../evidence/stage-05-acceptance.json) records exact client
+versions and scope, 80 native checks, fresh primary/package builds, installation
+resume, 13 graphics workloads, 12 mapped DLLs and resident kernel code. Claude
+connection diagnostics and Codex programmatic tool calls were exercised;
+interactive trust UI and Claude model-driven turns were not. See the
+[handoff](../handoffs/stage-05.md) for preserved failures and migration boundaries.
+
+`wb setup --agents codex|claude|mcp|all` merges project settings and retains
+private originals without changing user-global settings or approval policies.
+Nix packages both core server launchers and command refresh. SSH keys, host-key
+pinning and the derived private configuration are automatic during devbox setup
+and connections. No separate SSH setup command is needed.
+
+Host and guest waits preserve durable IDs across disconnects. Explicit retry
+IDs deduplicate background submissions; oversized MCP results retain complete
+receipts with bounded log/evidence reads. See [agent workflows](../agents.md)
+for configuration ownership, contributor flow and reproducible client checks.
 
 `wb-codex-config` renders checkout-specific configuration from locked Nix
 definitions. Its local command hook checks devenv's dependency cache before
 each Bash execution, then publishes a generation for the command shell.
-See [configuration](../../config/README.md). This slice does not establish the
-multi-client, guest-operation or contributor-workflow acceptance below.
+See [configuration](../../config/README.md). The earlier refresh slice alone did
+not establish the client, guest-operation or contributor acceptance below.
 The refresh hook and host control plane now use Node.js. Generated Codex MCP
 settings launch the Nix `wb` application directly, with no additional shell entry.
+Command exports are handed off through private `.state/codex/` files. Project
+code does not access devenv's internal state directory. Node formatting uses
+Prettier from the locked Nix input through `wb-format` and `wb-format-check`.
 
 ## Outcome
 

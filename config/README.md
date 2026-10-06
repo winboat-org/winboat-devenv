@@ -1,5 +1,11 @@
 # Configuration
 
+`wb setup --agents codex|claude|mcp|all` now merges the Stage 5 client settings.
+It preserves unrelated servers, personal hooks and approval policies, and keeps
+exact changed originals in private state. Restart clients after generation;
+handle their normal trust prompts. See [agent workflows](../docs/agents.md) for
+configuration ownership, durable waits, bounded evidence and client acceptance.
+
 Nix, devenv and native auto-activation are existing host prerequisites.
 Shell startup files and the per-user trust database remain outside this
 workspace's configuration; see [activation](../docs/auto-activation.md).
@@ -57,7 +63,7 @@ The generated Codex `PreToolUse` hook checks devenv's own evaluation cache
 before each Bash command. Refresh occurs at command start when devenv detects
 a change to its recorded inputs, including imported/read files, Nix
 configuration and the lock. Successful exports are published atomically
-under ignored `.devenv/codex/`; command shells apply the current generation and
+under ignored `.state/codex/`; command shells apply the current generation and
 restore removed variables using the locked CLI's environment-diff helpers.
 Nested shells using the same generation retain their existing environment.
 A failed refresh denies the command instead of executing with stale tools.
@@ -66,6 +72,9 @@ Restart Codex after merging its configuration. Existing running commands and
 MCP processes keep their environment until restarted; restart/reconnect the
 affected server after changing its Nix execution definitions, locked inputs
 or MCP schemas.
+
+Only devenv manages its internal state directory. Project code obtains exports
+through the devenv CLI and stores its own command handoff under `.state/`.
 
 This integration uses supported local Codex command hooks. Cloud orchestration
 does not support project command hooks, including when execution is local; use

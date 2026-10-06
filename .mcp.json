@@ -3,12 +3,20 @@
     "devenv": {
       "type": "stdio",
       "command": "devenv",
-      "args": ["mcp"]
+      "args": [
+        "mcp"
+      ],
+      "timeout": 60000
     },
     "winboat": {
       "type": "stdio",
-      "command": "devenv",
-      "args": ["shell", "--", "wb", "mcp"]
+      "command": "wb",
+      "args": [
+        "--workspace",
+        ".",
+        "mcp"
+      ],
+      "timeout": 60000
     }
   }
 }

@@ -28,8 +28,11 @@ development guest remains preserved. See [runtime evidence](docs/evidence/stage-
 Acceptance covers this development environment and its measured workloads.
 Driver conformance, another physical host, second-account Windows boot and
 canonical publication remain unverified. WinBoat/Electron still need their
-complete fixed dependency closures. Stage 5 has Codex command refresh;
-its remaining client/workflow acceptance and Stages 6–7 remain planned.
+complete fixed dependency closures. Stage 5 now supplies merged client setup,
+automatic SSH configuration, durable waits, retry IDs and bounded evidence.
+Its measured client/protocol and live build/install/loaded-code checks passed;
+see [Stage 5 evidence](docs/evidence/stage-05-acceptance.json) for client/UI limits.
+Stages 6–7 remain planned.
 
 ## Start here
 
@@ -78,6 +81,8 @@ acceptance gates. [The Stage 4 handoff](docs/handoffs/stage-04.md) records the
 completed checkpoint and preservation boundaries.
 [Workspace usage](docs/workspace.md) covers commands, publication recovery,
 forks and MCP jobs.
+[Agent workflows](docs/agents.md) cover `wb setup --agents all`, client connection
+checks, contributor forks, durable completion and build/install verification.
 [Build usage](docs/builds.md) covers target selection, source modes, guest
 dispatch plans and artifact/closure verification.
 [Devbox usage](docs/devbox.md) covers exact artifact selection, persistent state,

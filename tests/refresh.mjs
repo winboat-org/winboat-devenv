@@ -22,7 +22,7 @@ function fixture(t) {
     root,
     command,
     response: path.join(root, "response"),
-    current: path.join(root, ".devenv/codex/current"),
+    current: path.join(root, ".state/codex/current"),
   };
 }
 test("refresh publishes a private complete generation without sourcing BASH_ENV", (t) => {
@@ -44,6 +44,7 @@ test("refresh publishes a private complete generation without sourcing BASH_ENV"
     /^# [a-f0-9]{64}\nexport WB_TEST_VALUE="first"\nunset WB_OLD_VALUE\n$/,
   );
   assert.equal(fs.statSync(f.current).mode & 0o777, 0o600);
+  assert.equal(fs.statSync(path.dirname(f.current)).mode & 0o777, 0o700);
   assert.deepEqual(
     JSON.parse(fs.readFileSync(path.join(f.root, "invocation.json"))),
     { args: ["--quiet", "direnv-export"] },

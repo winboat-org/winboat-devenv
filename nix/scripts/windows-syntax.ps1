@@ -28,6 +28,18 @@ if (Test-Path (Join-Path $Directory 'Control.ps1')) {
     } finally { Remove-Item -LiteralPath $fixture -Force }
 }
 
+if(Test-Path (Join-Path $Directory 'RegistryProjection.ps1')) {
+    . (Join-Path $Directory 'RegistryProjection.ps1')
+    $large='evidence' * 300000
+    $provenance=@{operationId='operation';manifestSha256='hash';sources=@{helios='commit'};artifacts=$large}
+    $row=Get-RegistryProvenanceSummary $provenance
+    $serialized=$row | ConvertTo-Json -Depth 10 -Compress
+    if($serialized.Length -gt 1000 -or $row.sources.helios -ne 'commit' -or $provenance.artifacts.Length -ne $large.Length) {throw 'Inventory provenance repeated or changed artifact evidence'}
+    $transaction=[pscustomobject]@{operationId='operation';state='installed';receipt=@{path='receipt';sha256='hash';size=100};changed=@();previousRegistry=$large;requestedManifest=[pscustomobject]@{packageId='package';source=@{helios='commit'};files=$large}}
+    $summary=Get-RegistryTransactionSummary $transaction
+    if(($summary | ConvertTo-Json -Depth 10 -Compress).Length -gt 1000 -or $summary.requestedManifest.packageId -ne 'package' -or $summary.receipt.sha256 -ne 'hash') {throw 'Inventory transaction lost identity or repeated rollback evidence'}
+    Write-Host 'Verified compact inventory provenance and retained transaction evidence'
+}
 $lock = Get-Content -Raw -LiteralPath $ProvisionLock | ConvertFrom-Json
 foreach ($tool in $lock.tools) {
     if ($tool.status -ne 'locked') { continue }

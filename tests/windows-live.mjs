@@ -80,7 +80,9 @@ class Acceptance {
         job = response.result;
       assert.equal(job?.jobId, id, JSON.stringify(response));
       if (!["queued", "running"].includes(job.state)) {
-        assert.ok(["succeeded", "failed"].includes(job.state));
+        assert.ok(
+          ["succeeded", "failed", "reboot-required"].includes(job.state),
+        );
         assert.ok(
           job.operation && allowed.includes(job.operation.exitCode),
           JSON.stringify(job),

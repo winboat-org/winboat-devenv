@@ -57,6 +57,7 @@ let
           "windows/GuestBuild.ps1"
           "windows/ExportArtifact.ps1"
           "windows/Registry.ps1"
+          "windows/RegistryProjection.ps1"
           "windows/Graphics.ps1"
           "windows/LoadedIdentity.cs"
           "windows/Install.ps1"
@@ -104,6 +105,8 @@ let
           "wb/common.mjs"
           "wb/lock-holder.mjs"
           "wb/jobs.mjs"
+          "wb/agents.mjs"
+          "wb/evidence.mjs"
           "wb/publication.mjs"
           "wb/repos.mjs"
           "wb/workspace.mjs"
@@ -111,6 +114,7 @@ let
         ]
   );
   environment = ''
+    export WB_AGENT_RUNTIME=${import ../agent-runtime.nix { inherit pkgs inputs; }}
     export WB_REAL_GIT=${pkgs.git}/bin/git
     export WB_MANIFEST_FILE=${manifest}
     export WB_DEVENV=${devenv}/bin/devenv

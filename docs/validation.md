@@ -379,3 +379,84 @@ including the receipt-preservation fix. Connected MCP calls verified all 12 clea
 pinned repositories and all 86 component artifact files. No component source
 changes or pushes were made. Validation preceded the maintainer-requested
 workspace commit.
+
+## Nix formatting and refresh-state ownership (2026-10-06)
+
+Codex export publication and the generated Bash handoff now use private
+`.state/codex/` files. Project code obtains exports through the devenv CLI and
+does not access its internal state directory. Existing internal state was left
+untouched; there is no direct cleanup or migration operation. Ignore rules and
+guest-share/mirror exclusions continue to prevent exposing private tool state.
+
+Prettier 3.9.6 is supplied by the existing locked nixpkgs input. `wb-format` and
+`wb-format-check` use that package, and formatting checks are included in the
+Nix-declared test entry point. The existing MCP source was formatted to pass the
+new repository check. No npm installation or lock update was required.
+
+All 31 integration/refresh tests passed after these changes. The actual generated
+hook and Bash handoff also passed a live check: `.state/codex/` had mode `0700`,
+the published export had mode `0600`, and the command shell selected Prettier
+3.9.6. Prettier, Nix formatting and whitespace checks passed. Reviewed project
+Codex settings were merged while preserving other settings; restart Codex to
+load the changed hook and Bash environment, and reconnect its MCP server for the
+updated source closure. Full Stage 5 client/workflow acceptance remains pending.
+
+
+## Stage 5 agent integration and live workflow (2026-10-06)
+
+[Acceptance evidence](evidence/stage-05-acceptance.json) records the measured
+current-host client/protocol, contributor-fixture and Windows runtime checks.
+`wb setup --agents` merges project settings with private backups and preserved
+approvals. SSH keys, host-key pinning and the derived config are automatic;
+there is no additional SSH setup command. [Agent workflows](agents.md) document
+client restart, explicit retry IDs, bounded host/guest waits and receipt pages.
+
+The installed Codex CLI 0.160.0 app-server initialized both servers and called
+repository, Nix and guest-status tools from a copied workspace path containing
+spaces, without a model turn or policy changes. Claude Code 2.1.289 connected
+both portable project servers through its actual diagnostics. Fresh generic
+MCP initialization advertised 49 WinBoat tools and eight devenv tools. Generated
+Bash refresh selected locked command wrappers and private mode-0600 exports.
+Interactive client trust UI and Claude model-driven turns were not exercised;
+Codex used explicit per-process generated server definitions for its test.
+
+All 80 native checks passed: 37 workspace/agent/refresh, 21 devbox and 22 Windows.
+The Nix test entry point, 19 PowerShell payloads, mapped-image C# compilation,
+literal argument/array checks and compact inventory projection regression passed.
+Formatting and whitespace passed. Local bare repositories tested scoped forks,
+checkpoints, dependency-first publication and concurrent pins without organization
+pushes. Two fresh MCP clients reused one durable mutation for one retry ID.
+Queued launch recovery kept its original ID and preserved completed output.
+
+The runtime workflow built fresh clean-pinned primary Helios with Linux MSVC
+engine artifacts, composed a package with exact retained Mesa/CLVK artifacts,
+installed it and resumed the original transaction after reboot. Thirteen
+interactive workloads and all 12 mapped DLL identities passed. Inventory schema
+2 then verified installed bytes, certificates, protocol pairing and actual
+resident kernel code, including the fixture driver. The original development
+guest and all 12 clean pinned repositories were preserved. Final normal shutdown
+returned zero container exit and left the acceptance guest stopped.
+
+The outer artifact manifest was initially refused by install preflight before
+guest changes; the bundle manifest was used for the successful invocation.
+Windows 3010 exposed the old host wrapper's Unix 194 presentation; current jobs
+retain native codes separately and normalize historical observations without
+rewriting original evidence. A 120-second shutdown deadline expired before the
+normal shutdown completed cleanly. The proposed activation reboot failed before
+submission when SSH closed; no forced reboot/stop executed. All failures remain
+retained. Existing compiler warnings and the three baseline npm audit advisories
+remain distinct from the passing checks; no unrelated dependency pins changed.
+
+Full inventory exposed an 886,701,521-byte result caused mainly by repeating
+artifact provenance in each file row. Schema 2 preserves that provenance once
+and references complete transaction receipts, producing an 8,851,454-byte verified
+record. The original oversized inventory and the helper strict-mode/publication
+failures remain retained. Native unprefixed hexadecimal kernel pointers are now
+validated without 64-bit precision loss, and unavailable observations remain
+unknown. See [the handoff](handoffs/stage-05.md) for preservation boundaries.
+
+The genuine Nix/provisioning locks and component pins are unchanged. The old
+container supervisor was retained; this check does not prove its replacement's
+fresh-container boot, another physical host, remote Windows host, conformance,
+visual acceptance or canonical publication. WinBoat/Electron closures and
+Stages 6–7 remain separate. Changes remain uncommitted and unpublished.

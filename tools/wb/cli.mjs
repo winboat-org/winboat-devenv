@@ -21,6 +21,8 @@ import * as devbox from "./devbox.mjs";
 import * as jobs from "./jobs.mjs";
 import * as publication from "./publication.mjs";
 import * as repos from "./repos.mjs";
+import * as agents from "./agents.mjs";
+import * as evidence from "./evidence.mjs";
 const schema = readJSON(new URL("./cli-schema.json", import.meta.url).pathname);
 const globalNames = Object.keys(schema.options);
 export function parse(argv) {
@@ -107,14 +109,26 @@ export async function dispatch(ws, args, operationId, argv) {
     mkdir(ws.state);
     const local = path.join(ws.root, "local.json");
     if (!exists(local)) write_json(local, { schemaVersion: 1, workspace: {} });
-    return { localConfig: local, stateRoot: ws.state, state: "prepared" };
+    return {
+      localConfig: local,
+      stateRoot: ws.state,
+      state: "prepared",
+      ...(args.agents
+        ? { agents: await agents.setup(ws, args.agents, operationId) }
+        : {}),
+    };
   }
+  if (args.family === "agents") return agents.config(ws, args.client);
+  if (args.family === "evidence")
+    return evidence.read(ws, args.id, args.offset, args.limit);
   if (args.family === "job")
     return {
       status: jobs.status,
       cancel: jobs.cancel,
       resume: jobs.resume,
       run: jobs.execute,
+      wait: () => jobs.wait(ws, args.id, args.timeout),
+      logs: () => jobs.logs(ws, args.id, args.offset, args.limit),
     }[args.action](ws, args.id);
   if (args.family === "mcp") {
     env.WB_WORKSPACE_ROOT = ws.root;
@@ -130,6 +144,7 @@ export async function dispatch(ws, args, operationId, argv) {
       ? jobs.start(
           ws,
           argv.filter((v) => v !== "--background"),
+          args.request_id,
         )
       : devbox.dispatch(ws, args, operationId);
   if (args.family === "build") {
@@ -145,6 +160,7 @@ export async function dispatch(ws, args, operationId, argv) {
       return jobs.start(
         ws,
         argv.filter((v) => v !== "--background"),
+        args.request_id,
       );
     return builds.execute(
       ws,
@@ -191,6 +207,7 @@ export async function dispatch(ws, args, operationId, argv) {
     return jobs.start(
       ws,
       argv.filter((v) => v !== "--background"),
+      args.request_id,
     );
   switch (args.action) {
     case "list":
@@ -353,7 +370,7 @@ export async function main(argv = process.argv.slice(2)) {
     for (let i = 0; i < argv.length; i++) {
       const flag = argv[i].split("=")[0];
       if (globalNames.includes(flag)) {
-        if (flag !== "--json" && !argv[i].includes("=")) i++;
+        if (!schema.options[flag].boolean && !argv[i].includes("=")) i++;
       } else rest.push(argv[i]);
     }
     const result = await dispatch(ws, args, operationId, rest);
@@ -383,6 +400,13 @@ export async function main(argv = process.argv.slice(2)) {
     };
   }
   const json = args?.json ?? argv.includes("--json");
+  if (
+    args?.compact &&
+    ws &&
+    !["evidence"].includes(args.family) &&
+    !(args.family === "job" && args.action === "logs")
+  )
+    payload = evidence.compact(ws, payload);
   if (!json && code)
     process.stderr.write((payload.error ?? "operation failed") + "\n");
   process.stdout.write(

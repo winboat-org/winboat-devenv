@@ -28,7 +28,33 @@ mock.module("../tools/wb/common.mjs", {
 const devbox = await import("../tools/wb/devbox.mjs");
 const graphics = await import("../tools/wb/graphics.mjs");
 const builds = await import("../tools/wb/builds.mjs");
+import { spawnSync } from "node:child_process";
 const { Failure, write_json, digest } = common;
+test("SSH config is derived automatically from existing keys and parses paths with spaces", (t) => {
+  const f = fixture(t),
+    record = f.record();
+  const directory = devbox.location(f.ws, record.name);
+  f.write(
+    path.relative(f.root, path.join(directory, "known_hosts")),
+    "[127.0.0.1]:49123 ssh-ed25519 fixture\n",
+  );
+  const args = devbox.ssh_command(directory, record);
+  const config = args[args.indexOf("-F") + 1];
+  assert.equal(fs.statSync(config).mode & 0o777, 0o600);
+  const parsed = spawnSync("ssh", ["-G", "-F", config, "127.0.0.1"], {
+    encoding: "utf8",
+  });
+  assert.equal(parsed.status, 0, parsed.stderr);
+  assert.match(parsed.stdout, /strict(host)?keychecking true/);
+  assert.ok(
+    parsed.stdout.includes(
+      "identityfile " + path.join(directory, "secrets/ssh"),
+    ),
+  );
+  record.ports.ssh = 49222;
+  devbox.ssh_command(directory, record);
+  assert.match(fs.readFileSync(config, "utf8"), /Port 49222/);
+});
 const ok = (value = "") => ({
   stdout: typeof value === "string" ? value : JSON.stringify(value),
   stderr: "",
@@ -476,6 +502,7 @@ check(
     const record = f.record();
     record.provisioning.verified = true;
     f.save(record);
+    f.write(".state/devboxes/one/known_hosts", "pinned fixture host key\n");
     const disk = f.write(".state/devboxes/one/disk.qcow2", "keep guest disk");
     f.write("payloads/Shutdown.ps1", "shutdown fixture");
     f.container = f.inspect(record, true);

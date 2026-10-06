@@ -44,13 +44,13 @@ export function connection(ws, name) {
     throw new Failure("guest SSH host key is not pinned", 3);
   return [directory, record];
 }
-export function invoke(ws, name, script, check = true) {
+export function invoke(ws, name, script, check = true, timeout = 120000) {
   const [directory, record] = connection(ws, name);
   let proc;
   try {
     proc = run([...devbox.ssh_command(directory, record), encoded(script)], {
       check: false,
-      timeout: 120000,
+      timeout,
     });
   } catch (e) {
     if (e.code === 75)
@@ -149,6 +149,7 @@ export async function payloads(ws, name) {
       "Task.ps1",
       "LoadedIdentity.cs",
       "Toolchain.ps1",
+      "RegistryProjection.ps1",
     ].map((n) => path.join(env.WB_DEVBOX_PAYLOADS, n)),
     id = hash(files.map(digest).join("")),
     remote = ROOT + "\\control\\" + id,
@@ -276,7 +277,7 @@ export async function submit(
   });
   return result;
 }
-export function _control(ws, name, receipt, action) {
+export function _control(ws, name, receipt, action, timeout = 120000) {
   const script =
       "& " +
       literal(receipt.control + "\\Control.ps1") +
@@ -286,7 +287,7 @@ export function _control(ws, name, receipt, action) {
       literal(receipt.remote) +
       " -RequestSha256 " +
       literal(receipt.requestSha256),
-    proc = invoke(ws, name, script, false);
+    proc = invoke(ws, name, script, false, timeout);
   let result;
   try {
     result = JSON.parse(proc.stdout.replace(/^\uFEFF/, ""));
@@ -306,7 +307,14 @@ export function _control(ws, name, receipt, action) {
     );
   return result;
 }
-export function job(ws, name, identifier, action, operationId) {
+export function job(
+  ws,
+  name,
+  identifier,
+  action,
+  operationId,
+  timeout = 120000,
+) {
   job_id(identifier);
   const [directory, record] = connection(ws, name),
     local = path.join(directory, "windows-jobs", identifier),
@@ -316,7 +324,7 @@ export function job(ws, name, identifier, action, operationId) {
     receipt.operationId !== identifier
   )
     throw new Failure("Windows job belongs to a different guest", 2);
-  const result = _control(ws, name, receipt, action);
+  const result = _control(ws, name, receipt, action, timeout);
   write_json(path.join(local, "observation.json"), result);
   ws.journal(operationId, {
     kind: "windows-job-" + action,
@@ -340,6 +348,33 @@ export async function wait(ws, name, identifier, allowReboot = false) {
     }
     await sleep(5000);
   }
+}
+export async function observe_wait(
+  ws,
+  name,
+  identifier,
+  operationId,
+  timeout = 45,
+) {
+  if (!Number.isInteger(timeout) || timeout < 0 || timeout > 50)
+    throw new Failure("wait timeout must be 0..50 seconds", 2);
+  const deadline = Date.now() + timeout * 1000;
+  let result;
+  do {
+    const budget = timeout === 0 ? 5000 : Math.max(100, deadline - Date.now());
+    result = job(ws, name, identifier, "status", operationId, budget);
+    if (!["queued", "running"].includes(result.state))
+      return { ...result, terminal: true, timedOut: false };
+    if (Date.now() >= deadline) break;
+    await sleep(Math.min(1000, deadline - Date.now()));
+  } while (true);
+  return {
+    ...result,
+    terminal: false,
+    timedOut: true,
+    externalStep:
+      "Wait again using this guest name and original task ID; timeout preserves the Windows task.",
+  };
 }
 export function windows_source_files(root) {
   const boundary = resolve(root),
@@ -1497,6 +1532,12 @@ export async function mapped_kernel_identity(image, base, readMapped) {
     discardableSectionsExcluded: true,
   };
 }
+export function kernel_base(value) {
+  // LoadedIdentity.cs serializes native pointers as exact hexadecimal strings.
+  if (typeof value !== "string" || !/^(?:0x)?[0-9a-f]{1,16}$/i.test(value))
+    throw new Failure("invalid loaded kernel base address", 76);
+  return BigInt("0x" + value.replace(/^0x/i, ""));
+}
 export async function observe_kernel(ws, name, result, operationId) {
   const [directory] = connection(ws, name),
     observations = [];
@@ -1504,7 +1545,7 @@ export async function observe_kernel(ws, name, result, operationId) {
     const observed = { ...module, state: "unknown" };
     observations.push(observed);
     try {
-      const base = BigInt(module.BaseAddress);
+      const base = kernel_base(module.BaseAddress);
       if (
         !base ||
         !Number.isInteger(module.ImageSize) ||
@@ -1612,11 +1653,26 @@ export async function observe_kernel(ws, name, result, operationId) {
   }
   return observations;
 }
+function inventory_record(result, location) {
+  if (
+    ![1, 2].includes(result.schemaVersion) ||
+    (result.schemaVersion === 2 &&
+      result.transactionsView !== "summary-with-retained-receipts")
+  )
+    throw new Failure("unsupported Windows inventory schema/view", 76, {
+      path: location,
+    });
+  return result;
+}
 export async function registry(ws, name, mode, operationId) {
   name = devbox.name_check(name);
   const retained = path.join(devbox.location(ws, name), "stack-registry.json");
   if (mode === "show" && file(retained))
-    return { ...readJSON(retained), observationKind: "retained", exitCode: 0 };
+    return {
+      ...inventory_record(readJSON(retained), retained),
+      observationKind: "retained",
+      exitCode: 0,
+    };
   await submit(
     ws,
     name,
@@ -1647,7 +1703,7 @@ export async function registry(ws, name, mode, operationId) {
     ROOT + "\\jobs\\" + operationId + "\\registry-result.json",
     local,
   );
-  const result = readJSON(local),
+  const result = inventory_record(readJSON(local), local),
     host = devbox.status(ws, name),
     [directory, record] = devbox.load(ws, name);
   result.host = {
@@ -1676,8 +1732,9 @@ export async function registry(ws, name, mode, operationId) {
         sources: pkg.source,
         manifestSha256: result.packageProvenance.manifestSha256,
       };
-      result.loadedKernelIdentity =
-        kernels[0].disk?.sha256 === requiredSys[0].sha256.toLowerCase()
+      result.loadedKernelIdentity = !kernels[0].disk?.sha256
+        ? "unknown"
+        : kernels[0].disk.sha256 === requiredSys[0].sha256.toLowerCase()
           ? kernels[0].state
           : "drift-selected-sys";
     }
@@ -1912,7 +1969,9 @@ export async function dispatch(ws, args, operationId) {
         args.direct,
       );
     case "job":
-      return job(ws, args.name, args.id, args.job_action, operationId);
+      return args.job_action === "wait"
+        ? observe_wait(ws, args.name, args.id, operationId, args.timeout)
+        : job(ws, args.name, args.id, args.job_action, operationId);
     case "mirror": {
       if (!args.repo.length)
         throw new Failure("mirror requires explicit --repo selections", 2);

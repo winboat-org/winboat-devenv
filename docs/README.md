@@ -5,6 +5,7 @@
 | [Architecture](architecture.md) | Workspace, command, devbox and artifact contracts |
 | [Automatic activation](auto-activation.md) | Native activation, Codex command refresh and explicit execution when needed |
 | [Agent configuration](../config/README.md) | Locked Codex settings, MCP defaults and server restart requirements |
+| [Agent workflows](agents.md) | Client setup, automatic SSH, durable waits, bounded evidence and contributor/build workflows |
 | [Repositories](repositories.md) | Inventory, subsets, pins, fork and submodule policy |
 | [Workspace control plane](workspace.md) | MCP tool mapping, CLI usage, setup, scoped publication and durable jobs |
 | [Builds](builds.md) | Native/cross targets, Windows dispatch and immutable artifact contracts |
@@ -14,6 +15,8 @@
 | [Stage 2 handoff](handoffs/stage-02.md) | Original build implementation prompt |
 | [Stage 3 handoff](handoffs/stage-03.md) | Next-session devbox implementation prompt |
 | [Stage 4 handoff](handoffs/stage-04.md) | Windows component builds, durable installation and loaded inventory |
+| [Stage 5 handoff](handoffs/stage-05.md) | Client setup, automatic SSH, durable completion and measured live workflows |
+| [Stage 6 handoff](handoffs/stage-06.md) | Component CI, exact release inputs, prebuilt installer migration and bundling acceptance |
 | [Reference audit](reference-audit.md) | Existing tooling and evidence to preserve |
 | [Validation](validation.md) | Workspace acceptance evidence and remaining limitations |
 | [Personal docs](user/README.md) | Ignored machine notes |

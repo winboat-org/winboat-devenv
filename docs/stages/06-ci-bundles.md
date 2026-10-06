@@ -3,6 +3,9 @@
 Status: planned. Prerequisites: Stages 2 and 4. Agent setup is useful but not a
 prerequisite. No workflows are installed by the initial scaffold.
 
+The [implementation handoff](../handoffs/stage-06.md) records the Stage 5 baseline,
+current publication boundaries and a next-session prompt for this stage.
+
 ## Outcome
 
 Each component repository builds its own individual artifacts. Root release CI

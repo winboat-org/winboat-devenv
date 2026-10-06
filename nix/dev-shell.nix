@@ -10,10 +10,18 @@ let
   manifestFile = pkgs.writeText "winboat-repositories.json" (builtins.toJSON manifest);
   commands = import ./commands/repos.nix { inherit pkgs inputs; };
   devenvCli = inputs.devenv-cli.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  format = mode: ''
+    cd -- "$WB_WORKSPACE_ROOT"
+    if [ "$#" -eq 0 ]; then
+      set -- 'tools/**/*.mjs' 'tools/**/*.json' 'tests/**/*.mjs' 'nix/scripts/*.mjs'
+    fi
+    exec ${pkgs.prettier}/bin/prettier ${mode} "$@"
+  '';
   testSources = pkgs.runCommand "winboat-test-sources" { } ''
     mkdir -p "$out/tools" "$out/tests" "$out/nix/scripts"
     ln -s ${commands.operationSources}/wb "$out/tools/wb"
     ln -s ${commands.operationSources}/node_modules "$out/tools/node_modules"
+    ln -s ${commands.operationSources}/node_modules "$out/node_modules"
     cp ${../tests/helpers.mjs} "$out/tests/helpers.mjs"
     cp ${../tests/integration.mjs} "$out/tests/integration.mjs"
     cp ${../tests/devbox.mjs} "$out/tests/devbox.mjs"
@@ -22,6 +30,8 @@ let
     cp ${../tests/windows-live.mjs} "$out/tests/windows-live.mjs"
     cp ${../tests/msvc-cross-live.mjs} "$out/tests/msvc-cross-live.mjs"
     cp ${../tests/cross-artifact-live.mjs} "$out/tests/cross-artifact-live.mjs"
+    cp ${../tests/agents-live.mjs} "$out/tests/agents-live.mjs"
+    cp ${../tests/agents.mjs} "$out/tests/agents.mjs"
     cp ${../tests/refresh.mjs} "$out/tests/refresh.mjs"
     cp ${./scripts/codex-refresh.mjs} "$out/nix/scripts/codex-refresh.mjs"
   '';
@@ -34,6 +44,7 @@ in
       jq
       ripgrep
       nodejs
+      prettier
       nix
       nixfmt
       shellcheck
@@ -43,6 +54,14 @@ in
   # scripts outrank the Git package on PATH; the wrapper uses an absolute Git.
   scripts.wb.exec = ''exec ${commands.wb}/bin/wb "$@"'';
   scripts.git.exec = ''exec ${commands.git}/bin/git "$@"'';
+  scripts.wb-format = {
+    description = "Format Node sources and manifests with Nix-pinned Prettier";
+    exec = format "--write";
+  };
+  scripts.wb-format-check = {
+    description = "Check Node formatting with Nix-pinned Prettier";
+    exec = format "--check";
+  };
   scripts.wb-test.exec = ''
     ${commands.environment}
     export WB_REAL_GIT=${pkgs.git}/bin/git
@@ -50,7 +69,7 @@ in
     export WB_TEST_SOURCE="$WB_WORKSPACE_ROOT"
     export WB_TEST_COMMAND=${commands.wb}/bin/wb
     export WB_TEST_GIT=${commands.git}/bin/git
-    exec ${pkgs.nodejs}/bin/node --test "$@" ${testSources}/tests/integration.mjs ${testSources}/tests/refresh.mjs
+    exec ${pkgs.nodejs}/bin/node --test "$@" ${testSources}/tests/integration.mjs ${testSources}/tests/refresh.mjs ${testSources}/tests/agents.mjs
   '';
   scripts.wb-devbox-test.exec = ''
     ${commands.environment}
@@ -59,6 +78,11 @@ in
   scripts.wb-windows-test.exec = ''
     ${commands.environment}
     exec ${pkgs.nodejs}/bin/node --experimental-test-module-mocks --test ${testSources}/tests/windows.mjs "$@"
+  '';
+  scripts.wb-agents-live.exec = ''
+    ${commands.environment}
+    export WB_LIVE_COMMAND=${commands.wb}/bin/wb
+    exec ${pkgs.nodejs}/bin/node ${testSources}/tests/agents-live.mjs "$@"
   '';
   scripts.wb-windows-live.exec = ''
     ${commands.environment}
@@ -124,6 +148,7 @@ in
 
   # Shell entry only supplies tools; later mutations need an explicit command.
   enterTest = ''
+    wb-format-check
     wb-check
     wb-pins helios | jq -e '.repositories | length == 8' >/dev/null
     wb-pins winboat | jq -e '.repositories | length == 3' >/dev/null

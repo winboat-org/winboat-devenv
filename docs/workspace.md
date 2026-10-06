@@ -208,6 +208,11 @@ No organization changes are pushed by the test suite.
 
 ## Component builds
 
+Stage 5 adds [client setup and workflows](agents.md), bounded `job_wait`/
+`devbox_job_wait`, `job_logs`, `evidence_read` and optional background `requestId`
+deduplication. Oversized MCP receipts retain their full evidence in private state.
+The connected tools must be reloaded after schema changes.
+
 Stage 2 adds `wb build list`, target plans/runs and artifact verification.
 See [build usage](builds.md) for clean release snapshots, captured development
 diffs, native/guest roots and retained Nix closures. MCP adds `build_list`,
@@ -215,5 +220,6 @@ diffs, native/guest roots and retained Nix closures. MCP adds `build_list`,
 background jobs over MCP; CLI uses `--background`. Plans evaluate shared Nix
 contracts and do not execute compilers or initialize unselected sources.
 Stage 4 adds [Windows control](windows-control.md). The DXVK engine backend
-dispatches to a named verified guest; other incomplete Windows component
-contracts still fail with code 3. Full stack execution remains pending.
+dispatches to a named verified guest. Stage 4's complete selected stack passed
+its current-host build/install/loaded-state checks; unsupported application
+closures still fail closed. See [acceptance evidence](evidence/stage-04-acceptance.json).

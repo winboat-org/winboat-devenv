@@ -1,5 +1,6 @@
 param([ValidateSet('show','reconcile','verify')][string]$Mode='reconcile')
 . (Join-Path $env:WINBOAT_CONTROL_ROOT 'Control.ps1')
+. (Join-Path $env:WINBOAT_CONTROL_ROOT 'RegistryProjection.ps1')
 $root = 'C:\ProgramData\WinBoatDev'
 $registryPath = Join-Path $root 'stack-registry.json'
 if ($Mode -eq 'show') {
@@ -11,8 +12,19 @@ Add-Type -Path (Join-Path $env:WINBOAT_CONTROL_ROOT 'LoadedIdentity.cs')
 $previous = if (Test-Path $registryPath) {Read-ControlJson $registryPath} else {$null}
 $entries = [Collections.Generic.List[object]]::new()
 $observationErrors=[Collections.Generic.List[object]]::new()
-$transactions=@(Get-ChildItem (Join-Path $root 'transactions') -Filter 'transaction.json' -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {Read-ControlJson $_.FullName})
+$transactions=@(Get-ChildItem (Join-Path $root 'transactions') -Filter 'transaction.json' -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {
+    $receipt=$_
+    $record=Read-ControlJson $receipt.FullName
+    # Rollback snapshots remain in their original durable receipt. Repeating
+    # them inside each inventory recursively expands previous inventories.
+    $summary=@{receipt=@{path=$receipt.FullName;sha256=(Get-FileHash -LiteralPath $receipt.FullName -Algorithm SHA256).Hash.ToLower();size=$receipt.Length}}
+    foreach($field in @('schemaVersion','operationId','state','observed','manifestSha256','changed','expectedRegistration','requestedManifest')) {
+        if($record.PSObject.Properties[$field]) {$summary[$field]=$record.$field}
+    }
+    [pscustomobject]$summary
+})
 function Add-ObservedFile([string]$Path, [string]$Role, [string]$Architecture='unknown', [string]$ExpectedHash='', $Provenance=$null, [switch]$DataFile) {
+    $Provenance=Get-RegistryProvenanceSummary $Provenance
     $desired=if($ExpectedHash){@{sha256=$ExpectedHash.ToLower()}}else{$null}
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
         if($ExpectedHash) {$entries.Add(@{role=$Role;path=$Path;sha256=$null;desired=$desired;built=$null;staged=$null;installed='drift';reason='missing';loaded=@();provenance=$Provenance})}
@@ -232,7 +244,7 @@ if($requestedPackage) {
         $desiredTransaction.operationId -eq $matchingTransactions[0].operationId
     $installedVerified=$desiredVerified -and $LASTEXITCODE -eq 0 -and $certificateVerified -and $drift.Count -eq 0 -and @($observedTools | Where-Object state -ne 'verified').Count -eq 0
 }
-$value=@{schemaVersion=1;observed=[DateTime]::UtcNow.ToString('o');bootTime=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o');provisioning=$provisioning;observedTools=$observedTools;entries=@($entries.ToArray());devices=$devices;systemDrivers=$drivers;registrations=$registration;certificates=$certificates;loadedImages=@($mapped.ToArray());kernelModules=$kernelModules;observationErrors=@($observationErrors.ToArray());installState=$installState;requestedPackage=$requestedPackage;packageProvenance=$packageProvenance;installationCheck=$installationCheck;transactions=$transactions;state=if($drift.Count -or @($observationErrors | Where-Object state -eq 'drift').Count){'drift'} else {'observed'};loadedKernelIdentity='unknown-requires-kernel-image-evidence';installedVerified=$installedVerified;loadedVerified=$false}
+$value=@{schemaVersion=2;transactionsView="summary-with-retained-receipts";observed=[DateTime]::UtcNow.ToString('o');bootTime=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o');provisioning=$provisioning;observedTools=$observedTools;entries=@($entries.ToArray());devices=$devices;systemDrivers=$drivers;registrations=$registration;certificates=$certificates;loadedImages=@($mapped.ToArray());kernelModules=$kernelModules;observationErrors=@($observationErrors.ToArray());installState=$installState;requestedPackage=$requestedPackage;packageProvenance=$packageProvenance;installationCheck=$installationCheck;transactions=@($transactions | ForEach-Object {Get-RegistryTransactionSummary $_});state=if($drift.Count -or @($observationErrors | Where-Object state -eq 'drift').Count){'drift'} else {'observed'};loadedKernelIdentity='unknown-requires-kernel-image-evidence';installedVerified=$installedVerified;loadedVerified=$false}
 $graphics=@(Get-ChildItem (Join-Path $root 'jobs') -Recurse -File -Filter 'graphics-result.json' | ForEach-Object {Read-ControlJson $_.FullName} | Where-Object {
     $_.state -eq 'passed' -and $requestedPackage -and $_.packageId -eq $requestedPackage.packageId -and
     $_.manifestSha256 -eq $packageProvenance.manifestSha256 -and $_.bootTime -eq $value.bootTime

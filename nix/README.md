@@ -1,5 +1,10 @@
 # Nix ownership
 
+`agent-runtime.nix` packages the shared Codex Bash handoff, refresh script and
+devenv MCP launcher. `wb setup --agents` and `wb-codex-config` render/merge those
+same runtime identities. `wb-agents-live` is the Nix-declared client/protocol
+acceptance entry point; it does not install clients or modify approval policies.
+
 `repositories.nix` owns canonical identities, checkout paths, dependency edges,
 subsets and selected submodules. `pins.nix` owns source object IDs and provenance.
 `manifest.nix` combines them; `checks.nix` validates without fetching packages.
@@ -14,6 +19,13 @@ and local fixture builds are shared payloads rather than MCP implementations.
 `tools/package-lock.json` supplies exact Node dependency versions and integrity
 hashes through `importNpmLock`; no Python interpreter implements `wb`. Python
 compiler helpers remain inside their Nix build recipes.
+
+`dev-shell.nix` supplies Prettier from the locked nixpkgs input. `wb-format` and
+`wb-format-check` format or check the Node sources and manifests, with optional
+file arguments. Formatting checks also run in `devenv test`. The Codex refresh
+handoff belongs under `.state/codex/`; project code uses the devenv CLI without
+reading or modifying its internal state directory.
+
 `wb-pins` reads current pin data through `wb repo list`; the static
 manifest supplies canonical inventory and dependency edges. Stage 2 adds component
 adapters and outputs; Stage 3 adds the devbox module. Avoid placeholder build

@@ -25,6 +25,12 @@ bootstrap exceptions. If inputs cannot be fetched, report the blocked check;
 Nix parsing is not shell, build, VM or CI validation. Do not manufacture lockfiles
 or source hashes.
 
+Never read or modify devenv's internal state directory directly. Use its CLI;
+project-owned state belongs under `.state/`. Declare development tools in Nix
+and invoke them through the activated PATH or workspace commands. Use `git` on
+PATH for ordinary Git operations; never bypass its workspace wrapper with an
+absolute executable path.
+
 The scaffold session authorizes the initial scaffold and its commit.
 Implementation is split into later stages. Complete a requested stage through
 its acceptance checks, and update the stage status and documentation.

@@ -993,6 +993,7 @@ export async function create(ws, args, operationId) {
         path.join(directory, "known_hosts"),
         `[127.0.0.1]:${record.ports.ssh} ${hostKey[0]} ${hostKey[1]}\n`,
       );
+      write_ssh_config(directory, record);
       write_json(path.join(directory, "devbox.json"), record);
       ws.journal(operationId, {
         kind: "devbox-create",
@@ -1643,28 +1644,45 @@ export async function destroy(ws, name, confirmation, operationId) {
   );
 }
 export function ssh_command(directory, record) {
+  const config = write_ssh_config(directory, record);
   return [
     env.WB_SSH,
     "-F",
-    "/dev/null",
-    "-o",
-    "BatchMode=yes",
-    "-o",
-    "IdentitiesOnly=yes",
-    "-o",
-    "StrictHostKeyChecking=yes",
-    "-o",
-    "UserKnownHostsFile=" + path.join(directory, "known_hosts"),
-    "-o",
-    "GlobalKnownHostsFile=/dev/null",
-    "-o",
-    "ConnectTimeout=10",
+    config,
     "-i",
     path.join(directory, "secrets/ssh"),
     "-p",
     String(record.ports.ssh),
     "wbdev@127.0.0.1",
   ];
+}
+function write_ssh_config(directory, record) {
+  if (!file(path.join(directory, "known_hosts")))
+    throw new Failure("guest SSH host key has not been authenticated", 3);
+  const quote = (value) => {
+    if (/[\r\n\0]/.test(value)) throw new Failure("invalid SSH path", 2);
+    return '"' + value.replaceAll("\\", "\\\\").replaceAll('"', '\\"') + '"';
+  };
+  const config = path.join(directory, "ssh/config");
+  if (symlink(path.dirname(config)) || symlink(config))
+    throw new Failure("refusing symlinked SSH config", 2);
+  const content = [
+    "Host *",
+    "  HostName 127.0.0.1",
+    "  User wbdev",
+    "  Port " + record.ports.ssh,
+    "  BatchMode yes",
+    "  IdentitiesOnly yes",
+    "  StrictHostKeyChecking yes",
+    "  GlobalKnownHostsFile /dev/null",
+    "  ConnectTimeout 10",
+    "  IdentityFile " + quote(path.join(directory, "secrets/ssh")),
+    "  UserKnownHostsFile " + quote(path.join(directory, "known_hosts")),
+    "",
+  ].join("\n");
+  if (!exists(config) || read(config) !== content)
+    atomic_write(config, content, 0o600);
+  return config;
 }
 export function guest_status(ws, name, operationId) {
   const [directory, record] = load(ws, name);

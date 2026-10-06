@@ -44,12 +44,40 @@
       "type": "string",
       "multiple": false,
       "boolean": false
+    },
+    "--compact": {
+      "dest": "compact",
+      "required": false,
+      "default": false,
+      "choices": null,
+      "type": "string",
+      "multiple": false,
+      "boolean": true
+    },
+    "--request-id": {
+      "dest": "request_id",
+      "required": false,
+      "default": null,
+      "choices": null,
+      "type": "string",
+      "multiple": false,
+      "boolean": false
     }
   },
   "positionals": [],
   "commands": {
     "setup": {
-      "options": {},
+      "options": {
+        "--agents": {
+          "dest": "agents",
+          "required": false,
+          "default": null,
+          "choices": ["codex", "claude", "mcp", "all"],
+          "type": "string",
+          "multiple": false,
+          "boolean": false
+        }
+      },
       "positionals": [],
       "commands": {}
     },
@@ -651,6 +679,15 @@
               "type": "string",
               "multiple": false,
               "boolean": false
+            },
+            "--timeout": {
+              "dest": "timeout",
+              "required": false,
+              "default": 45,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
             }
           },
           "positionals": [
@@ -658,7 +695,7 @@
               "dest": "job_action",
               "required": true,
               "default": null,
-              "choices": ["status", "cancel", "resume"],
+              "choices": ["status", "cancel", "resume", "wait"],
               "type": "string",
               "multiple": false,
               "boolean": false,
@@ -1440,12 +1477,124 @@
           },
           "positionals": [],
           "commands": {}
+        },
+        "wait": {
+          "options": {
+            "--id": {
+              "dest": "id",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--timeout": {
+              "dest": "timeout",
+              "required": false,
+              "default": 45,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        },
+        "logs": {
+          "options": {
+            "--id": {
+              "dest": "id",
+              "required": true,
+              "default": null,
+              "choices": null,
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            },
+            "--offset": {
+              "dest": "offset",
+              "required": false,
+              "default": 0,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
+            },
+            "--limit": {
+              "dest": "limit",
+              "required": false,
+              "default": 8192,
+              "choices": null,
+              "type": "integer",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
         }
       },
       "commandDest": "action"
     },
     "mcp": {
       "options": {},
+      "positionals": [],
+      "commands": {}
+    },
+    "agents": {
+      "options": {},
+      "positionals": [],
+      "commandDest": "action",
+      "commands": {
+        "config": {
+          "options": {
+            "--client": {
+              "dest": "client",
+              "required": true,
+              "default": null,
+              "choices": ["codex", "claude", "mcp"],
+              "type": "string",
+              "multiple": false,
+              "boolean": false
+            }
+          },
+          "positionals": [],
+          "commands": {}
+        }
+      }
+    },
+    "evidence": {
+      "options": {
+        "--id": {
+          "dest": "id",
+          "required": true,
+          "default": null,
+          "choices": null,
+          "type": "string",
+          "multiple": false,
+          "boolean": false
+        },
+        "--offset": {
+          "dest": "offset",
+          "required": false,
+          "default": 0,
+          "choices": null,
+          "type": "integer",
+          "multiple": false,
+          "boolean": false
+        },
+        "--limit": {
+          "dest": "limit",
+          "required": false,
+          "default": 8192,
+          "choices": null,
+          "type": "integer",
+          "multiple": false,
+          "boolean": false
+        }
+      },
       "positionals": [],
       "commands": {}
     }

@@ -1,5 +1,15 @@
 # Windows execution and inventory
 
+Stage 5 adds bounded host/guest waits and compact evidence access; see
+[agent workflows](agents.md). Inventory schema 2 keeps complete package provenance
+once and uses compact per-file provenance and transaction summaries. Every
+transaction summary carries its original receipt path, size and SHA-256; rollback
+snapshots and full requested manifests remain in those durable receipts. Existing
+schema 1 retained records remain distinguishable, and a new reconcile/verify
+produces schema 2. Unknown inventory schemas are refused. This avoids repeating
+large artifact provenance in every file row and exceeding Node's string limit;
+the original failed large inventory remains retained as repair evidence.
+
 Stage 4 passed current-host acceptance. Its shared Windows controller is
 Nix-declared and the Node MCP proxies the same `wb` operations. Complete clean
 CLI/MCP stack builds, installation, graphics and resident kernel/DLL identities

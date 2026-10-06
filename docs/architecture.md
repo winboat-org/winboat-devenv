@@ -54,12 +54,20 @@ that environment enters it explicitly with `devenv shell -- <command>`.
 Codex command refresh is declared in `nix/codex.nix`. Its generated project
 configuration uses the locked devenv CLI and a local `PreToolUse` hook to check
 the native dependency cache before each Bash command. Shell exports published
-atomically under ignored `.devenv/` are derived state; Nix files and the committed
-lock remain their source. Failed refreshes block the pending command. Existing
+atomically under ignored `.state/codex/` are derived state; Nix files and the
+committed lock remain their source. Failed refreshes block the pending command. Existing
 commands and MCP processes keep their environment until restarted. No host
 service or user-global configuration is installed.
 
+Project code never reads or modifies devenv's internal state directory. It uses
+the devenv CLI to obtain exports; only devenv owns its cache and activation state.
+
 ## Control plane
+
+Stage 5's [agent integration](agents.md) merges project configuration while
+preserving approval policies, supplies bounded job waits and evidence pages,
+and deduplicates explicitly identified retries through durable request mappings.
+The shared Node operations retain Nix-owned execution and artifact contracts.
 
 Use one `wb` command surface for setup, repository operations, builds, devbox
 lifecycle, jobs, inventory and bundling. Commands and their execution environment

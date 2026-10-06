@@ -30,6 +30,21 @@ mock.module("../tools/wb/builds.mjs", {
 });
 const windows = await import("../tools/wb/windows.mjs");
 const { Failure, digest, hash, write_json, readJSON } = common;
+test("native kernel addresses retain all hexadecimal bits without a prefix", () => {
+  for (const value of [
+    "fffff8073ffc0000",
+    "0xfffff8073ffc0000",
+    "FFFFF8073FFC0000",
+  ])
+    assert.equal(windows.kernel_base(value), 0xfffff8073ffc0000n);
+  for (const value of [
+    "invalid",
+    "fffffffffffffffff",
+    0xfffff8073ffc0000,
+    "-1",
+  ])
+    assert.throws(() => windows.kernel_base(value), Failure);
+});
 const op = (n) => "op-" + n.repeat(32);
 const ok = (v = "") => ({
   stdout: typeof v === "string" ? v : JSON.stringify(v),
@@ -81,6 +96,7 @@ function fixture(t) {
     "Task.ps1",
     "LoadedIdentity.cs",
     "Toolchain.ps1",
+    "RegistryProjection.ps1",
     "Snapshot.ps1",
     "Graphics.ps1",
     "Install.ps1",
@@ -89,6 +105,7 @@ function fixture(t) {
   const canonical = (p) => p.replace(/^\//, "").replaceAll("/", "\\");
   f.run = (argv, options = {}) => {
     f.calls.push(argv);
+    if (argv[0] === "fixture-ssh") f.lastSshTimeout = options.timeout;
     if (argv[0] === "fixture-nix")
       return argv[1] === "build" ? ok(f.built) : ok("fixture-only");
     if (argv[0] === "fixture-sftp") {
@@ -199,6 +216,31 @@ function fixture(t) {
   return f;
 }
 const check = (name, fn) => test(name, (t) => fn(fixture(t), t));
+check(
+  "retained inventory accepts explicit schema views and rejects unknown versions",
+  async (f) => {
+    const file = path.join(f.guest, "stack-registry.json");
+    for (const value of [
+      { schemaVersion: 3 },
+      { schemaVersion: 2, transactionsView: "unknown" },
+    ]) {
+      write_json(file, value);
+      await assert.rejects(
+        windows.registry(f.ws, "one", "show", op("a")),
+        (e) => e instanceof Failure && e.code === 76,
+      );
+    }
+    write_json(file, {
+      schemaVersion: 2,
+      transactionsView: "summary-with-retained-receipts",
+      state: "verified",
+    });
+    assert.equal(
+      (await windows.registry(f.ws, "one", "show", op("a"))).observationKind,
+      "retained",
+    );
+  },
+);
 // Construct raw ZIP records so invalid Windows paths can be tested before the
 // producer's own path checks. This is a fixture encoder, not production parsing.
 function crc32(buffer) {
@@ -367,6 +409,16 @@ check("task IDs and native reboot codes are retained", async (f) => {
     remote: "remote",
     requestSha256: "hash",
   });
+  f.observation = { state: "reboot-required", exitCode: 3010 };
+  const observed = await windows.observe_wait(f.ws, "one", op("a"), op("b"), 0);
+  assert.equal(observed.terminal, true);
+  assert.equal(f.lastSshTimeout, 5000);
+  assert.equal(observed.exitCode, 3010);
+  f.observation = { state: "running", exitCode: 0 };
+  assert.equal(
+    (await windows.observe_wait(f.ws, "one", op("a"), op("b"), 0)).timedOut,
+    true,
+  );
   f.observation = { state: "reboot-required", exitCode: 3010 };
   assert.deepEqual(
     await windows.wait(f.ws, "one", op("a"), true),
@@ -734,11 +786,11 @@ check(
       windows.payloads(f.ws, "one"),
     ]);
     assert.equal(results[0], results[1]);
-    assert.equal(f.calls.filter((a) => a[0] === "fixture-sftp").length, 4);
+    assert.equal(f.calls.filter((a) => a[0] === "fixture-sftp").length, 5);
     const key = [...f.remote.keys()].find((p) => p.endsWith("Toolchain.ps1"));
     f.remote.set(key, Buffer.from("tampered"));
     await assert.rejects(windows.payloads(f.ws, "one"), Failure);
-    assert.equal(f.calls.filter((a) => a[0] === "fixture-sftp").length, 4);
+    assert.equal(f.calls.filter((a) => a[0] === "fixture-sftp").length, 5);
   },
 );
 check("archive table errors fail before publishing", async (f) => {
