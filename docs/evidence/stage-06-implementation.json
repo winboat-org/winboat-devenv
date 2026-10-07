@@ -1996,5 +1996,15 @@
     },
     "sharedNativeAndSdkChecks": 119,
     "hostedAcceptance": false
+  },
+  "sdkRangeRetry": {
+    "state": "validated-local-fix",
+    "failure": "hosted Mesa x64 and vkd3d x86 SDK reads returned a short body; the length check previously ran outside retry handling",
+    "runs": [37696836624, 37696831256],
+    "retry": "up to three attempts for short bodies and interrupted reads; exact Content-Range, oversize, member hashes and fixed output NAR checks retained",
+    "nativeAndSdkTests": 120,
+    "sdkBehaviorTests": 8,
+    "log": "workspace-state:stage06/devenv-test-sdk-retry.log",
+    "coherentArtifactsPendingNewSource": true
   }
 }

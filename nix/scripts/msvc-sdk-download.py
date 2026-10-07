@@ -2,6 +2,7 @@
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
+from http.client import IncompleteRead
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -94,8 +95,12 @@ def extract(manifest, output, media=None):
                         if response.status != 206 or response.headers.get("Content-Range") != expected_range:
                             raise ValueError("SDK server did not honor the exact byte range")
                         data = response.read(end - start + 1)
+                    if len(data) < end - start:
+                        raise OSError("SDK range length mismatch")
+                    if len(data) > end - start:
+                        raise ValueError("SDK range length mismatch")
                     break
-                except (OSError, TimeoutError):
+                except (OSError, TimeoutError, IncompleteRead):
                     if attempt == 2:
                         raise
                     time.sleep(2 ** attempt)

@@ -19,16 +19,18 @@ class DownloadTests(unittest.TestCase):
         self.output = Path(self.temp.name) / "sdk"
         self.media = b"prefix--" + b"header-data" + b"gap" + b"library-data"
         self.mode = "valid"
+        self.requests = 0
         outer = self
 
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):
+                outer.requests += 1
                 begin, end = map(int, self.headers["Range"].removeprefix("bytes=").split("-"))
                 data = outer.media[begin:end + 1]
                 status = 200 if outer.mode == "ignore-range" else 206
                 if outer.mode == "corrupt":
                     data = bytes([data[0] ^ 1]) + data[1:]
-                if outer.mode == "short":
+                if outer.mode == "short" or (outer.mode == "short-once" and outer.requests == 1):
                     data = data[:-1]
                 self.send_response(status)
                 if outer.mode != "ignore-range":
@@ -94,8 +96,16 @@ class DownloadTests(unittest.TestCase):
 
     def test_short_response_is_rejected(self):
         self.mode = "short"
-        with self.assertRaisesRegex(ValueError, "length mismatch"):
+        with self.assertRaisesRegex(OSError, "length mismatch"):
             sdk.extract(self.manifest, self.output)
+        self.assertEqual(self.requests, 3)
+
+    def test_transient_short_response_is_retried_and_verified(self):
+        self.mode = "short-once"
+        sdk.extract(self.manifest, self.output)
+        self.assertEqual(self.requests, 2)
+        self.assertEqual((self.output / "sdk/include/test.h").read_bytes(), b"header-data")
+        self.assertEqual((self.output / "crt/lib/test.lib").read_bytes(), b"library-data")
 
     def test_member_cannot_escape_output(self):
         self.manifest["files"][0]["path"] = "../outside"
