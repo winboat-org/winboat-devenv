@@ -11,11 +11,13 @@ checkpoints and pushes; the six component repositories are published at verified
 canonical revisions. Root implementation `db1ffc0` is published on `master`.
 No repository runners were registered in root or any of the
 six components, and root/Helios had no configured environments at inspection.
-QEMU, virglrenderer, the catalog verifier and the ADL shim have passed hosted
-builds and exact archive/member verification. DXVK and vkd3d builds also passed,
-but their original manifests exceeded the metadata reader's bound. Full COFF
-inspection reports now remain in hashed artifact files instead of being copied
-into manifests. Their corrected artifacts still need hosted verification.
+QEMU, virglrenderer, the catalog verifier, ADL, both Mesa architectures and both
+vkd3d architectures have passed hosted builds and exact archive/member
+verification. Initial DXVK/vkd3d manifests exceeded the metadata reader's bound.
+Full COFF reports now remain in hashed artifact files instead of being copied
+into manifests; the corrected vkd3d artifacts verified. DXVK passed after an
+x64 retry, but the paired artifacts have different run attempts and need a
+fresh complete run for release selection.
 These proofs span source revisions and do not form one release input set.
 Root release CI now uses public hosted runners. The two Windows component
 builds still need their prepared guest/toolchain inputs. No release was published.

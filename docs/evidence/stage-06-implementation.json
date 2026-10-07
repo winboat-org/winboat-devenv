@@ -914,7 +914,7 @@
     }
   },
   "hostedExecution": {
-    "observedAt": "2026-10-07T05:39:01.750Z",
+    "observedAt": "2026-10-07T05:45:57.710Z",
     "state": "partial-hosted-component-proof-root-candidate-not-dispatched",
     "producerSourceRevision": "727d9d214fb906bdcb318541d38fa007f2a8213a",
     "sourcePreflightFix": "ab091831a63687e53a5c5e54d3c5bae6b87748a5",
@@ -1220,7 +1220,7 @@
       "rootCandidateAssembled": false
     },
     "engineMetadata": {
-      "state": "successful-builds-rejected-before-assembly",
+      "state": "vkd3d-corrected-artifacts-verified-dxvk-x64-verified-paired-run-pending",
       "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
       "runs": [
         {
@@ -1361,7 +1361,7 @@
         "rootCandidateAssembled": false
       }
     ],
-    "remainingGate": "root assembly needs all thirteen verified variants from one source revision; current proofs span source revisions and Windows driver/installer producer workflows still require an unavailable prepared runner",
+    "remainingGate": "CLVK and a fresh complete DXVK run are in progress; root assembly still needs all thirteen variants from one source revision and the unavailable Windows driver/installer producer inputs",
     "windowsProducers": {
       "observedAt": "2026-10-07T05:26:20.879Z",
       "registeredHeliosRepositoryRunners": 0,
@@ -1485,8 +1485,64 @@
         "x86": "success",
         "x64": "failure inside Nix before metadata export; stderr only retained on runner"
       },
-      "state": "in_progress",
-      "diagnosticsSourceFix": "shared build now streams stderr and retains the identical local log"
+      "state": "success",
+      "diagnosticsSourceFix": "shared build now streams stderr and retains the identical local log",
+      "x64Artifact": {
+        "state": "verified-real-hosted-component",
+        "repository": "winboat-org/dxvk",
+        "target": "dxvk-engine-x64",
+        "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
+        "componentRevision": "6948271578bf2aa6481389a07b5070c95f911952",
+        "runId": 37576333228,
+        "artifactId": 11463610581,
+        "workflow": {
+          "repository": "winboat-org/dxvk",
+          "path": ".github/workflows/build-dxvk.yml",
+          "runId": 37576333228,
+          "runAttempt": 2,
+          "headSha": "6948271578bf2aa6481389a07b5070c95f911952",
+          "event": "workflow_dispatch"
+        },
+        "archive": {
+          "sha256": "ab680cd37ad03462d1dfbe302de4b0f6fbf1e571be91689b97b0ed1ed8bd1b1d",
+          "size": 42600203
+        },
+        "verifiedMembers": 55,
+        "licenses": [
+          "files/licenses/dxvk/include/native/directx/COPYING.MinGW-w64.txt",
+          "files/licenses/dxvk/include/openvr/LICENSE",
+          "files/licenses/dxvk/include/spirv/LICENSE",
+          "files/licenses/dxvk/include/vulkan/LICENSE.md",
+          "files/licenses/dxvk/LICENSE",
+          "files/licenses/dxvk/subprojects/dxbc-spirv/LICENSE",
+          "files/licenses/dxvk/subprojects/dxbc-spirv/submodules/spirv_headers/LICENSE",
+          "files/licenses/dxvk/subprojects/libdisplay-info/LICENSE",
+          "files/licenses/dxvk/subprojects/libdisplay-info/test/data/LICENSE.CC-BY-4.0",
+          "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+          "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+          "files/licenses/msvc/1033/Redist.txt",
+          "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+          "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+          "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+          "files/licenses/msvc/Windows 8 SDK License.rtf",
+          "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf"
+        ],
+        "installed": false,
+        "loaded": false,
+        "rootCandidateAssembled": false
+      },
+      "pairedArtifactsEligible": false,
+      "pairingGate": "x86 artifact records attempt 1 while the successful latest run is attempt 2; exact-attempt contract rejects the mixed pair",
+      "freshPairRun": {
+        "runId": 37577801177,
+        "url": "https://github.com/winboat-org/dxvk/actions/runs/37577801177",
+        "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
+        "state": "in_progress"
+      }
     },
     "streamedBuildLog": {
       "state": "passed-real-local-development-build",
@@ -1503,6 +1559,13 @@
       "validationLog": {
         "path": "workspace-state:stage06/devenv-test-build-log-streaming.log",
         "sha256": "2355e8ca2b7d124538f735dc49619ff294b94994af68c8be530ff0b33c0335f6"
+      },
+      "sourceCheckpoint": "d8cd443de0cd7f1cab5cc226a5681d398489d2c0",
+      "liveIntegrationLog": {
+        "path": "workspace-state:stage06/stream-build-live.log",
+        "sha256": "3892c4a9f0da57dbc1e53111c34bca43f7c49c440aff69f96a463223bff84ee2",
+        "passingTests": 39,
+        "scope": "38 regular workspace/agent checks plus one real Venus build exercising stderr retention and streaming"
       }
     },
     "clvkSourcePublication": {

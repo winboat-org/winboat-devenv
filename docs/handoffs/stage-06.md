@@ -52,10 +52,17 @@ but download verification rejected their oversized original build manifests.
 The full COFF inspection report is now retained in its hashed `images.json`
 artifact file, with manifests recording that file's path/hash/size and compact
 image results. The 16 MiB metadata limit remains enforced. Corrected artifacts
-still require fresh hosted runs.
+were verified for vkd3d in run `37576336855`; all 112 members in each
+architecture archive matched. Mesa run `37575104915` and all 74 members in each
+architecture archive verified. DXVK run `37576333228` passed after retrying x64,
+but its paired artifacts have different attempts. A fresh full run is required
+by the existing exact-attempt release contract.
 CLVK run `37575107854` failed because source sync omitted Helios loader/probe
 sources required by its declared target. Component fix `e56fd1b` and root pin
-checkpoint `a68b7be` are published; the retry needs the new metadata checkpoint.
+checkpoint `a68b7be` are published. Retry `37576329599` uses source `8d7aed0`,
+passed source sync and is still compiling. Logging fix `d8cd443` streams shared
+Nix build stderr while retaining the identical durable log. Its real local
+Venus build verified that equality; 119 regular checks passed.
 The first catalog-verifier run was cancelled after twenty minutes in the build
 step. Its captured Nix stderr did not identify the precise stalled substep;
 the producer now streams that stderr. Its cold path requires the locked ISO.

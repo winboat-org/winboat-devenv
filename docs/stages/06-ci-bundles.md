@@ -1,7 +1,8 @@
 # Stage 6 — Component CI and bundling-only release CI
 
-Status: QEMU, virglrenderer, catalog verifier and ADL hosted artifacts verified;
-DXVK/vkd3d builds passed but require the corrected metadata export;
+Status: QEMU, virglrenderer, catalog verifier, ADL, both Mesa architectures and
+both corrected vkd3d architectures have verified hosted artifacts;
+DXVK passed after an x64 retry and needs a fresh paired artifact set;
 complete hosted component set,
 candidate assembly, real packed output
 and fresh installer runtime acceptance pending. Prerequisites: Stages 2 and 4.
