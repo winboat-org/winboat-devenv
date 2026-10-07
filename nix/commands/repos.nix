@@ -20,6 +20,7 @@ let
           "msvc-sysroot.nix"
           "msvc-sdk-source.nix"
           "msvc-sdk.lock.json"
+          "msvc-tools.lock.json"
           "msvc-toolchain.nix"
           "msvc-cross-tools.nix"
           "msvc-meson.nix"
@@ -45,6 +46,7 @@ let
           "windows-rust-deps.nix"
           "windows-utilities.nix"
           "windows-component-inputs.nix"
+          "windows-ci-toolchain.nix"
           "scripts/devbox-run.mjs"
           "scripts/windows-win-flex.py"
           "windows/Bootstrap.ps1"
@@ -60,6 +62,8 @@ let
           "windows/Task.ps1"
           "windows/Snapshot.ps1"
           "windows/GuestBuild.ps1"
+          "windows/HostedBuildEnvironment.ps1"
+          "windows/HostedDriver.ps1"
           "windows/ExportArtifact.ps1"
           "windows/Registry.ps1"
           "windows/RegistryProjection.ps1"
@@ -112,6 +116,7 @@ let
     export WB_WINDOWS_RUST_EXPRESSION=${buildOperations}/windows-rust-deps.nix
     export WB_WINDOWS_UTILITIES_EXPRESSION=${buildOperations}/windows-utilities.nix
     export WB_WINDOWS_COMPONENT_EXPRESSION=${buildOperations}/windows-component-inputs.nix
+    export WB_HOSTED_WINDOWS_TOOLS_EXPRESSION=${buildOperations}/windows-ci-toolchain.nix
     export WB_DEVBOX_PAYLOADS=${buildOperations}/windows
     export WB_NIX=${pkgs.nix}/bin/nix
     export WB_NIXPKGS=${pkgs.path}

@@ -8,8 +8,14 @@ $buildRoot = Assert-ControlPath $spec.buildRoot 'C:\WinBoatDev\build'
 $snapshot = Get-Content -Raw -LiteralPath (Join-Path $sourceRoot '.winboat-snapshot.json') | ConvertFrom-Json
 Write-Output ("WinBoat build: verifying source tree ({0} files)" -f @($snapshot.files).Count)
 Assert-ControlTree $sourceRoot $snapshot.files
-$inventory = Get-Content -Raw -LiteralPath 'C:\ProgramData\WinBoatDev\provisioning.json' | ConvertFrom-Json
-if ($inventory.phase -ne 'verified' -or $inventory.lockSha256 -ne $spec.provisionLockSha256) { throw 'Guest provisioning inventory is not the selected verified toolchain' }
+if ($spec.PSObject.Properties['hostedToolchain']) {
+    $env:WINBOAT_HOSTED_TOOLCHAIN=$spec.hostedToolchain
+    $inventory=Read-ControlJson $env:WINBOAT_HOSTED_TOOLCHAIN
+    if ($inventory.provisionLockSha256 -ne $spec.provisionLockSha256) { throw 'Hosted toolchain lock differs' }
+} else {
+    $inventory = Get-Content -Raw -LiteralPath 'C:\ProgramData\WinBoatDev\provisioning.json' | ConvertFrom-Json
+    if ($inventory.phase -ne 'verified' -or $inventory.lockSha256 -ne $spec.provisionLockSha256) { throw 'Guest provisioning inventory is not the selected verified toolchain' }
+}
 Import-ControlBuildEnvironment $spec.architecture
 $prerequisites = @(if ($spec.PSObject.Properties.Name -contains 'prerequisites') {$spec.prerequisites})
 foreach ($prerequisite in $prerequisites) {
@@ -32,15 +38,15 @@ foreach($dependency in $spec.componentDependencies) {
     Write-Output ("WinBoat build: verifying {0} dependency ({1} files)" -f $dependency.target,@($dependency.files).Count)
     Assert-ControlTree $root $dependency.files -SkipSymbolHashes:$separateSymbols
 }
-$env:LIBCLANG_PATH = 'C:\WinBoatDev\tools\LLVM\bin'
+if (-not $spec.PSObject.Properties['hostedToolchain']) {$env:LIBCLANG_PATH = 'C:\WinBoatDev\tools\LLVM\bin'}
 $env:RUSTUP_TOOLCHAIN = 'nightly-2026-07-14'
 $env:RUST_TOOLCHAIN = $env:RUSTUP_TOOLCHAIN
 $env:CARGO_TARGET_DIR = Join-Path $buildRoot 'cargo'
 if ($env:WindowsSDKVersion.TrimEnd('\') -ne '10.0.26100.0') { throw 'SDK/WDK selection differs from the matched kit' }
-$higher = @(Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\Include' -Directory | Where-Object { $_.Name -match '^10\.0\.\d+\.\d+$' -and [version]$_.Name -gt [version]'10.0.26100.0' })
+$higher = @(Get-ChildItem ($env:WindowsSdkDir+'Include') -Directory | Where-Object { $_.Name -match '^10\.0\.\d+\.\d+$' -and [version]$_.Name -gt [version]'10.0.26100.0' })
 if ($higher.Count) { throw 'A higher incomplete kit may override the matched SDK/WDK' }
 $toolchain = [ordered]@{}
-foreach ($tool in @('clang-cl.exe','git.exe','meson.exe','ninja.exe','glslangValidator.exe')) {
+foreach ($tool in $(if($spec.PSObject.Properties['hostedToolchain']){@('clang-cl.exe','rustc.exe','cargo.exe','python.exe')}else{@('clang-cl.exe','git.exe','meson.exe','ninja.exe','glslangValidator.exe')})) {
     $command = Get-Command $tool -ErrorAction Stop
     $toolchain[$tool] = @{path=$command.Source;sha256=(Get-FileHash $command.Source -Algorithm SHA256).Hash.ToLower();version=(& $command.Source --version | Out-String).Trim()}
 }
@@ -72,7 +78,7 @@ foreach ($relative in $spec.outputs) {
     New-Item -ItemType Directory -Path (Split-Path $destination -Parent) -Force | Out-Null
     Copy-Item -LiteralPath $inputPath -Destination $destination
     if ([IO.Path]::GetExtension($inputPath) -in @('.a','.lib','.dll','.sys','.exe')) {
-        $headers = (& 'C:\WinBoatDev\tools\LLVM\bin\llvm-readobj.exe' --file-headers --sections --coff-imports --coff-directives $inputPath | Out-String)
+        $headers = (& (Join-Path $env:LIBCLANG_PATH 'llvm-readobj.exe') --file-headers --sections --coff-imports --coff-directives $inputPath | Out-String)
         if ($LASTEXITCODE) { throw "Cannot inspect required Windows image: $relative" }
         $architecture=$spec.architecture
         if ($spec.PSObject.Properties['outputArchitectures'] -and $spec.outputArchitectures.PSObject.Properties[$relative]) {$architecture=$spec.outputArchitectures.$relative}

@@ -283,15 +283,17 @@ export async function seal(
       certificateSha256: cert.sha256,
       catalogSha256: cat.sha256,
     };
-    const branding = Object.fromEntries(
-      ["metadata/helios.env", "kmd_render/driver-version.env"].flatMap((p) =>
-        fs
-          .readFileSync(path.join(ws.paths.helios, p), "utf8")
-          .split(/\r?\n/)
-          .filter((l) => /^[A-Z0-9_]+=/.test(l))
-          .map((l) => l.split("=")),
-      ),
-    );
+    const branding =
+      built.branding ??
+      Object.fromEntries(
+        ["metadata/helios.env", "kmd_render/driver-version.env"].flatMap((p) =>
+          fs
+            .readFileSync(path.join(ws.paths.helios, p), "utf8")
+            .split(/\r?\n/)
+            .filter((l) => /^[A-Z0-9_]+=/.test(l))
+            .map((l) => l.split("=")),
+        ),
+      );
     m.version = branding.HELIOS_KMD_VERSION;
     m.productName = branding.HELIOS_PRODUCT;
     m.publisher = branding.HELIOS_PUBLISHER;
@@ -761,24 +763,36 @@ export async function main(argv = process.argv.slice(2)) {
   )
     manifestPath = await windows_release_tool_build(ws, args, operationId);
   else if (args.target === "helios-guest-x64") {
-    const dependencies = await exact_engines(
-      ws,
-      args.engine_selection ?? "[]",
-      args.root_revision,
-      args.configuration,
-      path.join(ws.state, "release-components", operationId, "engines"),
-    );
-    manifestPath = (
-      await windows.build(
+    if (args.phase === "seal") {
+      manifestPath = await (
+        await import("./hosted-driver.mjs")
+      ).collect(ws, args);
+    } else {
+      const dependencies = await exact_engines(
         ws,
-        args.name,
-        args.target,
+        args.engine_selection ?? "[]",
+        args.root_revision,
         args.configuration,
-        "release",
-        operationId,
-        dependencies,
-      )
-    ).manifest;
+        path.join(ws.state, "release-components", operationId, "engines"),
+      );
+      if (args.phase === "prepare") {
+        await (
+          await import("./hosted-driver.mjs")
+        ).prepare(ws, args, operationId, dependencies);
+        return;
+      }
+      manifestPath = (
+        await windows.build(
+          ws,
+          args.name,
+          args.target,
+          args.configuration,
+          "release",
+          operationId,
+          dependencies,
+        )
+      ).manifest;
+    }
   } else
     manifestPath = (
       await builds.execute(

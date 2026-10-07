@@ -2,6 +2,7 @@
   pkgs,
   lockFile,
   payloads ? null,
+  subsetFile ? ./msvc-sdk.lock.json,
 }:
 let
   provision = builtins.fromJSON (builtins.readFile lockFile);
@@ -9,8 +10,8 @@ let
     builtins.filter (item: (item.sourceKind or "") == "self-contained-ewdk") provision.tools
   );
   media = builtins.head tool.payloads;
-  subset = builtins.fromJSON (builtins.readFile ./msvc-sdk.lock.json);
-  manifest = pkgs.writeText "msvc-sdk-subset.json" (builtins.readFile ./msvc-sdk.lock.json);
+  subset = builtins.fromJSON (builtins.readFile subsetFile);
+  manifest = pkgs.writeText "msvc-sdk-subset.json" (builtins.readFile subsetFile);
   downloader = pkgs.writeText "msvc-sdk-download.py" (
     builtins.readFile ./scripts/msvc-sdk-download.py
   );

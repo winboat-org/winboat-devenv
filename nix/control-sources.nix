@@ -32,6 +32,7 @@ let
           "wb/evidence.mjs"
           "wb/bundles.mjs"
           "wb/release-producer.mjs"
+          "wb/hosted-driver.mjs"
           "wb/release-zip-metadata.mjs"
           "wb/publication.mjs"
           "wb/repos.mjs"

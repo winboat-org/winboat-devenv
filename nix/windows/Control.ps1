@@ -134,6 +134,10 @@ function Invoke-ControlPayload([string]$Script, [object[]]$Arguments) {
 }
 
 function Import-ControlBuildEnvironment([ValidateSet('x64','x86')][string]$Architecture) {
+    if ($env:WINBOAT_HOSTED_TOOLCHAIN) {
+        . (Join-Path $PSScriptRoot 'HostedBuildEnvironment.ps1') -Architecture $Architecture
+        return
+    }
     $ewdk = [Environment]::GetEnvironmentVariable('WINBOAT_EWDK_ROOT','Machine')
     if (-not $ewdk) { throw 'The locked portable EWDK is not configured' }
     $setup = Join-Path $ewdk 'BuildEnv\SetupBuildEnv.cmd'

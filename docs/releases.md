@@ -21,7 +21,8 @@ verified. CLVK compiled successfully, but its original manifest duplicated a
 73 MB PE dump; the shared export now uses the existing hashed LLVM report.
 Its corrected hosted artifact is still pending.
 These proofs span source revisions and do not form one release input set.
-Root release CI now uses public hosted runners. The driver component still needs its Windows build host. The installer now
+Root release CI now uses public hosted runners. The driver now has hosted Ubuntu preparation, Windows compilation/signing and
+Ubuntu artifact verification jobs; their real hosted build remains pending. The installer now
 cross-compiles on hosted Ubuntu and has a separate Windows interface probe. No release was published.
 
 ## Production ownership
@@ -46,7 +47,8 @@ artifact provenance come from GitHub's actual workflow identity.
 
 Manual dispatch selects exact root/component commits and release/debug output.
 Cross jobs use hosted Ubuntu and only their component command and source closure.
-The primary driver retains its Windows WDK build requirement. The installer
+The primary driver retains its Windows WDK build requirement, fulfilled by a
+hosted Windows job with portable Nix-verified inputs. The installer
 build uses the same cross SDK and pinned Rust distribution, followed by a
 Windows job that probes the already built executable. No generic workflow
 builds unrelated component roles in one matrix.
@@ -113,8 +115,11 @@ Memory for concurrent range bodies is bounded at 32 MiB. Full Windows guest
 provisioning still uses its original locked media; no input lock was replaced.
 
 Component source sync selects that component's dependency closure. Root-only
-installer/shim/verifier builds do not clone the graphics stack. Prepared Windows
-component runners still need the existing locked guest/toolchain inputs. Private
+installer/shim/verifier builds do not clone the graphics stack. The driver preparation selects only native MSVC compiler/include/static-library
+files from verified EWDK extents and the required SDK/WDK MSI/cabinet packages.
+Portable LLVM and Rust come from the locked payloads. It needs no prepared guest
+or registered runner. The Windows job generates its own ephemeral test-signing
+certificate and emits signed artifacts; it does not install the driver. Private
 state, keys and media remain outside source caches and artifacts.
 
 ## Source migration

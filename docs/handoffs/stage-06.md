@@ -246,3 +246,13 @@ gates pass. Complete WinBoat/Electron closures, canonical publication, driver
 conformance and client trust/model-turn checks remain separate recorded limits;
 they cannot be inferred from a successful release assembly.
 ```
+
+Installer migration follow-up: `c23358a` adds the Linux MSVC cross recipe using
+the locked nightly publisher manifest. Run `37694101730` passed the Ubuntu build
+and Windows prebuilt interface probe; all 34 archive members verified. Driver
+production now uses three hosted jobs and a portable Nix toolchain; its local
+toolkit build and 119 checks passed, but actual driver CI remains pending.
+The native MSVC subset is 693 verified files / 665.76 MB instead of the full
+20 GB EWDK image. The complete portable toolkit is 5.66 GB before compression.
+Original guest workflows remain available for development; release assembly
+continues to consume already signed driver and installer artifacts only.
