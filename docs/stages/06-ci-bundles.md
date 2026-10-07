@@ -1,6 +1,8 @@
 # Stage 6 — Component CI and bundling-only release CI
 
-Status: virglrenderer hosted artifact verified; complete hosted component set,
+Status: QEMU, virglrenderer, catalog verifier and ADL hosted artifacts verified;
+DXVK/vkd3d builds passed but require the corrected metadata export;
+complete hosted component set,
 candidate assembly, real packed output
 and fresh installer runtime acceptance pending. Prerequisites: Stages 2 and 4.
 Agent setup is useful but not a prerequisite.

@@ -574,7 +574,18 @@ export async function _execute(ws, name, configuration, mode, operationId) {
   }
   manifest.images = images;
   if (contract.toolchain === "linux-msvc-cross") {
-    const inspections = readJSON(path.join(exported, "files/images.json")),
+    const inspectionPath = path.join(exported, "files/images.json"),
+      inspectionFile = files.find((f) => f.path === "images.json");
+    if (!inspectionFile)
+      throw new Failure("cross artifact lacks its image inspection file", 74);
+    // Retain the full per-object COFF report in the hashed artifact file;
+    // copying it into metadata made real engine manifests exceed 50 MiB.
+    const inspections = readJSON(inspectionPath).map(
+        ({ inspection, ...record }) => ({
+          ...record,
+          inspectionFile,
+        }),
+      ),
       indexed = Object.fromEntries(inspections.map((i) => [i.path, i]));
     for (const i of images)
       if (i.format === "PE") {

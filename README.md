@@ -34,7 +34,9 @@ Its measured client/protocol and live build/install/loaded-code checks passed;
 see [Stage 5 evidence](docs/evidence/stage-05-acceptance.json) for client/UI limits.
 Stage 6 now supplies exact component workflows, migrated installer sources and
 a prebuilt-only candidate bundler. The virglrenderer hosted artifact passed CI
-and download verification. The complete hosted artifact set, candidate assembly
+and download verification. QEMU, catalog-verifier and ADL artifacts also verified;
+DXVK/vkd3d builds passed but need corrected metadata exports. The complete hosted
+artifact set, candidate assembly
 and fresh installer runtime
 acceptance remain pending; see [release usage](docs/releases.md). Stage 7 remains
 planned.

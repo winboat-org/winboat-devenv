@@ -43,8 +43,19 @@ Hosted producer runs were dispatched. After fixing process-local Git
 authentication and removing the unrelated all-workspace source check,
 virglrenderer run `37512779816` passed and uploaded its exact component artifact.
 QEMU run `37512784944` could not read the then-private virglrenderer dependency.
-The user made that repository public on 2026-10-07; retry `37571476155` passed
-and uploaded its complete host-stack component artifact.
+The user made that repository public on 2026-10-07; retry `37571476155` passed.
+Its complete host-stack archive and all 1,055 members passed download verification.
+Catalog-verifier retry `37574741899` passed with the SDK subset downloader;
+its six archive members and ADL run `37575096252`'s eleven members verified.
+DXVK run `37575099055` and vkd3d run `37575102010` passed both architectures,
+but download verification rejected their oversized original build manifests.
+The full COFF inspection report is now retained in its hashed `images.json`
+artifact file, with manifests recording that file's path/hash/size and compact
+image results. The 16 MiB metadata limit remains enforced. Corrected artifacts
+still require fresh hosted runs.
+CLVK run `37575107854` failed because source sync omitted Helios loader/probe
+sources required by its declared target. Component fix `e56fd1b` and root pin
+checkpoint `a68b7be` are published; the retry needs the new metadata checkpoint.
 The first catalog-verifier run was cancelled after twenty minutes in the build
 step. Its captured Nix stderr did not identify the precise stalled substep;
 the producer now streams that stderr. Its cold path requires the locked ISO.

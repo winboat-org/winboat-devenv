@@ -539,84 +539,61 @@
       {
         "repository": "helios",
         "path": ".github/workflows/build-helios-drivers.yml",
-        "targets": [
-          "helios-guest-x64"
-        ],
+        "targets": ["helios-guest-x64"],
         "backend": "windows"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-helios-installer.yml",
-        "targets": [
-          "helios-installer"
-        ],
+        "targets": ["helios-installer"],
         "backend": "windows"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-adl-compatibility.yml",
-        "targets": [
-          "helios-compatibility"
-        ],
+        "targets": ["helios-compatibility"],
         "backend": "cross"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-catalog-verifier.yml",
-        "targets": [
-          "helios-catalog-verifier"
-        ],
+        "targets": ["helios-catalog-verifier"],
         "backend": "cross"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-clvk-runtime.yml",
-        "targets": [
-          "clvk-helios"
-        ],
+        "targets": ["clvk-helios"],
         "backend": "cross"
       },
       {
         "repository": "qemu-helios",
         "path": ".github/workflows/build-qemu.yml",
-        "targets": [
-          "qemu-helios"
-        ],
+        "targets": ["qemu-helios"],
         "backend": "cross"
       },
       {
         "repository": "virglrenderer",
         "path": ".github/workflows/build-virglrenderer.yml",
-        "targets": [
-          "virglrenderer"
-        ],
+        "targets": ["virglrenderer"],
         "backend": "cross"
       },
       {
         "repository": "mesa-helios",
         "path": ".github/workflows/build-icds.yml",
-        "targets": [
-          "mesa-guest-x64",
-          "mesa-guest-x86"
-        ],
+        "targets": ["mesa-guest-x64", "mesa-guest-x86"],
         "backend": "cross"
       },
       {
         "repository": "dxvk",
         "path": ".github/workflows/build-dxvk.yml",
-        "targets": [
-          "dxvk-engine-x64",
-          "dxvk-engine-x86"
-        ],
+        "targets": ["dxvk-engine-x64", "dxvk-engine-x86"],
         "backend": "cross"
       },
       {
         "repository": "vkd3d-proton",
         "path": ".github/workflows/build-vkd3d-proton.yml",
-        "targets": [
-          "vkd3d-engine-x64",
-          "vkd3d-engine-x86"
-        ],
+        "targets": ["vkd3d-engine-x64", "vkd3d-engine-x86"],
         "backend": "cross"
       }
     ],
@@ -624,13 +601,8 @@
     "requiredVariants": 13,
     "mcpCatalogTools": 55,
     "componentBuildWorkflows": 10,
-    "rootWorkflows": [
-      ".github/workflows/assemble-release-candidate.yml"
-    ],
-    "rootRunners": [
-      "ubuntu-24.04",
-      "windows-2025"
-    ],
+    "rootWorkflows": [".github/workflows/assemble-release-candidate.yml"],
+    "rootRunners": ["ubuntu-24.04", "windows-2025"],
     "rootSelfHosted": false,
     "composedEnvironment": {
       "base": "nix/ci-environment.nix",
@@ -942,7 +914,7 @@
     }
   },
   "hostedExecution": {
-    "observedAt": "2026-10-06T18:54:34.292Z",
+    "observedAt": "2026-10-07T05:26:20.878Z",
     "state": "partial-hosted-component-proof-root-candidate-not-dispatched",
     "producerSourceRevision": "727d9d214fb906bdcb318541d38fa007f2a8213a",
     "sourcePreflightFix": "ab091831a63687e53a5c5e54d3c5bae6b87748a5",
@@ -991,29 +963,52 @@
         "size": 75758827
       },
       "verifiedMembers": 21,
-      "licenses": [
-        "files/share/licenses/virglrenderer/COPYING"
-      ],
+      "licenses": ["files/share/licenses/virglrenderer/COPYING"],
       "installed": false,
       "loaded": false,
       "rootCandidateAssembled": false
     },
     "qemu": {
-      "runId": 37512784944,
-      "url": "https://github.com/winboat-org/qemu-helios/actions/runs/37512784944",
-      "conclusion": "failure",
-      "failure": "authenticated repository token cannot read private winboat-org/virglrenderer; repository not found",
-      "requiredInput": "COMPONENT_INPUTS_TOKEN with cross-repository Contents read access",
-      "log": {
-        "path": "workspace-state:stage06/qemu-ci-auth-failure.log",
-        "size": 3113,
-        "sha256": "f853e78db5ceadb78adb7a587b42a56a872194079301b0a46e3f7ad94eb245c5"
-      }
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/qemu-helios",
+      "runId": 37571476155,
+      "artifactId": 11461756661,
+      "rootRevision": "1b893726571bb62ed1f1c18ca31557874b9ab597",
+      "componentRevision": "090446454fbb1a834334c27547a758aa60d1ee6b",
+      "workflow": {
+        "repository": "winboat-org/qemu-helios",
+        "path": ".github/workflows/build-qemu.yml",
+        "runId": 37571476155,
+        "runAttempt": 1,
+        "headSha": "090446454fbb1a834334c27547a758aa60d1ee6b",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "9f09798b6d63766f83ae18e83af7b1a1d507af9eb4333abda319a02959bafc9b",
+        "size": 1093465319
+      },
+      "verifiedMembers": 1055,
+      "licenses": [
+        "files/share/licenses/qemu-helios/COPYING",
+        "files/share/licenses/qemu-helios/COPYING.LIB",
+        "files/share/licenses/qemu-helios/edk2-licenses.txt",
+        "files/share/licenses/qemu-helios/firmware-README",
+        "files/share/licenses/venus-protocol/common.h",
+        "files/share/licenses/venus-protocol/VK_EXT_command_serialization.xml",
+        "files/share/licenses/venus-protocol/VK_MESA_venus_protocol.xml",
+        "files/share/licenses/venus-protocol/vk.xml",
+        "files/share/licenses/venus-protocol/vn_protocol.py",
+        "files/share/licenses/virglrenderer/COPYING"
+      ],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false,
+      "url": "https://github.com/winboat-org/qemu-helios/actions/runs/37571476155"
     },
     "catalogVerifier": {
-      "runId": 37511546608,
-      "url": "https://github.com/winboat-org/helios/actions/runs/37511546608",
-      "conclusion": "cancelled",
+      "runId": 37574741899,
+      "url": "https://github.com/winboat-org/helios/actions/runs/37574741899",
+      "conclusion": "success",
       "scope": "stopped obsolete build after approximately twenty minutes; captured Nix stderr did not expose exact stalled substep",
       "coldSdkBytes": 20002537472,
       "oldOutputClosureBytes": 26512124704,
@@ -1042,7 +1037,52 @@
         "size": 2490,
         "sha256": "9a7e2d5770570edd4229e417d2d3fbdbe9e1c91b138071873c9930aad17a41dc"
       },
-      "streamedNixStderr": true
+      "streamedNixStderr": true,
+      "firstAttempt": {
+        "runId": 37511546608,
+        "url": "https://github.com/winboat-org/helios/actions/runs/37511546608",
+        "conclusion": "cancelled",
+        "scope": "stopped obsolete build after approximately twenty minutes; captured Nix stderr did not expose exact stalled substep",
+        "coldSdkBytes": 20002537472,
+        "oldOutputClosureBytes": 26512124704,
+        "mediaReferenceFix": {
+          "scope": "local compiled output runtime NAR closure; cold builds still fetch EWDK",
+          "beforeCatalogClosureBytes": 26512124704,
+          "after": [
+            {
+              "role": "compatibility",
+              "derivation": "/nix/store/2qdjr5prmhv5s26cagiwvxvvrmgdd8ap-helios-compatibility-release.drv",
+              "output": "/nix/store/33wcnz8x5f0h8qj0xqcijy630g7sknal-helios-compatibility-release",
+              "narBytes": 6684832,
+              "closureBytes": 3620489912
+            },
+            {
+              "role": "catalogVerifier",
+              "derivation": "/nix/store/hqr5xvmzsfdig23p1cjlsd956q798bjv-helios-catalog-verifier-release.drv",
+              "output": "/nix/store/v14iwm68csd8pdv3w78zm497faqrhlym-helios-catalog-verifier-release",
+              "narBytes": 6727376,
+              "closureBytes": 3620532456
+            }
+          ]
+        },
+        "localRecipeLog": {
+          "path": "workspace-state:stage06/recipes-without-media-reference.log",
+          "size": 2490,
+          "sha256": "9a7e2d5770570edd4229e417d2d3fbdbe9e1c91b138071873c9930aad17a41dc"
+        },
+        "streamedNixStderr": true
+      },
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/helios",
+      "target": "helios-catalog-verifier",
+      "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
+      "componentRevision": "fecffde64fd32399a877b452332681ef0db7993e",
+      "artifactId": 11462565411,
+      "archive": {
+        "sha256": "72d1cddd08fec6d7aac4459b80bc1a5c00e9404fbbbdc164db9f506d9a085ca4",
+        "size": 1827258
+      },
+      "verifiedMembers": 6
     },
     "localBundleTests": {
       "tests": 31,
@@ -1140,7 +1180,97 @@
       "loaded": false,
       "published": false
     },
-    "guestOperationsExecuted": false
+    "guestOperationsExecuted": false,
+    "qemuPrivateSourceFailure": {
+      "runId": 37512784944,
+      "url": "https://github.com/winboat-org/qemu-helios/actions/runs/37512784944",
+      "conclusion": "failure",
+      "failure": "authenticated repository token cannot read private winboat-org/virglrenderer; repository not found",
+      "requiredInput": "COMPONENT_INPUTS_TOKEN with cross-repository Contents read access",
+      "log": {
+        "path": "workspace-state:stage06/qemu-ci-auth-failure.log",
+        "size": 3113,
+        "sha256": "f853e78db5ceadb78adb7a587b42a56a872194079301b0a46e3f7ad94eb245c5"
+      }
+    },
+    "adlCompatibility": {
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/helios",
+      "target": "helios-compatibility",
+      "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
+      "componentRevision": "fecffde64fd32399a877b452332681ef0db7993e",
+      "runId": 37575096252,
+      "artifactId": 11461949905,
+      "workflow": {
+        "repository": "winboat-org/helios",
+        "path": ".github/workflows/build-adl-compatibility.yml",
+        "runId": 37575096252,
+        "runAttempt": 1,
+        "headSha": "fecffde64fd32399a877b452332681ef0db7993e",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "0ee08bbf244cffbbc26012381704b06ecdcc15dedef3e0c8eb2362636c126d49",
+        "size": 1847407
+      },
+      "verifiedMembers": 11,
+      "licenses": ["files/licenses/NOTICE"],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false
+    },
+    "engineMetadata": {
+      "state": "successful-builds-rejected-before-assembly",
+      "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
+      "runs": [
+        {
+          "repository": "winboat-org/dxvk",
+          "runId": 37575099055,
+          "conclusion": "success"
+        },
+        {
+          "repository": "winboat-org/vkd3d-proton",
+          "runId": 37575102010,
+          "conclusion": "success"
+        }
+      ],
+      "failure": "original build manifests duplicate verbose COFF archive inspection and exceed the 16 MiB metadata bound",
+      "observedBuildManifestBytes": {
+        "dxvkX64": 51563117,
+        "vkd3dX64": 52879758
+      },
+      "fix": "retain full inspection in the original hashed images.json artifact member; manifests reference its path, digest and size while retaining architecture, CRT and symbol results",
+      "metadataLimitRelaxed": false
+    },
+    "clvkSourceFix": {
+      "firstRunId": 37575107854,
+      "conclusion": "failure",
+      "failure": "workflow fetched CLVK alone, but its declared target also needs Helios loader/probe sources",
+      "componentRevision": "e56fd1bf5340b7b2cc729531736c574f66471b7c",
+      "rootPinCheckpoint": "a68b7beb7d007a9f02f474d5ba9746faf55b2e66",
+      "retry": "pending metadata source checkpoint"
+    },
+    "mesa": {
+      "runId": 37575104915,
+      "repository": "winboat-org/mesa-helios",
+      "conclusion": "success",
+      "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
+      "downloadVerification": "in progress"
+    },
+    "remainingGate": "root assembly needs all thirteen verified variants from one source revision; current proofs span source revisions and Windows driver/installer producer workflows still require an unavailable prepared runner",
+    "windowsProducers": {
+      "observedAt": "2026-10-07T05:26:20.879Z",
+      "registeredHeliosRepositoryRunners": 0,
+      "workflows": ["build-helios-drivers.yml", "build-helios-installer.yml"],
+      "requirement": "existing self-hosted Linux command plus verified Windows guest/toolchain",
+      "dispatched": false
+    },
+    "inspectionFixValidation": {
+      "state": "passed-real-devenv-validation",
+      "nativeTests": 112,
+      "sdkBehaviorTests": 7,
+      "log": "workspace-state:validation/native.JRupo1Ok.log"
+    }
   },
   "publicDependencyRetry": {
     "observedAt": "2026-10-07T05:04:34.749Z",
@@ -1292,7 +1422,22 @@
         "size": 297,
         "sha256": "94f046f485ceb4dfa458ac0ec892a715d8d4673ac7c2cb483cea3b84e89b4c17"
       },
-      "hostedVerifier": "pending updated source checkpoint and run"
+      "hostedVerifier": {
+        "state": "verified-real-hosted-component",
+        "repository": "winboat-org/helios",
+        "target": "helios-catalog-verifier",
+        "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
+        "componentRevision": "fecffde64fd32399a877b452332681ef0db7993e",
+        "runId": 37574741899,
+        "artifactId": 11462565411,
+        "archive": {
+          "sha256": "72d1cddd08fec6d7aac4459b80bc1a5c00e9404fbbbdc164db9f506d9a085ca4",
+          "size": 1827258
+        },
+        "verifiedMembers": 6,
+        "conclusion": "success",
+        "durationSeconds": 155
+      }
     },
     "rootCandidateAssembled": false,
     "installed": false,

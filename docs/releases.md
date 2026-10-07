@@ -11,6 +11,12 @@ checkpoints and pushes; the six component repositories are published at verified
 canonical revisions. Root implementation `db1ffc0` is published on `master`.
 No repository runners were registered in root or any of the
 six components, and root/Helios had no configured environments at inspection.
+QEMU, virglrenderer, the catalog verifier and the ADL shim have passed hosted
+builds and exact archive/member verification. DXVK and vkd3d builds also passed,
+but their original manifests exceeded the metadata reader's bound. Full COFF
+inspection reports now remain in hashed artifact files instead of being copied
+into manifests. Their corrected artifacts still need hosted verification.
+These proofs span source revisions and do not form one release input set.
 Root release CI now uses public hosted runners. The two Windows component
 builds still need their prepared guest/toolchain inputs. No release was published.
 
@@ -209,7 +215,9 @@ on each component repository; a repository's `GITHUB_TOKEN` generally does not
 grant cross-repository artifact access. A fine-grained token or GitHub App can
 provide that scope. Do not grant publication permissions to the read token.
 Missing/expired tokens or artifacts are reported, not replaced with another run.
-Source-sync steps supply the same read token. The Nix command configures Git's
+CLVK source sync includes Helios because its declared target consumes the Helios
+loader and probe sources as well as CLVK. Source-sync steps supply the same read
+token. The Nix command configures Git's
 GitHub credential helper for that process, keeping credentials out of URLs and
 leaving the user's Git configuration untouched. Private dependencies require
 Contents read access across repositories even when the build repository is public.
