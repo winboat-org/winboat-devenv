@@ -90,8 +90,15 @@ here supplies the CI commands, and development imports it before adding tools.
 The SDK provenance records its locked ISO name and digest without retaining the
 ISO store path in the output closure. Local verifier output closure measurement
 fell from 26.5 GB to 3.62 GB with both x64 tool recipes rebuilt successfully.
-This does not eliminate the 20 GB cold SDK acquisition; a prepared binary cache
-is still needed for consistently lightweight cross-build jobs.
+Cold cross-builds now use the fixed-output SDK subset in
+[msvc-sdk.lock.json](../nix/msvc-sdk.lock.json). Its file hashes, byte extents and
+NAR hash were generated from the complete SHA256-verified locked EWDK image.
+The downloader reads only the selected ranges, verifies every member and the
+complete output NAR, and retains the SDK/CRT libraries, headers and licenses.
+Local-media and remote HTTP extraction produced the same hash: 7,239 files,
+about 2.00 GB of content and 2.01 GB of range reads from the 20.00 GB image.
+Memory for concurrent range bodies is bounded at 32 MiB. Full Windows guest
+provisioning still uses its original locked media; no input lock was replaced.
 
 Component source sync selects that component's dependency closure. Root-only
 installer/shim/verifier builds do not clone the graphics stack. Prepared Windows

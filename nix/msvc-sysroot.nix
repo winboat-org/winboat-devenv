@@ -9,18 +9,9 @@ let
     builtins.filter (item: (item.sourceKind or "") == "self-contained-ewdk") lock.tools
   );
   payload = builtins.head tool.payloads;
-  iso =
-    if payloads != null then
-      payloads + "/files/${payload.sha256}-${payload.file}"
-    else
-      pkgs.fetchurl {
-        inherit (payload) url sha256;
-        name = payload.file;
-      };
-  vc = "Program Files/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/${tool.msvcToolset}";
-  kit = "Program Files/Windows Kits/10";
+  source = import ./msvc-sdk-source.nix { inherit pkgs lockFile payloads; };
+  subset = builtins.fromJSON (builtins.readFile ./msvc-sdk.lock.json);
   sdk = "10.0.26100.0";
-  licenses = "Program Files/Microsoft Visual Studio/2022/BuildTools/Licenses";
   prepareScript = pkgs.writeText "msvc-sysroot.py" (builtins.readFile ./scripts/msvc-sysroot.py);
 in
 assert
@@ -31,27 +22,12 @@ assert
 pkgs.runCommand "winboat-msvc-${tool.msvcToolset}-sdk-${sdk}-sysroot"
   {
     nativeBuildInputs = [
-      pkgs._7zz
       pkgs.python3
     ];
   }
   ''
-    printf '%s  %s\n' '${payload.sha256}' '${iso}' | sha256sum --check
-    mkdir -p extracted "$out/crt/lib" "$out/sdk/lib/um" "$out/sdk/lib/ucrt" "$out/share/licenses"
-    7zz x -tUdf -y -oextracted '${iso}' \
-      '${vc}/include/*' '${vc}/lib/x64/*' '${vc}/lib/x86/*' \
-      '${kit}/Include/${sdk}/*' \
-      '${kit}/Lib/${sdk}/um/x64/*' '${kit}/Lib/${sdk}/um/x86/*' \
-      '${kit}/Lib/${sdk}/ucrt/x64/*' '${kit}/Lib/${sdk}/ucrt/x86/*' \
-      '${licenses}/*' > extraction.log
-    cp -R 'extracted/${vc}/include' "$out/crt/include"
-    cp -R 'extracted/${kit}/Include/${sdk}' "$out/sdk/include"
-    for architecture in x64 x86; do
-      cp -R "extracted/${vc}/lib/$architecture" "$out/crt/lib/$architecture"
-      cp -R "extracted/${kit}/Lib/${sdk}/um/$architecture" "$out/sdk/lib/um/$architecture"
-      cp -R "extracted/${kit}/Lib/${sdk}/ucrt/$architecture" "$out/sdk/lib/ucrt/$architecture"
-    done
-    cp -R 'extracted/${licenses}' "$out/share/licenses/msvc"
+    mkdir -p "$out"
+    cp -R --no-preserve=mode ${source}/. "$out/"
     python3 ${prepareScript} "$out"
     test -f "$out/crt/include/vector"
     test -f "$out/sdk/include/um/Windows.h"
@@ -72,6 +48,8 @@ pkgs.runCommand "winboat-msvc-${tool.msvcToolset}-sdk-${sdk}-sysroot"
       ];
       provisionLockSha256 = builtins.hashFile "sha256" lockFile;
       input = payload.file;
+      sdkSubsetNarHash = subset.narHash;
+      sourceIntegrity = "verified-sdk-subset-from-locked-ewdk";
     }}
     JSON
   ''

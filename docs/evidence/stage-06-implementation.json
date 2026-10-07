@@ -1141,5 +1141,162 @@
       "published": false
     },
     "guestOperationsExecuted": false
+  },
+  "publicDependencyRetry": {
+    "observedAt": "2026-10-07T05:04:34.749Z",
+    "repository": "winboat-org/virglrenderer",
+    "visibility": "public",
+    "qemu": {
+      "runId": 37571476155,
+      "url": "https://github.com/winboat-org/qemu-helios/actions/runs/37571476155",
+      "state": "completed",
+      "conclusion": "success",
+      "rootRevision": "1b893726571bb62ed1f1c18ca31557874b9ab597",
+      "componentRevision": "090446454fbb1a834334c27547a758aa60d1ee6b",
+      "artifactId": 11461756661,
+      "archiveDigest": "sha256:9f09798b6d63766f83ae18e83af7b1a1d507af9eb4333abda319a02959bafc9b",
+      "archiveBytes": 1093465319,
+      "localDownloadVerification": "in progress"
+    },
+    "sdkSubset": {
+      "state": "passed-local-and-remote-extraction-and-recipes",
+      "originalImageSha256": "9f48251dd24ad31aac206d8256e95bda5f90a9783982c45a8aafeb9054562379",
+      "originalImageBytes": 20002537472,
+      "selectedFileBytes": 1997907567,
+      "rangeBytesRead": 2005138153,
+      "files": 7239,
+      "narHash": "sha256-nK7VyzZpdPKQXGYs4UNTy9MQuTy8RYIV8KJaun7TMTc=",
+      "lockFile": "nix/msvc-sdk.lock.json",
+      "generatedFromVerifiedMedia": {
+        "path": "workspace-state:stage06/sdk-subset-generation.log",
+        "size": 126,
+        "sha256": "0b191d93948027b807df0d51212bee83133ed7fb4cfdbf2ad9f60363f6a6ab33"
+      },
+      "localExtraction": {
+        "path": "workspace-state:stage06/sdk-local-range-check.log",
+        "size": 515,
+        "sha256": "8a3a11ad755f7769f751fa67e8c1891aac5c19026e17e47f83ca3ecf33bbdcc3"
+      },
+      "remoteExtraction": {
+        "path": "workspace-state:stage06/sdk-http-direct-check.log",
+        "size": 515,
+        "sha256": "8a3a11ad755f7769f751fa67e8c1891aac5c19026e17e47f83ca3ecf33bbdcc3"
+      },
+      "nixFixedOutputBuild": [
+        {
+          "drvPath": "/nix/store/i7jmbkas0icrzcixq59zkrdgfjs3xmfm-winboat-msvc-sdk-subset-14.44.35207-10.0.26100.0.drv",
+          "outputs": {
+            "out": "/nix/store/xg44ni9d4z64zqz937wkrgvq8ji00jb6-winboat-msvc-sdk-subset-14.44.35207-10.0.26100.0"
+          }
+        }
+      ],
+      "recipes": {
+        "schemaVersion": 1,
+        "state": "passed-local-recipes",
+        "compatibility": {
+          "derivation": "/nix/store/zv0drmi9pgxyr9m4kpikwnm8jy2ynrkv-helios-compatibility-release.drv",
+          "architecture": "x64",
+          "backend": "linux-msvc-cross",
+          "files": [
+            {
+              "path": "Install-Resolve-Compatibility.ps1",
+              "size": 6604,
+              "sha256": "76091f7c2084b2028370a0c20659b3ea6d0259e5549aa95c093bdb398c5b8d51"
+            },
+            {
+              "path": "README.md",
+              "size": 1744,
+              "sha256": "20ce8386e4b793e6f2ef26a60cda3384a731f269f28003eddfe860aa43960b39"
+            },
+            {
+              "path": "Resolve-CompatibilityCommon.ps1",
+              "size": 6154,
+              "sha256": "eb418675aa7eb6ed34c81f034f53a1ecf8f03f6d6321df1794a99f699f42b899"
+            },
+            {
+              "path": "Uninstall-Resolve-Compatibility.ps1",
+              "size": 1107,
+              "sha256": "b04a01f92674e582f1bb494e6f53317109157b490e304e2aa6051c1ad05c08a7"
+            },
+            {
+              "path": "atiadlxx.dll",
+              "size": 509440,
+              "sha256": "10d8edb4a9b74931a67e26cead77d7d9be6dfc51ae9e6b793e46d82814cf04a1"
+            },
+            {
+              "path": "atiadlxx.lib",
+              "size": 4032,
+              "sha256": "dbb7174bb05824af38d4a31f18aeafa1d62f91542f76d142de111ba382954fe5"
+            },
+            {
+              "path": "images.json",
+              "size": 17490,
+              "sha256": "1e9d3df859444685c08c3170a587d23b431f9e0bbd0a274f7da19751995f68b1"
+            },
+            {
+              "path": "licenses/NOTICE",
+              "size": 179,
+              "sha256": "7d63fd82be5809b6ee9874c8cedd7f6a7644b07f1830e10ae0a8f0655fd276fb"
+            },
+            {
+              "path": "symbols/atiadlxx.pdb",
+              "size": 6135808,
+              "sha256": "678da65c65df442c7e0c29f57e6501720137bd7b21e1282d89c44c06bb223e5d"
+            }
+          ]
+        },
+        "catalogVerifier": {
+          "derivation": "/nix/store/1hi8jlb4js43ssxp6jjv43ci4wnbayz5-helios-catalog-verifier-release.drv",
+          "architecture": "x64",
+          "backend": "linux-msvc-cross",
+          "files": [
+            {
+              "path": "VerifyCatalog.exe",
+              "size": 505856,
+              "sha256": "b8ea8a0a4ffe064508ebae119e5ac50995d19c42767c88d291567a9342de980f"
+            },
+            {
+              "path": "images.json",
+              "size": 10653,
+              "sha256": "3a33d46c734a0e3417cbdf3798548ae2a01edfb997f80945f2896a574edf65bb"
+            },
+            {
+              "path": "licenses/NOTICE",
+              "size": 83,
+              "sha256": "2e77361b95cfbe46fcea38575f56e4424aeab331b9814b5d3294cf2b9bb3a66a"
+            },
+            {
+              "path": "symbols/VerifyCatalog.pdb",
+              "size": 6209536,
+              "sha256": "453f0371ad32fe707ec93ce54b3b47777bcd2b571c3e5ee709e5137eb28dafc9"
+            }
+          ]
+        },
+        "installerDependencies": {
+          "derivation": "/nix/store/0ni6v2lswy71l2wax6ays8iga63c380a-helios-installer-cargo-dependencies.drv",
+          "lockSha256": "a350e2ddb520349fbcc5d7449460f0e9df0f981e475b4b607cafa2666ecfbf51",
+          "files": 1444
+        },
+        "rootSource": "uncommitted local snapshot; not a hosted release artifact"
+      },
+      "rangeBehaviorTests": {
+        "passed": 7,
+        "log": {
+          "path": "workspace-state:stage06/sdk-download-tests.log",
+          "size": 247,
+          "sha256": "d2bdfb5f4e6c40577fd0af3097bbb5b55d44afaef036530078fced27f83233d7"
+        }
+      },
+      "nativeValidationLog": {
+        "path": "workspace-state:stage06/devenv-test-sdk-subset.log",
+        "size": 297,
+        "sha256": "94f046f485ceb4dfa458ac0ec892a715d8d4673ac7c2cb483cea3b84e89b4c17"
+      },
+      "hostedVerifier": "pending updated source checkpoint and run"
+    },
+    "rootCandidateAssembled": false,
+    "installed": false,
+    "loaded": false,
+    "published": false
   }
 }

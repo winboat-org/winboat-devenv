@@ -35,6 +35,8 @@ let
     cp ${../tests/refresh.mjs} "$out/tests/refresh.mjs"
     cp ${../tests/bundles.mjs} "$out/tests/bundles.mjs"
     cp ${../tests/release-recipes.mjs} "$out/tests/release-recipes.mjs"
+    cp ${../tests/sdk-download.py} "$out/tests/sdk-download.py"
+    cp ${./scripts/msvc-sdk-download.py} "$out/nix/scripts/msvc-sdk-download.py"
     cp ${./scripts/codex-refresh.mjs} "$out/nix/scripts/codex-refresh.mjs"
   '';
 in
@@ -78,6 +80,9 @@ in
     export WB_TEST_SOURCE="$WB_WORKSPACE_ROOT"
     export WB_TEST_COMMAND=${commands.wb}/bin/wb
     exec ${pkgs.nodejs}/bin/node --experimental-test-module-mocks --test ${testSources}/tests/bundles.mjs "$@"
+  '';
+  scripts.wb-sdk-download-test.exec = ''
+    exec ${pkgs.python3}/bin/python ${testSources}/tests/sdk-download.py
   '';
   scripts.wb-ci-component.exec = ''
     ${commands.environment}
@@ -179,6 +184,7 @@ in
       wb-devbox-test
       wb-windows-test
       wb-bundle-test
+      wb-sdk-download-test
       wb-windows-check
       ${pkgs.coreutils}/bin/printf '%s\n' "$validation_log" > "$WB_WORKSPACE_ROOT/.state/validation/last-path"
     '';

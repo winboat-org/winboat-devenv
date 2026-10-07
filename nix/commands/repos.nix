@@ -18,6 +18,8 @@ let
         [
           "build.nix"
           "msvc-sysroot.nix"
+          "msvc-sdk-source.nix"
+          "msvc-sdk.lock.json"
           "msvc-toolchain.nix"
           "msvc-cross-tools.nix"
           "msvc-meson.nix"
@@ -32,6 +34,7 @@ let
           "scripts/host-smoke.py"
           "scripts/host-vulkan-probe.c"
           "scripts/msvc-sysroot.py"
+          "scripts/msvc-sdk-download.py"
           "scripts/clvk-symbol-policy.py"
           "scripts/msvc-cross-inspect.py"
           "devbox.nix"

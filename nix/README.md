@@ -50,6 +50,13 @@ static-CRT image inspection, PDB directories and source attribution. Component
 workflows run these recipes; the root release command consumes their prebuilt
 artifacts.
 
+`msvc-sdk-source.nix` declares a fixed-output SDK subset. Its member hashes and
+byte extents in `msvc-sdk.lock.json` were generated from the verified locked
+EWDK image. The Python build helper performs bounded HTTP range transfers and
+checks each file; Nix additionally checks the exact output NAR hash.
+`msvc-sysroot.nix` adds the shared filesystem aliases and header overlay. Both
+development and CI use that same source and preparation logic.
+
 Bootstrap-only pure checks, usable before packages can be downloaded:
 
 ```sh

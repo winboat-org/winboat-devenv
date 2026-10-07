@@ -491,6 +491,7 @@ async function windows_release_tool_build(ws, args, operationId) {
       [
         env.WB_NIX,
         "build",
+        "--print-build-logs",
         "--no-link",
         "--json",
         "--file",
