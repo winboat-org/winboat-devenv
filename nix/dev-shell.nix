@@ -115,6 +115,7 @@ in
     exec ${pkgs.nodejs}/bin/node ${testSources}/tests/cross-artifact-live.mjs "$@"
   '';
   scripts.wb-windows-check.exec = ''
+    set -e
     ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/nix/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
     ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/packaging/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
     ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/ci/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"

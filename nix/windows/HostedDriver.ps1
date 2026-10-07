@@ -50,7 +50,19 @@ $commands=@(foreach ($command in $request.recipe.commands) {
     })
 })
 $dependencies=@(foreach($dependency in $request.dependencies){@{target=$dependency.target;root=(Join-Path $inputs ('engines\'+$dependency.target));files=$dependency.files}})
-$spec=@{schemaVersion=1;operationId=$request.operationId;target='helios-guest-x64';architecture='x64';configuration=$request.configuration;sourceRoot=$source;buildRoot=$build;sources=$request.sources;commands=$commands;outputs=$request.recipe.outputs;outputArchitectures=$request.recipe.outputArchitectures;prerequisites=@(@{kind='cargo';root=(Join-Path $inputs 'cargo');files=@($request.files|Where-Object path -like 'cargo/*'|ForEach-Object {@{path=$_.path.Substring(6);sha256=$_.sha256;size=$_.size}}));componentDependencies=$dependencies;preserveDirectories=@();symbolStorage='artifact';hostedToolchain=$env:WINBOAT_HOSTED_TOOLCHAIN;provisionLockSha256=$request.provisionLockSha256;certificateThumbprint=$certificate.Thumbprint}
+$cargoFiles=@($request.files | Where-Object path -like 'cargo/*' | ForEach-Object {
+    @{path=$_.path.Substring(6);sha256=$_.sha256;size=$_.size}
+})
+$spec=@{
+    schemaVersion=1;operationId=$request.operationId;target='helios-guest-x64'
+    architecture='x64';configuration=$request.configuration
+    sourceRoot=$source;buildRoot=$build;sources=$request.sources;commands=$commands
+    outputs=$request.recipe.outputs;outputArchitectures=$request.recipe.outputArchitectures
+    prerequisites=@(@{kind='cargo';root=(Join-Path $inputs 'cargo');files=$cargoFiles})
+    componentDependencies=$dependencies;preserveDirectories=@();symbolStorage='artifact'
+    hostedToolchain=$env:WINBOAT_HOSTED_TOOLCHAIN;provisionLockSha256=$request.provisionLockSha256
+    certificateThumbprint=$certificate.Thumbprint
+}
 Write-ControlJson $spec $specification
 & (Join-Path $PSScriptRoot 'GuestBuild.ps1') -Specification $specification
 if ($LASTEXITCODE) { exit $LASTEXITCODE }

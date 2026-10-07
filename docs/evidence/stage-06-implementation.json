@@ -2165,5 +2165,12 @@
     "nativeAndSdkTests": 120,
     "log": "workspace-state:stage06/devenv-test-driver-source-fix.log",
     "hostedAcceptance": false
+  },
+  "windowsPayloadValidation": {
+    "state": "validated-local-fix",
+    "failure": "HostedDriver.ps1 had a missing hashtable brace; the Windows check wrapper masked the first parser failure",
+    "fix": "Build the Cargo file table separately and stop the Nix-declared check on its first failing command",
+    "payloadCheck": "workspace-state:stage06/windows-payload-source-fix.log",
+    "hostedAcceptance": false
   }
 }
