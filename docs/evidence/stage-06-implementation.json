@@ -1253,8 +1253,10 @@
       "retry": {
         "runId": 37576329599,
         "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
-        "state": "in_progress",
-        "sourceSync": "passed"
+        "state": "success",
+        "sourceSync": "passed",
+        "downloadVerification": "rejected oversized PE unwind dump in original build manifest",
+        "originalManifestBytes": 73137279
       }
     },
     "mesa": [
@@ -1614,7 +1616,105 @@
           "revision": "e56fd1bf5340b7b2cc729531736c574f66471b7c"
         }
       ]
-    }
+    },
+    "dxvkPaired": [
+      {
+        "state": "verified-real-hosted-component",
+        "repository": "winboat-org/dxvk",
+        "target": "dxvk-engine-x86",
+        "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
+        "componentRevision": "6948271578bf2aa6481389a07b5070c95f911952",
+        "runId": 37577801177,
+        "artifactId": 11464080617,
+        "workflow": {
+          "repository": "winboat-org/dxvk",
+          "path": ".github/workflows/build-dxvk.yml",
+          "runId": 37577801177,
+          "runAttempt": 1,
+          "headSha": "6948271578bf2aa6481389a07b5070c95f911952",
+          "event": "workflow_dispatch"
+        },
+        "archive": {
+          "sha256": "c37b6dab1f8886b4dd73bb754fb13c8990a7a5197bfe0841335e1fde934fd3c1",
+          "size": 41717666
+        },
+        "verifiedMembers": 55,
+        "licenses": [
+          "files/licenses/dxvk/include/native/directx/COPYING.MinGW-w64.txt",
+          "files/licenses/dxvk/include/openvr/LICENSE",
+          "files/licenses/dxvk/include/spirv/LICENSE",
+          "files/licenses/dxvk/include/vulkan/LICENSE.md",
+          "files/licenses/dxvk/LICENSE",
+          "files/licenses/dxvk/subprojects/dxbc-spirv/LICENSE",
+          "files/licenses/dxvk/subprojects/dxbc-spirv/submodules/spirv_headers/LICENSE",
+          "files/licenses/dxvk/subprojects/libdisplay-info/LICENSE",
+          "files/licenses/dxvk/subprojects/libdisplay-info/test/data/LICENSE.CC-BY-4.0",
+          "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+          "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+          "files/licenses/msvc/1033/Redist.txt",
+          "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+          "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+          "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+          "files/licenses/msvc/Windows 8 SDK License.rtf",
+          "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf"
+        ],
+        "installed": false,
+        "loaded": false,
+        "rootCandidateAssembled": false
+      },
+      {
+        "state": "verified-real-hosted-component",
+        "repository": "winboat-org/dxvk",
+        "target": "dxvk-engine-x64",
+        "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
+        "componentRevision": "6948271578bf2aa6481389a07b5070c95f911952",
+        "runId": 37577801177,
+        "artifactId": 11463214795,
+        "workflow": {
+          "repository": "winboat-org/dxvk",
+          "path": ".github/workflows/build-dxvk.yml",
+          "runId": 37577801177,
+          "runAttempt": 1,
+          "headSha": "6948271578bf2aa6481389a07b5070c95f911952",
+          "event": "workflow_dispatch"
+        },
+        "archive": {
+          "sha256": "e911ed5676a27d81b551a780bfbcffd4f01a1622eaea2c9757a7c70093b16a19",
+          "size": 42600249
+        },
+        "verifiedMembers": 55,
+        "licenses": [
+          "files/licenses/dxvk/include/native/directx/COPYING.MinGW-w64.txt",
+          "files/licenses/dxvk/include/openvr/LICENSE",
+          "files/licenses/dxvk/include/spirv/LICENSE",
+          "files/licenses/dxvk/include/vulkan/LICENSE.md",
+          "files/licenses/dxvk/LICENSE",
+          "files/licenses/dxvk/subprojects/dxbc-spirv/LICENSE",
+          "files/licenses/dxvk/subprojects/dxbc-spirv/submodules/spirv_headers/LICENSE",
+          "files/licenses/dxvk/subprojects/libdisplay-info/LICENSE",
+          "files/licenses/dxvk/subprojects/libdisplay-info/test/data/LICENSE.CC-BY-4.0",
+          "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+          "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+          "files/licenses/msvc/1033/Redist.txt",
+          "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+          "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+          "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+          "files/licenses/msvc/Windows 8 SDK License.rtf",
+          "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf"
+        ],
+        "installed": false,
+        "loaded": false,
+        "rootCandidateAssembled": false
+      }
+    ]
   },
   "publicDependencyRetry": {
     "observedAt": "2026-10-07T05:04:34.749Z",
@@ -1787,5 +1887,32 @@
     "installed": false,
     "loaded": false,
     "published": false
+  },
+  "installerCrossBuild": {
+    "state": "passed-real-local-recipe-hosted-interface-pending",
+    "observedAt": "2026-10-07T22:06:20.397144+00:00",
+    "sourceState": "uncommitted local snapshot",
+    "rootCompilationInReleaseWorkflow": false,
+    "toolchain": "nightly-2026-07-14 Linux host and Windows MSVC standard library from the SHA256-verified locked publisher manifest",
+    "output": {
+      "drvPath": "/nix/store/sjm2fd55ggf68p16v4n6g076h37859r1-helios-installer-release.drv",
+      "outputs": {
+        "out": "/nix/store/k3l9xbhhh018g808xhx5r6libk7hir0y-helios-installer-release"
+      }
+    },
+    "architecture": "x64",
+    "staticCrtVerified": true,
+    "guiSubsystemVerified": true,
+    "exeBytes": 994816,
+    "pdbBytes": 5525504,
+    "nativeAndSdkChecks": 119,
+    "hostedProbe": "pending exact source checkpoint and Windows interface job"
+  },
+  "clvkPeMetadataFix": {
+    "state": "implemented-local-validation",
+    "scope": "Linux MSVC builds use the already hashed LLVM images.json report; GNU objdump unwind tables are not duplicated into metadata",
+    "originalClvkManifestBytes": 73137279,
+    "readerLimitRelaxed": false,
+    "hostedArtifactVerified": false
   }
 }

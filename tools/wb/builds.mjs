@@ -574,6 +574,13 @@ export async function _execute(ws, name, configuration, mode, operationId) {
       fs.closeSync(fd);
     }
     if (magic.subarray(0, 2).toString() === "MZ") {
+      if (contract.toolchain === "linux-msvc-cross") {
+        // The Nix recipe already inspected PE headers/imports and recorded
+        // architecture, CRT and symbols in the hashed images.json member.
+        // objdump -p also expands every unwind entry in large compiler DLLs.
+        images.push({ path: f.path, format: "PE" });
+        continue;
+      }
       const headers = run([env.WB_OBJDUMP, "-p", image]).stdout,
         sections = run([env.WB_OBJDUMP, "-h", image]).stdout;
       images.push({

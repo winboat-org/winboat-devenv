@@ -31,6 +31,8 @@ let
           "windows-release-tool.nix"
           "build-adl-compatibility.nix"
           "build-catalog-verifier.nix"
+          "build-helios-installer.nix"
+          "release-rust-toolchain.nix"
           "scripts/host-smoke.py"
           "scripts/host-vulkan-probe.c"
           "scripts/msvc-sysroot.py"
@@ -65,6 +67,7 @@ let
           "windows/LoadedIdentity.cs"
           "windows/Install.ps1"
           "windows/Bundle.ps1"
+          "windows/VerifyInstaller.ps1"
           "windows/ReleaseComponent.ps1"
           "windows/Rollback.ps1"
           "windows/Restore-PowerShell.ps1"
@@ -99,6 +102,7 @@ let
     export WB_INSTALLER_DEPS_EXPRESSION=${buildOperations}/installer-dependencies.nix
     export WB_ADL_COMPATIBILITY_EXPRESSION=${buildOperations}/build-adl-compatibility.nix
     export WB_CATALOG_VERIFIER_EXPRESSION=${buildOperations}/build-catalog-verifier.nix
+    export WB_INSTALLER_CROSS_EXPRESSION=${buildOperations}/build-helios-installer.nix
     export WB_FLOCK=${pkgs.util-linux}/bin/flock
     export WB_OPERATION_SOURCES=${operationSources}
     export WB_BUILD_TARGETS=${buildTargets}

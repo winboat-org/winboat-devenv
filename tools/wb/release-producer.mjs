@@ -470,6 +470,7 @@ async function windows_release_tool_build(ws, args, operationId) {
     "packaging/windows/verify-catalog.c",
     "metadata",
     "kmd_render/driver-version.env",
+    ...(args.target === "helios-installer" ? ["installer"] : []),
   )
     .stdout.trim()
     .split("\n")) {
@@ -495,9 +496,11 @@ async function windows_release_tool_build(ws, args, operationId) {
         "--no-link",
         "--json",
         "--file",
-        args.target === "helios-compatibility"
-          ? env.WB_ADL_COMPATIBILITY_EXPRESSION
-          : env.WB_CATALOG_VERIFIER_EXPRESSION,
+        args.target === "helios-installer"
+          ? env.WB_INSTALLER_CROSS_EXPRESSION
+          : args.target === "helios-compatibility"
+            ? env.WB_ADL_COMPATIBILITY_EXPRESSION
+            : env.WB_CATALOG_VERIFIER_EXPRESSION,
         "--argstr",
         "nixpkgsPath",
         env.WB_NIXPKGS,
@@ -749,10 +752,12 @@ export async function main(argv = process.argv.slice(2)) {
     "missing hosted workflow identity",
   );
   let manifestPath;
-  if (args.target === "helios-installer")
-    manifestPath = await installer_build(ws, args, operationId);
-  else if (
-    ["helios-compatibility", "helios-catalog-verifier"].includes(args.target)
+  if (
+    [
+      "helios-installer",
+      "helios-compatibility",
+      "helios-catalog-verifier",
+    ].includes(args.target)
   )
     manifestPath = await windows_release_tool_build(ws, args, operationId);
   else if (args.target === "helios-guest-x64") {
@@ -812,7 +817,8 @@ export async function main(argv = process.argv.slice(2)) {
       sourcePaths: [
         "installer",
         "packaging/windows",
-        "ci/windows/Build-Installer.ps1",
+        "nix/build-helios-installer.nix",
+        "nix/release-rust-toolchain.nix",
       ],
     };
     write_json(path.join(output, "component.json"), m);

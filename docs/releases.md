@@ -16,11 +16,13 @@ vkd3d architectures have passed hosted builds and exact archive/member
 verification. Initial DXVK/vkd3d manifests exceeded the metadata reader's bound.
 Full COFF reports now remain in hashed artifact files instead of being copied
 into manifests; the corrected vkd3d artifacts verified. DXVK passed after an
-x64 retry, but the paired artifacts have different run attempts and need a
-fresh complete run for release selection.
+x64 retry. Fresh run `37577801177` passed and both exact archive/member tables
+verified. CLVK compiled successfully, but its original manifest duplicated a
+73 MB PE dump; the shared export now uses the existing hashed LLVM report.
+Its corrected hosted artifact is still pending.
 These proofs span source revisions and do not form one release input set.
-Root release CI now uses public hosted runners. The two Windows component
-builds still need their prepared guest/toolchain inputs. No release was published.
+Root release CI now uses public hosted runners. The driver component still needs its Windows build host. The installer now
+cross-compiles on hosted Ubuntu and has a separate Windows interface probe. No release was published.
 
 ## Production ownership
 
@@ -44,8 +46,9 @@ artifact provenance come from GitHub's actual workflow identity.
 
 Manual dispatch selects exact root/component commits and release/debug output.
 Cross jobs use hosted Ubuntu and only their component command and source closure.
-The two builds with the existing Windows toolchain limitation retain their
-prepared guest requirement and Windows component command. No generic workflow
+The primary driver retains its Windows WDK build requirement. The installer
+build uses the same cross SDK and pinned Rust distribution, followed by a
+Windows job that probes the already built executable. No generic workflow
 builds unrelated component roles in one matrix.
 
 Linux cross compilation supplies DXVK, vkd3d, Mesa, CLVK/loaders/probes and the
@@ -54,11 +57,12 @@ compatibility shim and catalog verifier. The separate
 [catalog verifier recipe](../nix/build-catalog-verifier.nix) share only the
 [locked Windows toolchain setup](../nix/windows-release-tool.nix).
 Helios retains the documented Windows WDK build-script
-blocker. The migrated installer also retains its native Windows build entry:
-`build.rs` executes `rc.exe` and uses Windows SDK path discovery. Its Cargo
-dependencies are vendored from the unchanged installer lock through Nix, and
-its durable Windows build uses a local source copy and `CARGO_TARGET_DIR`.
-These are concrete script/tool limitations, not consequences of the MSVC ABI.
+blocker. The migrated installer supports an explicitly selected resource compiler and
+portable resource paths. Its Nix recipe uses LLVM resource tools and the pinned
+nightly Rust host compiler/Windows standard library from the verified publisher
+manifest. Cargo dependencies remain vendored from the unchanged installer lock,
+with a local `CARGO_TARGET_DIR`, static CRT and retained PDBs. Its local cross
+build passed; the hosted Windows interface check remains pending.
 
 The Helios driver job requires four exact artifacts from the DXVK/vkd3d jobs,
 using JSON selectors with `repository`, `artifactId`, `runId`, and `runAttempt`.

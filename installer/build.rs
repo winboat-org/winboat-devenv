@@ -5,6 +5,12 @@ use std::path::PathBuf;
 use std::process::Command;
 
 fn find_rc() -> Option<PathBuf> {
+    if let Some(compiler) = std::env::var_os("HELIOS_RC_COMPILER") {
+        let candidate = PathBuf::from(compiler);
+        if candidate.is_file() {
+            return Some(candidate);
+        }
+    }
     if let Some(dir) = std::env::var_os("HELIOS_RC_DIR") {
         let candidate = PathBuf::from(dir).join("rc.exe");
         if candidate.is_file() {
@@ -43,11 +49,12 @@ fn find_rc() -> Option<PathBuf> {
 fn main() {
     println!("cargo:rerun-if-changed=installer.rc");
     println!("cargo:rerun-if-changed=src/installer.manifest");
+    println!("cargo:rerun-if-env-changed=HELIOS_RC_COMPILER");
     if std::env::var("CARGO_CFG_WINDOWS").is_err() {
         return;
     }
     let out = std::env::var("OUT_DIR").expect("OUT_DIR");
-    let res = format!("{out}\\installer.res");
+    let res = PathBuf::from(out).join("installer.res");
     let rc = find_rc().expect(
         "rc.exe from the Windows SDK is required to embed the installer manifest; set HELIOS_RC_DIR",
     );
@@ -69,7 +76,7 @@ fn main() {
     if !status.success() {
         panic!("rc.exe failed to compile installer.rc");
     }
-    println!("cargo:rustc-link-arg={res}");
+    println!("cargo:rustc-link-arg={}", res.display());
 }
 
 fn sdk_includes(rc: &PathBuf) -> Vec<PathBuf> {
@@ -99,4 +106,3 @@ fn sdk_includes(rc: &PathBuf) -> Vec<PathBuf> {
     }
     includes
 }
-
