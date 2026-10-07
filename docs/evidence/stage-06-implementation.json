@@ -914,7 +914,7 @@
     }
   },
   "hostedExecution": {
-    "observedAt": "2026-10-07T05:26:20.878Z",
+    "observedAt": "2026-10-07T05:39:01.750Z",
     "state": "partial-hosted-component-proof-root-candidate-not-dispatched",
     "producerSourceRevision": "727d9d214fb906bdcb318541d38fa007f2a8213a",
     "sourcePreflightFix": "ab091831a63687e53a5c5e54d3c5bae6b87748a5",
@@ -1240,7 +1240,9 @@
         "vkd3dX64": 52879758
       },
       "fix": "retain full inspection in the original hashed images.json artifact member; manifests reference its path, digest and size while retaining architecture, CRT and symbol results",
-      "metadataLimitRelaxed": false
+      "metadataLimitRelaxed": false,
+      "vkd3dCorrectedRun": 37576336855,
+      "vkd3dCorrectedArtifactsVerified": true
     },
     "clvkSourceFix": {
       "firstRunId": 37575107854,
@@ -1248,15 +1250,117 @@
       "failure": "workflow fetched CLVK alone, but its declared target also needs Helios loader/probe sources",
       "componentRevision": "e56fd1bf5340b7b2cc729531736c574f66471b7c",
       "rootPinCheckpoint": "a68b7beb7d007a9f02f474d5ba9746faf55b2e66",
-      "retry": "pending metadata source checkpoint"
+      "retry": {
+        "runId": 37576329599,
+        "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
+        "state": "in_progress",
+        "sourceSync": "passed"
+      }
     },
-    "mesa": {
-      "runId": 37575104915,
-      "repository": "winboat-org/mesa-helios",
-      "conclusion": "success",
-      "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
-      "downloadVerification": "in progress"
-    },
+    "mesa": [
+      {
+        "state": "verified-real-hosted-component",
+        "repository": "winboat-org/mesa-helios",
+        "target": "mesa-guest-x86",
+        "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
+        "componentRevision": "aa42464065e0b436516fa7514eeda18a976b462d",
+        "runId": 37575104915,
+        "artifactId": 11463171379,
+        "workflow": {
+          "repository": "winboat-org/mesa-helios",
+          "path": ".github/workflows/build-icds.yml",
+          "runId": 37575104915,
+          "runAttempt": 1,
+          "headSha": "aa42464065e0b436516fa7514eeda18a976b462d",
+          "event": "workflow_dispatch"
+        },
+        "archive": {
+          "sha256": "85633e209cb25f372cb98d325392d9d2d28e56f056537383f013e8a27e9f5b05",
+          "size": 37052036
+        },
+        "verifiedMembers": 74,
+        "licenses": [
+          "files/licenses/directx-headers/LICENSE",
+          "files/licenses/directx-headers/source.json",
+          "files/licenses/mesa-helios/docs/license.rst",
+          "files/licenses/mesa-helios/src/imgui/LICENSE.txt",
+          "files/licenses/mesa-helios/src/mesa/glapi/glapi/gen/license.py",
+          "files/licenses/mesa-helios/src/vulkan/runtime/radix_sort/LICENSE",
+          "files/licenses/mesa-helios/src/vulkan/screenshot-layer/LICENSE.txt",
+          "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+          "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+          "files/licenses/msvc/1033/Redist.txt",
+          "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+          "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+          "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+          "files/licenses/msvc/Windows 8 SDK License.rtf",
+          "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf",
+          "files/licenses/venus-protocol/common.h",
+          "files/licenses/venus-protocol/VK_EXT_command_serialization.xml",
+          "files/licenses/venus-protocol/VK_MESA_venus_protocol.xml",
+          "files/licenses/venus-protocol/vk.xml",
+          "files/licenses/venus-protocol/vn_protocol.py"
+        ],
+        "installed": false,
+        "loaded": false,
+        "rootCandidateAssembled": false
+      },
+      {
+        "state": "verified-real-hosted-component",
+        "repository": "winboat-org/mesa-helios",
+        "target": "mesa-guest-x64",
+        "rootRevision": "85da1ac230f18f654f36708d271ee92a4f8c039b",
+        "componentRevision": "aa42464065e0b436516fa7514eeda18a976b462d",
+        "runId": 37575104915,
+        "artifactId": 11463031611,
+        "workflow": {
+          "repository": "winboat-org/mesa-helios",
+          "path": ".github/workflows/build-icds.yml",
+          "runId": 37575104915,
+          "runAttempt": 1,
+          "headSha": "aa42464065e0b436516fa7514eeda18a976b462d",
+          "event": "workflow_dispatch"
+        },
+        "archive": {
+          "sha256": "53ddfcb2130aaa2b323eaa1ca3b833d601f1fad7a495c38706564a76a09abcdf",
+          "size": 35416970
+        },
+        "verifiedMembers": 74,
+        "licenses": [
+          "files/licenses/directx-headers/LICENSE",
+          "files/licenses/directx-headers/source.json",
+          "files/licenses/mesa-helios/docs/license.rst",
+          "files/licenses/mesa-helios/src/imgui/LICENSE.txt",
+          "files/licenses/mesa-helios/src/mesa/glapi/glapi/gen/license.py",
+          "files/licenses/mesa-helios/src/vulkan/runtime/radix_sort/LICENSE",
+          "files/licenses/mesa-helios/src/vulkan/screenshot-layer/LICENSE.txt",
+          "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+          "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+          "files/licenses/msvc/1033/Redist.txt",
+          "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+          "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+          "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+          "files/licenses/msvc/Windows 8 SDK License.rtf",
+          "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf",
+          "files/licenses/venus-protocol/common.h",
+          "files/licenses/venus-protocol/VK_EXT_command_serialization.xml",
+          "files/licenses/venus-protocol/VK_MESA_venus_protocol.xml",
+          "files/licenses/venus-protocol/vk.xml",
+          "files/licenses/venus-protocol/vn_protocol.py"
+        ],
+        "installed": false,
+        "loaded": false,
+        "rootCandidateAssembled": false
+      }
+    ],
     "remainingGate": "root assembly needs all thirteen verified variants from one source revision; current proofs span source revisions and Windows driver/installer producer workflows still require an unavailable prepared runner",
     "windowsProducers": {
       "observedAt": "2026-10-07T05:26:20.879Z",
@@ -1270,6 +1374,183 @@
       "nativeTests": 112,
       "sdkBehaviorTests": 7,
       "log": "workspace-state:validation/native.JRupo1Ok.log"
+    },
+    "vkd3d": [
+      {
+        "state": "verified-real-hosted-component",
+        "repository": "winboat-org/vkd3d-proton",
+        "target": "vkd3d-engine-x64",
+        "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
+        "componentRevision": "3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+        "runId": 37576336855,
+        "artifactId": 11463187576,
+        "workflow": {
+          "repository": "winboat-org/vkd3d-proton",
+          "path": ".github/workflows/build-vkd3d-proton.yml",
+          "runId": 37576336855,
+          "runAttempt": 1,
+          "headSha": "3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+          "event": "workflow_dispatch"
+        },
+        "archive": {
+          "sha256": "96cafc672b6b8231cf2f4332f11eea9fdd2a3d9a5a007fd82518ae98af9db52b",
+          "size": 52056302
+        },
+        "verifiedMembers": 112,
+        "licenses": [
+          "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+          "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+          "files/licenses/msvc/1033/Redist.txt",
+          "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+          "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+          "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+          "files/licenses/msvc/Windows 8 SDK License.rtf",
+          "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf",
+          "files/licenses/vkd3d-proton/COPYING",
+          "files/licenses/vkd3d-proton/khronos/SPIRV-Headers/LICENSE",
+          "files/licenses/vkd3d-proton/khronos/Vulkan-Headers/LICENSE.md",
+          "files/licenses/vkd3d-proton/LICENSE",
+          "files/licenses/vkd3d-proton/subprojects/dxil-spirv/LICENSE.MIT",
+          "files/licenses/vkd3d-proton/subprojects/dxil-spirv/subprojects/dxbc-spirv/LICENSE",
+          "files/licenses/vkd3d-proton/subprojects/dxil-spirv/subprojects/dxbc-spirv/submodules/spirv_headers/LICENSE",
+          "files/licenses/vkd3d-proton/subprojects/dxil-spirv/third_party/spirv-headers/LICENSE",
+          "files/licenses/widl/COPYING",
+          "files/licenses/widl/COPYING.MinGW-w64/COPYING.MinGW-w64.txt",
+          "files/licenses/widl/COPYING.MinGW-w64-runtime/COPYING.MinGW-w64-runtime.txt"
+        ],
+        "installed": false,
+        "loaded": false,
+        "rootCandidateAssembled": false
+      },
+      {
+        "state": "verified-real-hosted-component",
+        "repository": "winboat-org/vkd3d-proton",
+        "target": "vkd3d-engine-x86",
+        "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
+        "componentRevision": "3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+        "runId": 37576336855,
+        "artifactId": 11462389745,
+        "workflow": {
+          "repository": "winboat-org/vkd3d-proton",
+          "path": ".github/workflows/build-vkd3d-proton.yml",
+          "runId": 37576336855,
+          "runAttempt": 1,
+          "headSha": "3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+          "event": "workflow_dispatch"
+        },
+        "archive": {
+          "sha256": "af41e5722bd7140636a4635e1f9dc7f453c97c463f51e1a113b2bff2c6485440",
+          "size": 50707155
+        },
+        "verifiedMembers": 112,
+        "licenses": [
+          "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+          "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+          "files/licenses/msvc/1033/Redist.txt",
+          "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+          "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+          "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+          "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+          "files/licenses/msvc/Windows 8 SDK License.rtf",
+          "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+          "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf",
+          "files/licenses/vkd3d-proton/COPYING",
+          "files/licenses/vkd3d-proton/khronos/SPIRV-Headers/LICENSE",
+          "files/licenses/vkd3d-proton/khronos/Vulkan-Headers/LICENSE.md",
+          "files/licenses/vkd3d-proton/LICENSE",
+          "files/licenses/vkd3d-proton/subprojects/dxil-spirv/LICENSE.MIT",
+          "files/licenses/vkd3d-proton/subprojects/dxil-spirv/subprojects/dxbc-spirv/LICENSE",
+          "files/licenses/vkd3d-proton/subprojects/dxil-spirv/subprojects/dxbc-spirv/submodules/spirv_headers/LICENSE",
+          "files/licenses/vkd3d-proton/subprojects/dxil-spirv/third_party/spirv-headers/LICENSE",
+          "files/licenses/widl/COPYING",
+          "files/licenses/widl/COPYING.MinGW-w64/COPYING.MinGW-w64.txt",
+          "files/licenses/widl/COPYING.MinGW-w64-runtime/COPYING.MinGW-w64-runtime.txt"
+        ],
+        "installed": false,
+        "loaded": false,
+        "rootCandidateAssembled": false
+      }
+    ],
+    "dxvkRetry": {
+      "runId": 37576333228,
+      "runAttempt": 2,
+      "rootRevision": "8d7aed0590d1c055faa2c84d10ffbaafda486a85",
+      "firstAttempt": {
+        "x86": "success",
+        "x64": "failure inside Nix before metadata export; stderr only retained on runner"
+      },
+      "state": "in_progress",
+      "diagnosticsSourceFix": "shared build now streams stderr and retains the identical local log"
+    },
+    "streamedBuildLog": {
+      "state": "passed-real-local-development-build",
+      "target": "venus-protocol",
+      "operationId": "op-2200d2f6682546d2b651ed3eeee1ae4d",
+      "manifest": "/media/rupansh/wdblack/winboat-stage04-artifacts/native/op-2200d2f6682546d2b651ed3eeee1ae4d/manifest.json",
+      "log": "workspace-state:builds/op-2200d2f6682546d2b651ed3eeee1ae4d/build.log",
+      "logSha256": "210700c9e72a85a3e03fa9b6507a1f21933ef0e20e956407558adf5336ee939b",
+      "streamMatchesRetainedLog": true,
+      "hostedAcceptance": false,
+      "scope": "real locked local Venus development build; stream and retained log match exactly",
+      "nativeValidationTests": 112,
+      "sdkBehaviorTests": 7,
+      "validationLog": {
+        "path": "workspace-state:stage06/devenv-test-build-log-streaming.log",
+        "sha256": "2355e8ca2b7d124538f735dc49619ff294b94994af68c8be530ff0b33c0335f6"
+      }
+    },
+    "clvkSourcePublication": {
+      "componentRevision": "e56fd1bf5340b7b2cc729531736c574f66471b7c",
+      "dependencyOrdered": true,
+      "rootCheckpoint": "a68b7beb7d007a9f02f474d5ba9746faf55b2e66",
+      "reconciledRepositories": [
+        {
+          "repository": "dxil-spirv",
+          "state": "succeeded",
+          "revision": "f4651bd076a2613728823ec289abc121a348a48a"
+        },
+        {
+          "repository": "dxvk",
+          "state": "succeeded",
+          "revision": "6948271578bf2aa6481389a07b5070c95f911952"
+        },
+        {
+          "repository": "venus-protocol",
+          "state": "succeeded",
+          "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78"
+        },
+        {
+          "repository": "mesa-helios",
+          "state": "succeeded",
+          "revision": "aa42464065e0b436516fa7514eeda18a976b462d"
+        },
+        {
+          "repository": "virglrenderer",
+          "state": "succeeded",
+          "revision": "48cbbf401443e96c7e7f2cd113e432c557ebf6a0"
+        },
+        {
+          "repository": "qemu-helios",
+          "state": "succeeded",
+          "revision": "090446454fbb1a834334c27547a758aa60d1ee6b"
+        },
+        {
+          "repository": "vkd3d-proton",
+          "state": "succeeded",
+          "revision": "3d1ba76b2c2e89b657112b44e0771beff3677ebe"
+        },
+        {
+          "repository": "helios",
+          "state": "succeeded",
+          "revision": "e56fd1bf5340b7b2cc729531736c574f66471b7c"
+        }
+      ]
     }
   },
   "publicDependencyRetry": {

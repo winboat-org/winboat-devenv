@@ -6,6 +6,7 @@ import {
   digest,
   git,
   run,
+  spawn,
   write_json,
   readJSON,
   read,
@@ -431,7 +432,41 @@ export async function _execute(ws, name, configuration, mode, operationId) {
   const log = fs.openSync(receipt.log, "w");
   let proc;
   try {
-    proc = run(argv, { stderr: log, check: false });
+    proc = await new Promise((resolve, reject) => {
+      const child = spawn(argv[0], argv.slice(1), {
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+      const output = [];
+      let size = 0,
+        failure = null;
+      child.stdout.on("data", (chunk) => {
+        size += chunk.length;
+        if (size > 16 * 1024 * 1024) {
+          failure ??= new Failure(
+            "Nix build result exceeds its size bound",
+            74,
+          );
+          child.kill();
+          return;
+        }
+        output.push(chunk);
+      });
+      child.stderr.on("data", (chunk) => {
+        fs.writeSync(log, chunk);
+        process.stderr.write(chunk);
+      });
+      child.once("error", (error) => {
+        failure = error;
+      });
+      child.once("close", (code) => {
+        if (failure) reject(failure);
+        else
+          resolve({
+            stdout: Buffer.concat(output).toString("utf8"),
+            returncode: code ?? 128,
+          });
+      });
+    });
   } finally {
     fs.closeSync(log);
   }
