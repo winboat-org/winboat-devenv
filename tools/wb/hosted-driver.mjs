@@ -17,6 +17,7 @@ import {
 import * as builds from "./builds.mjs";
 import { create_zip, extract_artifact } from "./archives.mjs";
 import { table, safe_file } from "./bundles.mjs";
+import { materialize_source } from "./windows.mjs";
 
 function require_(value, message) {
   if (!value) throw new Failure(message, 74);
@@ -60,14 +61,16 @@ export async function prepare(ws, args, operationId, engines) {
   const sources = {};
   for (const component of ["helios", "dxvk", "vkd3d-proton", "dxil-spirv"]) {
     const repo = ws.repos[component],
-      selected = new Set(repo.submodules?.paths ?? []);
-    for (const p of repo.submodules?.nested ?? [])
-      selected.add(p.parent + "/" + p.path);
-    const destination = path.join(stage, "source", component);
+      selected =
+        component === "helios"
+          ? new Set()
+          : builds.selected_gitlinks(ws, component),
+      exported = path.join(directory, "sources", component),
+      destination = path.join(stage, "source", component);
     sources[component] = {
       ...builds._export(
         ws.validate_checkout(component),
-        destination,
+        exported,
         "release",
         repo.pin.rev,
         selected,
@@ -80,8 +83,9 @@ export async function prepare(ws, args, operationId, engines) {
         "hash",
         "path",
         "--sri",
-        destination,
+        exported,
       ]).stdout.trim(),
+      windowsLinks: materialize_source(exported, destination),
     };
   }
   const vendor = realize(env.WB_WINDOWS_RUST_EXPRESSION, [

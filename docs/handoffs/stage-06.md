@@ -256,3 +256,11 @@ The native MSVC subset is 693 verified files / 665.76 MB instead of the full
 20 GB EWDK image. The complete portable toolkit is 5.66 GB before compression.
 Original guest workflows remain available for development; release assembly
 continues to consume already signed driver and installer artifacts only.
+
+Hosted driver run `37698922437` reached input preparation but rejected symlinks
+from an unnecessarily broad Helios submodule export. Preparation now exports
+Helios without its unrelated submodules, includes the selected engine headers,
+and materializes source links through the shared Windows mirror boundary checks.
+The real pinned source export passed: 9,418 regular files across the four driver
+sources, with original Git/NAR provenance retained. The 120 native/SDK checks
+passed. Hosted compilation and release assembly still require successful runs.

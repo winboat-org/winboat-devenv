@@ -539,61 +539,84 @@
       {
         "repository": "helios",
         "path": ".github/workflows/build-helios-drivers.yml",
-        "targets": ["helios-guest-x64"],
+        "targets": [
+          "helios-guest-x64"
+        ],
         "backend": "windows"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-helios-installer.yml",
-        "targets": ["helios-installer"],
+        "targets": [
+          "helios-installer"
+        ],
         "backend": "windows"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-adl-compatibility.yml",
-        "targets": ["helios-compatibility"],
+        "targets": [
+          "helios-compatibility"
+        ],
         "backend": "cross"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-catalog-verifier.yml",
-        "targets": ["helios-catalog-verifier"],
+        "targets": [
+          "helios-catalog-verifier"
+        ],
         "backend": "cross"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-clvk-runtime.yml",
-        "targets": ["clvk-helios"],
+        "targets": [
+          "clvk-helios"
+        ],
         "backend": "cross"
       },
       {
         "repository": "qemu-helios",
         "path": ".github/workflows/build-qemu.yml",
-        "targets": ["qemu-helios"],
+        "targets": [
+          "qemu-helios"
+        ],
         "backend": "cross"
       },
       {
         "repository": "virglrenderer",
         "path": ".github/workflows/build-virglrenderer.yml",
-        "targets": ["virglrenderer"],
+        "targets": [
+          "virglrenderer"
+        ],
         "backend": "cross"
       },
       {
         "repository": "mesa-helios",
         "path": ".github/workflows/build-icds.yml",
-        "targets": ["mesa-guest-x64", "mesa-guest-x86"],
+        "targets": [
+          "mesa-guest-x64",
+          "mesa-guest-x86"
+        ],
         "backend": "cross"
       },
       {
         "repository": "dxvk",
         "path": ".github/workflows/build-dxvk.yml",
-        "targets": ["dxvk-engine-x64", "dxvk-engine-x86"],
+        "targets": [
+          "dxvk-engine-x64",
+          "dxvk-engine-x86"
+        ],
         "backend": "cross"
       },
       {
         "repository": "vkd3d-proton",
         "path": ".github/workflows/build-vkd3d-proton.yml",
-        "targets": ["vkd3d-engine-x64", "vkd3d-engine-x86"],
+        "targets": [
+          "vkd3d-engine-x64",
+          "vkd3d-engine-x86"
+        ],
         "backend": "cross"
       }
     ],
@@ -601,8 +624,13 @@
     "requiredVariants": 13,
     "mcpCatalogTools": 55,
     "componentBuildWorkflows": 10,
-    "rootWorkflows": [".github/workflows/assemble-release-candidate.yml"],
-    "rootRunners": ["ubuntu-24.04", "windows-2025"],
+    "rootWorkflows": [
+      ".github/workflows/assemble-release-candidate.yml"
+    ],
+    "rootRunners": [
+      "ubuntu-24.04",
+      "windows-2025"
+    ],
     "rootSelfHosted": false,
     "composedEnvironment": {
       "base": "nix/ci-environment.nix",
@@ -963,7 +991,9 @@
         "size": 75758827
       },
       "verifiedMembers": 21,
-      "licenses": ["files/share/licenses/virglrenderer/COPYING"],
+      "licenses": [
+        "files/share/licenses/virglrenderer/COPYING"
+      ],
       "installed": false,
       "loaded": false,
       "rootCandidateAssembled": false
@@ -1214,7 +1244,9 @@
         "size": 1847407
       },
       "verifiedMembers": 11,
-      "licenses": ["files/licenses/NOTICE"],
+      "licenses": [
+        "files/licenses/NOTICE"
+      ],
       "installed": false,
       "loaded": false,
       "rootCandidateAssembled": false
@@ -1367,7 +1399,10 @@
     "windowsProducers": {
       "observedAt": "2026-10-07T05:26:20.879Z",
       "registeredHeliosRepositoryRunners": 0,
-      "workflows": ["build-helios-drivers.yml", "build-helios-installer.yml"],
+      "workflows": [
+        "build-helios-drivers.yml",
+        "build-helios-installer.yml"
+      ],
       "requirement": "existing self-hosted Linux command plus verified Windows guest/toolchain",
       "dispatched": false
     },
@@ -2000,11 +2035,135 @@
   "sdkRangeRetry": {
     "state": "validated-local-fix",
     "failure": "hosted Mesa x64 and vkd3d x86 SDK reads returned a short body; the length check previously ran outside retry handling",
-    "runs": [37696836624, 37696831256],
+    "runs": [
+      37696836624,
+      37696831256
+    ],
     "retry": "up to three attempts for short bodies and interrupted reads; exact Content-Range, oversize, member hashes and fixed output NAR checks retained",
     "nativeAndSdkTests": 120,
     "sdkBehaviorTests": 8,
     "log": "workspace-state:stage06/devenv-test-sdk-retry.log",
     "coherentArtifactsPendingNewSource": true
+  },
+  "hostedDriverSourcePackaging": {
+    "state": "validated-local-fix",
+    "failedRun": 37698922437,
+    "failure": "Unrelated Helios submodules introduced source symlinks into a release file table",
+    "sourceFiles": 9418,
+    "sources": [
+      {
+        "name": "helios",
+        "revision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "files": 613,
+        "bytes": 27678777,
+        "gitlinks": [
+          {
+            "path": "LookingGlass",
+            "materialized": false
+          },
+          {
+            "path": "dxvk-helios",
+            "materialized": false
+          },
+          {
+            "path": "icd/mesa",
+            "materialized": false
+          },
+          {
+            "path": "qemu-helios",
+            "materialized": false
+          },
+          {
+            "path": "venus-protocol",
+            "materialized": false
+          },
+          {
+            "path": "virglrenderer",
+            "materialized": false
+          },
+          {
+            "path": "vkd3d-proton-helios",
+            "materialized": false
+          }
+        ]
+      },
+      {
+        "name": "dxvk",
+        "revision": "6948271578bf2aa6481389a07b5070c95f911952",
+        "files": 1238,
+        "bytes": 62357441,
+        "gitlinks": [
+          {
+            "path": "include/native/directx",
+            "materialized": true
+          },
+          {
+            "path": "include/spirv",
+            "materialized": true
+          },
+          {
+            "path": "include/vulkan",
+            "materialized": true
+          },
+          {
+            "path": "subprojects/dxbc-spirv",
+            "materialized": true
+          },
+          {
+            "path": "subprojects/libdisplay-info",
+            "materialized": true
+          }
+        ]
+      },
+      {
+        "name": "vkd3d-proton",
+        "revision": "3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+        "files": 4878,
+        "bytes": 102299433,
+        "gitlinks": [
+          {
+            "path": "khronos/SPIRV-Headers",
+            "materialized": true
+          },
+          {
+            "path": "khronos/Vulkan-Headers",
+            "materialized": true
+          },
+          {
+            "path": "subprojects/dxil-spirv",
+            "materialized": true
+          }
+        ]
+      },
+      {
+        "name": "dxil-spirv",
+        "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+        "files": 2689,
+        "bytes": 20427911,
+        "gitlinks": [
+          {
+            "path": "subprojects/dxbc-spirv",
+            "materialized": true
+          },
+          {
+            "path": "third_party/SPIRV-Cross",
+            "materialized": false
+          },
+          {
+            "path": "third_party/SPIRV-Tools",
+            "materialized": false
+          },
+          {
+            "path": "third_party/spirv-headers",
+            "materialized": true
+          }
+        ]
+      }
+    ],
+    "materialization": "Reuse Windows source link boundary and cycle checks; retain original source NAR and Git provenance",
+    "dependencyBoundary": "Hosted engine inputs are verified under the local source root",
+    "nativeAndSdkTests": 120,
+    "log": "workspace-state:stage06/devenv-test-driver-source-fix.log",
+    "hostedAcceptance": false
   }
 }

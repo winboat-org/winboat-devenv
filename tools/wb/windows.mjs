@@ -410,6 +410,25 @@ export function windows_source_files(root) {
   visit(root, "", new Set());
   return [files, links];
 }
+export function materialize_source(root, destination) {
+  const [files, links] = windows_source_files(root),
+    names = new Set();
+  for (const [relative] of files) {
+    const name = windows_relative(relative).toLowerCase();
+    if (names.has(name))
+      throw new Failure("case-aliased Windows snapshot paths", 2, {
+        path: relative,
+      });
+    names.add(name);
+  }
+  for (const [relative, source] of files) {
+    const output = path.join(destination, relative);
+    mkdir(path.dirname(output));
+    fs.copyFileSync(source, output, fs.constants.COPYFILE_EXCL);
+    fs.chmodSync(output, fs.statSync(source).mode);
+  }
+  return links;
+}
 export async function mirror_sources(ws, name, components, mode, operationId) {
   const directory = path.join(ws.state, "windows-sources", operationId);
   mkdir(directory);

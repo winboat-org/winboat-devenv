@@ -34,7 +34,8 @@ foreach ($prerequisite in $prerequisites) {
 $separateSymbols=$spec.PSObject.Properties['symbolStorage'] -and $spec.symbolStorage -eq 'component-artifacts'
 if($separateSymbols -and $spec.target -ne 'helios-development-package') {throw 'Separate symbol references require a package build'}
 foreach($dependency in $spec.componentDependencies) {
-    $root=Assert-ControlPath $dependency.root 'C:\WinBoatDev\build'
+    $boundary=if($spec.PSObject.Properties['hostedToolchain']){'C:\WinBoatDev\src'}else{'C:\WinBoatDev\build'}
+    $root=Assert-ControlPath $dependency.root $boundary
     Write-Output ("WinBoat build: verifying {0} dependency ({1} files)" -f $dependency.target,@($dependency.files).Count)
     Assert-ControlTree $root $dependency.files -SkipSymbolHashes:$separateSymbols
 }

@@ -726,6 +726,13 @@ check("source links materialize without cycles or escape", (f) => {
   assert.deepEqual(links, [
     { path: "ci/bin", target: "../bin", materialized: "directory" },
   ]);
+  const materialized = path.join(f.root, "materialized");
+  assert.deepEqual(windows.materialize_source(source, materialized), links);
+  assert.equal(
+    fs.readFileSync(path.join(materialized, "ci/bin/tool.py"), "utf8"),
+    "build source",
+  );
+  assert.ok(!fs.lstatSync(path.join(materialized, "ci/bin")).isSymbolicLink());
   fs.symlinkSync("..", path.join(source, "bin/cycle"));
   assert.throws(() => windows.windows_source_files(source), Failure);
   fs.unlinkSync(path.join(source, "bin/cycle"));
