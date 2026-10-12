@@ -8,7 +8,8 @@ scope is recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
 The root remote is `https://github.com/winboat-org/winboat-devenv`. It was verified
 empty before source publication on 2026-10-06. The user subsequently authorized
 checkpoints and pushes; the six component repositories are published at verified
-canonical revisions. Root implementation `db1ffc0` is published on `master`.
+canonical revisions. Current component builds use published root source `6797be4`
+on `master`.
 No repository runners were registered in root or any of the
 six components, and root/Helios had no configured environments at inspection.
 QEMU, virglrenderer, the catalog verifier, ADL, both Mesa architectures and both
@@ -19,8 +20,13 @@ into manifests; the corrected vkd3d artifacts verified. DXVK passed after an
 x64 retry. Fresh run `37577801177` passed and both exact archive/member tables
 verified. CLVK compiled successfully, but its original manifest duplicated a
 73 MB PE dump; the shared export now uses the existing hashed LLVM report.
-Its corrected hosted artifact is still pending.
-These proofs span source revisions and do not form one release input set.
+Corrected CLVK run `37701032294` passed and all 87 archive members verified;
+its original build manifest is now 50,386 bytes without weakening reader limits.
+The nine component workflows dispatched from `6797be4` all passed and produced
+twelve exact artifacts. Their current run and artifact IDs are recorded in the
+evidence. Driver run `38323559694` is using the four paired engine artifacts
+from that same source revision. The complete thirteen-artifact input set remains
+pending until the driver workflow passes.
 Root release CI now uses public hosted runners. The driver now has hosted Ubuntu preparation, Windows compilation/signing and
 Ubuntu artifact verification jobs; their real hosted build remains pending. The installer now
 cross-compiles on hosted Ubuntu and has a separate Windows interface probe. No release was published.

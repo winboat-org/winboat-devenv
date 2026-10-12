@@ -2172,5 +2172,291 @@
     "fix": "Build the Cargo file table separately and stop the Nix-declared check on its first failing command",
     "payloadCheck": "workspace-state:stage06/windows-payload-source-fix.log",
     "hostedAcceptance": false
+  },
+  "currentHostedAcceptance": {
+    "state": "nine-workflows-passed-driver-pending",
+    "observedAt": "2026-10-12T23:46:02.869367+00:00",
+    "sourceRevision": "6797be4f226a6484a53e00539014a1fa295340bf",
+    "workflows": [
+      {
+        "repository": "helios",
+        "workflow": "build-helios-installer.yml",
+        "runId": 37701012053,
+        "componentRevision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "conclusion": "success"
+      },
+      {
+        "repository": "helios",
+        "workflow": "build-adl-compatibility.yml",
+        "runId": 37701018922,
+        "componentRevision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "conclusion": "success"
+      },
+      {
+        "repository": "helios",
+        "workflow": "build-catalog-verifier.yml",
+        "runId": 37701025438,
+        "componentRevision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "conclusion": "success"
+      },
+      {
+        "repository": "helios",
+        "workflow": "build-clvk-runtime.yml",
+        "runId": 37701032294,
+        "componentRevision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "conclusion": "success"
+      },
+      {
+        "repository": "dxvk",
+        "workflow": "build-dxvk.yml",
+        "runId": 37701039011,
+        "componentRevision": "6948271578bf2aa6481389a07b5070c95f911952",
+        "conclusion": "success"
+      },
+      {
+        "repository": "vkd3d-proton",
+        "workflow": "build-vkd3d-proton.yml",
+        "runId": 37701045614,
+        "componentRevision": "3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+        "conclusion": "success"
+      },
+      {
+        "repository": "mesa-helios",
+        "workflow": "build-icds.yml",
+        "runId": 37701051986,
+        "componentRevision": "aa42464065e0b436516fa7514eeda18a976b462d",
+        "conclusion": "success"
+      },
+      {
+        "repository": "virglrenderer",
+        "workflow": "build-virglrenderer.yml",
+        "runId": 37701058574,
+        "componentRevision": "48cbbf401443e96c7e7f2cd113e432c557ebf6a0",
+        "conclusion": "success"
+      },
+      {
+        "repository": "qemu-helios",
+        "workflow": "build-qemu.yml",
+        "runId": 37701065436,
+        "componentRevision": "090446454fbb1a834334c27547a758aa60d1ee6b",
+        "conclusion": "success"
+      }
+    ],
+    "availableArtifacts": [
+      {
+        "repository": "winboat-org/helios",
+        "runId": 37701012053,
+        "runAttempt": 1,
+        "artifactId": 11516924041,
+        "name": "helios-installer-release-dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "archiveSha256": "888f1e3856b2a047769771d3c7fd631eeca3c473a403ffa98db4206fb48e8758",
+        "size": 1962428
+      },
+      {
+        "repository": "winboat-org/helios",
+        "runId": 37701018922,
+        "runAttempt": 1,
+        "artifactId": 11516989913,
+        "name": "helios-compatibility-release-dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "archiveSha256": "d555558b031586b13145eb5111fd96ff70f709852bdd1e20e76917f2a082c6f3",
+        "size": 1847397
+      },
+      {
+        "repository": "winboat-org/helios",
+        "runId": 37701025438,
+        "runAttempt": 1,
+        "artifactId": 11517053595,
+        "name": "helios-catalog-verifier-release-dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "archiveSha256": "12bb5d3bb99ac8accfe1a0673d33433f6f8c3d8d2b639952d5b797eba6b82105",
+        "size": 1827261
+      },
+      {
+        "repository": "winboat-org/helios",
+        "runId": 37701032294,
+        "runAttempt": 1,
+        "artifactId": 11522744140,
+        "name": "clvk-helios-release-dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "archiveSha256": "90f0761c705667ba9a30a4a975df493c229e020a6ddddda4b96cd3a3ab6fb41f",
+        "size": 113756524
+      },
+      {
+        "repository": "winboat-org/dxvk",
+        "runId": 37701039011,
+        "runAttempt": 1,
+        "artifactId": 11517632307,
+        "name": "dxvk-engine-x64-release-6948271578bf2aa6481389a07b5070c95f911952",
+        "archiveSha256": "3305b8698a2c1d69dc13c4ecd0862d30d9ddaff0e1958a545f1dace2d8023d99",
+        "size": 42600191
+      },
+      {
+        "repository": "winboat-org/dxvk",
+        "runId": 37701039011,
+        "runAttempt": 1,
+        "artifactId": 11517562355,
+        "name": "dxvk-engine-x86-release-6948271578bf2aa6481389a07b5070c95f911952",
+        "archiveSha256": "669099b89144f19a159c43b144f66a10a2df17fed122e7656d791c1405156565",
+        "size": 41717671
+      },
+      {
+        "repository": "winboat-org/vkd3d-proton",
+        "runId": 37701045614,
+        "runAttempt": 1,
+        "artifactId": 11517642605,
+        "name": "vkd3d-engine-x86-release-3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+        "archiveSha256": "5f148084af7d844d7713a70e680e96613ec4222249dd83054aea717a7df9aae6",
+        "size": 50706956
+      },
+      {
+        "repository": "winboat-org/vkd3d-proton",
+        "runId": 37701045614,
+        "runAttempt": 1,
+        "artifactId": 11516759680,
+        "name": "vkd3d-engine-x64-release-3d1ba76b2c2e89b657112b44e0771beff3677ebe",
+        "archiveSha256": "f9686005fec77074527fe54f2e5f7eff6c24f48216139a818984ad3ac2a35907",
+        "size": 52056225
+      },
+      {
+        "repository": "winboat-org/mesa-helios",
+        "runId": 37701051986,
+        "runAttempt": 1,
+        "artifactId": 11517991057,
+        "name": "mesa-guest-x86-release-aa42464065e0b436516fa7514eeda18a976b462d",
+        "archiveSha256": "932f77d9848ab1c518c5aa45ee4b1075ee2b569f583e285ab50860bcf153afde",
+        "size": 34057752
+      },
+      {
+        "repository": "winboat-org/mesa-helios",
+        "runId": 37701051986,
+        "runAttempt": 1,
+        "artifactId": 11517597706,
+        "name": "mesa-guest-x64-release-aa42464065e0b436516fa7514eeda18a976b462d",
+        "archiveSha256": "13fc49a2c39ffe2739f8f8a68b7d55c09833477a105ae618b868a6a59e539480",
+        "size": 33953909
+      },
+      {
+        "repository": "winboat-org/virglrenderer",
+        "runId": 37701058574,
+        "runAttempt": 1,
+        "artifactId": 11517617150,
+        "name": "virglrenderer-release-48cbbf401443e96c7e7f2cd113e432c557ebf6a0",
+        "archiveSha256": "b899412a3db8dbf9f5406e585ff3fc51d935864ccf49df0d54f15a6be7750fab",
+        "size": 75758832
+      },
+      {
+        "repository": "winboat-org/qemu-helios",
+        "runId": 37701065436,
+        "runAttempt": 1,
+        "artifactId": 11518106862,
+        "name": "qemu-helios-release-090446454fbb1a834334c27547a758aa60d1ee6b",
+        "archiveSha256": "240788b3b51c319b903dc9c94a8c04ad2fbd66a95190cf021b3f111d0ecfe950",
+        "size": 1093465980
+      }
+    ],
+    "clvkVerified": {
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/helios",
+      "target": "clvk-helios",
+      "rootRevision": "6797be4f226a6484a53e00539014a1fa295340bf",
+      "componentRevision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+      "runId": 37701032294,
+      "artifactId": 11522744140,
+      "workflow": {
+        "repository": "winboat-org/helios",
+        "path": ".github/workflows/build-clvk-runtime.yml",
+        "runId": 37701032294,
+        "runAttempt": 1,
+        "headSha": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "90f0761c705667ba9a30a4a975df493c229e020a6ddddda4b96cd3a3ab6fb41f",
+        "size": 113756524
+      },
+      "verifiedMembers": 87,
+      "licenses": [
+        "files/licenses/clvk-helios/external/clspv/LICENSE",
+        "files/licenses/clvk-helios/external/OpenCL-Headers/LICENSE",
+        "files/licenses/clvk-helios/external/SPIRV-Headers/LICENSE",
+        "files/licenses/clvk-helios/external/SPIRV-LLVM-Translator/LICENSE.TXT",
+        "files/licenses/clvk-helios/external/SPIRV-Tools/LICENSE",
+        "files/licenses/clvk-helios/external/SPIRV-Tools/utils/vscode/src/lsp/LICENSE",
+        "files/licenses/clvk-helios/LICENSE",
+        "files/licenses/llvm/LICENSE.TXT",
+        "files/licenses/llvm/sources/clang/LICENSE.TXT",
+        "files/licenses/llvm/sources/libc/LICENSE.TXT",
+        "files/licenses/llvm/sources/libclc/LICENSE.TXT",
+        "files/licenses/llvm/sources/llvm/include/llvm/Support/LICENSE.TXT",
+        "files/licenses/llvm/sources/llvm/lib/Support/BLAKE3/LICENSE",
+        "files/licenses/llvm/sources/llvm/LICENSE.TXT",
+        "files/licenses/llvm/sources/llvm/utils/lit/LICENSE.TXT",
+        "files/licenses/llvm/sources/third-party/benchmark/LICENSE",
+        "files/licenses/llvm/sources/third-party/boost-math/LICENSE",
+        "files/licenses/llvm/sources/third-party/unittest/googlemock/LICENSE.txt",
+        "files/licenses/llvm/sources/third-party/unittest/googletest/LICENSE.TXT",
+        "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+        "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+        "files/licenses/msvc/1033/Redist.txt",
+        "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+        "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+        "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+        "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+        "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+        "files/licenses/msvc/Windows 8 SDK License.rtf",
+        "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+        "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+        "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf",
+        "files/licenses/OpenCL-Headers/LICENSE",
+        "files/licenses/OpenCL-ICD-Loader/LICENSE",
+        "files/licenses/Vulkan-Headers/LICENSE.md",
+        "files/licenses/Vulkan-Headers/LICENSES/Apache-2.0.txt",
+        "files/licenses/Vulkan-Headers/LICENSES/MIT.txt",
+        "files/licenses/Vulkan-Loader/LICENSE.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/Apache-2.0.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/CC-BY-4.0.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/HPND-Kevlin-Henney.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/MIT-Khronos-old.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/MIT.txt"
+      ],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false
+    },
+    "clvkManifestBytes": 50386,
+    "driver": {
+      "repository": "helios",
+      "workflow": "build-helios-drivers.yml",
+      "rootRevision": "6797be4f226a6484a53e00539014a1fa295340bf",
+      "componentRevision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+      "runId": 38323559694,
+      "engineSelection": [
+        {
+          "repository": "winboat-org/dxvk",
+          "runId": 37701039011,
+          "runAttempt": 1,
+          "artifactId": 11517632307
+        },
+        {
+          "repository": "winboat-org/dxvk",
+          "runId": 37701039011,
+          "runAttempt": 1,
+          "artifactId": 11517562355
+        },
+        {
+          "repository": "winboat-org/vkd3d-proton",
+          "runId": 37701045614,
+          "runAttempt": 1,
+          "artifactId": 11517642605
+        },
+        {
+          "repository": "winboat-org/vkd3d-proton",
+          "runId": 37701045614,
+          "runAttempt": 1,
+          "artifactId": 11516759680
+        }
+      ],
+      "dispatchedAt": "2026-10-12T23:42:47.516Z"
+    },
+    "rootAssemblyAccepted": false,
+    "freshInstallerRuntimeAccepted": false
   }
 }

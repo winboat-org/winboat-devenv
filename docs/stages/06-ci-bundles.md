@@ -1,10 +1,9 @@
 # Stage 6 — Component CI and bundling-only release CI
 
-Status: QEMU, virglrenderer, catalog verifier, ADL, both Mesa architectures and
-both corrected vkd3d architectures have verified hosted artifacts;
-DXVK passed after an x64 retry and needs a fresh paired artifact set;
-complete hosted component set,
-candidate assembly, real packed output
+Status: nine hosted component workflows passed from source revision `6797be4`,
+producing twelve exact artifacts. Both engine/ICD architectures passed and the
+corrected CLVK archive verified. Hosted driver production, the complete component
+set, candidate assembly, real packed output
 and fresh installer runtime acceptance pending. Prerequisites: Stages 2 and 4.
 Agent setup is useful but not a prerequisite.
 
