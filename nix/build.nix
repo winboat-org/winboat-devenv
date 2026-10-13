@@ -53,7 +53,21 @@ let
   packages = {
     venus-protocol = protocol;
     virglrenderer = renderer;
-    qemu-helios = qemu;
+    qemu-helios = pkgs.symlinkJoin {
+      name = "qemu-helios-artifact";
+      paths = [
+        qemu
+        qemu.debug
+        smoke
+      ];
+      # Every build-id has an alias to the same original source tree. Sources
+      # are pinned in provenance; expanding these aliases would copy that tree
+      # once per binary. Keep symbols and the generated source overlay once.
+      postBuild = ''
+        find "$out/lib/debug/.build-id" -type l \
+          \( -name '*.source' -o -name '*.sourceoverlay' \) -delete
+      '';
+    };
     host-stack = pkgs.symlinkJoin {
       name = "winboat-host-stack";
       paths = [

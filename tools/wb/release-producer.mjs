@@ -169,7 +169,7 @@ export async function seal(
     owner = OWNERS[target],
     filesRoot = path.join(path.dirname(manifestPath), "files");
   require_(
-    built.target === (target === "qemu-helios" ? "host-stack" : target) &&
+    built.target === target &&
       built.mode === "release" &&
       built.configuration === configuration,
     "component build identity differs",
@@ -203,10 +203,10 @@ export async function seal(
     mkdir(path.dirname(dest));
     fs.copyFileSync(p, dest, fs.constants.COPYFILE_EXCL);
   };
-  for (const p of walk(filesRoot).filter(file))
-    copy(p, "files/" + path.relative(filesRoot, p).replaceAll(path.sep, "/"));
+  for (const row of built.files.filter((row) => row.sha256))
+    copy(path.join(filesRoot, relative(row.path)), "files/" + row.path);
   copy(manifestPath, "build-manifest.json");
-  if (target === "qemu-helios" || target === "virglrenderer")
+  if (target === "virglrenderer")
     require_(
       await export_closure(built, output),
       "host component requires its complete Nix closure",
@@ -801,7 +801,7 @@ export async function main(argv = process.argv.slice(2)) {
     manifestPath = (
       await builds.execute(
         ws,
-        args.target === "qemu-helios" ? "host-stack" : args.target,
+        args.target,
         args.configuration,
         "release",
         operationId,

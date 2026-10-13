@@ -271,3 +271,24 @@ omitted the four consumed engine manifest hashes. Preparation and collection
 now retain those exact receipts; the real archive collection regression check
 and the full 122-check suite passed. The existing driver archive remains
 unchanged and rejected. Rerun the driver workflow before release assembly.
+
+QEMU artifact sizing correction: the old 1.09 GB artifact included a 908 MB
+compressed full host closure and another 185 MB compressed file tree. The
+QEMU executable itself is 34 MB / 7 MB compressed. Component production now
+selects `qemu-helios`, retains modules/symbols/reports, enumerates directory links
+with member hashes, and omits the duplicated full host closure. The x86-only
+recipe excludes non-x86 EDK2 images; losslessly compressed unit reports no longer
+retain build-only runtime dependencies. The component output excludes repeated
+per-build-id source aliases while preserving symbols and source pins/hashes.
+The 123-check suite passed. Exact QEMU and Helios parent pins advanced to
+`5262ea9` and `d82ce56`; their affected hosted producers require fresh artifacts.
+Unchanged engine, Mesa and renderer source artifacts remain reusable through
+explicit build-root selection. Release assembly and fresh runtime acceptance
+remain pending.
+
+The corrected local QEMU archive measured 142,139,628 bytes (about 87% smaller
+than the old hosted archive), retaining 941 hashed files, 19 modules and 90 symbol
+files. The clean pinned component source passed 105 unit tests and 3 known skips,
+and the paired-renderer/module/SDL-QMP checks passed. This local build used
+development mode for changed root packaging code; hosted release proof remains
+pending. No existing guest or runtime binding changed.

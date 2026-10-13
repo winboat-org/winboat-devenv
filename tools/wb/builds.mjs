@@ -252,8 +252,34 @@ export function _export(
     untracked,
   };
 }
-export function _files(root) {
-  return walk(root).flatMap((p) => {
+export function _files(root, expandStoreDirectories = false) {
+  const paths = (directory, ancestors = new Set()) => {
+    const resolved = resolve(directory);
+    if (ancestors.has(resolved))
+      throw new Failure("artifact directory link cycle", 74);
+    const parents = new Set([...ancestors, resolved]);
+    return list(directory).flatMap((p) => {
+      if (
+        symlink(p) &&
+        !within(resolve(p), resolve(root)) &&
+        !resolve(p).startsWith("/nix/store/")
+      )
+        throw new Failure(
+          "artifact links must reference the export or immutable Nix closure",
+          1,
+          { artifact: p },
+        );
+      return [
+        p,
+        ...(dir(p) && (!symlink(p) || expandStoreDirectories)
+          ? paths(p, parents)
+          : []),
+      ];
+    });
+  };
+  return (expandStoreDirectories ? paths(root) : walk(root)).flatMap((p) => {
+    if (symlink(p) && !file(p) && !dir(p))
+      throw new Failure("broken artifact symlink", 1, { artifact: p });
     if (
       symlink(p) &&
       !within(resolve(p), resolve(root)) &&
@@ -273,7 +299,7 @@ export function _files(root) {
           ...(symlink(p) ? { linkTarget: fs.readlinkSync(p) } : {}),
         },
       ];
-    if (symlink(p)) {
+    if (symlink(p) && !expandStoreDirectories) {
       if (!dir(p))
         throw new Failure("broken artifact symlink", 1, { artifact: p });
       return [
@@ -496,7 +522,8 @@ export async function _execute(ws, name, configuration, mode, operationId) {
     verbatimSymlinks: true,
     preserveTimestamps: true,
   });
-  const files = _files(path.join(exported, "files")),
+  const expandStoreDirectories = name === "qemu-helios";
+  const files = _files(path.join(exported, "files"), expandStoreDirectories),
     licenses = files
       .filter((f) => f.path.includes("licenses/"))
       .map((f) => f.path),
@@ -522,6 +549,9 @@ export async function _execute(ws, name, configuration, mode, operationId) {
     abi: contract.abi,
     configuration,
     mode,
+    ...(expandStoreDirectories
+      ? { filesLayout: "expanded-store-directories" }
+      : {}),
     sources: Object.fromEntries(
       Object.entries(sourceRecords).map(([k, v]) => [
         k,
@@ -669,7 +699,15 @@ export function verify(p) {
     throw new Failure("unsupported artifact manifest", 2);
   if (
     !manifest.files?.length ||
-    !equal(_files(path.join(path.dirname(p), "files")), manifest.files)
+    (manifest.filesLayout &&
+      manifest.filesLayout !== "expanded-store-directories") ||
+    !equal(
+      _files(
+        path.join(path.dirname(p), "files"),
+        manifest.filesLayout === "expanded-store-directories",
+      ),
+      manifest.files,
+    )
   )
     throw new Failure("artifact hashes/file set differ from the manifest", 1, {
       manifest: p,

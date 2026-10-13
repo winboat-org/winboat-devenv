@@ -40,6 +40,42 @@ const refused = (f, ...args) => {
   a.notEqual(r.exitCode, 0);
   return r;
 };
+test("expanded component directory links retain member hashes and reject cycles", (t) => {
+  const root = fs.mkdtempSync("/tmp/wb-component-directory-");
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const files = path.join(root, "files");
+  write(path.join(files, "modules/ui-sdl.so"), "matching QEMU module\n");
+  fs.mkdirSync(path.join(files, "lib"));
+  fs.symlinkSync("../modules", path.join(files, "lib/qemu"));
+  const manifest = path.join(root, "manifest.json"),
+    rows = builds._files(files, true);
+  a.ok(
+    rows.some(
+      (f) =>
+        f.path === "lib/qemu/ui-sdl.so" &&
+        f.sha256 === digest(path.join(files, f.path)),
+    ),
+  );
+  a.ok(rows.every((f) => f.type !== "directorySymlink"));
+  write(
+    manifest,
+    JSON.stringify({
+      schemaVersion: 1,
+      state: "built",
+      filesLayout: "expanded-store-directories",
+      files: rows,
+    }),
+  );
+  a.equal(builds.verify(manifest).state, "verified");
+  write(path.join(files, "modules/ui-sdl.so"), "different build\n");
+  a.throws(() => builds.verify(manifest), /hashes\/file set differ/);
+  const broken = path.join(files, "missing-module");
+  fs.symlinkSync("missing", broken);
+  a.throws(() => builds._files(files, true), /broken artifact symlink/);
+  fs.unlinkSync(broken);
+  fs.symlinkSync("..", path.join(files, "modules/cycle"));
+  a.throws(() => builds._files(files, true), /directory link cycle/);
+});
 check("selection and read-only plan", (f) => {
   const before = f.snapshot(f.root);
   const selected = f.wb("repo", "plan", "--repo", "qemu-helios");

@@ -40,8 +40,10 @@ The corrected CLVK archive and all 87 members also verified. Hosted driver run
 producing the thirteenth component artifact. Exact-input verification rejected
 its missing engine-dependency receipts; the exporter fix passed 122 local checks
 and requires a new hosted driver artifact. Candidate assembly and fresh installer
-runtime acceptance remain pending; see [release usage](docs/releases.md). Stage 7 remains
-planned.
+runtime acceptance remain pending; see [release usage](docs/releases.md). QEMU
+component packaging now excludes the duplicated full host closure and non-x86
+EDK2 images; its updated source and matching Helios parent require fresh hosted
+artifacts. Stage 7 remains planned.
 
 ## Start here
 

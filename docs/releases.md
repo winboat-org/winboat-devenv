@@ -39,18 +39,18 @@ that component. The common execution template is
 [ci/component-build.yml.in](../ci/component-build.yml.in); workflow paths in
 artifact provenance come from GitHub's actual workflow identity.
 
-| Repository | Workflow | Responsibility |
-| --- | --- | --- |
-| helios | `build-helios-drivers.yml` | Signed KMD and native/WoW64 UMDs |
-| helios | `build-helios-installer.yml` | Migrated installer and packer |
-| helios | `build-adl-compatibility.yml` | ADL compatibility shim |
-| helios | `build-catalog-verifier.yml` | Prebuilt catalog membership verifier |
-| helios | `build-clvk-runtime.yml` | CLVK runtime, loaders and probes |
-| qemu-helios | `build-qemu.yml` | QEMU host stack and complete closure |
-| virglrenderer | `build-virglrenderer.yml` | Renderer and paired Venus headers |
-| mesa-helios | `build-icds.yml` | Native and WoW64 Mesa ICDs |
-| dxvk | `build-dxvk.yml` | Native and WoW64 DXVK engines |
-| vkd3d-proton | `build-vkd3d-proton.yml` | Native and WoW64 vkd3d engines |
+| Repository    | Workflow                      | Responsibility                       |
+| ------------- | ----------------------------- | ------------------------------------ |
+| helios        | `build-helios-drivers.yml`    | Signed KMD and native/WoW64 UMDs     |
+| helios        | `build-helios-installer.yml`  | Migrated installer and packer        |
+| helios        | `build-adl-compatibility.yml` | ADL compatibility shim               |
+| helios        | `build-catalog-verifier.yml`  | Prebuilt catalog membership verifier |
+| helios        | `build-clvk-runtime.yml`      | CLVK runtime, loaders and probes     |
+| qemu-helios   | `build-qemu.yml`              | QEMU host stack and complete closure |
+| virglrenderer | `build-virglrenderer.yml`     | Renderer and paired Venus headers    |
+| mesa-helios   | `build-icds.yml`              | Native and WoW64 Mesa ICDs           |
+| dxvk          | `build-dxvk.yml`              | Native and WoW64 DXVK engines        |
+| vkd3d-proton  | `build-vkd3d-proton.yml`      | Native and WoW64 vkd3d engines       |
 
 Manual dispatch selects exact root/component commits and release/debug output.
 Cross jobs use hosted Ubuntu and only their component command and source closure.
@@ -211,6 +211,16 @@ manifest. Payload digests can be compared across local/CI assemblies. A local
 mocked transport comparison does not establish real packer or hosted byte
 reproducibility. Installation, loaded verification and publication remain false
 in a candidate receipt.
+
+The QEMU build artifact contains QEMU's executable, matching modules, x86
+firmware, symbols, notices and unit/frontend validation reports. It builds the
+`qemu-helios` target rather than exporting `host-stack`. Directory links into
+its immutable outputs are enumerated and every member is hashed and copied;
+the archive does not duplicate those files in a complete Nix host closure.
+Dependency store paths and hashes remain in the original build manifest.
+This is a component build artifact; its Nix runtime dependencies are resolved
+separately when composing a runnable host environment. Full host closures remain
+part of devbox/environment operations.
 
 ## Hosted assembly and publication
 

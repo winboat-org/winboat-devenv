@@ -2531,5 +2531,59 @@
     "testLog": "workspace-state:stage06/devenv-test-driver-receipts.log",
     "hostedAcceptance": false,
     "rootAssemblyAccepted": false
+  },
+  "qemuComponentPackagingCorrection": {
+    "state": "passed-real-local-component-build-hosted-pending",
+    "observedAt": "2026-10-13T02:05:30.832454+00:00",
+    "previousArtifact": {
+      "repository": "winboat-org/qemu-helios",
+      "runId": 37701065436,
+      "artifactId": 11518106862,
+      "archiveBytes": 1093465980,
+      "closureNarBytes": 2388388184,
+      "compressedClosureBytes": 908482882,
+      "compressedOtherFilesBytes": 184758567,
+      "executableBytes": 33970056,
+      "compressedExecutableBytes": 7123951
+    },
+    "cause": "QEMU CI exported host-stack, duplicated its files inside a full transitive Nix closure, and retained build-tool/source references through plain-text Meson reports.",
+    "fix": [
+      "Build the qemu-helios component target, with its matching modules, symbols and frontend/unit reports.",
+      "Enumerate/hash immutable output directory links and publish their regular members without duplicating the complete host closure.",
+      "Exclude non-x86 EDK2 images and per-build-id source-tree aliases from the component output; retain symbols and immutable source provenance.",
+      "Keep unit reports losslessly gzipped and reject compiler/source/build-tool dependencies in the QEMU runtime output."
+    ],
+    "componentRevision": "5262ea9400ba44a1d9bbf18bea77ec30e7ab9422",
+    "parentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+    "tests": 123,
+    "testLog": "workspace-state:stage06/devenv-test-qemu-component-final.log",
+    "hostedAcceptance": false,
+    "rootAssemblyAccepted": false,
+    "localBuild": {
+      "operationId": "op-6a0a6b6380424316937e2270276c6e10",
+      "manifestSha256": "6cff53450d56d619618ef0e608ae2844ce13a381e606b0fef1697168085948ee",
+      "mode": "development",
+      "componentRevision": "5262ea9400ba44a1d9bbf18bea77ec30e7ab9422",
+      "componentDiffSha256": null,
+      "unitResults": {
+        "OK": 105,
+        "SKIP": 3
+      },
+      "frontend": "dummy-driver-qmp-quit",
+      "filesVerified": 941
+    },
+    "localArchiveMeasurement": {
+      "mode": "development",
+      "target": "qemu-helios",
+      "manifestSha256": "6cff53450d56d619618ef0e608ae2844ce13a381e606b0fef1697168085948ee",
+      "archiveBytes": 142139628,
+      "uncompressedFileBytes": 261724431,
+      "files": 941,
+      "symbols": 90,
+      "modules": 19,
+      "firmwareBytes": 28989922
+    },
+    "installed": false,
+    "loaded": false
   }
 }
