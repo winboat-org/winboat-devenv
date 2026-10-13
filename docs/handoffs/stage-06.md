@@ -314,3 +314,15 @@ workflow cases. The clean release host-stack build `op-306217dd1457417e92343c81b
 passed and the fresh guest `release-acceptance-20261013` booted with verified
 QEMU/renderer/modules and NVIDIA inputs. Its Windows desktop was observed; tool
 provisioning, candidate assembly and installer runtime checks remain pending.
+
+The fresh guest subsequently verified all 14 locked tools, effective test signing
+after its second reboot, and the actual running signed fixture driver. Its first
+certificate import failed because a blank Windows installation had no
+TrustedPublisher store. Provisioning now opens/creates the stores with the
+Windows X509Store API and verifies the imported thumbprint. SYSTEM repair task
+`op-5957237ecf5f4f268c59ca3fcfae7b11` created the missing store using the retained
+certificate and resumed the original provisioning task; the failure remains in
+its history. Guest status `op-970d150d93df43e38d90530e11ad2ffe` verified the baseline.
+Windows payload validation and the 124-check locked suite passed. Existing guest
+runtime/image bindings remain unchanged. CLVK production, exact-input assembly
+and the fresh installer's lifecycle/loaded-code checks remain pending.

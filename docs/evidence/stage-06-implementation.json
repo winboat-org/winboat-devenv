@@ -3352,7 +3352,7 @@
     "testLog": "workspace-state:stage06/devenv-test-release-archive-cache-final.log"
   },
   "freshReleaseAcceptanceGuest": {
-    "state": "host-running-windows-provisioning-pending",
+    "state": "provisioning-baseline-verified-after-certificate-store-repair",
     "name": "release-acceptance-20261013",
     "createJobId": "op-bd41848624d8407d95f554b78e93ec4c",
     "hostBuildOperation": "op-306217dd1457417e92343c81bc0d73aa",
@@ -3362,8 +3362,45 @@
     "loadedHostImagesVerified": true,
     "graphicsProvider": "nvidia-cdi",
     "windowsDesktopObserved": true,
-    "toolProvisioningVerified": false,
+    "toolProvisioningVerified": true,
     "installerRuntimeAccepted": false,
-    "existingDevelopmentGuestState": "stopped"
+    "existingDevelopmentGuestState": "stopped",
+    "lockedToolsVerified": 14,
+    "signingRebootVerified": true,
+    "rebootCount": 2,
+    "signedFixtureDriverLoaded": true,
+    "fixtureSha256": "e1227f5ca9597ef867fb7f43b30c08009a23bb6d7c4c62c4588d348e468eb0eb",
+    "guestStatusOperation": "op-970d150d93df43e38d90530e11ad2ffe",
+    "initialFailure": {
+      "operation": "Import-Certificate into missing LocalMachine TrustedPublisher store",
+      "code": "0x80070005",
+      "preservedInProvisioningHistory": true
+    },
+    "certificateStoreRepair": {
+      "operationId": "op-5957237ecf5f4f268c59ca3fcfae7b11",
+      "principal": "SYSTEM",
+      "state": "succeeded",
+      "certificateIdentityPreserved": true,
+      "sourceCorrection": "X509Store ReadWrite creates the store, imports the public certificate and verifies the thumbprint",
+      "documentation": "https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509store.open?view=netframework-4.8.1"
+    },
+    "validation": {
+      "windows": {
+        "path": "workspace-state:stage06/windows-check-certificate-store.log",
+        "size": 2743,
+        "sha256": "e63bb6ce4fe1f99290441ff7e7671d456e768da72ed69e76f304a0b25daaa89e"
+      },
+      "devenv": {
+        "path": "workspace-state:stage06/devenv-test-certificate-store.log",
+        "size": 299,
+        "sha256": "6bbdadb851eb945ae5ddc511434ca10b16bf7035cfe1cb439a6c004e0517939d"
+      },
+      "native": {
+        "path": "workspace-state:validation/native.AutfJ4oB.log",
+        "size": 13005,
+        "sha256": "154423bb6fa04f78084524893e52401f30ff317395edc654a1c75ed501534c17"
+      },
+      "nativeAndSdkTests": 124
+    }
   }
 }

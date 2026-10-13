@@ -18,6 +18,12 @@ manifest receipts verified. The matching CLVK build remains in progress.
 Historical successful/failed runs and the rejected driver archive without engine
 receipts remain recorded in the evidence.
 
+The fresh acceptance guest has verified all 14 locked tools, effective test
+signing after reboot, and a running signed fixture driver. Its initial missing
+TrustedPublisher store was corrected through Windows' certificate API, with the
+original failure and repair receipt retained. Candidate assembly and installer
+lifecycle/loaded-code checks remain pending.
+
 Root release CI uses public hosted runners. Driver production uses hosted Ubuntu
 preparation, Windows compilation/signing and Ubuntu artifact verification. The
 installer cross-compiles on hosted Ubuntu and has a separate Windows interface

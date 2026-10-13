@@ -40,7 +40,9 @@ verified. QEMU run `38335618535` passed with a verified 142.5 MB component archi
 passed and verified; the matching CLVK build remains in progress. Exact-input
 verification and local/hosted candidate assembly remain pending. A fresh
 acceptance guest has booted with the pinned host stack and reached the Windows
-desktop; tool provisioning and installer runtime checks remain pending. See
+desktop. All 14 locked tools, the signing reboot and signed fixture-driver load
+verified after correcting creation of an absent TrustedPublisher store;
+installer runtime checks remain pending. See
 [release usage](docs/releases.md). Stage 7 remains planned.
 
 ## Start here

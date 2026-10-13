@@ -6,8 +6,9 @@ archive and the four exact consumed engine-manifest receipts verified. QEMU run
 Refreshed installer, ADL and catalog artifacts also passed and verified; matching
 CLVK production remains in progress. Exact-input verification, local/hosted
 candidate assembly and fresh installer runtime acceptance remain pending. The
-fresh guest has booted and reached the Windows desktop; tool provisioning is
-pending. Prerequisites: Stages 2 and 4. Agent setup is useful but not a prerequisite.
+fresh guest reached the Windows desktop and verified all 14 tools, the signing
+reboot and signed fixture-driver load after correcting an absent TrustedPublisher
+store. Prerequisites: Stages 2 and 4. Agent setup is useful but not a prerequisite.
 
 [Release usage](../releases.md) describes the exact-input contracts, six component
 repositories with ten responsibility-specific build workflows, the hosted

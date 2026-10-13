@@ -188,14 +188,26 @@ try {
     $state.secureBoot = $secureBoot
     $state.hvci = @(Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty SecurityServicesRunning)
+    $state.phase = 'signing-certificate'; Save-State
     $certificate = Get-ChildItem Cert:\LocalMachine\My | Where-Object Subject -eq 'CN=WinBoatDev Test Signing' | Select-Object -First 1
     if (-not $certificate) {
         $certificate = New-SelfSignedCertificate -Type CodeSigningCert -Subject 'CN=WinBoatDev Test Signing' -CertStoreLocation Cert:\LocalMachine\My -KeyExportPolicy Exportable -NotAfter (Get-Date).AddYears(5)
     }
     $state.certificateThumbprint = $certificate.Thumbprint
     Export-Certificate -Cert $certificate -FilePath (Join-Path $root 'test-signing.cer') | Out-Null
-    Import-Certificate -FilePath (Join-Path $root 'test-signing.cer') -CertStoreLocation Cert:\LocalMachine\Root | Out-Null
-    Import-Certificate -FilePath (Join-Path $root 'test-signing.cer') -CertStoreLocation Cert:\LocalMachine\TrustedPublisher | Out-Null
+    $publicCertificate = [Security.Cryptography.X509Certificates.X509Certificate2]::new((Join-Path $root 'test-signing.cer'))
+    foreach ($name in @('Root', 'TrustedPublisher')) {
+        $store = [Security.Cryptography.X509Certificates.X509Store]::new($name, 'LocalMachine')
+        try {
+            # ReadWrite creates an absent store. Import-Certificate rejects a
+            # fresh Windows installation with no TrustedPublisher registry key.
+            $store.Open([Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+            $store.Add($publicCertificate)
+            if ($store.Certificates.Find('FindByThumbprint', $certificate.Thumbprint, $false).Count -ne 1) {
+                throw "Test signing certificate was not retained in LocalMachine\$name"
+            }
+        } finally { $store.Dispose() }
+    }
     # Query the effective current boot entry after an actual reboot, not only the
     # requested on-disk BCD setting immediately after bcdedit /set.
     $bootId = (Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o')
