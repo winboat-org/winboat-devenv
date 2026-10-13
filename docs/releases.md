@@ -28,6 +28,13 @@ exact certificate bytes, validity dates and code-signing usage, followed by the
 prebuilt catalog-membership verifier. It does not install the certificate into
 the packing machine's trust stores. Rejection cases passed in Linux PowerShell
 and the guest's Windows PowerShell. Local/hosted candidate assembly remain pending.
+
+The corrected local operation verified catalog membership and produced a 38.6 MB
+installer. Collection exposed a separate file-record comparison bug: the expected
+record's path was compared with hash/size-only remote metadata. Downloads now
+compare the declared hash and size, preserving destination guards and transfer
+verification. The 126-check suite passed; final collection/container verification
+and the matching hosted assembly remain pending.
 Historical successful/failed runs and the rejected driver archive without engine
 receipts remain recorded in the evidence.
 

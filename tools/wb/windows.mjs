@@ -115,7 +115,10 @@ export function upload(ws, name, local, remote) {
 }
 export function download(ws, name, remote, local, expected = null) {
   const before = remote_file(ws, name, remote);
-  if (expected && !equal(before, expected))
+  if (
+    expected &&
+    !equal(before, { sha256: expected.sha256, size: expected.size })
+  )
     throw new Failure("guest output differs from its manifest", 74, {
       expected,
       observed: before,

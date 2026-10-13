@@ -359,3 +359,13 @@ Regenerate the release input against this correction's clean source commit,
 reuse the exact 13 artifacts, retry local packing, then checkpoint the reviewed
 input data and dispatch hosted root assembly. Preserve the failed packing directory
 and receipts. The fresh guest remains prepared for the installer's signing gate.
+
+Catalog correction `3ad7519` passed real local catalog membership and packing.
+Packing operation `op-214368e9a2074082bceadf53921d4ab4` produced a 38,632,510-byte
+installer, SHA256 `d7d94ff75e485782af3073885383630edf4de7842e5db457ce9cb739207e2c86`.
+Collection then rejected matching hash/size because the expected file record also
+contained its path. The shared Windows download operation now compares the byte
+identity fields, retaining caller path guards and before/after transfer checks.
+The 126-check suite passed, including transfer of the path-bearing record and
+rejection of a wrong digest before transfer. Preserve this packing receipt too;
+regenerate the input for the clean correction and finish local/hosted assembly.

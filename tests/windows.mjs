@@ -342,6 +342,34 @@ check("upload refuses corruption and source changes during transfer", (f) => {
   );
 });
 check(
+  "download accepts a pinned file record and rejects mismatched bytes before transfer",
+  (f) => {
+    const data = Buffer.from("packed installer bytes"),
+      remote = "C:\\output.exe",
+      local = path.join(f.root, "output.exe"),
+      expected = { path: remote, sha256: hash(data), size: data.length };
+    f.remote.set(remote, data);
+    const result = windows.download(f.ws, "one", remote, local, expected);
+    assert.equal(result.sha256, expected.sha256);
+    assert.deepEqual(fs.readFileSync(local), data);
+    const rejected = path.join(f.root, "wrong-identity.exe"),
+      transfers = f.calls.filter((a) => a[0] === "fixture-sftp").length;
+    assert.throws(
+      () =>
+        windows.download(f.ws, "one", remote, rejected, {
+          ...expected,
+          sha256: "0".repeat(64),
+        }),
+      /differs from its manifest/,
+    );
+    assert.equal(fs.existsSync(rejected), false);
+    assert.equal(
+      f.calls.filter((a) => a[0] === "fixture-sftp").length,
+      transfers,
+    );
+  },
+);
+check(
   "download never publishes corrupt bytes or overwrites divergent output",
   (f) => {
     const p = path.join(f.root, "output.dll");

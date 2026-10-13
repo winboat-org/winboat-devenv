@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "stage": 6,
   "state": "implemented-local-validation",
-  "observedAt": "2026-10-13T05:28:36.858Z",
+  "observedAt": "2026-10-13T05:43:38.716Z",
   "root": {
     "repository": "https://github.com/winboat-org/winboat-devenv",
     "sourceState": "required Stage 5 baseline and Stage 6 implementation published; this evidence update descends from the recorded source checkpoint",
@@ -3591,5 +3591,32 @@
         "sha256": "a38bcb5b774cbb950b5e5142d62e0b326e4fd284af292201eae106e08c46c230"
       }
     }
+  },
+  "packedInstallerFileRecordCorrection": {
+    "state": "real-windows-packing-passed-collection-retry-pending",
+    "sourceRevision": "3ad7519363a51d37e8e44f30f4251470b0a81e91",
+    "packingOperation": "op-214368e9a2074082bceadf53921d4ab4",
+    "archiveCacheHits": 13,
+    "catalogSignatureVerified": true,
+    "catalogMembershipVerified": true,
+    "installerBytes": 38632510,
+    "installerSha256": "d7d94ff75e485782af3073885383630edf4de7842e5db457ce9cb739207e2c86",
+    "collectionFailure": "Expected file record included a path; observed remote metadata contained only hash and size, both matching.",
+    "correction": "Compare expected SHA256 and size while preserving caller path guards, before/after transfer identity and divergent-output refusal.",
+    "validation": {
+      "nativeAndSdkTests": 126,
+      "native": {
+        "path": "workspace-state:validation/native.TxEMKML3.log",
+        "size": 13302,
+        "sha256": "25934af176063b7ca7248e2d7808fe33b278074da100568c7559ec7729658280"
+      },
+      "devenv": {
+        "path": "workspace-state:stage06/devenv-test-pack-file-record.log",
+        "size": 297,
+        "sha256": "4ad3eb8e9169fd988855d375d30bc20a8bd5316bba325b3f33f4534269cc5744"
+      }
+    },
+    "containerMembersVerified": false,
+    "hostedCandidateAssembly": false
   }
 }
