@@ -2,8 +2,9 @@
 
 Status: nine hosted component workflows passed from source revision `6797be4`,
 producing twelve exact artifacts. Both engine/ICD architectures passed and the
-corrected CLVK archive verified. Hosted driver production, the complete component
-set, candidate assembly, real packed output
+corrected CLVK archive verified. Driver run `38327393281` passed all three hosted
+jobs, completing the thirteen-artifact set. Exact-input verification, candidate
+assembly, real packed output
 and fresh installer runtime acceptance pending. Prerequisites: Stages 2 and 4.
 Agent setup is useful but not a prerequisite.
 

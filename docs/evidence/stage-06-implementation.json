@@ -2475,6 +2475,85 @@
     "nativeAndSdkTests": 121,
     "testLog": "workspace-state:stage06/devenv-test-explicit-build-roots.log",
     "artifactReuse": "Explicit buildRootRevision selection is checked in normalized and original manifests; component pins, toolchain locks, architectures, dependency pairing and archive/member hashes remain required",
-    "hostedAcceptance": false
+    "hostedAcceptance": true
+  },
+  "hostedDriverAccepted": {
+    "state": "passed-real-hosted-workflow",
+    "observedAt": "2026-10-13T01:02:43.350124+00:00",
+    "dispatch": {
+      "repository": "helios",
+      "workflow": "build-helios-drivers.yml",
+      "rootRevision": "d721a7b7c02ea4af98174aa03e80f41a2095a713",
+      "componentRevision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+      "runId": 38327393281,
+      "engineSelection": [
+        {
+          "repository": "winboat-org/dxvk",
+          "runId": 37701039011,
+          "runAttempt": 1,
+          "artifactId": 11517632307,
+          "buildRootRevision": "6797be4f226a6484a53e00539014a1fa295340bf"
+        },
+        {
+          "repository": "winboat-org/dxvk",
+          "runId": 37701039011,
+          "runAttempt": 1,
+          "artifactId": 11517562355,
+          "buildRootRevision": "6797be4f226a6484a53e00539014a1fa295340bf"
+        },
+        {
+          "repository": "winboat-org/vkd3d-proton",
+          "runId": 37701045614,
+          "runAttempt": 1,
+          "artifactId": 11517642605,
+          "buildRootRevision": "6797be4f226a6484a53e00539014a1fa295340bf"
+        },
+        {
+          "repository": "winboat-org/vkd3d-proton",
+          "runId": 37701045614,
+          "runAttempt": 1,
+          "artifactId": 11516759680,
+          "buildRootRevision": "6797be4f226a6484a53e00539014a1fa295340bf"
+        }
+      ],
+      "dispatchedAt": "2026-10-13T00:28:17.775Z"
+    },
+    "jobs": [
+      {
+        "name": "prepare-inputs (helios-guest-x64)",
+        "id": 115069145964,
+        "conclusion": "success",
+        "startedAt": "2026-10-13T00:28:20Z",
+        "completedAt": "2026-10-13T00:37:36Z"
+      },
+      {
+        "name": "Compile and sign the driver",
+        "id": 115071596552,
+        "conclusion": "success",
+        "startedAt": "2026-10-13T00:37:38Z",
+        "completedAt": "2026-10-13T00:51:58Z"
+      },
+      {
+        "name": "Verify and publish the driver artifact",
+        "id": 115075263741,
+        "conclusion": "success",
+        "startedAt": "2026-10-13T00:52:00Z",
+        "completedAt": "2026-10-13T00:55:08Z"
+      }
+    ],
+    "artifact": {
+      "id": 11782054056,
+      "name": "helios-guest-x64-release-dac6d0f93db879193aeb91c7395d1dce6426479a",
+      "size_in_bytes": 430212090,
+      "digest": "sha256:51a664b5d37614c719a67a336ec29f80de05453d0d73c6a4e8a9a38860710691",
+      "expired": false
+    },
+    "preparedArchiveBytes": 2226727202,
+    "sdkSubsetHttpBytes": 2005138153,
+    "nativeMsvcHttpBytes": 666393314,
+    "compilerLog": "workspace-state:stage06/driver-native-hosted-success.log",
+    "installed": false,
+    "loaded": false,
+    "rootAssemblyAccepted": false
   }
 }

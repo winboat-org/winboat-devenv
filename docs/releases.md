@@ -24,11 +24,12 @@ Corrected CLVK run `37701032294` passed and all 87 archive members verified;
 its original build manifest is now 50,386 bytes without weakening reader limits.
 The nine component workflows dispatched from `6797be4` all passed and produced
 twelve exact artifacts. Their current run and artifact IDs are recorded in the
-evidence. Driver run `38323559694` is using the four paired engine artifacts
-from that same source revision. The complete thirteen-artifact input set remains
-pending until the driver workflow passes.
+evidence. Driver retry `38327393281` passed preparation, Windows compilation/signing
+and Linux verification from root `d721a7b`, using the four exact engine artifacts
+from `6797be4`. Normalized driver artifact `11782054056` completes the thirteen
+roles. The input lock/download, root assembly and fresh runtime gates remain pending.
 Root release CI now uses public hosted runners. The driver now has hosted Ubuntu preparation, Windows compilation/signing and
-Ubuntu artifact verification jobs; their real hosted build remains pending. The installer now
+Ubuntu artifact verification jobs; all three passed in the driver retry. The installer now
 cross-compiles on hosted Ubuntu and has a separate Windows interface probe. No release was published.
 
 ## Production ownership

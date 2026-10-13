@@ -35,8 +35,10 @@ see [Stage 5 evidence](docs/evidence/stage-05-acceptance.json) for client/UI lim
 Stage 6 now supplies exact component workflows, migrated installer sources and
 a prebuilt-only candidate bundler. Nine hosted component workflows passed from
 source revision `6797be4`, including both DXVK/vkd3d/Mesa architectures and CLVK.
-The corrected CLVK archive and all 87 members also verified. Hosted driver
-production, the complete artifact set, candidate assembly and fresh installer runtime
+The corrected CLVK archive and all 87 members also verified. Hosted driver run
+`38327393281` passed preparation, Windows compilation/signing and Linux verification,
+completing the thirteen component artifacts. Exact-input verification, candidate
+assembly and fresh installer runtime
 acceptance remain pending; see [release usage](docs/releases.md). Stage 7 remains
 planned.
 
