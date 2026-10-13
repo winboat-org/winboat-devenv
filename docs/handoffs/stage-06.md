@@ -7,8 +7,9 @@ exact release contracts and `wb bundle` with six typed MCP tools are present.
 See [release usage](../releases.md) and
 [implementation evidence](../evidence/stage-06-implementation.json).
 
-Hosted component production and real local/CI candidate assembly passed. Fresh
-installer runtime acceptance remains in progress. The user authorized checkpoints and pushes. Stage 5
+Hosted component production, real local/CI candidate assembly and the measured
+fresh installer lifecycle/loaded-graphics acceptance passed. Higher-version GUI
+and deferred cleanup remain unmeasured. The user authorized checkpoints and pushes. Stage 5
 is checkpointed in `7e4fcf9`, and `a5b2b18` fixes canonical remote verification
 when Git omits the SSH username from its destination display. All six component
 repositories and their required recipe history are published, with exact remote
@@ -388,3 +389,39 @@ Ignored acceptance wrappers stalled while serializing rich PowerShell objects;
 the original tasks/logs and immediate native-exit receipt are retained. Future
 wrapper log lines are converted to plain strings. Existing guests are preserved,
 and no release was published.
+
+Fresh installer acceptance then passed. Installation verification
+`op-7ba0253daa084468b84093202d116bbe`, resident-kernel reconcile
+`op-71dc90a9af924d5f9993305a423e8660`, and desktop task
+`op-c56b96654b254a82bb872d5d0ef39c85` verified selected files/registrations,
+the actual kernel code, 12 mapped DLLs and all 13 workloads. Repair
+`op-bafa3d0c9a3c4616bc971b8b0f191452` restored a deliberately removed probe,
+returned native 3010, and preserved both original snapshot groups. Uninstall
+`op-3594ebb41a834182beee64ae20a4c780` returned zero, removed driver/certificate/
+state and runtime registrations, and restored all nine registry snapshots.
+Reconcile `op-c8f29c2c953449e1977595b8f3cc2b98` confirmed no Helios kernel
+image after reboot. Stored uninstall payloads and original receipts remain.
+
+The genuine earlier package `helios-development-op-673dcb12adb54d58804ac872d2b074a8`
+was installed with its original manifest (SHA256
+`ca9dc43dccd75c76274a01264ce994ca2ff38d3c826014438df685d5560cd7f2`)
+and different resident SYS bytes. Candidate replacement
+`op-07f67d74be6a4e1c89dcf4de1d3278a9` returned 3010, kept original snapshots
+and removed old runtime registrations. The default shutdown timed out after
+120 seconds and preserved the guest; it later exited cleanly with container code
+zero and was started through job `op-19c83dfe91f64d46b9d66e716c906cf7`.
+Reconcile `op-f00950bcd8724965b72c15e25fc22c0d` verified the candidate's resident
+kernel, and desktop task `op-37f56508c64149b7a2aa537c7ca4fdea` passed all
+12 mapped identities and 13 workloads again. Both real packages have version
+22.22.289.0; higher-version GUI behavior remains unmeasured. Loaded old runtime
+files and prior certificate/driver state remain with the original warnings;
+complete deferred cleanup is not claimed. Preserve this guest's installed
+candidate and its final shutdown receipt for review. Stage 7 removals and release
+publication are separate; neither was performed.
+
+Final shutdown job `op-8857b0018bf24306a4943c5017b1809b` succeeded through
+SSH with `cleanShutdown: true` (operation `op-f89670d8043b43a6bedea293cbd06dc5`).
+The acceptance guest is stopped with the candidate installed; the previous
+development guest remains stopped and preserved. Both locks are unchanged.
+No implementation code changed after the already passed 126-check suite;
+this acceptance checkpoint adds measured evidence and documentation only.

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "stage": 6,
-  "state": "hosted-and-local-candidate-accepted-fresh-installer-runtime-in-progress",
+  "state": "hosted-local-and-current-host-installer-acceptance-passed-with-recorded-limits",
   "observedAt": "2026-10-13",
   "root": {
     "repository": "https://github.com/winboat-org/winboat-devenv",
@@ -3363,7 +3363,7 @@
     "graphicsProvider": "nvidia-cdi",
     "windowsDesktopObserved": true,
     "toolProvisioningVerified": true,
-    "installerRuntimeAccepted": false,
+    "installerRuntimeAccepted": true,
     "existingDevelopmentGuestState": "stopped",
     "lockedToolsVerified": 14,
     "signingRebootVerified": true,
@@ -3685,7 +3685,7 @@
     "published": false
   },
   "freshInstallerRuntime": {
-    "state": "finished-loaded-code-graphics-lifecycle-in-progress",
+    "state": "measured-lifecycle-and-runtime-acceptance-passed",
     "name": "release-acceptance-20261013",
     "packageId": "helios-5024969307a6-release",
     "version": "22.22.289.0",
@@ -3694,7 +3694,9 @@
       "operationId": "op-117eec783ef1485a807f3f4d326b1e21",
       "nativeExitCode": 3010,
       "status": "test-signing-restart-required",
-      "nativeExitReceipt": "workspace-state:stage06/installer-native-exit-observed.json"
+      "nativeExitReceipt": "workspace-state:stage06/installer-native-exit-observed.json",
+      "wrapperTaskExitCode": 130,
+      "wrapperTaskState": "cancelled-after-independent-native-exit-receipt"
     },
     "testSigningRestartJob": "op-8b93dca08eab4f139088e105c7d4e2cd",
     "postSigningObservation": "op-98286decb3f44dedbf2572424b172a10",
@@ -3710,11 +3712,11 @@
       "initialOperation": "op-a87d536f16374c2e80067f0f4e1b66f7",
       "diagnosticOperation": "op-87f3abd54de944318d5e4967299a2e12",
       "cancelledWrappersPreserved": true,
-      "correction": "Write native exit before observations; serialize plain log strings."
+      "correction": "Capture native exit immediately and serialize Get-Content log lines as plain strings; the later real repair/update/uninstall wrappers completed normally."
     },
-    "loadedCodeVerified": false,
-    "graphicsVerified": false,
-    "lifecycleAccepted": false,
+    "loadedCodeVerified": true,
+    "graphicsVerified": true,
+    "lifecycleAccepted": true,
     "published": false,
     "driverRestartState": "succeeded",
     "provisioningStatus": "finished",
@@ -3750,6 +3752,700 @@
       "frameworkLoadedVerified": false,
       "frameworkBoundary": "Standalone installer has no requested MCP installation transaction; candidate identity is independently compared with the selected manifest."
     },
-    "residentKernelCodeVerified": true
+    "residentKernelCodeVerified": true,
+    "firstInstallGraphics": {
+      "state": "passed",
+      "operation": "op-c56b96654b254a82bb872d5d0ef39c85",
+      "sessionId": 1,
+      "principal": "WB-DEVBOX\\wbdev",
+      "manifestSha256": "a0683add25ef90bd512382b6c7fe312d5a3caa2d92c9ac2e42017efc09f1c2f2",
+      "mappedImages": [
+        {
+          "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\loaders\\vulkan-1.dll",
+          "architecture": "x64",
+          "baseAddress": "7ffd2a3b0000",
+          "packagePath": "payload/loaders/vulkan-1.dll",
+          "processStart": "2026-10-13T13:30:46.3117976Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "80f4bb394bc23ddf02124d9e9d7cb85cdaf7131b4ad9e21761effea8eb06c618",
+          "pid": 4880,
+          "observed": "2026-10-13T13:30:48.2725695Z"
+        },
+        {
+          "path": "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\helios_kmd_render.inf_amd64_3435bc871ef9812c\\helios_umd.dll",
+          "architecture": "x64",
+          "baseAddress": "7ffd6b9e0000",
+          "packagePath": "payload/driver/helios_umd.dll",
+          "processStart": "2026-10-13T13:30:46.3117976Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "5314bacbab79ce23b1b161becd9c6b84d5a135c0f9c4a6bc89d203484b25e7ee",
+          "pid": 4880,
+          "observed": "2026-10-13T13:30:48.3225352Z"
+        },
+        {
+          "path": "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\helios_kmd_render.inf_amd64_3435bc871ef9812c\\helios_umd12.dll",
+          "architecture": "x64",
+          "baseAddress": "7ffd25210000",
+          "packagePath": "payload/driver/helios_umd12.dll",
+          "processStart": "2026-10-13T13:30:46.3117976Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "574b93c184c7e139f85060858dfb066d742fc90aee1be66d76c56d59be70a2fd",
+          "pid": 4880,
+          "observed": "2026-10-13T13:30:48.3435241Z"
+        },
+        {
+          "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\mesa\\vulkan_virtio.dll",
+          "architecture": "x64",
+          "baseAddress": "7ffd655f0000",
+          "packagePath": "payload/mesa/vulkan_virtio.dll",
+          "processStart": "2026-10-13T13:30:46.3117976Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "30d19918207f0956d5a8e51a3d5b3e348151061a0fe175f34d845bd77d9e2d9e",
+          "pid": 4880,
+          "observed": "2026-10-13T13:30:48.3634214Z"
+        },
+        {
+          "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\mesa\\libgallium_wgl.dll",
+          "architecture": "x64",
+          "baseAddress": "7ffd23bd0000",
+          "packagePath": "payload/mesa/libgallium_wgl.dll",
+          "processStart": "2026-10-13T13:30:46.3117976Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "4958ea314b0acaad0d02609eef3734c556d59f1e6597d2c6a0a3e8112a1d2c01",
+          "pid": 4880,
+          "observed": "2026-10-13T13:30:49.3600341Z"
+        },
+        {
+          "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\loaders\\OpenCL.dll",
+          "architecture": "x64",
+          "baseAddress": "7ffd2a310000",
+          "packagePath": "payload/loaders/OpenCL.dll",
+          "processStart": "2026-10-13T13:30:46.3117976Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "27fb734166357916687223caa55cb1da4fa7954740912044b543eae953217593",
+          "pid": 4880,
+          "observed": "2026-10-13T13:30:49.9056233Z"
+        },
+        {
+          "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\opencl\\clvk.dll",
+          "architecture": "x64",
+          "baseAddress": "7ffd1e250000",
+          "packagePath": "payload/opencl/clvk.dll",
+          "processStart": "2026-10-13T13:30:46.3117976Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "af6937c8d98dea74b28122e45c3ef239e84a0c17a377fab77ad70f2a251aec59",
+          "pid": 4880,
+          "observed": "2026-10-13T13:30:52.1822890Z"
+        },
+        {
+          "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\loaders\\x86\\vulkan-1.dll",
+          "architecture": "x86",
+          "baseAddress": "70630000",
+          "packagePath": "payload/loaders/x86/vulkan-1.dll",
+          "processStart": "2026-10-13T13:31:10.6317815Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "3212f513fc96652ce04a290d14a2dbb1c30341adf12cbe3c948b78d32efcb582",
+          "pid": 6444,
+          "observed": "2026-10-13T13:31:14.1834885Z"
+        },
+        {
+          "path": "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\helios_kmd_render.inf_amd64_3435bc871ef9812c\\helios_umd32.dll",
+          "architecture": "x86",
+          "baseAddress": "6f5d0000",
+          "packagePath": "payload/driver/helios_umd32.dll",
+          "processStart": "2026-10-13T13:31:10.6317815Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "da4af88dfe022fced75e33219e71f50d2466a1932686c8ae0715139909c55e89",
+          "pid": 6444,
+          "observed": "2026-10-13T13:31:15.3583367Z"
+        },
+        {
+          "path": "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\helios_kmd_render.inf_amd64_3435bc871ef9812c\\helios_umd12_32.dll",
+          "architecture": "x86",
+          "baseAddress": "6f100000",
+          "packagePath": "payload/driver/helios_umd12_32.dll",
+          "processStart": "2026-10-13T13:31:10.6317815Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "eee4a658fe459d11434165c327003c7f8d72d027c5940562faef3256c1d03e85",
+          "pid": 6444,
+          "observed": "2026-10-13T13:31:16.2032905Z"
+        },
+        {
+          "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\mesa\\x86\\vulkan_virtio.dll",
+          "architecture": "x86",
+          "baseAddress": "6ed70000",
+          "packagePath": "payload/mesa/x86/vulkan_virtio.dll",
+          "processStart": "2026-10-13T13:31:10.6317815Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "fced5af806b398437b9a250c03a43f68f7a753c6903c02aeb0cb30c5a4274529",
+          "pid": 6444,
+          "observed": "2026-10-13T13:31:16.7912956Z"
+        },
+        {
+          "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\mesa\\x86\\libgallium_wgl.dll",
+          "architecture": "x86",
+          "baseAddress": "6d830000",
+          "packagePath": "payload/mesa/x86/libgallium_wgl.dll",
+          "processStart": "2026-10-13T13:31:10.6317815Z",
+          "mappedCode": "mapped-code-matches",
+          "sha256": "bf62f8245319574176a0690a8715e3d05b0fae2d52d6113af1a3047b575ff886",
+          "pid": 6444,
+          "observed": "2026-10-13T13:31:17.9437221Z"
+        }
+      ],
+      "workloads": [
+        {
+          "name": "vulkan",
+          "architecture": "x64",
+          "packagePath": "payload/smoke/vulkan-smoke.exe",
+          "sha256": "6f0b4b177d7261abb5e2ed68bbf0e49acf310d52631b84929f992f2c33c2ac76",
+          "exitCode": 0
+        },
+        {
+          "name": "vulkan-wsi",
+          "architecture": "x64",
+          "packagePath": "payload/smoke/vulkan-wsi-probe.exe",
+          "sha256": "9070697b9eef9854e13f9cc39a30501ff207c3d9fb8feedd9ba2b99b2617f6ad",
+          "exitCode": 0
+        },
+        {
+          "name": "d3d11",
+          "architecture": "x64",
+          "packagePath": "payload/smoke/d3d11-smoke.exe",
+          "sha256": "6fbd01bb504d2f303a8934b57c22dc7168dd738d0d29c3d3c1198bf0f977760e",
+          "exitCode": 0
+        },
+        {
+          "name": "opengl",
+          "architecture": "x64",
+          "packagePath": "payload/smoke/opengl-smoke.exe",
+          "sha256": "4ab4af5a98e8a350b3d88362abde009e4b763f0b4251b172fefb837136d3a981",
+          "exitCode": 0
+        },
+        {
+          "name": "d3d12-device",
+          "architecture": "x64",
+          "packagePath": "payload/smoke/d3d12-smoke.exe",
+          "sha256": "6e63a89b7e4a7fd93e68c0402aa293bcb2d88e797f85ed9614e41fbae12f73f8",
+          "exitCode": 0
+        },
+        {
+          "name": "d3d12-clear",
+          "architecture": "x64",
+          "packagePath": "payload/smoke/d3d12-clear.exe",
+          "sha256": "9d502d551af3b2a13a0769bb294dda2918bccd25fb36912840beec363643f7a3",
+          "exitCode": 0
+        },
+        {
+          "name": "opencl",
+          "architecture": "x64",
+          "packagePath": "payload/smoke/opencl-smoke.exe",
+          "sha256": "afb077f02e1b987d8792fa344ffc5c5f3638d971f55303f79825e45b8f88e67f",
+          "exitCode": 0
+        },
+        {
+          "name": "vulkan",
+          "architecture": "x86",
+          "packagePath": "payload/smoke/x86/vulkan-smoke.exe",
+          "sha256": "e751d409adb13de4dd4d6057e96e8907f6e3d65ba7993c2fa94ee91c840678e1",
+          "exitCode": 0
+        },
+        {
+          "name": "vulkan-wsi",
+          "architecture": "x86",
+          "packagePath": "payload/smoke/x86/vulkan-wsi-probe.exe",
+          "sha256": "603ffb877d7176393a2b4243bc97c27efdbc0cc00f82127add01a68400dec86e",
+          "exitCode": 0
+        },
+        {
+          "name": "d3d11",
+          "architecture": "x86",
+          "packagePath": "payload/smoke/x86/d3d11-smoke.exe",
+          "sha256": "7220bc39f24e1f7a76db723b452254ff9354ecaa3b6c054abfdb26182118a1c7",
+          "exitCode": 0
+        },
+        {
+          "name": "opengl",
+          "architecture": "x86",
+          "packagePath": "payload/smoke/x86/opengl-smoke.exe",
+          "sha256": "a48123427126668a047d2b1b55c4ab9e1ad44e68daf31f820e33132c1c3190d4",
+          "exitCode": 0
+        },
+        {
+          "name": "d3d12-device",
+          "architecture": "x86",
+          "packagePath": "payload/smoke/x86/d3d12-smoke.exe",
+          "sha256": "f8f9846d92b30634d827c2467acb550fb32735742f353d82380ec94ba4bf0cd2",
+          "exitCode": 0
+        },
+        {
+          "name": "d3d12-clear",
+          "architecture": "x86",
+          "packagePath": "payload/smoke/x86/d3d12-clear.exe",
+          "sha256": "44a02aa1794678d849fa2a81afcaa52dc85b2cfdcfae444f55794ffae3cbb77b",
+          "exitCode": 0
+        }
+      ]
+    },
+    "repair": {
+      "operation": "op-bafa3d0c9a3c4616bc971b8b0f191452",
+      "nativeExitCode": 3010,
+      "restartJob": "op-53bf01cc25d34e73b1cffff5a0d42d0b",
+      "verificationOperation": "op-1318e56c2a9f4b079116920bf227378f",
+      "action": "repair",
+      "restoredProbeSha256": "afb077f02e1b987d8792fa344ffc5c5f3638d971f55303f79825e45b8f88e67f",
+      "originalSnapshotsPreserved": true,
+      "packageId": "helios-5024969307a6-release",
+      "state": "passed"
+    },
+    "uninstall": {
+      "operation": "op-3594ebb41a834182beee64ae20a4c780",
+      "nativeExitCode": 0,
+      "restartJob": "op-070a6ce8fa0c43468be573fb86f8a77b",
+      "verificationOperation": "op-5cc117ef99cb4108bf6bb5c1976ab91e",
+      "packageCertificateRemoved": true,
+      "action": "uninstall",
+      "packageId": "helios-5024969307a6-release",
+      "storedUninstallPayloadRetained": true,
+      "runtimeTreePresent": true,
+      "state": "passed",
+      "registrySnapshots": {
+        "OpenGLVersion": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        },
+        "OpenGLVersionWow": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        },
+        "InstalledDisplayDrivers": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        },
+        "OpenGLDriverName": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        },
+        "OpenGLFlags": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        },
+        "OpenGLDriverNameWow": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        },
+        "UserModeDriverName": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        },
+        "OpenGLFlagsWow": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        },
+        "UserModeDriverNameWoW": {
+          "exists": false,
+          "kind": null,
+          "value": null
+        }
+      },
+      "originalSnapshotsRestored": true,
+      "registrationsRemoved": true,
+      "kernelUnload": {
+        "state": "helios-kernel-unloaded",
+        "reconcileJob": "op-c8f29c2c953449e1977595b8f3cc2b98",
+        "kernelImages": []
+      }
+    },
+    "replacement": {
+      "operation": "op-07f67d74be6a4e1c89dcf4de1d3278a9",
+      "nativeExitCode": 3010,
+      "olderInstallOperation": "op-a596c77193014f1782543d1abf1a6271",
+      "olderManifestSha256": "ca9dc43dccd75c76274a01264ce994ca2ff38d3c826014438df685d5560cd7f2",
+      "olderResidentKernel": {
+        "state": "earlier-package-resident-code-verified",
+        "reconcileJob": "op-3678fa82567940c6a67d4da312a19e0e",
+        "kernelSha256": "16d5d65e54fd2b12ff7f0de52fbd71af1b96c454e9f82c73b875f63c9f6038e3",
+        "sections": [
+          {
+            "name": ".text",
+            "rva": 4096,
+            "size": 374272,
+            "normalizedSha256": "a4224ba1f675e132a2d69f4aa6bb49cd2811959040bb0ae62d49d7cbefde810b",
+            "expectedSha256": "a4224ba1f675e132a2d69f4aa6bb49cd2811959040bb0ae62d49d7cbefde810b",
+            "matches": true
+          },
+          {
+            "name": "PAGE",
+            "rva": 2510848,
+            "size": 512,
+            "normalizedSha256": "68ee51360b9ba95c7967c9dbfa53c3eacd4dde33995ebe3fc695041fd1f44d17",
+            "expectedSha256": "68ee51360b9ba95c7967c9dbfa53c3eacd4dde33995ebe3fc695041fd1f44d17",
+            "matches": true
+          }
+        ],
+        "installedVerified": false,
+        "loadedVerified": false
+      },
+      "verificationOperation": "op-7569e140665c4777a35563718488f39c",
+      "afterVersion": "22.22.289.0",
+      "oldRegistrationsRemoved": true,
+      "originalSnapshotsPreserved": true,
+      "semanticVersionChanged": false,
+      "afterPackageId": "helios-5024969307a6-release",
+      "beforeVersion": "22.22.289.0",
+      "state": "passed",
+      "beforePackageId": "helios-development-op-673dcb12adb54d58804ac872d2b074a8",
+      "oldRuntimeTreePresent": true,
+      "oldCertificatePresent": true,
+      "delayedShutdown": {
+        "state": "clean-stop-observed-after-restart-timeout",
+        "restartJob": "op-4c6d9ac8196b43e0a5c73dad9864ae90",
+        "shutdownTimeoutSeconds": 120,
+        "containerExitCode": 0,
+        "finishedAt": "2026-10-13T12:19:40.451366573+05:30",
+        "forcedStop": false,
+        "guestDiskPreserved": true
+      },
+      "startJob": "op-19c83dfe91f64d46b9d66e716c906cf7",
+      "selectedInstallationVerification": "op-b8aff9bd60c94c5ab9da8c76dd9ac300",
+      "residentKernel": {
+        "state": "replacement-resident-kernel-code-verified",
+        "reconcileJob": "op-f00950bcd8724965b72c15e25fc22c0d",
+        "kernelSha256": "62486658b57918198a4eb5c481633e839cd5d2dfbe140aef582f66d25514f449",
+        "sections": [
+          {
+            "name": ".text",
+            "rva": 4096,
+            "size": 374272,
+            "normalizedSha256": "828113d09c12622a7ce2c82b242bc007550a89a2a6c9ab843b07f7f28505fb2e",
+            "expectedSha256": "828113d09c12622a7ce2c82b242bc007550a89a2a6c9ab843b07f7f28505fb2e",
+            "matches": true
+          },
+          {
+            "name": "PAGE",
+            "rva": 2510848,
+            "size": 512,
+            "normalizedSha256": "d863c33309de8416928109d07397b6198e96acdcd31531d2e1df8c81ae8fdc5d",
+            "expectedSha256": "d863c33309de8416928109d07397b6198e96acdcd31531d2e1df8c81ae8fdc5d",
+            "matches": true
+          }
+        ],
+        "frameworkInstalledVerified": false,
+        "frameworkLoadedVerified": false,
+        "frameworkBoundary": "The standalone candidate replacement does not alter the earlier MCP desired installation transaction."
+      },
+      "graphics": {
+        "state": "passed",
+        "operation": "op-37f56508c64149b7a2aa537c7ca4fdea",
+        "sessionId": 1,
+        "principal": "WB-DEVBOX\\wbdev",
+        "manifestSha256": "a0683add25ef90bd512382b6c7fe312d5a3caa2d92c9ac2e42017efc09f1c2f2",
+        "mappedImages": [
+          {
+            "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\loaders\\vulkan-1.dll",
+            "architecture": "x64",
+            "baseAddress": "7ffec5ef0000",
+            "packagePath": "payload/loaders/vulkan-1.dll",
+            "processStart": "2026-10-13T13:52:52.0508286Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "80f4bb394bc23ddf02124d9e9d7cb85cdaf7131b4ad9e21761effea8eb06c618",
+            "pid": 7732,
+            "observed": "2026-10-13T13:52:54.0688251Z"
+          },
+          {
+            "path": "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\helios_kmd_render.inf_amd64_3435bc871ef9812c\\helios_umd.dll",
+            "architecture": "x64",
+            "baseAddress": "7fff0c460000",
+            "packagePath": "payload/driver/helios_umd.dll",
+            "processStart": "2026-10-13T13:52:52.0508286Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "5314bacbab79ce23b1b161becd9c6b84d5a135c0f9c4a6bc89d203484b25e7ee",
+            "pid": 7732,
+            "observed": "2026-10-13T13:52:54.0954468Z"
+          },
+          {
+            "path": "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\helios_kmd_render.inf_amd64_3435bc871ef9812c\\helios_umd12.dll",
+            "architecture": "x64",
+            "baseAddress": "7ffec5a00000",
+            "packagePath": "payload/driver/helios_umd12.dll",
+            "processStart": "2026-10-13T13:52:52.0508286Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "574b93c184c7e139f85060858dfb066d742fc90aee1be66d76c56d59be70a2fd",
+            "pid": 7732,
+            "observed": "2026-10-13T13:52:54.1107198Z"
+          },
+          {
+            "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\mesa\\vulkan_virtio.dll",
+            "architecture": "x64",
+            "baseAddress": "7fff08d60000",
+            "packagePath": "payload/mesa/vulkan_virtio.dll",
+            "processStart": "2026-10-13T13:52:52.0508286Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "30d19918207f0956d5a8e51a3d5b3e348151061a0fe175f34d845bd77d9e2d9e",
+            "pid": 7732,
+            "observed": "2026-10-13T13:52:54.1226929Z"
+          },
+          {
+            "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\mesa\\libgallium_wgl.dll",
+            "architecture": "x64",
+            "baseAddress": "7ffec43c0000",
+            "packagePath": "payload/mesa/libgallium_wgl.dll",
+            "processStart": "2026-10-13T13:52:52.0508286Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "4958ea314b0acaad0d02609eef3734c556d59f1e6597d2c6a0a3e8112a1d2c01",
+            "pid": 7732,
+            "observed": "2026-10-13T13:52:55.1011574Z"
+          },
+          {
+            "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\loaders\\OpenCL.dll",
+            "architecture": "x64",
+            "baseAddress": "7ffec9160000",
+            "packagePath": "payload/loaders/OpenCL.dll",
+            "processStart": "2026-10-13T13:52:52.0508286Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "27fb734166357916687223caa55cb1da4fa7954740912044b543eae953217593",
+            "pid": 7732,
+            "observed": "2026-10-13T13:52:55.6809008Z"
+          },
+          {
+            "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\opencl\\clvk.dll",
+            "architecture": "x64",
+            "baseAddress": "7ffebea40000",
+            "packagePath": "payload/opencl/clvk.dll",
+            "processStart": "2026-10-13T13:52:52.0508286Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "af6937c8d98dea74b28122e45c3ef239e84a0c17a377fab77ad70f2a251aec59",
+            "pid": 7732,
+            "observed": "2026-10-13T13:52:55.9274541Z"
+          },
+          {
+            "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\loaders\\x86\\vulkan-1.dll",
+            "architecture": "x86",
+            "baseAddress": "6fde0000",
+            "packagePath": "payload/loaders/x86/vulkan-1.dll",
+            "processStart": "2026-10-13T13:53:13.8257680Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "3212f513fc96652ce04a290d14a2dbb1c30341adf12cbe3c948b78d32efcb582",
+            "pid": 8152,
+            "observed": "2026-10-13T13:53:17.5879319Z"
+          },
+          {
+            "path": "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\helios_kmd_render.inf_amd64_3435bc871ef9812c\\helios_umd32.dll",
+            "architecture": "x86",
+            "baseAddress": "6ed80000",
+            "packagePath": "payload/driver/helios_umd32.dll",
+            "processStart": "2026-10-13T13:53:13.8257680Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "da4af88dfe022fced75e33219e71f50d2466a1932686c8ae0715139909c55e89",
+            "pid": 8152,
+            "observed": "2026-10-13T13:53:18.9840305Z"
+          },
+          {
+            "path": "C:\\WINDOWS\\System32\\DriverStore\\FileRepository\\helios_kmd_render.inf_amd64_3435bc871ef9812c\\helios_umd12_32.dll",
+            "architecture": "x86",
+            "baseAddress": "6e8b0000",
+            "packagePath": "payload/driver/helios_umd12_32.dll",
+            "processStart": "2026-10-13T13:53:13.8257680Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "eee4a658fe459d11434165c327003c7f8d72d027c5940562faef3256c1d03e85",
+            "pid": 8152,
+            "observed": "2026-10-13T13:53:19.8058300Z"
+          },
+          {
+            "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\mesa\\x86\\vulkan_virtio.dll",
+            "architecture": "x86",
+            "baseAddress": "6e520000",
+            "packagePath": "payload/mesa/x86/vulkan_virtio.dll",
+            "processStart": "2026-10-13T13:53:13.8257680Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "fced5af806b398437b9a250c03a43f68f7a753c6903c02aeb0cb30c5a4274529",
+            "pid": 8152,
+            "observed": "2026-10-13T13:53:20.7006192Z"
+          },
+          {
+            "path": "C:\\Program Files\\Helios\\helios-5024969307a6-release\\runtime\\mesa\\x86\\libgallium_wgl.dll",
+            "architecture": "x86",
+            "baseAddress": "6cfe0000",
+            "packagePath": "payload/mesa/x86/libgallium_wgl.dll",
+            "processStart": "2026-10-13T13:53:13.8257680Z",
+            "mappedCode": "mapped-code-matches",
+            "sha256": "bf62f8245319574176a0690a8715e3d05b0fae2d52d6113af1a3047b575ff886",
+            "pid": 8152,
+            "observed": "2026-10-13T13:53:21.8678200Z"
+          }
+        ],
+        "workloads": [
+          {
+            "name": "vulkan",
+            "architecture": "x64",
+            "packagePath": "payload/smoke/vulkan-smoke.exe",
+            "sha256": "6f0b4b177d7261abb5e2ed68bbf0e49acf310d52631b84929f992f2c33c2ac76",
+            "exitCode": 0
+          },
+          {
+            "name": "vulkan-wsi",
+            "architecture": "x64",
+            "packagePath": "payload/smoke/vulkan-wsi-probe.exe",
+            "sha256": "9070697b9eef9854e13f9cc39a30501ff207c3d9fb8feedd9ba2b99b2617f6ad",
+            "exitCode": 0
+          },
+          {
+            "name": "d3d11",
+            "architecture": "x64",
+            "packagePath": "payload/smoke/d3d11-smoke.exe",
+            "sha256": "6fbd01bb504d2f303a8934b57c22dc7168dd738d0d29c3d3c1198bf0f977760e",
+            "exitCode": 0
+          },
+          {
+            "name": "opengl",
+            "architecture": "x64",
+            "packagePath": "payload/smoke/opengl-smoke.exe",
+            "sha256": "4ab4af5a98e8a350b3d88362abde009e4b763f0b4251b172fefb837136d3a981",
+            "exitCode": 0
+          },
+          {
+            "name": "d3d12-device",
+            "architecture": "x64",
+            "packagePath": "payload/smoke/d3d12-smoke.exe",
+            "sha256": "6e63a89b7e4a7fd93e68c0402aa293bcb2d88e797f85ed9614e41fbae12f73f8",
+            "exitCode": 0
+          },
+          {
+            "name": "d3d12-clear",
+            "architecture": "x64",
+            "packagePath": "payload/smoke/d3d12-clear.exe",
+            "sha256": "9d502d551af3b2a13a0769bb294dda2918bccd25fb36912840beec363643f7a3",
+            "exitCode": 0
+          },
+          {
+            "name": "opencl",
+            "architecture": "x64",
+            "packagePath": "payload/smoke/opencl-smoke.exe",
+            "sha256": "afb077f02e1b987d8792fa344ffc5c5f3638d971f55303f79825e45b8f88e67f",
+            "exitCode": 0
+          },
+          {
+            "name": "vulkan",
+            "architecture": "x86",
+            "packagePath": "payload/smoke/x86/vulkan-smoke.exe",
+            "sha256": "e751d409adb13de4dd4d6057e96e8907f6e3d65ba7993c2fa94ee91c840678e1",
+            "exitCode": 0
+          },
+          {
+            "name": "vulkan-wsi",
+            "architecture": "x86",
+            "packagePath": "payload/smoke/x86/vulkan-wsi-probe.exe",
+            "sha256": "603ffb877d7176393a2b4243bc97c27efdbc0cc00f82127add01a68400dec86e",
+            "exitCode": 0
+          },
+          {
+            "name": "d3d11",
+            "architecture": "x86",
+            "packagePath": "payload/smoke/x86/d3d11-smoke.exe",
+            "sha256": "7220bc39f24e1f7a76db723b452254ff9354ecaa3b6c054abfdb26182118a1c7",
+            "exitCode": 0
+          },
+          {
+            "name": "opengl",
+            "architecture": "x86",
+            "packagePath": "payload/smoke/x86/opengl-smoke.exe",
+            "sha256": "a48123427126668a047d2b1b55c4ab9e1ad44e68daf31f820e33132c1c3190d4",
+            "exitCode": 0
+          },
+          {
+            "name": "d3d12-device",
+            "architecture": "x86",
+            "packagePath": "payload/smoke/x86/d3d12-smoke.exe",
+            "sha256": "f8f9846d92b30634d827c2467acb550fb32735742f353d82380ec94ba4bf0cd2",
+            "exitCode": 0
+          },
+          {
+            "name": "d3d12-clear",
+            "architecture": "x86",
+            "packagePath": "payload/smoke/x86/d3d12-clear.exe",
+            "sha256": "44a02aa1794678d849fa2a81afcaa52dc85b2cfdcfae444f55794ffae3cbb77b",
+            "exitCode": 0
+          }
+        ]
+      }
+    },
+    "preservation": {
+      "candidateInstalledForReview": true,
+      "shutdownJob": "op-8857b0018bf24306a4943c5017b1809b",
+      "shutdownState": "stopped",
+      "timeoutSeconds": 360,
+      "force": false,
+      "existingDevelopmentGuest": "stopped-and-preserved",
+      "oldRuntimeFilesAndCertificate": "retained-with-original-warnings-and-rollback-state",
+      "cleanShutdown": true,
+      "shutdownOperation": "op-f89670d8043b43a6bedea293cbd06dc5",
+      "shutdownMethod": "ssh"
+    },
+    "limits": [
+      "Both real packages have version 22.22.289.0; higher-version GUI transition was not exercised.",
+      "Uninstall restores registrations and removes its driver/certificate/state but warns and retains DLL files that were loaded; complete deferred file cleanup was not demonstrated.",
+      "A replacement shutdown exceeded 120 seconds, then exited cleanly without force; the timeout and later clean exit are both retained.",
+      "Standalone installer observations do not adopt or alter MCP desired installation transactions.",
+      "Another physical host, driver conformance, visual acceptance and Stage 7 removals remain separate."
+    ],
+    "evidenceFiles": {
+      "firstGraphics": {
+        "path": "workspace-state:stage06/release-installer-graphics-result.json",
+        "size": 40773,
+        "sha256": "0f815a72d66676387c0de55210bfddcc84bbcf0c1e145b60fbbcb152f2a1ab6c",
+        "representation": "collected normalized JSON observation"
+      },
+      "replacementGraphics": {
+        "path": "workspace-state:stage06/release-installer-post-update-graphics-result.json",
+        "size": 40775,
+        "sha256": "34ab3c6d0b67668abdb3e892fb4b792cde9c2db5060b09977012ea51aea3ed24",
+        "representation": "collected normalized JSON observation"
+      },
+      "repair": {
+        "path": "workspace-state:stage06/release-installer-repair-proof.json",
+        "size": 223,
+        "sha256": "a97b3ca007bbe22ca9aa6b35e1444f2a88b4237df696d26ac676a54116abecc4",
+        "representation": "collected normalized JSON observation"
+      },
+      "uninstall": {
+        "path": "workspace-state:stage06/release-installer-uninstall-proof.json",
+        "size": 1173,
+        "sha256": "91131f923e5075f3665c58fdc49b3306313ab08967445d824a94543320f73ed0",
+        "representation": "collected normalized JSON observation"
+      },
+      "replacement": {
+        "path": "workspace-state:stage06/release-installer-update-proof.json",
+        "size": 395,
+        "sha256": "5f25239b66bbf8589305474869504bd080b3b2dcf12d23411acb72aa09836d41",
+        "representation": "collected normalized JSON observation"
+      }
+    }
+  },
+  "acceptanceCheckpointValidation": {
+    "implementationSourceRevision": "5024969307a6a29395a7d86904eb7d678b9dbf48",
+    "implementationChanged": false,
+    "nativeAndSdkTests": 126,
+    "nativeLog": {
+      "path": "workspace-state:validation/native.TxEMKML3.log",
+      "size": 13302,
+      "sha256": "25934af176063b7ca7248e2d7808fe33b278074da100568c7559ec7729658280"
+    },
+    "devenvTestLog": {
+      "path": "workspace-state:stage06/devenv-test-pack-file-record.log",
+      "size": 297,
+      "sha256": "4ad3eb8e9169fd988855d375d30bc20a8bd5316bba325b3f33f4534269cc5744"
+    },
+    "formatting": "passed",
+    "whitespace": "passed",
+    "locksUnchanged": true,
+    "managedRepositoriesClean": 12
   }
 }

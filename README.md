@@ -39,10 +39,14 @@ source, dependency and member verification. Hosted QEMU's archive is 142.5 MB,
 [`38353599147`](https://github.com/winboat-org/winboat-devenv/actions/runs/38353599147)
 passed; their 38.6 MB installers are byte-identical, and every hosted candidate
 member verified. Root CI compiled no component or installer binaries. The fresh
-Windows guest passed baseline provisioning and the installer's test-signing
-reboot; automatic installation returned another native 3010 for the driver reboot
-and then reached `finished`. Loaded-code, graphics and lifecycle checks remain pending.
-See [release usage](docs/releases.md). Stage 7 remains planned.
+Windows guest passed the installer's test-signing/reboot/resume path to `finished`,
+actual file/registry and resident-kernel verification, 13 graphics workloads and
+12 mapped DLL identities. Repair restored a removed probe and preserved rollback
+snapshots; uninstall restored all nine registry snapshots and unloaded Helios.
+Replacement of a genuine earlier package passed the same loaded-code/graphics
+checks. Both packages report the same version; the higher-version GUI path remains
+unmeasured. Loaded old runtime files remain with the original cleanup warnings.
+See [release usage](docs/releases.md) for measured limits. Stage 7 remains planned.
 
 ## Start here
 

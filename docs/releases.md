@@ -2,7 +2,8 @@
 
 Stage 6 supplies repository-owned component workflows and a shared verifier and
 packer. All 13 exact inputs, local candidate assembly and hosted assembly passed.
-Fresh installer runtime acceptance remains in progress. The measured gates and
+Fresh installer acceptance passed its measured current-host lifecycle and graphics
+checks, with the limits below. The measured gates and
 artifact identities are recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
 
 The root remote is `https://github.com/winboat-org/winboat-devenv`. The user
@@ -36,14 +37,28 @@ prebuilt verifier. Download verification compares hash/size while preserving
 path guards and checks before and after transfer. The 126-check suite passed.
 Historical failures and rejected input cohorts remain in the evidence.
 
-The fresh acceptance guest verified all 14 tools and its signed fixture driver.
-It then disabled test signing to exercise the installer's own gate. The exact
-candidate returned native 3010 with `test-signing-restart-required`; after reboot,
-automatic provisioning installed the package and returned 3010 with
-`driver-restart-required`. The next boot reached `finished` and removed the
-startup task. Registry/loaded-code verification, interactive graphics and
-repair/update/uninstall acceptance remain in progress.
-The prior development guest and all retained artifacts remain preserved.
+The fresh acceptance guest verified all 14 tools and its signed fixture driver,
+then disabled test signing to exercise the installer's own gate. The exact
+candidate returned native 3010 with `test-signing-restart-required`; automatic
+post-reboot installation returned 3010 with `driver-restart-required`. The next
+boot reached `finished` and removed the startup task. Selected files/registry,
+resident kernel code, all 12 mapped DLLs and 13 interactive workloads passed.
+Repair restored a removed probe with its exact hash and kept the original
+snapshots. Uninstall returned zero, removed its driver/certificate/state and
+runtime registrations, restored all nine registry snapshots, and unloaded Helios
+after reboot. The stored uninstall payload and evidence remained available.
+
+A genuine earlier package was installed and its different resident kernel code
+verified. Replacement with this candidate kept the original snapshots, removed
+old runtime registrations and passed selected-file, resident-kernel and all
+13 workload/12 mapped-image checks again. Both packages report `22.22.289.0`;
+this verifies replacement of earlier binaries, while a higher-version GUI
+transition remains unmeasured. Existing cleanup warnings are retained: loaded
+DLL files remain in old runtime directories, and the earlier certificate/driver
+state is retained. Complete deferred file cleanup is not claimed. One replacement
+shutdown exceeded the default 120 seconds, then stopped cleanly without force;
+the same guest was started and verified. Its final candidate is retained for
+review. The prior development guest and all original artifacts remain preserved.
 
 Root release CI uses public hosted runners. Driver production uses hosted Ubuntu
 preparation, Windows compilation/signing and Ubuntu artifact verification. The

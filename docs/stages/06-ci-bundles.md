@@ -7,11 +7,18 @@ passed using source `5024969` and reviewed input data `bb8f1c4`. Payload hashes
 match, and both installers are byte-identical: 38,633,082 bytes. All 734 hosted
 candidate members verified; root logs contain no component or installer
 compilation. The corrected QEMU archive is 142.5 MB, 87% smaller than before.
-The fresh Windows guest passed baseline provisioning, the installer's native
-3010 test-signing request and automatic post-reboot installation. Its second
-3010 request was `driver-restart-required`; the next boot reached `finished`.
-Loaded-code, interactive graphics, repair/update and uninstall checks remain in progress. Prerequisites:
-Stages 2 and 4. Agent setup is useful but not a prerequisite.
+The fresh Windows guest passed test-signing/reboot/resume to `finished`, exact
+files/registry, resident kernel code, 12 mapped DLL identities and 13 interactive
+workloads. Repair restored a removed executable and retained the original
+snapshots. Uninstall returned zero, restored all nine registry snapshots and
+removed runtime registrations, the selected certificate and installation state;
+reboot confirmed no resident Helios kernel image. A genuine earlier package was
+then replaced with the candidate, preserving snapshots and passing the same
+loaded-code and graphics checks. Both packages report version `22.22.289.0`;
+the higher-version GUI path remains unmeasured. Loaded old DLL files remain with
+the original cleanup warnings; deferred file cleanup is not claimed. One
+replacement shutdown exceeded 120 seconds, then exited cleanly without force.
+Prerequisites: Stages 2 and 4. Agent setup is useful but not a prerequisite.
 
 [Release usage](../releases.md) describes the exact-input contracts, six component
 repositories with ten responsibility-specific build workflows, the hosted
