@@ -26,16 +26,16 @@ pending. The retained guest stopped with a recorded QEMU/Mesa cleanup crash;
 this check does not extend the historical Stage 4 graphics acceptance or complete
 Stage 5 client workflows.
 
-| Stage | Scope | Prerequisites | Status |
-| --- | --- | --- | --- |
-| 0 | devenv initialization, inventory/seed pins, docs and agent guidance | Empty workspace | Complete |
-| [1](01-workspace.md) | Setup/doctor, repo sync, checkpoints, push pins, forks, initial Node MCP | 0 | Complete for requested repository/MCP scope; activation limitation documented |
-| [2](02-builds.md) | Per-repo Nix recipes, native/cross builds, ABI and output contracts | 1 | Native/cross acceptance passed; full WinBoat/Electron application closures pending |
-| [3](03-devbox.md) | Containerized headless Windows provisioning, shared workspace and viewer | 2 host QEMU/renderer outputs | Podman/NVIDIA current-host acceptance passed; alternate UID preparation passed; corrected-artifact Docker repeat needs daemon space; second account Windows boot/other host pending |
-| [4](04-windows-control.md) | Windows builds, Helios installation, strict inventory, devbox MCP | 2, 3 | Accepted on current host: clean CLI/MCP stack builds, installs, 13 graphics workloads, 12 mapped DLLs and resident kernel code passed; publication/conformance remain separate |
-| [5](05-agents.md) | Claude/Codex setup, SSH/Nix integrations, agent workflows | 1, 4 | Implemented; measured current-host client/protocol, contributor fixtures and build/install/runtime checks passed; interactive client UI/Claude model turns not exercised |
-| [6](06-ci-bundles.md) | Component CI and bundling-only root CI, installer relocation | 2, 4 | All component workflows passed; exact-input verification, assembly and fresh installer runtime acceptance pending |
-| [7](07-migration.md) | Retire duplicate tooling/submodules, docs cleanup, fresh-host acceptance | 1–6 | Planned |
+| Stage                      | Scope                                                                    | Prerequisites                | Status                                                                                                                                                                              |
+| -------------------------- | ------------------------------------------------------------------------ | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0                          | devenv initialization, inventory/seed pins, docs and agent guidance      | Empty workspace              | Complete                                                                                                                                                                            |
+| [1](01-workspace.md)       | Setup/doctor, repo sync, checkpoints, push pins, forks, initial Node MCP | 0                            | Complete for requested repository/MCP scope; activation limitation documented                                                                                                       |
+| [2](02-builds.md)          | Per-repo Nix recipes, native/cross builds, ABI and output contracts      | 1                            | Native/cross acceptance passed; full WinBoat/Electron application closures pending                                                                                                  |
+| [3](03-devbox.md)          | Containerized headless Windows provisioning, shared workspace and viewer | 2 host QEMU/renderer outputs | Podman/NVIDIA current-host acceptance passed; alternate UID preparation passed; corrected-artifact Docker repeat needs daemon space; second account Windows boot/other host pending |
+| [4](04-windows-control.md) | Windows builds, Helios installation, strict inventory, devbox MCP        | 2, 3                         | Accepted on current host: clean CLI/MCP stack builds, installs, 13 graphics workloads, 12 mapped DLLs and resident kernel code passed; publication/conformance remain separate      |
+| [5](05-agents.md)          | Claude/Codex setup, SSH/Nix integrations, agent workflows                | 1, 4                         | Implemented; measured current-host client/protocol, contributor fixtures and build/install/runtime checks passed; interactive client UI/Claude model turns not exercised            |
+| [6](06-ci-bundles.md)      | Component CI and bundling-only root CI, installer relocation             | 2, 4                         | All component workflows, exact-input verification and local/hosted assembly passed; fresh installer runtime acceptance in progress                                                  |
+| [7](07-migration.md)       | Retire duplicate tooling/submodules, docs cleanup, fresh-host acceptance | 1–6                          | Planned                                                                                                                                                                             |
 
 Each stage ends with a reviewable checkpoint, concrete validation and an updated
 status here. Missing runtime prerequisites must be recorded as pending checks;

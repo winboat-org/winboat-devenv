@@ -7,8 +7,8 @@ exact release contracts and `wb bundle` with six typed MCP tools are present.
 See [release usage](../releases.md) and
 [implementation evidence](../evidence/stage-06-implementation.json).
 
-Hosted component runs, real local/CI packing, and fresh installer runtime
-acceptance remain pending. The user authorized checkpoints and pushes. Stage 5
+Hosted component production and real local/CI candidate assembly passed. Fresh
+installer runtime acceptance remains in progress. The user authorized checkpoints and pushes. Stage 5
 is checkpointed in `7e4fcf9`, and `a5b2b18` fixes canonical remote verification
 when Git omits the SSH username from its destination display. All six component
 repositories and their required recipe history are published, with exact remote
@@ -369,3 +369,22 @@ identity fields, retaining caller path guards and before/after transfer checks.
 The 126-check suite passed, including transfer of the path-bearing record and
 rejection of a wrong digest before transfer. Preserve this packing receipt too;
 regenerate the input for the clean correction and finish local/hosted assembly.
+
+Local candidate `op-bd5447da292446bc883bcc8322020e57` and hosted root run
+`38353599147` passed using source `5024969` and reviewed input data `bb8f1c4`
+(SHA256 `9d1944b2eb7a7d7421b465f8b65289871e3d6eb550811c7310953031ba87765c`).
+All three hosted jobs passed without component/installer compilation. Both
+installers are byte-identical, 38,633,082 bytes, SHA256
+`6e0c815d3f3432e039b8ac7f03d6a460edb7144c029f4ab9981dc7d6f6359170`;
+the payload digest is `d81ce5cdb9f9f138b90f55d131ad6bf42d2b3217f9eb1fa596187d1d3b454317`.
+Final artifact `11791559945` verified its archive digest and all 734 members.
+The fresh guest captured actual installer exit 3010 and
+`test-signing-restart-required`, then automatically installed the package after
+reboot and returned 3010 with `driver-restart-required`. Restart job
+`op-f3ee5eca8db34db8877d5d344c01d7ef` completed the second installer reboot.
+Provisioning reached `finished` and removed its startup task. Finish actual
+loaded-code/graphics, repair/update and uninstall checks.
+Ignored acceptance wrappers stalled while serializing rich PowerShell objects;
+the original tasks/logs and immediate native-exit receipt are retained. Future
+wrapper log lines are converted to plain strings. Existing guests are preserved,
+and no release was published.

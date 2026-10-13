@@ -33,19 +33,16 @@ automatic SSH configuration, durable waits, retry IDs and bounded evidence.
 Its measured client/protocol and live build/install/loaded-code checks passed;
 see [Stage 5 evidence](docs/evidence/stage-05-acceptance.json) for client/UI limits.
 Stage 6 supplies exact component workflows, migrated installer sources and a
-prebuilt-only candidate bundler. Driver run `38347050671` passed all three hosted
-jobs with the refreshed DXVK artifacts; both Mesa variants also passed. All 13
-selected component archives and exact engine-manifest receipts verified. QEMU
-run `38335618535` passed with a verified 142.5 MB component archive, 87% smaller
-than before. Driver preparation rejects stale helper pins before compilation.
-Local packing exposed Windows' untrusted-root `UnknownError`; the shared check
-now verifies the CMS signature and exact certificate, with rejection cases
-passing under both PowerShell runtimes. Local/hosted assembly remain pending. A fresh
-acceptance guest has booted with the pinned host stack and reached the Windows
-desktop. All 14 locked tools, the signing reboot and signed fixture-driver load
-verified after correcting creation of an absent TrustedPublisher store;
-installer runtime checks remain pending. See
-[release usage](docs/releases.md). Stage 7 remains planned.
+prebuilt-only candidate bundler. All 13 selected component archives passed exact
+source, dependency and member verification. Hosted QEMU's archive is 142.5 MB,
+87% smaller than before. Local candidate assembly and hosted run
+[`38353599147`](https://github.com/winboat-org/winboat-devenv/actions/runs/38353599147)
+passed; their 38.6 MB installers are byte-identical, and every hosted candidate
+member verified. Root CI compiled no component or installer binaries. The fresh
+Windows guest passed baseline provisioning and the installer's test-signing
+reboot; automatic installation returned another native 3010 for the driver reboot
+and then reached `finished`. Loaded-code, graphics and lifecycle checks remain pending.
+See [release usage](docs/releases.md). Stage 7 remains planned.
 
 ## Start here
 

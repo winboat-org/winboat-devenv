@@ -1,48 +1,49 @@
 # Exact component artifacts and release candidates
 
 Stage 6 supplies repository-owned component workflows and a shared verifier and
-packer. Exact-input verification, local/hosted candidate assembly and fresh
-installer acceptance remain pending. Current measured scope and artifact
-identities are recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
+packer. All 13 exact inputs, local candidate assembly and hosted assembly passed.
+Fresh installer runtime acceptance remains in progress. The measured gates and
+artifact identities are recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
 
 The root remote is `https://github.com/winboat-org/winboat-devenv`. The user
 authorized source checkpoints, dependency-first pushes and hosted CI runs.
-Current affected component builds use published root source `99b509d` with the
-updated QEMU and coherent Helios parent pins. The unchanged vkd3d and renderer
-artifacts retain their original source and build-root identities.
-The refreshed installer, ADL, catalog and QEMU archives passed hosted builds and
-complete member verification. QEMU's archive is 142.5 MB, down 87% after correcting
-its component packaging scope. Refreshed driver run `38335639658` passed its
-three hosted jobs; all 657 archive members and the four selected original engine
-manifest receipts verified. CLVK run `38335635675` passed and its archive verified.
-The complete input lock subsequently rejected older DXVK/Mesa helper pins.
-Runs `38345947461` and `38345950402` supplied their corrected variants using
-root `833227b`; driver run `38347050671` passed with the new DXVK receipts using
-root `ce49636`. All 13 selected inputs passed full verification, with every archive
-reused from the digest cache. Driver preparation compares normalized and original
-engine source tables and checks every dependency pin before compilation.
+Component artifacts retain their explicit build-root identities: `99b509d`
+for QEMU/installer/ADL/catalog/CLVK, `833227b` for refreshed DXVK/Mesa,
+`ce49636` for the driver, and `6797be4` for unchanged vkd3d/renderer inputs.
+All source pairings and consumed engine-manifest receipts verified. QEMU's
+component archive is 142.5 MB, 87% smaller after removing the duplicated full
+host closure and redundant source aliases while retaining modules and symbols.
 
-Local packing then exposed Windows reporting the selected untrusted test signer
-as `UnknownError`. The shared packing check now verifies the CMS signature,
-exact certificate bytes, validity dates and code-signing usage, followed by the
-prebuilt catalog-membership verifier. It does not install the certificate into
-the packing machine's trust stores. Rejection cases passed in Linux PowerShell
-and the guest's Windows PowerShell. Local/hosted candidate assembly remain pending.
+Root hosted run
+[`38353599147`](https://github.com/winboat-org/winboat-devenv/actions/runs/38353599147)
+passed verification, Windows prebuilt packing and final verification. It uses
+assembly source `5024969307a6a29395a7d86904eb7d678b9dbf48` and reviewed
+input data from `bb8f1c467dc7b9759c0582230760f2b2a6c12031` at
+[docs/release-inputs/winboat-release-inputs-20261013.json](release-inputs/winboat-release-inputs-20261013.json),
+SHA256 `9d1944b2eb7a7d7421b465f8b65289871e3d6eb550811c7310953031ba87765c`.
+Local and hosted payload digest is
+`d81ce5cdb9f9f138b90f55d131ad6bf42d2b3217f9eb1fa596187d1d3b454317`.
+Both produced a byte-identical 38,633,082-byte installer, SHA256
+`6e0c815d3f3432e039b8ac7f03d6a460edb7144c029f4ab9981dc7d6f6359170`.
+All 734 final hosted artifact members verified. Root logs contain no component
+or installer compilation. The 1.36 GB candidate evidence archive preserves the
+13 original component/symbol archives and unpacked payload; the distributable
+installer itself is 38.6 MB.
 
-The corrected local operation verified catalog membership and produced a 38.6 MB
-installer. Collection exposed a separate file-record comparison bug: the expected
-record's path was compared with hash/size-only remote metadata. Downloads now
-compare the declared hash and size, preserving destination guards and transfer
-verification. The 126-check suite passed; final collection/container verification
-and the matching hosted assembly remain pending.
-Historical successful/failed runs and the rejected driver archive without engine
-receipts remain recorded in the evidence.
+Local packing corrections verify the CMS signature, pinned certificate bytes,
+validity and code-signing usage, then catalog membership with the existing
+prebuilt verifier. Download verification compares hash/size while preserving
+path guards and checks before and after transfer. The 126-check suite passed.
+Historical failures and rejected input cohorts remain in the evidence.
 
-The fresh acceptance guest has verified all 14 locked tools, effective test
-signing after reboot, and a running signed fixture driver. Its initial missing
-TrustedPublisher store was corrected through Windows' certificate API, with the
-original failure and repair receipt retained. Candidate assembly and installer
-lifecycle/loaded-code checks remain pending.
+The fresh acceptance guest verified all 14 tools and its signed fixture driver.
+It then disabled test signing to exercise the installer's own gate. The exact
+candidate returned native 3010 with `test-signing-restart-required`; after reboot,
+automatic provisioning installed the package and returned 3010 with
+`driver-restart-required`. The next boot reached `finished` and removed the
+startup task. Registry/loaded-code verification, interactive graphics and
+repair/update/uninstall acceptance remain in progress.
+The prior development guest and all retained artifacts remain preserved.
 
 Root release CI uses public hosted runners. Driver production uses hosted Ubuntu
 preparation, Windows compilation/signing and Ubuntu artifact verification. The

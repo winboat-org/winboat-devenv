@@ -1,19 +1,17 @@
 # Stage 6 — Component CI and bundling-only release CI
 
-Status: hosted driver run `38347050671` passed all three jobs with refreshed
-DXVK inputs. Both Mesa variants passed, and all 13 selected component archives
-and exact engine receipts verified. QEMU run
-`38335618535` passed with a verified 142.5 MB archive, 87% smaller than before.
-Refreshed installer, ADL, catalog and CLVK artifacts also passed and verified.
-The earlier input lock rejected stale Helios helper pins; runs `38345947461` and
-`38345950402` supplied the corrected variants. Driver preparation now rejects
-stale dependency sources before compilation. Local packing stopped at an
-untrusted-root status; the shared CMS signature/pinned-certificate check and
-its rejection cases passed in both PowerShell runtimes. Local/hosted
-candidate assembly and fresh installer runtime acceptance remain pending. The
-fresh guest reached the Windows desktop and verified all 14 tools, the signing
-reboot and signed fixture-driver load after correcting an absent TrustedPublisher
-store. Prerequisites: Stages 2 and 4. Agent setup is useful but not a prerequisite.
+Status: all 13 selected component artifacts passed hosted production and exact
+input verification. Local assembly and all three jobs of root hosted run
+[`38353599147`](https://github.com/winboat-org/winboat-devenv/actions/runs/38353599147)
+passed using source `5024969` and reviewed input data `bb8f1c4`. Payload hashes
+match, and both installers are byte-identical: 38,633,082 bytes. All 734 hosted
+candidate members verified; root logs contain no component or installer
+compilation. The corrected QEMU archive is 142.5 MB, 87% smaller than before.
+The fresh Windows guest passed baseline provisioning, the installer's native
+3010 test-signing request and automatic post-reboot installation. Its second
+3010 request was `driver-restart-required`; the next boot reached `finished`.
+Loaded-code, interactive graphics, repair/update and uninstall checks remain in progress. Prerequisites:
+Stages 2 and 4. Agent setup is useful but not a prerequisite.
 
 [Release usage](../releases.md) describes the exact-input contracts, six component
 repositories with ten responsibility-specific build workflows, the hosted

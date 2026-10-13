@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "stage": 6,
-  "state": "implemented-local-validation",
-  "observedAt": "2026-10-13T05:43:38.716Z",
+  "state": "hosted-and-local-candidate-accepted-fresh-installer-runtime-in-progress",
+  "observedAt": "2026-10-13",
   "root": {
     "repository": "https://github.com/winboat-org/winboat-devenv",
     "sourceState": "required Stage 5 baseline and Stage 6 implementation published; this evidence update descends from the recorded source checkpoint",
@@ -3618,5 +3618,138 @@
     },
     "containerMembersVerified": false,
     "hostedCandidateAssembly": false
+  },
+  "candidateAssemblyAccepted": {
+    "state": "local-and-hosted-passed",
+    "assemblySourceRevision": "5024969307a6a29395a7d86904eb7d678b9dbf48",
+    "releaseInputRevision": "bb8f1c467dc7b9759c0582230760f2b2a6c12031",
+    "releaseInputPath": "docs/release-inputs/winboat-release-inputs-20261013.json",
+    "releaseInputSha256": "9d1944b2eb7a7d7421b465f8b65289871e3d6eb550811c7310953031ba87765c",
+    "localOperation": "op-bd5447da292446bc883bcc8322020e57",
+    "localPackingOperation": "op-2e211e18455f468da429f34c7d8af2f6",
+    "localHostJob": "op-23ad6875615c455aa4e547d09ad87149",
+    "archiveCacheHits": 13,
+    "hosted": {
+      "runId": 38353599147,
+      "state": "all-three-hosted-jobs-passed",
+      "componentOrInstallerCompilationDetected": false,
+      "hostedCompletion": {
+        "schemaVersion": 1,
+        "operationId": "op-228fd1dabcd34f398cade61bc35a1aef",
+        "state": "candidate",
+        "exitCode": 0,
+        "evidencePaths": [
+          "/home/runner/work/winboat-devenv/winboat-devenv/.state/operations/op-228fd1dabcd34f398cade61bc35a1aef.json"
+        ],
+        "result": {
+          "state": "candidate",
+          "exitCode": 0,
+          "manifest": "/home/runner/work/winboat-devenv/winboat-devenv/out/bundles/op-228fd1dabcd34f398cade61bc35a1aef/release-manifest.json",
+          "installer": "/home/runner/work/winboat-devenv/winboat-devenv/out/bundles/op-228fd1dabcd34f398cade61bc35a1aef/HeliosSetup.exe",
+          "payloadDigest": "d81ce5cdb9f9f138b90f55d131ad6bf42d2b3217f9eb1fa596187d1d3b454317",
+          "packingOperationId": "op-7c4dcc9d2bfe4cc686fd89a9303ce6b0",
+          "installed": false,
+          "loaded": false,
+          "published": false
+        }
+      },
+      "localPayloadDigest": "d81ce5cdb9f9f138b90f55d131ad6bf42d2b3217f9eb1fa596187d1d3b454317",
+      "payloadDigestsEqual": true,
+      "installerBytesEqual": true,
+      "log": {
+        "path": "workspace-state:stage06/hosted-candidate-success.log",
+        "size": 372034,
+        "sha256": "470eb3e8ed990ae1d00b0935924139e5adb25f8450101cd06fe4bcecee84f667"
+      },
+      "published": false
+    },
+    "finalHostedArtifact": {
+      "artifactId": 11791559945,
+      "archiveSha256": "33dc74589e1994fa524cde1fe61fb25e9818c8b1fcc6e77f70c0de5b2ed58bc3",
+      "archiveBytes": 1355964982,
+      "path": "workspace-state:stage06/hosted-candidate-11791559945.zip",
+      "state": "verified",
+      "verifiedMembers": 734,
+      "releaseManifestSha256": "b23a7c5fffda8d6491ab3a27236ccdcf30776cf5cefd89b91d404eda09b0ddf9",
+      "container": {
+        "format": "HLIOSET2",
+        "file": {
+          "path": "HeliosSetup.exe",
+          "size": 38633082,
+          "sha256": "6e0c815d3f3432e039b8ac7f03d6a460edb7144c029f4ab9981dc7d6f6359170"
+        }
+      },
+      "payloadDigest": "d81ce5cdb9f9f138b90f55d131ad6bf42d2b3217f9eb1fa596187d1d3b454317",
+      "componentArchives": 13
+    },
+    "published": false
+  },
+  "freshInstallerRuntime": {
+    "state": "finished-loaded-code-graphics-lifecycle-in-progress",
+    "name": "release-acceptance-20261013",
+    "packageId": "helios-5024969307a6-release",
+    "version": "22.22.289.0",
+    "installerSha256": "6e0c815d3f3432e039b8ac7f03d6a460edb7144c029f4ab9981dc7d6f6359170",
+    "testSigningRequest": {
+      "operationId": "op-117eec783ef1485a807f3f4d326b1e21",
+      "nativeExitCode": 3010,
+      "status": "test-signing-restart-required",
+      "nativeExitReceipt": "workspace-state:stage06/installer-native-exit-observed.json"
+    },
+    "testSigningRestartJob": "op-8b93dca08eab4f139088e105c7d4e2cd",
+    "postSigningObservation": "op-98286decb3f44dedbf2572424b172a10",
+    "effectiveKernelTestSigning": true,
+    "automaticInstall": {
+      "task": "HeliosGraphicsProvisioning",
+      "nativeExitCode": 3010,
+      "status": "driver-restart-required",
+      "packageInstalled": true
+    },
+    "driverRestartJob": "op-f3ee5eca8db34db8877d5d344c01d7ef",
+    "wrapperHistory": {
+      "initialOperation": "op-a87d536f16374c2e80067f0f4e1b66f7",
+      "diagnosticOperation": "op-87f3abd54de944318d5e4967299a2e12",
+      "cancelledWrappersPreserved": true,
+      "correction": "Write native exit before observations; serialize plain log strings."
+    },
+    "loadedCodeVerified": false,
+    "graphicsVerified": false,
+    "lifecycleAccepted": false,
+    "published": false,
+    "driverRestartState": "succeeded",
+    "provisioningStatus": "finished",
+    "startupTaskRemoved": true,
+    "finishedObservation": "workspace-state:stage06/installer-finished-observation.json",
+    "registryFilesVerified": true,
+    "installationVerificationOperation": "op-7ba0253daa084468b84093202d116bbe",
+    "residentKernel": {
+      "state": "candidate-resident-kernel-code-verified",
+      "reconcileJob": "op-71dc90a9af924d5f9993305a423e8660",
+      "inventoryOperation": "op-3e40a2ed0cd74bed99e29730a1917bcf",
+      "kernelSha256": "62486658b57918198a4eb5c481633e839cd5d2dfbe140aef582f66d25514f449",
+      "kernelSize": 405416,
+      "sections": [
+        {
+          "name": ".text",
+          "rva": 4096,
+          "size": 374272,
+          "normalizedSha256": "828113d09c12622a7ce2c82b242bc007550a89a2a6c9ab843b07f7f28505fb2e",
+          "expectedSha256": "828113d09c12622a7ce2c82b242bc007550a89a2a6c9ab843b07f7f28505fb2e",
+          "matches": true
+        },
+        {
+          "name": "PAGE",
+          "rva": 2510848,
+          "size": 512,
+          "normalizedSha256": "d863c33309de8416928109d07397b6198e96acdcd31531d2e1df8c81ae8fdc5d",
+          "expectedSha256": "d863c33309de8416928109d07397b6198e96acdcd31531d2e1df8c81ae8fdc5d",
+          "matches": true
+        }
+      ],
+      "frameworkInstalledVerified": false,
+      "frameworkLoadedVerified": false,
+      "frameworkBoundary": "Standalone installer has no requested MCP installation transaction; candidate identity is independently compared with the selected manifest."
+    },
+    "residentKernelCodeVerified": true
   }
 }
