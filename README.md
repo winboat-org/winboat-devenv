@@ -41,9 +41,10 @@ producing the thirteenth component artifact. Exact-input verification rejected
 its missing engine-dependency receipts; the exporter fix passed 122 local checks
 and requires a new hosted driver artifact. Candidate assembly and fresh installer
 runtime acceptance remain pending; see [release usage](docs/releases.md). QEMU
-component packaging now excludes the duplicated full host closure and non-x86
-EDK2 images; its updated source and matching Helios parent require fresh hosted
-artifacts. Stage 7 remains planned.
+hosted run `38335618535` passed with a verified 142.5 MB component archive, down
+87% from 1.09 GB. It preserves modules, symbols, notices and validation reports.
+Refreshed installer, ADL and catalog artifacts also passed and verified; matching
+driver and CLVK runs remain pending. Stage 7 remains planned.
 
 ## Start here
 

@@ -2533,8 +2533,8 @@
     "rootAssemblyAccepted": false
   },
   "qemuComponentPackagingCorrection": {
-    "state": "passed-real-local-component-build-hosted-pending",
-    "observedAt": "2026-10-13T02:05:30.832454+00:00",
+    "state": "passed-real-hosted-build-and-archive-verification",
+    "observedAt": "2026-10-13T02:32:21.986448+00:00",
     "previousArtifact": {
       "repository": "winboat-org/qemu-helios",
       "runId": 37701065436,
@@ -2557,7 +2557,7 @@
     "parentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
     "tests": 123,
     "testLog": "workspace-state:stage06/devenv-test-qemu-component-final.log",
-    "hostedAcceptance": false,
+    "hostedAcceptance": true,
     "rootAssemblyAccepted": false,
     "localBuild": {
       "operationId": "op-6a0a6b6380424316937e2270276c6e10",
@@ -2584,6 +2584,244 @@
       "firmwareBytes": 28989922
     },
     "installed": false,
-    "loaded": false
-  }
+    "loaded": false,
+    "hostedProof": {
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/qemu-helios",
+      "target": "qemu-helios",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "5262ea9400ba44a1d9bbf18bea77ec30e7ab9422",
+      "runId": 38335618535,
+      "artifactId": 11785257477,
+      "workflow": {
+        "repository": "winboat-org/qemu-helios",
+        "path": ".github/workflows/build-qemu.yml",
+        "runId": 38335618535,
+        "runAttempt": 1,
+        "headSha": "5262ea9400ba44a1d9bbf18bea77ec30e7ab9422",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "d616c744e84a9197557b56e0a633d539583d5489e3691205be9e9e90eb45b8f8",
+        "size": 142507005
+      },
+      "verifiedMembers": 943,
+      "licenses": [
+        "files/share/licenses/qemu-helios/COPYING",
+        "files/share/licenses/qemu-helios/COPYING.LIB",
+        "files/share/licenses/qemu-helios/edk2-licenses.txt",
+        "files/share/licenses/qemu-helios/firmware-README"
+      ],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false
+    },
+    "hostedArtifactContents": {
+      "buildTarget": "qemu-helios",
+      "unitResults": {
+        "OK": 105,
+        "SKIP": 3
+      },
+      "modules": 19,
+      "symbols": 90,
+      "fullClosureMembers": 0,
+      "perBuildIdSourceTreeAliases": 0,
+      "nonX86Edk2RuntimeImages": 0,
+      "frontend": "dummy-driver-qmp-quit"
+    }
+  },
+  "componentScopeHostedDispatches": [
+    {
+      "repository": "qemu-helios",
+      "workflow": "build-qemu.yml",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "5262ea9400ba44a1d9bbf18bea77ec30e7ab9422",
+      "ref": "helios-11.1.1",
+      "dispatchedAt": "2026-10-13T02:10:22.788Z",
+      "runId": 38335618535
+    },
+    {
+      "repository": "helios",
+      "workflow": "build-helios-installer.yml",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "ref": "master",
+      "dispatchedAt": "2026-10-13T02:10:25.932Z",
+      "runId": 38335622988
+    },
+    {
+      "repository": "helios",
+      "workflow": "build-adl-compatibility.yml",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "ref": "master",
+      "dispatchedAt": "2026-10-13T02:10:28.937Z",
+      "runId": 38335627419
+    },
+    {
+      "repository": "helios",
+      "workflow": "build-catalog-verifier.yml",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "ref": "master",
+      "dispatchedAt": "2026-10-13T02:10:32.211Z",
+      "runId": 38335631178
+    },
+    {
+      "repository": "helios",
+      "workflow": "build-clvk-runtime.yml",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "ref": "master",
+      "dispatchedAt": "2026-10-13T02:10:35.059Z",
+      "runId": 38335635675
+    },
+    {
+      "repository": "helios",
+      "workflow": "build-helios-drivers.yml",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "ref": "master",
+      "dispatchedAt": "2026-10-13T02:10:38.083Z",
+      "runId": 38335639658,
+      "engineSelection": [
+        {
+          "repository": "winboat-org/dxvk",
+          "runId": 37701039011,
+          "runAttempt": 1,
+          "artifactId": 11517632307,
+          "buildRootRevision": "6797be4f226a6484a53e00539014a1fa295340bf"
+        },
+        {
+          "repository": "winboat-org/dxvk",
+          "runId": 37701039011,
+          "runAttempt": 1,
+          "artifactId": 11517562355,
+          "buildRootRevision": "6797be4f226a6484a53e00539014a1fa295340bf"
+        },
+        {
+          "repository": "winboat-org/vkd3d-proton",
+          "runId": 37701045614,
+          "runAttempt": 1,
+          "artifactId": 11517642605,
+          "buildRootRevision": "6797be4f226a6484a53e00539014a1fa295340bf"
+        },
+        {
+          "repository": "winboat-org/vkd3d-proton",
+          "runId": 37701045614,
+          "runAttempt": 1,
+          "artifactId": 11516759680,
+          "buildRootRevision": "6797be4f226a6484a53e00539014a1fa295340bf"
+        }
+      ]
+    }
+  ],
+  "componentScopeSmallArtifactsVerified": [
+    {
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/helios",
+      "target": "helios-installer",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "runId": 38335622988,
+      "artifactId": 11784681764,
+      "workflow": {
+        "repository": "winboat-org/helios",
+        "path": ".github/workflows/build-helios-installer.yml",
+        "runId": 38335622988,
+        "runAttempt": 1,
+        "headSha": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "27c4aee40b4393161f6163525fc839af1dc9b499fb20653ebaeff2c37f3d7c2a",
+        "size": 1962409
+      },
+      "verifiedMembers": 34,
+      "licenses": [
+        "files/licenses/block-buffer-0.10.4/source-attribution.toml",
+        "files/licenses/cc-1.4.6/source-attribution.toml",
+        "files/licenses/cfg-if-1.0.5/source-attribution.toml",
+        "files/licenses/cpufeatures-0.2.17/source-attribution.toml",
+        "files/licenses/crypto-common-0.1.7/source-attribution.toml",
+        "files/licenses/digest-0.10.7/source-attribution.toml",
+        "files/licenses/find-msvc-tools-0.1.12/source-attribution.toml",
+        "files/licenses/generic-array-0.14.7/source-attribution.toml",
+        "files/licenses/libc-0.2.189/source-attribution.toml",
+        "files/licenses/lzma-sys-0.1.20/source-attribution.toml",
+        "files/licenses/NOTICE",
+        "files/licenses/pkg-config-0.3.34/source-attribution.toml",
+        "files/licenses/sha2-0.10.9/source-attribution.toml",
+        "files/licenses/shlex-2.0.1/source-attribution.toml",
+        "files/licenses/typenum-1.20.1/source-attribution.toml",
+        "files/licenses/version_check-0.9.5/source-attribution.toml",
+        "files/licenses/windows_aarch64_gnullvm-0.52.6/source-attribution.toml",
+        "files/licenses/windows_aarch64_msvc-0.52.6/source-attribution.toml",
+        "files/licenses/windows_i686_gnu-0.52.6/source-attribution.toml",
+        "files/licenses/windows_i686_gnullvm-0.52.6/source-attribution.toml",
+        "files/licenses/windows_i686_msvc-0.52.6/source-attribution.toml",
+        "files/licenses/windows_x86_64_gnu-0.52.6/source-attribution.toml",
+        "files/licenses/windows_x86_64_gnullvm-0.52.6/source-attribution.toml",
+        "files/licenses/windows_x86_64_msvc-0.52.6/source-attribution.toml",
+        "files/licenses/windows-sys-0.59.0/source-attribution.toml",
+        "files/licenses/windows-targets-0.52.6/source-attribution.toml",
+        "files/licenses/xz2-0.1.7/source-attribution.toml"
+      ],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false
+    },
+    {
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/helios",
+      "target": "helios-compatibility",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "runId": 38335627419,
+      "artifactId": 11785380503,
+      "workflow": {
+        "repository": "winboat-org/helios",
+        "path": ".github/workflows/build-adl-compatibility.yml",
+        "runId": 38335627419,
+        "runAttempt": 1,
+        "headSha": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "8322d2361b7d69c492a663b01fad184ebf93d803d79a81ea8775b7130b79a31e",
+        "size": 1847406
+      },
+      "verifiedMembers": 11,
+      "licenses": ["files/licenses/NOTICE"],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false
+    },
+    {
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/helios",
+      "target": "helios-catalog-verifier",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "runId": 38335631178,
+      "artifactId": 11785425368,
+      "workflow": {
+        "repository": "winboat-org/helios",
+        "path": ".github/workflows/build-catalog-verifier.yml",
+        "runId": 38335631178,
+        "runAttempt": 1,
+        "headSha": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "40092278e505fdba57da2556d243fa7c1a5b8d5ad48fe56e4574d42ee6e2b300",
+        "size": 1827261
+      },
+      "verifiedMembers": 6,
+      "licenses": ["files/licenses/NOTICE"],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false
+    }
+  ]
 }

@@ -292,3 +292,14 @@ files. The clean pinned component source passed 105 unit tests and 3 known skips
 and the paired-renderer/module/SDL-QMP checks passed. This local build used
 development mode for changed root packaging code; hosted release proof remains
 pending. No existing guest or runtime binding changed.
+
+Hosted QEMU run `38335618535` passed from root `99b509d` and component
+`5262ea9`. Artifact `11785257477` is 142,507,005 bytes, 87% smaller than the
+previous 1,093,465,980-byte archive. The archive digest and all 943 members
+verified; it retains 19 modules, 90 symbol files, notices and validation reports.
+Hosted unit results are 105 OK / 3 known skips, with the paired-renderer/module/
+SDL-QMP checks passed. It contains no full closure duplicate, per-build-ID source
+tree alias expansion or non-x86 EDK2 runtime images. Refreshed installer, ADL and
+catalog runs also passed and all their archive members verified. Driver and CLVK
+runs remain pending, as do root candidate assembly and fresh installer runtime
+acceptance.

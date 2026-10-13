@@ -6,8 +6,10 @@ corrected CLVK archive verified. Driver run `38327393281` passed all three hoste
 jobs, producing the thirteenth artifact. Exact-input verification rejected its
 missing engine-dependency receipts. The exporter correction passed 122 checks;
 a new hosted artifact, candidate assembly and fresh installer runtime acceptance
-remain pending. QEMU component packaging has been corrected; updated QEMU and
-Helios pins require fresh affected hosted artifacts. Prerequisites: Stages 2 and 4.
+remain pending. QEMU run `38335618535` passed and its 142.5 MB archive verified,
+87% smaller than before. Refreshed installer, ADL and catalog artifacts also passed
+and verified; matching driver and CLVK runs remain pending. Prerequisites: Stages 2
+and 4.
 Agent setup is useful but not a prerequisite.
 
 [Release usage](../releases.md) describes the exact-input contracts, six component
