@@ -32,19 +32,16 @@ complete fixed dependency closures. Stage 5 now supplies merged client setup,
 automatic SSH configuration, durable waits, retry IDs and bounded evidence.
 Its measured client/protocol and live build/install/loaded-code checks passed;
 see [Stage 5 evidence](docs/evidence/stage-05-acceptance.json) for client/UI limits.
-Stage 6 now supplies exact component workflows, migrated installer sources and
-a prebuilt-only candidate bundler. Nine hosted component workflows passed from
-source revision `6797be4`, including both DXVK/vkd3d/Mesa architectures and CLVK.
-The corrected CLVK archive and all 87 members also verified. Hosted driver run
-`38327393281` passed preparation, Windows compilation/signing and Linux verification,
-producing the thirteenth component artifact. Exact-input verification rejected
-its missing engine-dependency receipts; the exporter fix passed 122 local checks
-and requires a new hosted driver artifact. Candidate assembly and fresh installer
-runtime acceptance remain pending; see [release usage](docs/releases.md). QEMU
-hosted run `38335618535` passed with a verified 142.5 MB component archive, down
-87% from 1.09 GB. It preserves modules, symbols, notices and validation reports.
-Refreshed installer, ADL and catalog artifacts also passed and verified; matching
-driver and CLVK runs remain pending. Stage 7 remains planned.
+Stage 6 supplies exact component workflows, migrated installer sources and a
+prebuilt-only candidate bundler. Refreshed driver run `38335639658` passed all
+three hosted jobs; its archive and four consumed engine-manifest receipts
+verified. QEMU run `38335618535` passed with a verified 142.5 MB component archive,
+87% smaller than before. Refreshed installer, ADL and catalog artifacts also
+passed and verified; the matching CLVK build remains in progress. Exact-input
+verification and local/hosted candidate assembly remain pending. A fresh
+acceptance guest has booted with the pinned host stack and reached the Windows
+desktop; tool provisioning and installer runtime checks remain pending. See
+[release usage](docs/releases.md). Stage 7 remains planned.
 
 ## Start here
 

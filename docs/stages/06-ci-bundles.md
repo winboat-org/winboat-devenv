@@ -1,16 +1,13 @@
 # Stage 6 — Component CI and bundling-only release CI
 
-Status: nine hosted component workflows passed from source revision `6797be4`,
-producing twelve exact artifacts. Both engine/ICD architectures passed and the
-corrected CLVK archive verified. Driver run `38327393281` passed all three hosted
-jobs, producing the thirteenth artifact. Exact-input verification rejected its
-missing engine-dependency receipts. The exporter correction passed 122 checks;
-a new hosted artifact, candidate assembly and fresh installer runtime acceptance
-remain pending. QEMU run `38335618535` passed and its 142.5 MB archive verified,
-87% smaller than before. Refreshed installer, ADL and catalog artifacts also passed
-and verified; matching driver and CLVK runs remain pending. Prerequisites: Stages 2
-and 4.
-Agent setup is useful but not a prerequisite.
+Status: refreshed hosted driver run `38335639658` passed all three jobs. Its
+archive and the four exact consumed engine-manifest receipts verified. QEMU run
+`38335618535` passed with a verified 142.5 MB archive, 87% smaller than before.
+Refreshed installer, ADL and catalog artifacts also passed and verified; matching
+CLVK production remains in progress. Exact-input verification, local/hosted
+candidate assembly and fresh installer runtime acceptance remain pending. The
+fresh guest has booted and reached the Windows desktop; tool provisioning is
+pending. Prerequisites: Stages 2 and 4. Agent setup is useful but not a prerequisite.
 
 [Release usage](../releases.md) describes the exact-input contracts, six component
 repositories with ten responsibility-specific build workflows, the hosted

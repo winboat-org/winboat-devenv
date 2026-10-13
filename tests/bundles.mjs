@@ -421,6 +421,133 @@ async function rewrite_artifact(f, a) {
   a.archive.sha256 = digest(archive);
   a.archive.size = fs.statSync(archive).size;
 }
+test("artifact cache reuses verified bytes while retaining remote and corruption gates", async (t) => {
+  const f = await fixture(t);
+  for (const [index, a] of f.input.artifacts.entries()) {
+    a.provenance.workflow.runId += index;
+    await rewrite_artifact(f, a);
+  }
+  write_json(f.manifest, f.input);
+  const apiData = path.join(f.ws.state, "github-fixture.json"),
+    gh = path.join(f.ws.state, "github-fixture.mjs"),
+    calls = path.join(f.ws.state, "github-calls.jsonl"),
+    denyDownload = path.join(f.ws.state, "deny-download"),
+    failedWorkflow = path.join(f.ws.state, "failed-workflow");
+  write_json(
+    apiData,
+    f.input.artifacts.map((a) => ({
+      id: a.githubArtifactId,
+      archive: path.join(f.artifacts_dir, a.archive.path),
+      metadata: {
+        id: a.githubArtifactId,
+        expired: false,
+        digest: "sha256:" + a.archive.sha256,
+        size_in_bytes: a.archive.size,
+        workflow_run: {
+          id: a.provenance.workflow.runId,
+          head_sha: a.provenance.workflow.headSha,
+        },
+      },
+      run: {
+        id: a.provenance.workflow.runId,
+        run_attempt: a.provenance.workflow.runAttempt,
+        head_sha: a.provenance.workflow.headSha,
+        path: a.provenance.workflow.path,
+        event: "workflow_dispatch",
+        conclusion: "success",
+        head_repository: { full_name: a.provenance.repository },
+      },
+    })),
+  );
+  write(
+    gh,
+    `#!${process.execPath}
+import fs from 'node:fs';
+const endpoint=process.argv[3], rows=JSON.parse(fs.readFileSync(${JSON.stringify(apiData)}));
+fs.appendFileSync(${JSON.stringify(calls)},JSON.stringify(endpoint)+String.fromCharCode(10));
+const parts=endpoint.split('/'), kind=parts[4], id=Number(parts[5]);
+if(!['artifacts','runs'].includes(kind))throw new Error('unexpected API request');
+const repository=parts.slice(1,3).join('/');
+const row=rows.find(r=>r.run.head_repository.full_name===repository&&(kind==='artifacts'?r.id:r.run.id)===id);
+if(!row)throw new Error('unknown immutable selector');
+if(parts[6]==='zip'){
+  if(fs.existsSync(${JSON.stringify(denyDownload)}))throw new Error('download must be reused');
+  process.stdout.write(fs.readFileSync(row.archive));
+}else{
+  const value=kind==='artifacts'?row.metadata:row.run;
+  if(kind==='runs'&&fs.existsSync(${JSON.stringify(failedWorkflow)}))value.conclusion='failure';
+  process.stdout.write(JSON.stringify(value));
+}
+`,
+  );
+  fs.chmodSync(gh, 0o755);
+  const originalGh = env.WB_GH;
+  env.WB_GH = gh;
+  t.after(() => {
+    env.WB_GH = originalGh;
+  });
+  const firstDir = path.join(f.ws.root, "out/first-download"),
+    secondDir = path.join(f.ws.root, "out/cached-download");
+  const first = await bundles.fetch_artifacts(
+    f.ws,
+    { manifest: f.manifest, artifacts_dir: firstDir },
+    identity(),
+  );
+  assert.equal(first.archiveCacheHits, 0);
+  write(denyDownload, "cached inputs only\n");
+  const second = await bundles.fetch_artifacts(
+    f.ws,
+    { manifest: f.manifest, artifacts_dir: secondDir },
+    identity(),
+  );
+  assert.equal(second.archiveCacheHits, f.input.artifacts.length);
+  assert.equal(
+    (
+      await bundles.verify(
+        f.ws,
+        { manifest: f.manifest, artifacts_dir: secondDir },
+        identity(),
+      )
+    ).artifactsVerified,
+    f.input.artifacts.length,
+  );
+  assert.equal(
+    fs
+      .readFileSync(calls, "utf8")
+      .split("\n")
+      .filter((line) => line.endsWith('/zip"')).length,
+    f.input.artifacts.length,
+  );
+  write(failedWorkflow, "failed workflow\n");
+  await assert.rejects(
+    bundles.fetch_artifacts(
+      f.ws,
+      {
+        manifest: f.manifest,
+        artifacts_dir: path.join(f.ws.root, "out/failed-remote"),
+      },
+      identity(),
+    ),
+    /failed.*hosted artifact/,
+  );
+  fs.unlinkSync(failedWorkflow);
+  const a = f.input.artifacts[0];
+  write(
+    path.join(f.ws.state, "release-archive-cache", a.archive.sha256 + ".zip"),
+    "corrupt cache\n",
+  );
+  await assert.rejects(
+    bundles.fetch_artifacts(
+      f.ws,
+      {
+        manifest: f.manifest,
+        artifacts_dir: path.join(f.ws.root, "out/corrupt-cache"),
+      },
+      identity(),
+    ),
+    /hash\/size mismatch/,
+  );
+});
 test("exact archives verify; install schema keeps symbols outside payload and all source identities", async (t) => {
   const f = await fixture(t),
     result = await bundles.verify(f.ws, f, identity());

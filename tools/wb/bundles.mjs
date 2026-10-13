@@ -1246,23 +1246,61 @@ async function download_archive(repository, artifactId, destination) {
     fs.closeSync(fd);
   }
 }
+function link_or_copy(source, destination) {
+  try {
+    fs.linkSync(source, destination);
+  } catch (error) {
+    if (error.code !== "EXDEV") throw error;
+    fs.copyFileSync(source, destination, fs.constants.COPYFILE_EXCL);
+  }
+}
+async function obtain_archive(ws, repository, artifactId, directory, archive) {
+  const cache = path.join(ws.state, "release-archive-cache"),
+    cached = { ...archive, path: archive.sha256 + ".zip" },
+    destination = path.join(directory, relative(archive.path));
+  mkdir(cache);
+  mkdir(path.dirname(destination));
+  if (exists(path.join(cache, cached.path))) {
+    link_or_copy(verify_file(cache, cached), destination);
+    verify_file(directory, archive);
+    return true;
+  }
+  await download_archive(repository, artifactId, destination);
+  verify_file(directory, archive);
+  try {
+    link_or_copy(destination, path.join(cache, cached.path));
+  } catch (error) {
+    // Concurrent consumers can populate the same content identity. The winner
+    // must still contain exactly the bytes selected from GitHub.
+    if (error.code !== "EEXIST") throw error;
+    verify_file(cache, cached);
+  }
+  return false;
+}
 export async function fetch_artifacts(ws, args, operationId) {
   const input = validate(ws, readJSON(args.manifest)),
     directory = path.resolve(args.artifacts_dir);
   if (exists(directory) && fs.readdirSync(directory).length)
     fail("artifact download requires a clean empty directory");
   mkdir(directory);
+  let archiveCacheHits = 0;
   for (const a of input.artifacts) {
     check_remote(a);
-    const p = path.join(directory, relative(a.archive.path));
-    mkdir(path.dirname(p));
-    await download_archive(a.provenance.repository, a.githubArtifactId, p);
-    verify_file(directory, a.archive);
+    archiveCacheHits += Number(
+      await obtain_archive(
+        ws,
+        a.provenance.repository,
+        a.githubArtifactId,
+        directory,
+        a.archive,
+      ),
+    );
   }
   const result = {
     state: "downloaded",
     exitCode: 0,
     artifacts: input.artifacts.length,
+    archiveCacheHits,
     directory,
     releaseInputSha256: digest(args.manifest),
   };
@@ -1317,6 +1355,7 @@ export async function lock(ws, args, operationId) {
   }));
   root_source(ws, input.root);
   const seen = new Set();
+  let archiveCacheHits = 0;
   for (const s of selection.artifacts) {
     if (
       !repo(s.repository) ||
@@ -1340,12 +1379,9 @@ export async function lock(ws, args, operationId) {
       sha256: metadata.digest.slice(7),
       size: metadata.size_in_bytes,
     };
-    await download_archive(
-      s.repository,
-      s.artifactId,
-      path.join(directory, archive.path),
+    archiveCacheHits += Number(
+      await obtain_archive(ws, s.repository, s.artifactId, directory, archive),
     );
-    verify_file(directory, archive);
     const metadataFile = await read_metadata(
         path.join(directory, archive.path),
         "component.json",
@@ -1379,6 +1415,7 @@ export async function lock(ws, args, operationId) {
     manifest: output,
     manifestSha256: digest(output),
     directory,
+    archiveCacheHits,
   };
   ws.journal(operationId, { kind: "bundle-lock", ...result });
   return result;

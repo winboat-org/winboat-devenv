@@ -303,3 +303,14 @@ tree alias expansion or non-x86 EDK2 runtime images. Refreshed installer, ADL an
 catalog runs also passed and all their archive members verified. Driver and CLVK
 runs remain pending, as do root candidate assembly and fresh installer runtime
 acceptance.
+
+Driver receipt correction is now verified: run `38335639658` passed all three
+hosted jobs, artifact `11785179807` verified all 657 members, and its four consumed
+engine-manifest hashes match the exact selected DXVK/vkd3d originals. CLVK run
+`38335635675` remains in progress. Release archive fetch/lock now retains a
+SHA-256-keyed project cache, rechecking remote metadata and digest/size before
+reuse; the 124-check suite passed, including cache reuse, corrupt-cache and failed
+workflow cases. The clean release host-stack build `op-306217dd1457417e92343c81bc0d73aa`
+passed and the fresh guest `release-acceptance-20261013` booted with verified
+QEMU/renderer/modules and NVIDIA inputs. Its Windows desktop was observed; tool
+provisioning, candidate assembly and installer runtime checks remain pending.

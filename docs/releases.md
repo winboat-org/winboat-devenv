@@ -1,36 +1,27 @@
 # Exact component artifacts and release candidates
 
 Stage 6 supplies repository-owned component workflows and a shared verifier and
-packer. The complete hosted artifact set, candidate assembly and fresh installer
-acceptance remain pending; the measured
-scope is recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
+packer. Exact-input verification, local/hosted candidate assembly and fresh
+installer acceptance remain pending. Current measured scope and artifact
+identities are recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
 
-The root remote is `https://github.com/winboat-org/winboat-devenv`. It was verified
-empty before source publication on 2026-10-06. The user subsequently authorized
-checkpoints and pushes; the six component repositories are published at verified
-canonical revisions. Current component builds use published root source `6797be4`
-on `master`.
-No repository runners were registered in root or any of the
-six components, and root/Helios had no configured environments at inspection.
-QEMU, virglrenderer, the catalog verifier, ADL, both Mesa architectures and both
-vkd3d architectures have passed hosted builds and exact archive/member
-verification. Initial DXVK/vkd3d manifests exceeded the metadata reader's bound.
-Full COFF reports now remain in hashed artifact files instead of being copied
-into manifests; the corrected vkd3d artifacts verified. DXVK passed after an
-x64 retry. Fresh run `37577801177` passed and both exact archive/member tables
-verified. CLVK compiled successfully, but its original manifest duplicated a
-73 MB PE dump; the shared export now uses the existing hashed LLVM report.
-Corrected CLVK run `37701032294` passed and all 87 archive members verified;
-its original build manifest is now 50,386 bytes without weakening reader limits.
-The nine component workflows dispatched from `6797be4` all passed and produced
-twelve exact artifacts. Their current run and artifact IDs are recorded in the
-evidence. Driver retry `38327393281` passed preparation, Windows compilation/signing
-and Linux verification from root `d721a7b`, using the four exact engine artifacts
-from `6797be4`. Normalized driver artifact `11782054056` completes the thirteen
-roles. The input lock/download, root assembly and fresh runtime gates remain pending.
-Root release CI now uses public hosted runners. The driver now has hosted Ubuntu preparation, Windows compilation/signing and
-Ubuntu artifact verification jobs; all three passed in the driver retry. The installer now
-cross-compiles on hosted Ubuntu and has a separate Windows interface probe. No release was published.
+The root remote is `https://github.com/winboat-org/winboat-devenv`. The user
+authorized source checkpoints, dependency-first pushes and hosted CI runs.
+Current affected component builds use published root source `99b509d` with the
+updated QEMU and coherent Helios parent pins. The seven unchanged engine, Mesa
+and renderer artifacts retain their original source and build-root identities.
+The refreshed installer, ADL, catalog and QEMU archives passed hosted builds and
+complete member verification. QEMU's archive is 142.5 MB, down 87% after correcting
+its component packaging scope. Refreshed driver run `38335639658` passed its
+three hosted jobs; all 657 archive members and the four selected original engine
+manifest receipts verified. The matching CLVK build remains in progress.
+Historical successful/failed runs and the rejected driver archive without engine
+receipts remain recorded in the evidence.
+
+Root release CI uses public hosted runners. Driver production uses hosted Ubuntu
+preparation, Windows compilation/signing and Ubuntu artifact verification. The
+installer cross-compiles on hosted Ubuntu and has a separate Windows interface
+probe. Root CI consumes those already built artifacts. No release was published.
 
 ## Production ownership
 
@@ -46,7 +37,7 @@ artifact provenance come from GitHub's actual workflow identity.
 | helios        | `build-adl-compatibility.yml` | ADL compatibility shim               |
 | helios        | `build-catalog-verifier.yml`  | Prebuilt catalog membership verifier |
 | helios        | `build-clvk-runtime.yml`      | CLVK runtime, loaders and probes     |
-| qemu-helios   | `build-qemu.yml`              | QEMU host stack and complete closure |
+| qemu-helios   | `build-qemu.yml`              | QEMU executable, modules and symbols |
 | virglrenderer | `build-virglrenderer.yml`     | Renderer and paired Venus headers    |
 | mesa-helios   | `build-icds.yml`              | Native and WoW64 Mesa ICDs           |
 | dxvk          | `build-dxvk.yml`              | Native and WoW64 DXVK engines        |
@@ -71,7 +62,7 @@ portable resource paths. Its Nix recipe uses LLVM resource tools and the pinned
 nightly Rust host compiler/Windows standard library from the verified publisher
 manifest. Cargo dependencies remain vendored from the unchanged installer lock,
 with a local `CARGO_TARGET_DIR`, static CRT and retained PDBs. Its local cross
-build passed; the hosted Windows interface check remains pending.
+build and hosted Windows interface check passed.
 
 The Helios driver job requires four exact artifacts from the DXVK/vkd3d jobs,
 using JSON selectors with `repository`, `artifactId`, `runId`, and `runAttempt`.
@@ -193,7 +184,13 @@ false` selects foreground execution. Retry IDs, bounded waits and retained
 evidence use the existing job families. Reconnect MCP after loading the updated
 Nix execution closure; the previously connected server retains its old catalog.
 
-Artifact downloads require a clean destination. The exact ZIP and every member
+Artifact downloads require a clean destination. Previously downloaded ZIPs are
+retained under project-owned `.state/release-archive-cache/`, keyed by SHA-256.
+`lock` and `fetch` recheck GitHub metadata and the cached file's full digest/size
+before reusing it. Cache reuse never selects a different artifact or skips member
+verification; a corrupt cache entry fails. Hard links avoid duplicate storage on
+one filesystem, with an exclusive copy across filesystems.
+The exact ZIP and every member
 are checked before assembly. Windows packing additionally verifies driver
 resource versions/branding, the catalog signer/certificate, and SHA256 catalog
 membership of all five driver images without modifying the machine trust store.
