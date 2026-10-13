@@ -108,6 +108,7 @@ export async function prepare(ws, args, operationId, engines) {
     );
     dependencies.push({
       target: manifest.target,
+      manifestSha256: digest(manifestPath),
       files: manifest.files,
       manifest,
     });
@@ -193,6 +194,15 @@ export async function collect(ws, args) {
       sources: spec.sources,
       dependencies: Object.fromEntries(
         Object.entries(spec.sources).map(([n, s]) => [n, s.revision]),
+      ),
+      componentDependencies: spec.dependencies.map(
+        ({ target, manifestSha256 }) => {
+          require_(
+            /^[0-9a-f]{64}$/.test(manifestSha256 ?? ""),
+            "hosted engine manifest identity missing",
+          );
+          return { target, manifestSha256 };
+        },
       ),
       files,
       licenses: files

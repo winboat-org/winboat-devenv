@@ -17,6 +17,7 @@ import {
 } from "../tools/wb/common.mjs";
 import { create_zip } from "../tools/wb/archives.mjs";
 import * as bundles from "../tools/wb/bundles.mjs";
+import { collect as collect_driver } from "../tools/wb/hosted-driver.mjs";
 
 function write(p, data) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
@@ -494,6 +495,63 @@ test("explicit build roots preserve older artifacts and reject mismatched origin
   await rewrite_artifact(f, a);
   write_json(f.manifest, f.input);
   await assert.rejects(bundles.verify(f.ws, f, identity()), /original build/);
+});
+test("hosted collection retains the engine receipts required for release verification", async (t) => {
+  const f = await fixture(t),
+    prepared = path.join(f.ws.root, ".state/prepared"),
+    compiled = path.join(f.ws.root, ".state/compiled"),
+    filesRoot = path.join(f.ws.root, ".state/compiled-files");
+  const dependencies = f.input.artifacts
+    .filter((a) => a.id.includes("engine-"))
+    .map((a) => ({
+      target: a.id,
+      manifestSha256: a.provenance.originalManifestSha256,
+    }));
+  write(path.join(filesRoot, "images.json"), "[]\n");
+  write(path.join(filesRoot, "licenses/NOTICE"), "retained attribution\n");
+  const files = bundles.table(filesRoot),
+    archive = path.join(compiled, "artifact.zip"),
+    operationId = identity();
+  fs.mkdirSync(compiled, { recursive: true });
+  await create_zip(
+    archive,
+    files.map((r) => [path.join(filesRoot, r.path), r.path]),
+  );
+  const spec = {
+    kind: "winboat-hosted-driver-request",
+    rootRevision: f.input.root.revision,
+    operationId,
+    configuration: "release",
+    sources: {},
+    dependencies,
+    lockSha256: f.input.root.lockSha256,
+  };
+  write_json(path.join(prepared, "driver-request.json"), spec);
+  write_json(path.join(compiled, "build-result.json"), {
+    operationId,
+    state: "built",
+    files,
+    toolchain: {},
+    archive: { sha256: digest(archive), size: fs.statSync(archive).size },
+  });
+  const manifest = readJSON(
+    await collect_driver(f.ws, {
+      prepared_dir: prepared,
+      compiled_dir: compiled,
+      root_revision: spec.rootRevision,
+    }),
+  );
+  assert.deepEqual(manifest.componentDependencies, dependencies);
+  delete spec.dependencies[0].manifestSha256;
+  write_json(path.join(prepared, "driver-request.json"), spec);
+  await assert.rejects(
+    collect_driver(f.ws, {
+      prepared_dir: prepared,
+      compiled_dir: compiled,
+      root_revision: spec.rootRevision,
+    }),
+    /engine manifest identity missing/,
+  );
 });
 test("all incompatible release identities fail before a guest task", async (t) => {
   const f = await fixture(t);

@@ -37,9 +37,10 @@ a prebuilt-only candidate bundler. Nine hosted component workflows passed from
 source revision `6797be4`, including both DXVK/vkd3d/Mesa architectures and CLVK.
 The corrected CLVK archive and all 87 members also verified. Hosted driver run
 `38327393281` passed preparation, Windows compilation/signing and Linux verification,
-completing the thirteen component artifacts. Exact-input verification, candidate
-assembly and fresh installer runtime
-acceptance remain pending; see [release usage](docs/releases.md). Stage 7 remains
+producing the thirteenth component artifact. Exact-input verification rejected
+its missing engine-dependency receipts; the exporter fix passed 122 local checks
+and requires a new hosted driver artifact. Candidate assembly and fresh installer
+runtime acceptance remain pending; see [release usage](docs/releases.md). Stage 7 remains
 planned.
 
 ## Start here

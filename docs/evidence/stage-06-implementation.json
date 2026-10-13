@@ -539,84 +539,61 @@
       {
         "repository": "helios",
         "path": ".github/workflows/build-helios-drivers.yml",
-        "targets": [
-          "helios-guest-x64"
-        ],
+        "targets": ["helios-guest-x64"],
         "backend": "windows"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-helios-installer.yml",
-        "targets": [
-          "helios-installer"
-        ],
+        "targets": ["helios-installer"],
         "backend": "windows"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-adl-compatibility.yml",
-        "targets": [
-          "helios-compatibility"
-        ],
+        "targets": ["helios-compatibility"],
         "backend": "cross"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-catalog-verifier.yml",
-        "targets": [
-          "helios-catalog-verifier"
-        ],
+        "targets": ["helios-catalog-verifier"],
         "backend": "cross"
       },
       {
         "repository": "helios",
         "path": ".github/workflows/build-clvk-runtime.yml",
-        "targets": [
-          "clvk-helios"
-        ],
+        "targets": ["clvk-helios"],
         "backend": "cross"
       },
       {
         "repository": "qemu-helios",
         "path": ".github/workflows/build-qemu.yml",
-        "targets": [
-          "qemu-helios"
-        ],
+        "targets": ["qemu-helios"],
         "backend": "cross"
       },
       {
         "repository": "virglrenderer",
         "path": ".github/workflows/build-virglrenderer.yml",
-        "targets": [
-          "virglrenderer"
-        ],
+        "targets": ["virglrenderer"],
         "backend": "cross"
       },
       {
         "repository": "mesa-helios",
         "path": ".github/workflows/build-icds.yml",
-        "targets": [
-          "mesa-guest-x64",
-          "mesa-guest-x86"
-        ],
+        "targets": ["mesa-guest-x64", "mesa-guest-x86"],
         "backend": "cross"
       },
       {
         "repository": "dxvk",
         "path": ".github/workflows/build-dxvk.yml",
-        "targets": [
-          "dxvk-engine-x64",
-          "dxvk-engine-x86"
-        ],
+        "targets": ["dxvk-engine-x64", "dxvk-engine-x86"],
         "backend": "cross"
       },
       {
         "repository": "vkd3d-proton",
         "path": ".github/workflows/build-vkd3d-proton.yml",
-        "targets": [
-          "vkd3d-engine-x64",
-          "vkd3d-engine-x86"
-        ],
+        "targets": ["vkd3d-engine-x64", "vkd3d-engine-x86"],
         "backend": "cross"
       }
     ],
@@ -624,13 +601,8 @@
     "requiredVariants": 13,
     "mcpCatalogTools": 55,
     "componentBuildWorkflows": 10,
-    "rootWorkflows": [
-      ".github/workflows/assemble-release-candidate.yml"
-    ],
-    "rootRunners": [
-      "ubuntu-24.04",
-      "windows-2025"
-    ],
+    "rootWorkflows": [".github/workflows/assemble-release-candidate.yml"],
+    "rootRunners": ["ubuntu-24.04", "windows-2025"],
     "rootSelfHosted": false,
     "composedEnvironment": {
       "base": "nix/ci-environment.nix",
@@ -991,9 +963,7 @@
         "size": 75758827
       },
       "verifiedMembers": 21,
-      "licenses": [
-        "files/share/licenses/virglrenderer/COPYING"
-      ],
+      "licenses": ["files/share/licenses/virglrenderer/COPYING"],
       "installed": false,
       "loaded": false,
       "rootCandidateAssembled": false
@@ -1244,9 +1214,7 @@
         "size": 1847407
       },
       "verifiedMembers": 11,
-      "licenses": [
-        "files/licenses/NOTICE"
-      ],
+      "licenses": ["files/licenses/NOTICE"],
       "installed": false,
       "loaded": false,
       "rootCandidateAssembled": false
@@ -1399,10 +1367,7 @@
     "windowsProducers": {
       "observedAt": "2026-10-07T05:26:20.879Z",
       "registeredHeliosRepositoryRunners": 0,
-      "workflows": [
-        "build-helios-drivers.yml",
-        "build-helios-installer.yml"
-      ],
+      "workflows": ["build-helios-drivers.yml", "build-helios-installer.yml"],
       "requirement": "existing self-hosted Linux command plus verified Windows guest/toolchain",
       "dispatched": false
     },
@@ -2035,10 +2000,7 @@
   "sdkRangeRetry": {
     "state": "validated-local-fix",
     "failure": "hosted Mesa x64 and vkd3d x86 SDK reads returned a short body; the length check previously ran outside retry handling",
-    "runs": [
-      37696836624,
-      37696831256
-    ],
+    "runs": [37696836624, 37696831256],
     "retry": "up to three attempts for short bodies and interrupted reads; exact Content-Range, oversize, member hashes and fixed output NAR checks retained",
     "nativeAndSdkTests": 120,
     "sdkBehaviorTests": 8,
@@ -2554,6 +2516,20 @@
     "compilerLog": "workspace-state:stage06/driver-native-hosted-success.log",
     "installed": false,
     "loaded": false,
+    "rootAssemblyAccepted": false,
+    "releaseInputVerified": false
+  },
+  "hostedDriverDependencyReceiptCorrection": {
+    "state": "validated-local-fix-hosted-retry-pending",
+    "observedAt": "2026-10-13T01:40:01.278965+00:00",
+    "rejectedArtifactId": 11782054056,
+    "verificationOperation": "op-7bb7f4fd65e94bf7af4b868c430e7fc6",
+    "failure": "primary driver did not consume the exact selected engine artifact",
+    "cause": "The hosted collector omitted the original engine manifest hashes from componentDependencies. Compilation and signing passed, but the archive lacks required provenance.",
+    "fix": "Record each verified original engine manifest SHA-256 during preparation and retain those receipts in the collected driver manifest.",
+    "nativeAndSdkTests": 122,
+    "testLog": "workspace-state:stage06/devenv-test-driver-receipts.log",
+    "hostedAcceptance": false,
     "rootAssemblyAccepted": false
   }
 }

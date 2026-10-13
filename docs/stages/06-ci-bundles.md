@@ -3,9 +3,10 @@
 Status: nine hosted component workflows passed from source revision `6797be4`,
 producing twelve exact artifacts. Both engine/ICD architectures passed and the
 corrected CLVK archive verified. Driver run `38327393281` passed all three hosted
-jobs, completing the thirteen-artifact set. Exact-input verification, candidate
-assembly, real packed output
-and fresh installer runtime acceptance pending. Prerequisites: Stages 2 and 4.
+jobs, producing the thirteenth artifact. Exact-input verification rejected its
+missing engine-dependency receipts. The exporter correction passed 122 checks;
+a new hosted artifact, candidate assembly and fresh installer runtime acceptance
+remain pending. Prerequisites: Stages 2 and 4.
 Agent setup is useful but not a prerequisite.
 
 [Release usage](../releases.md) describes the exact-input contracts, six component

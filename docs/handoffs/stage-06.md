@@ -96,9 +96,9 @@ and publication evidence above.
 
 The genuine locks remain unchanged:
 
-| Lock | SHA-256 |
-| --- | --- |
-| `devenv.lock` | `676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc` |
+| Lock                         | SHA-256                                                            |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `devenv.lock`                | `676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc` |
 | `config/provision.lock.json` | `73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408` |
 
 The next session can start with this prompt:
@@ -264,3 +264,10 @@ and materializes source links through the shared Windows mirror boundary checks.
 The real pinned source export passed: 9,418 regular files across the four driver
 sources, with original Git/NAR provenance retained. The 120 native/SDK checks
 passed. Hosted compilation and release assembly still require successful runs.
+
+Driver run `38327393281` passed all three hosted jobs, but full exact-input
+verification rejected artifact `11782054056`: its collected build manifest
+omitted the four consumed engine manifest hashes. Preparation and collection
+now retain those exact receipts; the real archive collection regression check
+and the full 122-check suite passed. The existing driver archive remains
+unchanged and rejected. Rerun the driver workflow before release assembly.
