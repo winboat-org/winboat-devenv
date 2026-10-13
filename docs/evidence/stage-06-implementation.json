@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "stage": 6,
   "state": "implemented-local-validation",
-  "observedAt": "2026-10-13T04:26:01.896Z",
+  "observedAt": "2026-10-13T05:28:36.858Z",
   "root": {
     "repository": "https://github.com/winboat-org/winboat-devenv",
     "sourceState": "required Stage 5 baseline and Stage 6 implementation published; this evidence update descends from the recorded source checkpoint",
@@ -3544,5 +3544,52 @@
       }
     },
     "releaseCandidateAssembled": false
+  },
+  "helperCoherentInputsVerified": {
+    "state": "all-13-inputs-verified",
+    "rootRevision": "ce49636f1a3d78b4bbd9d9526eb39c6293d96985",
+    "releaseInputSha256": "382badc365f2b1b98d5157a2a3c42e7024222e887d852550d633ef7a0c3c68cf",
+    "lockOperation": "op-457ce000f6bd40c097c1df5e0b6cd000",
+    "verifyOperation": "op-20588e134f04479f9fcc71a0e5378056",
+    "archiveCacheHits": 13,
+    "dxvkRun": 38345947461,
+    "mesaRun": 38345950402,
+    "driverRun": 38347050671,
+    "driverArtifact": 11790960250,
+    "driverArchiveSha256": "6779eeb21aea3fcd91e26249266073d2d9f4c15919da32c8bc7e5723929eefdc",
+    "driverArchiveBytes": 430630234,
+    "consumedEngineReceiptsVerified": true
+  },
+  "catalogSignatureCorrection": {
+    "state": "verified-rejection-fixtures-local-packing-retry-pending",
+    "failedAssemblyOperation": "op-062ba95029f1476393285fbac7b11876",
+    "failedWindowsJob": "op-7fca02483aa2445ea9cdd47f642ef43f",
+    "initialStatus": "UnknownError",
+    "initialStatusMessage": "A certificate chain processed, but terminated in a root certificate which is not trusted by the trust provider",
+    "diagnosticOperation": "op-1148c95fad7b4aac9387475cb95580dd",
+    "cmsSignatureVerified": true,
+    "signerThumbprint": "2491AD4465E729E334B3DC317A970D1DB26A44CF",
+    "correction": "Verify CMS signature, exactly one signer with the selected certificate bytes, certificate dates and code-signing usage; retain the prebuilt catalog-membership gate.",
+    "trustStoreMutation": false,
+    "rejectionCases": [
+      "wrong signer",
+      "corrupt signature",
+      "wrong certificate usage"
+    ],
+    "windowsFixtureOperation": "op-bea528a613a44a95a65aad878529869e",
+    "windowsFixtureState": "succeeded",
+    "validation": {
+      "nativeAndSdkTests": 125,
+      "native": {
+        "path": "workspace-state:validation/native.9C4nk7vj.log",
+        "size": 13202,
+        "sha256": "4f1453fc8b7203ccb8ebee3a45380873618606d9439f3fe72ada7c20b570e7ea"
+      },
+      "devenv": {
+        "path": "workspace-state:stage06/devenv-test-pinned-catalog-final.log",
+        "size": 297,
+        "sha256": "a38bcb5b774cbb950b5e5142d62e0b326e4fd284af292201eae106e08c46c230"
+      }
+    }
   }
 }

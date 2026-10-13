@@ -33,15 +33,14 @@ automatic SSH configuration, durable waits, retry IDs and bounded evidence.
 Its measured client/protocol and live build/install/loaded-code checks passed;
 see [Stage 5 evidence](docs/evidence/stage-05-acceptance.json) for client/UI limits.
 Stage 6 supplies exact component workflows, migrated installer sources and a
-prebuilt-only candidate bundler. Refreshed driver run `38335639658` passed all
-three hosted jobs; its archive and four consumed engine-manifest receipts
-verified. QEMU run `38335618535` passed with a verified 142.5 MB component archive,
-87% smaller than before. Refreshed installer, ADL and catalog artifacts also
-passed and verified. CLVK run `38335635675` passed. The complete input lock
-rejected older DXVK/Mesa artifacts that consumed a previous Helios helper pin;
-their four variants are rebuilding, followed by a driver with the new engine
-receipts. Driver preparation now checks every engine dependency pin before
-compilation. Exact-input verification and local/hosted assembly remain pending. A fresh
+prebuilt-only candidate bundler. Driver run `38347050671` passed all three hosted
+jobs with the refreshed DXVK artifacts; both Mesa variants also passed. All 13
+selected component archives and exact engine-manifest receipts verified. QEMU
+run `38335618535` passed with a verified 142.5 MB component archive, 87% smaller
+than before. Driver preparation rejects stale helper pins before compilation.
+Local packing exposed Windows' untrusted-root `UnknownError`; the shared check
+now verifies the CMS signature and exact certificate, with rejection cases
+passing under both PowerShell runtimes. Local/hosted assembly remain pending. A fresh
 acceptance guest has booted with the pinned host stack and reached the Windows
 desktop. All 14 locked tools, the signing reboot and signed fixture-driver load
 verified after correcting creation of an absent TrustedPublisher store;

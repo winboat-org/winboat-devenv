@@ -13,6 +13,7 @@ if (Test-Path (Join-Path $Directory 'LoadedIdentity.cs')) {
 }
 if (Test-Path (Join-Path $Directory 'Control.ps1')) {
     . (Join-Path $Directory 'Control.ps1')
+    & (Join-Path (Split-Path (Split-Path $Directory -Parent) -Parent) 'tests/WindowsCatalogSignatureFixture.ps1') -ControlRoot $Directory
     $fixture = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString('N') + '.ps1')
     try {
         [IO.File]::WriteAllText($fixture, 'param([string]$Value,[int]$Seconds,[switch]$Flag) @{value=$Value;seconds=$Seconds;flag=$Flag.IsPresent}|ConvertTo-Json -Compress')

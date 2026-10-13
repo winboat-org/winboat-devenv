@@ -1,13 +1,15 @@
 # Stage 6 — Component CI and bundling-only release CI
 
-Status: refreshed hosted driver run `38335639658` passed all three jobs. Its
-archive and the four exact consumed engine-manifest receipts verified. QEMU run
+Status: hosted driver run `38347050671` passed all three jobs with refreshed
+DXVK inputs. Both Mesa variants passed, and all 13 selected component archives
+and exact engine receipts verified. QEMU run
 `38335618535` passed with a verified 142.5 MB archive, 87% smaller than before.
 Refreshed installer, ADL, catalog and CLVK artifacts also passed and verified.
-The complete input lock rejected older DXVK/Mesa artifacts with a stale Helios
-helper pin. Runs `38345947461` and `38345950402` rebuild their four variants;
-a driver with the new engine receipts follows. Driver preparation now rejects
-stale dependency sources before compilation. Exact-input verification, local/hosted
+The earlier input lock rejected stale Helios helper pins; runs `38345947461` and
+`38345950402` supplied the corrected variants. Driver preparation now rejects
+stale dependency sources before compilation. Local packing stopped at an
+untrusted-root status; the shared CMS signature/pinned-certificate check and
+its rejection cases passed in both PowerShell runtimes. Local/hosted
 candidate assembly and fresh installer runtime acceptance remain pending. The
 fresh guest reached the Windows desktop and verified all 14 tools, the signing
 reboot and signed fixture-driver load after correcting an absent TrustedPublisher

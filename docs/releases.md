@@ -15,12 +15,19 @@ complete member verification. QEMU's archive is 142.5 MB, down 87% after correct
 its component packaging scope. Refreshed driver run `38335639658` passed its
 three hosted jobs; all 657 archive members and the four selected original engine
 manifest receipts verified. CLVK run `38335635675` passed and its archive verified.
-The complete input lock subsequently rejected the earlier DXVK/Mesa artifacts:
-they consumed Helios build helpers from an older commit. Both DXVK variants and
-both Mesa ICDs are rebuilding through runs `38345947461` and `38345950402`, using
-root source `833227b` and the current Helios pin. A fresh driver must consume the
-new DXVK manifests. Driver preparation now compares normalized and original
+The complete input lock subsequently rejected older DXVK/Mesa helper pins.
+Runs `38345947461` and `38345950402` supplied their corrected variants using
+root `833227b`; driver run `38347050671` passed with the new DXVK receipts using
+root `ce49636`. All 13 selected inputs passed full verification, with every archive
+reused from the digest cache. Driver preparation compares normalized and original
 engine source tables and checks every dependency pin before compilation.
+
+Local packing then exposed Windows reporting the selected untrusted test signer
+as `UnknownError`. The shared packing check now verifies the CMS signature,
+exact certificate bytes, validity dates and code-signing usage, followed by the
+prebuilt catalog-membership verifier. It does not install the certificate into
+the packing machine's trust stores. Rejection cases passed in Linux PowerShell
+and the guest's Windows PowerShell. Local/hosted candidate assembly remain pending.
 Historical successful/failed runs and the rejected driver archive without engine
 receipts remain recorded in the evidence.
 

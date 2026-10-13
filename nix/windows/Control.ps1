@@ -50,6 +50,28 @@ function Assert-ControlFile([string]$Path, [string]$Sha256, [long]$Size) {
     if ($file.Length -ne $Size -or (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLower() -ne $Sha256) { throw "Verified file changed: $Path" }
 }
 
+function Assert-ControlCatalogSignature([string]$Catalog, [Security.Cryptography.X509Certificates.X509Certificate2]$Certificate) {
+    Add-Type -AssemblyName System.Security
+    if (-not ('System.Security.Cryptography.Pkcs.SignedCms' -as [type])) {
+        Add-Type -AssemblyName System.Security.Cryptography.Pkcs
+    }
+    $cms = [Security.Cryptography.Pkcs.SignedCms]::new()
+    $cms.Decode([IO.File]::ReadAllBytes($Catalog))
+    # Verify signed content without requiring installation of the selected test
+    # root. Windows reports that untrusted root as UnknownError on fresh guests.
+    $cms.CheckSignature($true)
+    if ($cms.SignerInfos.Count -ne 1 -or -not $cms.SignerInfos[0].Certificate -or
+        [Convert]::ToBase64String($cms.SignerInfos[0].Certificate.RawData) -cne [Convert]::ToBase64String($Certificate.RawData)) {
+        throw 'Catalog signer differs from the exact selected certificate'
+    }
+    $now = Get-Date
+    $usage = @($Certificate.Extensions | Where-Object { $_.Oid.Value -eq '2.5.29.37' })
+    if ($now -lt $Certificate.NotBefore -or $now -gt $Certificate.NotAfter -or $usage.Count -ne 1 -or
+        @($usage[0].EnhancedKeyUsages | Where-Object Value -eq '1.3.6.1.5.5.7.3.3').Count -ne 1) {
+        throw 'Catalog certificate is expired, not yet valid or lacks code-signing usage'
+    }
+}
+
 function Save-ControlPriorInventory($State, [string]$Transaction, [string]$StatePath, [string[]]$Paths) {
     if ($State.PSObject.Properties['priorInventory']) {
         if (@($State.priorInventory).Count -ne $Paths.Count -or

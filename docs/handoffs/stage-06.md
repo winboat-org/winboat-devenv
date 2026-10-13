@@ -342,3 +342,20 @@ regression. The guest also restarted successfully and its kernel reported test
 signing disabled with a live `wbdev` desktop, ready for the installer's own
 signing/reboot gate. Candidate assembly and installer runtime acceptance remain
 pending. Retained archive caches avoid downloading unchanged inputs again.
+
+The corrected DXVK/Mesa runs passed. Driver run `38347050671` then passed all
+three jobs, producing normalized artifact `11790960250` (430,630,234 bytes;
+SHA256 `6779eeb21aea3fcd91e26249266073d2d9f4c15919da32c8bc7e5723929eefdc`).
+Input lock `op-457ce000f6bd40c097c1df5e0b6cd000` reused all 13 archives and
+verification `op-20588e134f04479f9fcc71a0e5378056` passed every component, source
+pairing and consumed engine receipt. Local assembly `op-062ba95029f1476393285fbac7b11876`
+stopped before packing: Windows reported the untrusted selected test certificate
+as `UnknownError`, although its CMS signature and exact signer verified.
+The shared control helper now checks the cryptographic signature, pinned
+certificate bytes, validity and code-signing usage; the existing prebuilt catalog
+membership check remains required. The 125-check suite and real CMS rejection
+fixture passed on Linux and Windows PowerShell (`op-bea528a613a44a95a65aad878529869e`).
+Regenerate the release input against this correction's clean source commit,
+reuse the exact 13 artifacts, retry local packing, then checkpoint the reviewed
+input data and dispatch hosted root assembly. Preserve the failed packing directory
+and receipts. The fresh guest remains prepared for the installer's signing gate.

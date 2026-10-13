@@ -44,9 +44,7 @@ if ($certificate.Thumbprint -cne $spec.signing.thumbprint -or $certificate.Subje
     (Get-FileHash -LiteralPath $certificatePath -Algorithm SHA256).Hash.ToLowerInvariant() -ne $spec.signing.certificateSha256) { throw 'Certificate identity differs from release input' }
 $catalog = Join-Path $payload 'payload\driver\helios_kmd_render.cat'
 if ((Get-FileHash -LiteralPath $catalog -Algorithm SHA256).Hash.ToLowerInvariant() -ne $spec.signing.catalogSha256) { throw 'Catalog identity differs from release input' }
-$catalogSignature = Get-AuthenticodeSignature -LiteralPath $catalog
-if (-not $catalogSignature.SignerCertificate -or $catalogSignature.SignerCertificate.Thumbprint -cne $certificate.Thumbprint -or
-    $catalogSignature.Status -notin @('Valid','NotTrusted')) { throw 'Catalog signature/signer identity differs' }
+Assert-ControlCatalogSignature $catalog $certificate
 # Membership verification is an exact prebuilt component artifact. No runtime
 # source compilation or machine trust-store mutation occurs in root assembly.
 $verifier = Join-Path $root 'VerifyCatalog.exe'
