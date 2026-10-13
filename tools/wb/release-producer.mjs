@@ -562,7 +562,7 @@ async function windows_release_tool_build(ws, args, operationId) {
   write_json(manifestPath, manifest);
   return manifestPath;
 }
-async function exact_engines(
+export async function exact_engines(
   ws,
   selectionJSON,
   rootRevision,
@@ -685,6 +685,27 @@ async function exact_engines(
         original.value.mode === "release" &&
         m.value.originalManifestSha256 === original.record.sha256,
       "original engine manifest differs",
+    );
+    const sources = original.value.sources ?? {},
+      dependencies = Object.fromEntries(
+        Object.entries(sources).map(([name, source]) => [
+          name,
+          source.revision,
+        ]),
+      ),
+      helper = target.startsWith("dxvk-") ? "helios" : "dxil-spirv";
+    require_(
+      sources[owner] &&
+        sources[helper] &&
+        equal(m.value.sourceProvenance, sources) &&
+        equal(m.value.dependencies, dependencies) &&
+        Object.entries(sources).every(
+          ([name, source]) =>
+            source.revision === ws.repos[name]?.pin.rev &&
+            !source.diffSha256 &&
+            !source.untracked?.length,
+        ),
+      "engine dependency source pins differ from the selected closure",
     );
     const dest = path.join(directory, String(s.artifactId));
     await extract_artifact(archive, dest, [m.record, ...m.value.files]);

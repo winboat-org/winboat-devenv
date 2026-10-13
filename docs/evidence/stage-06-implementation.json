@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "stage": 6,
   "state": "implemented-local-validation",
-  "observedAt": "2026-10-06T14:20:04.401Z",
+  "observedAt": "2026-10-13T04:26:01.896Z",
   "root": {
     "repository": "https://github.com/winboat-org/winboat-devenv",
     "sourceState": "required Stage 5 baseline and Stage 6 implementation published; this evidence update descends from the recorded source checkpoint",
@@ -3401,6 +3401,148 @@
         "sha256": "154423bb6fa04f78084524893e52401f30ff317395edc654a1c75ed501534c17"
       },
       "nativeAndSdkTests": 124
+    },
+    "installerSigningGatePreparation": {
+      "state": "ready-for-prebuilt-installer",
+      "preparationOperation": "op-9a6d4bdebf2a4b129514a0f59cbf7a9a",
+      "nativeExitCode": 3010,
+      "restartJob": "op-c6cb0cd2b838461a9f8ad693d7a6f8f3",
+      "restartState": "succeeded",
+      "observationOperation": "op-ca9236e4c6ba4728830e49107767cb2c",
+      "effectiveKernelTestSigning": false,
+      "codeIntegrityOptions": 5,
+      "fixtureStopped": true,
+      "provisioningStartupDisabled": true,
+      "interactiveDesktop": {
+        "account": "wbdev",
+        "domain": "WB-DEVBOX",
+        "session": 1
+      },
+      "heliosInstalled": false
     }
+  },
+  "hostedClvkCurrentVerified": [
+    {
+      "state": "verified-real-hosted-component",
+      "repository": "winboat-org/helios",
+      "target": "clvk-helios",
+      "rootRevision": "99b509d9e0c9ef7f35f9185fa1726d661cf30fc6",
+      "componentRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+      "runId": 38335635675,
+      "artifactId": 11787999068,
+      "workflow": {
+        "repository": "winboat-org/helios",
+        "path": ".github/workflows/build-clvk-runtime.yml",
+        "runId": 38335635675,
+        "runAttempt": 1,
+        "headSha": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+        "event": "workflow_dispatch"
+      },
+      "archive": {
+        "sha256": "8a367b8f49a553ee53c29f95e70bdf3460325f8c8931a19b5159e770a12ae8c6",
+        "size": 113756077
+      },
+      "verifiedMembers": 87,
+      "licenses": [
+        "files/licenses/clvk-helios/external/clspv/LICENSE",
+        "files/licenses/clvk-helios/external/OpenCL-Headers/LICENSE",
+        "files/licenses/clvk-helios/external/SPIRV-Headers/LICENSE",
+        "files/licenses/clvk-helios/external/SPIRV-LLVM-Translator/LICENSE.TXT",
+        "files/licenses/clvk-helios/external/SPIRV-Tools/LICENSE",
+        "files/licenses/clvk-helios/external/SPIRV-Tools/utils/vscode/src/lsp/LICENSE",
+        "files/licenses/clvk-helios/LICENSE",
+        "files/licenses/llvm/LICENSE.TXT",
+        "files/licenses/llvm/sources/clang/LICENSE.TXT",
+        "files/licenses/llvm/sources/libc/LICENSE.TXT",
+        "files/licenses/llvm/sources/libclc/LICENSE.TXT",
+        "files/licenses/llvm/sources/llvm/include/llvm/Support/LICENSE.TXT",
+        "files/licenses/llvm/sources/llvm/lib/Support/BLAKE3/LICENSE",
+        "files/licenses/llvm/sources/llvm/LICENSE.TXT",
+        "files/licenses/llvm/sources/llvm/utils/lit/LICENSE.TXT",
+        "files/licenses/llvm/sources/third-party/benchmark/LICENSE",
+        "files/licenses/llvm/sources/third-party/boost-math/LICENSE",
+        "files/licenses/llvm/sources/third-party/unittest/googlemock/LICENSE.txt",
+        "files/licenses/llvm/sources/third-party/unittest/googletest/LICENSE.TXT",
+        "files/licenses/msvc/1033/.NET_Framework_EULA.rtf",
+        "files/licenses/msvc/1033/EntityFrameworkDesignerForVisualStudio2012.rtf",
+        "files/licenses/msvc/1033/Redist.txt",
+        "files/licenses/msvc/1033/SQLServerExpress_Sql2016.rtf",
+        "files/licenses/msvc/1033/SQLServerLocalDB_Sql2016.rtf",
+        "files/licenses/msvc/1033/ThirdPartyNotices.txt",
+        "files/licenses/msvc/BuildTools/1033/ThirdPartyNotices.txt",
+        "files/licenses/msvc/Microsoft_Windows_SDK_for_Windows_7_and_NET_Framework_4.rtf",
+        "files/licenses/msvc/Windows 8 SDK License.rtf",
+        "files/licenses/msvc/Windows 8 SDK Third Party Notices.rtf",
+        "files/licenses/msvc/Windows 8.1 SDK License.rtf",
+        "files/licenses/msvc/Windows 8.1 SDK Third Party Notices.rtf",
+        "files/licenses/OpenCL-Headers/LICENSE",
+        "files/licenses/OpenCL-ICD-Loader/LICENSE",
+        "files/licenses/Vulkan-Headers/LICENSE.md",
+        "files/licenses/Vulkan-Headers/LICENSES/Apache-2.0.txt",
+        "files/licenses/Vulkan-Headers/LICENSES/MIT.txt",
+        "files/licenses/Vulkan-Loader/LICENSE.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/Apache-2.0.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/CC-BY-4.0.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/HPND-Kevlin-Henney.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/MIT-Khronos-old.txt",
+        "files/licenses/Vulkan-Loader/LICENSES/MIT.txt"
+      ],
+      "installed": false,
+      "loaded": false,
+      "rootCandidateAssembled": false
+    }
+  ],
+  "releaseInputHelperPinCorrection": {
+    "state": "refreshing-dxvk-mesa-and-driver",
+    "rejectedLockJob": "op-b8cd623bd2df436bae329f1e9c523796",
+    "error": "protocol/engine dependency pairing mismatch: helios",
+    "builtHelperRevision": "dac6d0f93db879193aeb91c7395d1dce6426479a",
+    "selectedHelperRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+    "affectedTargets": [
+      "dxvk-engine-x64",
+      "dxvk-engine-x86",
+      "mesa-guest-x64",
+      "mesa-guest-x86"
+    ],
+    "earlyProducerGate": "Compare both engine source tables and require every clean source revision to match the selected pins before extraction and driver preparation.",
+    "dispatches": [
+      {
+        "repository": "dxvk",
+        "workflow": "build-dxvk.yml",
+        "ref": "master",
+        "componentRevision": "6948271578bf2aa6481389a07b5070c95f911952",
+        "rootRevision": "833227bda9bb9f1bb41f25a5a592f73a83fd864f",
+        "dispatchedAt": "2026-10-13T04:20:11.182Z",
+        "runId": 38345947461,
+        "state": "in_progress",
+        "url": "https://github.com/winboat-org/dxvk/actions/runs/38345947461"
+      },
+      {
+        "repository": "mesa-helios",
+        "workflow": "build-icds.yml",
+        "ref": "main",
+        "componentRevision": "aa42464065e0b436516fa7514eeda18a976b462d",
+        "rootRevision": "833227bda9bb9f1bb41f25a5a592f73a83fd864f",
+        "dispatchedAt": "2026-10-13T04:20:13.403Z",
+        "runId": 38345950402,
+        "state": "in_progress",
+        "url": "https://github.com/winboat-org/mesa-helios/actions/runs/38345950402"
+      }
+    ],
+    "driverState": "awaiting-current-dxvk-artifacts",
+    "validation": {
+      "nativeAndSdkTests": 125,
+      "native": {
+        "path": "workspace-state:validation/native.Qcb9akfG.log",
+        "size": 13104,
+        "sha256": "8d450201bb1e8dc12985cf9664ba8193f1c656b56898bdf2484094b562b65903"
+      },
+      "devenv": {
+        "path": "workspace-state:stage06/devenv-test-engine-source-gate.log",
+        "size": 299,
+        "sha256": "75d3c62116d0655d682e1116218d8411f44d8af02f9cb354ed0d7844b9442672"
+      }
+    },
+    "releaseCandidateAssembled": false
   }
 }

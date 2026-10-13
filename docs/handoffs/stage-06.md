@@ -326,3 +326,19 @@ its history. Guest status `op-970d150d93df43e38d90530e11ad2ffe` verified the bas
 Windows payload validation and the 124-check locked suite passed. Existing guest
 runtime/image bindings remain unchanged. CLVK production, exact-input assembly
 and the fresh installer's lifecycle/loaded-code checks remain pending.
+
+CLVK run `38335635675` then passed, producing artifact `11787999068`
+(113,756,077 bytes; SHA256
+`8a367b8f49a553ee53c29f95e70bdf3460325f8c8931a19b5159e770a12ae8c6`).
+The full input lock `op-b8cd623bd2df436bae329f1e9c523796` correctly rejected the
+older DXVK/Mesa artifacts: their original source tables consumed Helios helpers
+at `dac6d0f`, rather than selected `d82ce56`. Runs `38345947461` (DXVK) and
+`38345950402` (Mesa ICDs) rebuild the four variants using root `833227b`; vkd3d and
+renderer inputs remain reusable. A new driver must consume the new DXVK receipts.
+Driver preparation now checks every original engine source against the selected
+pins, requires its helper source and compares both source tables, so this mismatch
+fails before compilation. The 125-check suite passed, including a real ZIP
+regression. The guest also restarted successfully and its kernel reported test
+signing disabled with a live `wbdev` desktop, ready for the installer's own
+signing/reboot gate. Candidate assembly and installer runtime acceptance remain
+pending. Retained archive caches avoid downloading unchanged inputs again.

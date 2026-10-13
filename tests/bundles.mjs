@@ -18,6 +18,7 @@ import {
 import { create_zip } from "../tools/wb/archives.mjs";
 import * as bundles from "../tools/wb/bundles.mjs";
 import { collect as collect_driver } from "../tools/wb/hosted-driver.mjs";
+import { exact_engines } from "../tools/wb/release-producer.mjs";
 
 function write(p, data) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
@@ -546,6 +547,118 @@ if(parts[6]==='zip'){
       identity(),
     ),
     /hash\/size mismatch/,
+  );
+});
+test("driver preparation rejects a stale helper commit in an otherwise exact engine archive", async (t) => {
+  const f = await fixture(t),
+    engines = f.input.artifacts.filter((a) => a.id.includes("engine-")),
+    gh = path.join(f.ws.state, "engine-github-fixture.mjs"),
+    apiData = path.join(f.ws.state, "engine-github-fixture.json");
+  async function update() {
+    for (const [index, a] of engines.entries()) {
+      const m = a.provenance,
+        owner = bundles.OWNERS[a.id],
+        helper = a.id.startsWith("dxvk-") ? "helios" : "dxil-spirv",
+        sourcePath = path.join(
+          f.ws.state,
+          "sources",
+          a.id,
+          "build-manifest.json",
+        ),
+        original = readJSON(sourcePath);
+      m.workflow.runId = 500 + index;
+      m.sourceProvenance = Object.fromEntries(
+        [owner, helper].map((name) => [name, m.sourceProvenance[name]]),
+      );
+      m.dependencies = Object.fromEntries(
+        Object.entries(m.sourceProvenance).map(([name, source]) => [
+          name,
+          source.revision,
+        ]),
+      );
+      original.sources = m.sourceProvenance;
+      write_json(sourcePath, original);
+      m.originalManifestSha256 = digest(sourcePath);
+      Object.assign(
+        m.files.find((r) => r.path === "build-manifest.json"),
+        {
+          sha256: m.originalManifestSha256,
+          size: fs.statSync(sourcePath).size,
+        },
+      );
+      await rewrite_artifact(f, a);
+    }
+    write_json(
+      apiData,
+      engines.map((a) => ({
+        id: a.githubArtifactId,
+        archive: path.join(f.artifacts_dir, a.archive.path),
+        metadata: {
+          expired: false,
+          digest: "sha256:" + a.archive.sha256,
+          workflow_run: {
+            id: a.provenance.workflow.runId,
+            head_sha: a.provenance.workflow.headSha,
+          },
+        },
+        run: {
+          id: a.provenance.workflow.runId,
+          run_attempt: 1,
+          conclusion: "success",
+          event: "workflow_dispatch",
+          path: a.provenance.workflow.path,
+          head_repository: { full_name: a.provenance.repository },
+        },
+      })),
+    );
+  }
+  await update();
+  write(
+    gh,
+    `#!${process.execPath}
+import fs from 'node:fs';
+const parts=process.argv[3].split('/'), rows=JSON.parse(fs.readFileSync(${JSON.stringify(apiData)}));
+const row=rows.find(r=>(parts[4]==='artifacts'?r.id:r.run.id)===Number(parts[5]));
+if(!row)throw new Error('unknown exact engine selector');
+process.stdout.write(parts[6]==='zip'?fs.readFileSync(row.archive):JSON.stringify(parts[4]==='artifacts'?row.metadata:row.run));
+`,
+  );
+  fs.chmodSync(gh, 0o755);
+  const originalGh = env.WB_GH;
+  env.WB_GH = gh;
+  t.after(() => {
+    env.WB_GH = originalGh;
+  });
+  const selection = JSON.stringify(
+    engines.map((a) => ({
+      repository: a.provenance.repository,
+      artifactId: a.githubArtifactId,
+      runId: a.provenance.workflow.runId,
+      runAttempt: 1,
+    })),
+  );
+  assert.equal(
+    (
+      await exact_engines(
+        f.ws,
+        selection,
+        f.input.root.revision,
+        "release",
+        path.join(f.ws.state, "matching-engines"),
+      )
+    ).length,
+    4,
+  );
+  engines[0].provenance.sourceProvenance.helios.revision = "e".repeat(40);
+  await update();
+  const rejected = path.join(f.ws.state, "stale-helper-engine");
+  await assert.rejects(
+    exact_engines(f.ws, selection, f.input.root.revision, "release", rejected),
+    /dependency source pins differ/,
+  );
+  assert.equal(
+    fs.existsSync(path.join(rejected, String(engines[0].githubArtifactId))),
+    false,
   );
 });
 test("exact archives verify; install schema keeps symbols outside payload and all source identities", async (t) => {

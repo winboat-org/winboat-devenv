@@ -8,13 +8,19 @@ identities are recorded in [Stage 6 evidence](evidence/stage-06-implementation.j
 The root remote is `https://github.com/winboat-org/winboat-devenv`. The user
 authorized source checkpoints, dependency-first pushes and hosted CI runs.
 Current affected component builds use published root source `99b509d` with the
-updated QEMU and coherent Helios parent pins. The seven unchanged engine, Mesa
-and renderer artifacts retain their original source and build-root identities.
+updated QEMU and coherent Helios parent pins. The unchanged vkd3d and renderer
+artifacts retain their original source and build-root identities.
 The refreshed installer, ADL, catalog and QEMU archives passed hosted builds and
 complete member verification. QEMU's archive is 142.5 MB, down 87% after correcting
 its component packaging scope. Refreshed driver run `38335639658` passed its
 three hosted jobs; all 657 archive members and the four selected original engine
-manifest receipts verified. The matching CLVK build remains in progress.
+manifest receipts verified. CLVK run `38335635675` passed and its archive verified.
+The complete input lock subsequently rejected the earlier DXVK/Mesa artifacts:
+they consumed Helios build helpers from an older commit. Both DXVK variants and
+both Mesa ICDs are rebuilding through runs `38345947461` and `38345950402`, using
+root source `833227b` and the current Helios pin. A fresh driver must consume the
+new DXVK manifests. Driver preparation now compares normalized and original
+engine source tables and checks every dependency pin before compilation.
 Historical successful/failed runs and the rejected driver archive without engine
 receipts remain recorded in the evidence.
 

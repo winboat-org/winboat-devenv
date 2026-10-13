@@ -3,8 +3,11 @@
 Status: refreshed hosted driver run `38335639658` passed all three jobs. Its
 archive and the four exact consumed engine-manifest receipts verified. QEMU run
 `38335618535` passed with a verified 142.5 MB archive, 87% smaller than before.
-Refreshed installer, ADL and catalog artifacts also passed and verified; matching
-CLVK production remains in progress. Exact-input verification, local/hosted
+Refreshed installer, ADL, catalog and CLVK artifacts also passed and verified.
+The complete input lock rejected older DXVK/Mesa artifacts with a stale Helios
+helper pin. Runs `38345947461` and `38345950402` rebuild their four variants;
+a driver with the new engine receipts follows. Driver preparation now rejects
+stale dependency sources before compilation. Exact-input verification, local/hosted
 candidate assembly and fresh installer runtime acceptance remain pending. The
 fresh guest reached the Windows desktop and verified all 14 tools, the signing
 reboot and signed fixture-driver load after correcting an absent TrustedPublisher
