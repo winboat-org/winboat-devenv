@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       source_revision:
-        description: Exact root source used by the component builds (40 hex characters)
+        description: Exact root source for verification and release assembly (40 hex characters)
         required: true
         type: string
       release_input_revision:

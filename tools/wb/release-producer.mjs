@@ -647,7 +647,8 @@ async function exact_engines(
     const m = await read_metadata(archive, "component.json"),
       original = await read_metadata(archive, "build-manifest.json");
     require_(
-      m.value.rootRevision === rootRevision &&
+      valid_sha(s.buildRootRevision ?? rootRevision) &&
+        m.value.rootRevision === (s.buildRootRevision ?? rootRevision) &&
         m.value.configuration === configuration &&
         m.value.workflow.runId === s.runId &&
         m.value.workflow.runAttempt === s.runAttempt &&
@@ -677,6 +678,9 @@ async function exact_engines(
     );
     require_(
       original.value.target === target &&
+        original.value.recipe?.rootRevision ===
+          (s.buildRootRevision ?? rootRevision) &&
+        original.value.recipe?.rootDiffSha256 === hash("") &&
         original.value.configuration === configuration &&
         original.value.mode === "release" &&
         m.value.originalManifestSha256 === original.record.sha256,

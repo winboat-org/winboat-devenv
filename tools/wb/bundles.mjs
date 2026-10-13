@@ -218,7 +218,8 @@ export function validate(ws, input) {
       fail("duplicate/invalid artifact identity");
     ids.add(a.id);
     const m = a.provenance,
-      owner = OWNERS[m.target];
+      owner = OWNERS[m.target],
+      buildRootRevision = a.buildRootRevision ?? input.root.revision;
     if (
       m.schemaVersion !== 1 ||
       m.kind !== "winboat-component-artifact" ||
@@ -234,7 +235,8 @@ export function validate(ws, input) {
     )
       fail("component source does not agree with release pins");
     if (
-      m.rootRevision !== input.root.revision ||
+      !valid_sha(buildRootRevision) ||
+      m.rootRevision !== buildRootRevision ||
       m.toolchain?.lockSha256 !== input.root.lockSha256 ||
       !sha(m.toolchain?.identity)
     )
@@ -340,7 +342,7 @@ export function validate(ws, input) {
       m.target === "helios-installer" &&
       (m.installer?.interfaceVersion !== 1 ||
         m.installer?.format !== "HLIOSET2" ||
-        m.installer?.sourceRevision !== input.root.revision ||
+        m.installer?.sourceRevision !== buildRootRevision ||
         m.installer?.sourceRepository !== ROOT_REPOSITORY)
     )
       fail("stale installer interface/source");
@@ -461,7 +463,8 @@ async function checked_inputs(
       hash(JSON.stringify(original.toolchain)) !==
         a.provenance.toolchain.identity ||
       original.toolchain.lockSha256 !== input.root.lockSha256 ||
-      original.recipe?.rootRevision !== input.root.revision ||
+      original.recipe?.rootRevision !==
+        (a.buildRootRevision ?? input.root.revision) ||
       original.recipe?.rootDiffSha256 !== hash("")
     )
       fail("original build source/recipe/toolchain provenance differs");
@@ -590,7 +593,7 @@ async function checked_inputs(
   if (
     catalogVerifier.provenance.verifier?.interfaceVersion !== 1 ||
     catalogVerifier.provenance.verifier?.sourceRevision !==
-      input.root.revision ||
+      (catalogVerifier.buildRootRevision ?? input.root.revision) ||
     catalogVerifier.provenance.verifier?.sourceRepository !== ROOT_REPOSITORY
   )
     fail("stale catalog verifier interface/source");
@@ -1353,6 +1356,7 @@ export async function lock(ws, args, operationId) {
       },
       a = {
         id: parsed.provenance.target,
+        buildRootRevision: s.buildRootRevision ?? selection.rootRevision,
         githubArtifactId: s.artifactId,
         archive,
         ...parsed,

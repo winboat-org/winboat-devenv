@@ -19,6 +19,12 @@ $env:RUSTC = Join-Path $tools 'rust\bin\rustc.exe'
 $env:RUSTDOC = Join-Path $tools 'rust\bin\rustdoc.exe'
 $env:HELIOS_CLANG_CL = Join-Path $tools 'llvm\bin\clang-cl.exe'
 $env:HELIOS_MSVC_LIB = Join-Path $tools 'llvm\bin\llvm-lib.exe'
+$env:CC = $env:HELIOS_CLANG_CL
+$env:CXX = $env:HELIOS_CLANG_CL
+$env:AR = $env:HELIOS_MSVC_LIB
+$env:VCToolsVersion = $record.msvcToolset
+$target = if ($Architecture -eq 'x86') {'I686_PC_WINDOWS_MSVC'} else {'X86_64_PC_WINDOWS_MSVC'}
+[Environment]::SetEnvironmentVariable(('CARGO_TARGET_'+$target+'_LINKER'),(Join-Path (Split-Path $compiler -Parent) 'link.exe'),'Process')
 $env:HELIOS_WDK_INCLUDE = Join-Path $kits "Include\$($record.sdkVersion)"
 $env:PATH = ((@((Join-Path $tools 'rust\bin'),(Join-Path $tools 'llvm\bin'),(Join-Path $tools 'python'),(Split-Path $compiler -Parent),(Join-Path $kits "bin\$($record.sdkVersion)\x64"),$env:PATH)) -join ';')
 if ((& $env:RUSTC --version) -ne 'rustc 1.99.0-nightly (daf2e5e18 2026-07-13)') { throw 'Rust compiler differs from the locked distribution' }

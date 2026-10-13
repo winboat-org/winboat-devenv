@@ -218,10 +218,16 @@ checks out exact inputs, verifies/downloads archives, packs and retains a
 reviewable candidate. It has read permissions and no release publication step.
 It neither compiles components nor runs the installer build script.
 
-The source revision and the review-data revision are separate dispatch inputs:
-an input manifest cannot contain its own Git commit hash. Build all components
-from one committed source revision, generate/review the release-input JSON, then
-store that JSON in a separate data commit. Root CI checks out the original source
+The assembly source revision and the review-data revision are separate dispatch
+inputs: an input manifest cannot contain its own Git commit hash. Each artifact
+selection can specify `buildRootRevision`, the exact root commit that built it.
+The verifier requires that revision in both the normalized and original build
+manifests, alongside the selected component pins, toolchain lock, architecture
+and dependency identities. Omitted values default to the assembly source revision.
+This allows a driver CI fix to reuse already successful component artifacts
+without rebuilding unrelated binaries or rewriting their provenance.
+Generate/review the release-input JSON, then store it in a separate data commit.
+Root CI checks out the selected assembly source
 revision and reads the data commit under ignored `out/review/`. It checks the
 reviewed JSON digest before using it. Component builds use the `component-build` environment; root candidate jobs
 use ordinary hosted runners and manually reviewed immutable selections.

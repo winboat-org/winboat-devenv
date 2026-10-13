@@ -437,6 +437,64 @@ test("exact archives verify; install schema keeps symbols outside payload and al
     2,
   );
 });
+test("explicit build roots preserve older artifacts and reject mismatched original recipes", async (t) => {
+  const f = await fixture(t),
+    buildRoot = "e".repeat(40);
+  for (const target of [
+    "helios-installer",
+    "helios-catalog-verifier",
+    "helios-compatibility",
+  ]) {
+    const a = f.input.artifacts.find((a) => a.id === target);
+    a.buildRootRevision = buildRoot;
+    a.provenance.rootRevision = buildRoot;
+    if (a.provenance.installer)
+      a.provenance.installer.sourceRevision = buildRoot;
+    if (a.provenance.verifier) a.provenance.verifier.sourceRevision = buildRoot;
+    const originalPath = path.join(
+        f.ws.state,
+        "sources",
+        a.id,
+        "build-manifest.json",
+      ),
+      original = readJSON(originalPath);
+    original.recipe.rootRevision = buildRoot;
+    write_json(originalPath, original);
+    a.provenance.originalManifestSha256 = digest(originalPath);
+    Object.assign(
+      a.provenance.files.find((r) => r.path === "build-manifest.json"),
+      { sha256: digest(originalPath), size: fs.statSync(originalPath).size },
+    );
+    await rewrite_artifact(f, a);
+  }
+  write_json(f.manifest, f.input);
+  assert.equal(
+    (await bundles.verify(f.ws, f, identity())).artifactsVerified,
+    f.input.artifacts.length,
+  );
+  const a = f.input.artifacts.find((a) => a.id === "helios-compatibility");
+  a.buildRootRevision = "d".repeat(40);
+  write_json(f.manifest, f.input);
+  await assert.rejects(bundles.verify(f.ws, f, identity()), /root\/toolchain/);
+  a.buildRootRevision = buildRoot;
+  const originalPath = path.join(
+      f.ws.state,
+      "sources",
+      a.id,
+      "build-manifest.json",
+    ),
+    original = readJSON(originalPath);
+  original.recipe.rootRevision = "d".repeat(40);
+  write_json(originalPath, original);
+  a.provenance.originalManifestSha256 = digest(originalPath);
+  Object.assign(
+    a.provenance.files.find((r) => r.path === "build-manifest.json"),
+    { sha256: digest(originalPath), size: fs.statSync(originalPath).size },
+  );
+  await rewrite_artifact(f, a);
+  write_json(f.manifest, f.input);
+  await assert.rejects(bundles.verify(f.ws, f, identity()), /original build/);
+});
 test("all incompatible release identities fail before a guest task", async (t) => {
   const f = await fixture(t);
   const cases = [

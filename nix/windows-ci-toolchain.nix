@@ -14,15 +14,14 @@ let
     lockFile = builtins.toPath lockFile;
     subsetFile = ./msvc-tools.lock.json;
   };
+  sdk = import ./msvc-sdk-source.nix {
+    inherit pkgs;
+    payloads = if payloads == null then null else builtins.storePath (toString payloads);
+    lockFile = builtins.toPath lockFile;
+  };
   selections = {
     windows-sdk = [
-      "Universal_CRT_Headers_Libraries_and_Sources-x86_en-us.msi"
-      "Windows_SDK_for_Windows_Store_Apps_Headers-x86_en-us.msi"
       "Windows_SDK_for_Windows_Store_Apps_Libs-x86_en-us.msi"
-      "Windows_SDK_Desktop_Headers_x86-x86_en-us.msi"
-      "Windows_SDK_Desktop_Headers_x64-x86_en-us.msi"
-      "Windows_SDK_OnecoreUap_Headers_x86-x86_en-us.msi"
-      "Windows_SDK_OnecoreUap_Headers_x64-x86_en-us.msi"
       "Windows_SDK_Desktop_Libs_x86-x86_en-us.msi"
       "Windows_SDK_Desktop_Libs_x64-x86_en-us.msi"
       "Windows_SDK_Signing_Tools-x86_en-us.msi"
@@ -126,6 +125,19 @@ pkgs.runCommand "winboat-hosted-windows-toolchain"
       cp -R "$kit/licenses"/. "$out/licenses/"
       chmod -R u+w "$out/kits" "$out/licenses"
       done
+      mkdir -p "$out/kits/Include/10.0.26100.0"
+      cp -R ${sdk}/sdk/include/. "$out/kits/Include/10.0.26100.0/"
+      cp -R ${sdk}/sdk/lib/. "$out/kits/Lib/10.0.26100.0/"
+      cp ${
+        pkgs.writeText "sdk-headers-source.json" (
+          builtins.toJSON {
+            schemaVersion = 1;
+            provisionLockSha256 = builtins.hashFile "sha256" (builtins.toPath lockFile);
+            subsetNarHash = (builtins.fromJSON (builtins.readFile ./msvc-sdk.lock.json)).narHash;
+            media = (builtins.fromJSON (builtins.readFile ./msvc-sdk.lock.json)).media;
+          }
+        )
+      } "$out/licenses/sdk-headers-source.json"
       7zz x -y ${fetch llvm} -o"$out/llvm" > llvm-extraction.log
     test -f "$out/llvm/bin/libclang.dll" || { echo 'Portable LLVM libclang.dll missing'; exit 1; }
       ${pkgs.lib.concatMapStringsSep "\n" (p: ''
@@ -136,7 +148,7 @@ pkgs.runCommand "winboat-hosted-windows-toolchain"
         find rust-unpack -maxdepth 2 -type f \( -iname 'LICENSE*' -o -iname 'COPYRIGHT*' \) -exec cp '{}' "$out/licenses/" \;
         rm -r rust-unpack
       '') rustArchives}
-    for required in rust/bin/rustc.exe rust/bin/cargo.exe kits/Include/10.0.26100.0/km/ntddk.h kits/Lib/10.0.26100.0/km/x64/ntoskrnl.lib kits/bin/10.0.26100.0/x86/Inf2Cat.exe; do
+    for required in rust/bin/rustc.exe rust/bin/cargo.exe kits/Include/10.0.26100.0/shared/basetsd.h kits/Include/10.0.26100.0/shared/winerror.h kits/Include/10.0.26100.0/km/ntddk.h kits/Lib/10.0.26100.0/km/x64/ntoskrnl.lib kits/bin/10.0.26100.0/x86/Inf2Cat.exe; do
       test -f "$out/$required" || { echo "Portable toolchain member missing: $required"; find "$out/kits/bin" -iname '*inf2cat*'; exit 1; }
     done
     cp ${fetch (builtins.head (tool "python").payloads)} "$out/python-installer.exe"
@@ -152,6 +164,7 @@ pkgs.runCommand "winboat-hosted-windows-toolchain"
             llvmVersion = (tool "llvm").version;
             provisionLockSha256 = builtins.hashFile "sha256" (builtins.toPath lockFile);
             msvcSubsetNarHash = (builtins.fromJSON (builtins.readFile ./msvc-tools.lock.json)).narHash;
+            sdkSubsetNarHash = (builtins.fromJSON (builtins.readFile ./msvc-sdk.lock.json)).narHash;
           }
         )
       } "$out/toolchain.json"

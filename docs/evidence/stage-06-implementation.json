@@ -2458,5 +2458,23 @@
     },
     "rootAssemblyAccepted": false,
     "freshInstallerRuntimeAccepted": false
+  },
+  "hostedDriverToolchainCorrection": {
+    "state": "validated-local-fix-hosted-retry-pending",
+    "observedAt": "2026-10-13T00:27:38.793979+00:00",
+    "failedRun": 38323559694,
+    "preparedInputsPassed": true,
+    "failure": "Cargo's cxx dependency selected the runner-installed Visual Studio compiler; the portable MSI header selection omitted shared/basetsd.h",
+    "fix": "Compose portable SDK headers/libraries from the existing verified EWDK cross-build subset; set CC/CXX/AR and architecture-specific Cargo linker paths",
+    "toolkit": {
+      "drvPath": "/nix/store/rllmb5v7im4dly64qi213ivm6afxyf5z-winboat-hosted-windows-toolchain.drv",
+      "outputs": {
+        "out": "/nix/store/8bay7pb6sdrhy3h3zs82avjxpx5fnd4n-winboat-hosted-windows-toolchain"
+      }
+    },
+    "nativeAndSdkTests": 121,
+    "testLog": "workspace-state:stage06/devenv-test-explicit-build-roots.log",
+    "artifactReuse": "Explicit buildRootRevision selection is checked in normalized and original manifests; component pins, toolchain locks, architectures, dependency pairing and archive/member hashes remain required",
+    "hostedAcceptance": false
   }
 }
