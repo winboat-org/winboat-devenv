@@ -11,7 +11,7 @@
       provenance = "verified-push";
     };
     qemu-helios = {
-      rev = "5262ea9400ba44a1d9bbf18bea77ec30e7ab9422";
+      rev = "6577af923eac07522b4a6879854f1469c48c5801";
       ref = "refs/heads/helios-11.1.1";
       provenance = "verified-push";
     };
