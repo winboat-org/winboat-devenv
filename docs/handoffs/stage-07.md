@@ -31,7 +31,7 @@ all retained graphics/packaging workflows. There is no hosted workflow-lint job.
 The migration tests exercise real Git adoption, nested metadata, dirty work,
 recovery and conflicting destination refusal.
 
-The new source cohort still needs publication, exact hosted component artifacts
+The new source cohort still needs its remaining hosted component artifacts
 and a fresh installer assembly. Keep this separate from the earlier successful
 installer/lifecycle/graphics acceptance. The broader Stage 7 fresh-host acceptance
 and retirement of unrelated legacy tools remain pending.
@@ -41,8 +41,9 @@ and retirement of unrelated legacy tools remain pending.
 Root ownership implementation is `0564c26`; packaging path filters in `c347f42`
 skip component-pin-only pushes. Source pins through `ca5ceb1` are published.
 Component checkpoints are DXVK `aaca727`, vkd3d `6862ca7`, renderer `34ef854`,
-QEMU `6577af9`, CLVK `cfb2f21`, and Mesa `162130a`. Helios `ef3ec2a` is committed
-locally and awaits publication after its prebuilt engines pass.
+QEMU `6577af9`, CLVK `cfb2f21`, and Mesa `162130a`. Helios `ef3ec2a` is published and its driver build is running as `38912082120`.
+All twelve pinned source objects passed canonical remote verification;
+[the source receipt](../evidence/component-ownership-sources.json) records their identities.
 
 All packaging producers passed from root `c347f42`: loaders/probes `38908874043`,
 catalog verifier `38908874872`, ADL shim `38908874440`, and installer plus Windows

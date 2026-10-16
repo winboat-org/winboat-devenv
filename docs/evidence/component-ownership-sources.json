@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "scope": "pinned-source-object-availability",
+  "layoutVersion": 2,
+  "rootRevision": "131aaf9933244dedd8ec42d48734ac6e473ed98e",
+  "operationId": "op-ea8a247c5b954fb7bf1499051e22bc4a",
+  "repositories": [
+    {
+      "repository": "WBFreeRDP",
+      "canonicalUrl": "https://github.com/winboat-org/WBFreeRDP.git",
+      "revision": "24b2e41269ecd04b9cd2dbea72fb8406b69b16a0",
+      "developmentRef": "refs/heads/winboat-3.30",
+      "objectVerified": true
+    },
+    {
+      "repository": "clvk-helios",
+      "canonicalUrl": "https://github.com/winboat-org/clvk-helios.git",
+      "revision": "cfb2f21e912a22974b77526e4362f959c13c714f",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true
+    },
+    {
+      "repository": "dxil-spirv",
+      "canonicalUrl": "https://github.com/winboat-org/dxil-spirv.git",
+      "revision": "f4651bd076a2613728823ec289abc121a348a48a",
+      "developmentRef": "refs/heads/master",
+      "objectVerified": true
+    },
+    {
+      "repository": "dxvk",
+      "canonicalUrl": "https://github.com/winboat-org/dxvk.git",
+      "revision": "aaca727df5e29514c19bf59261929da6973a088c",
+      "developmentRef": "refs/heads/master",
+      "objectVerified": true
+    },
+    {
+      "repository": "electron",
+      "canonicalUrl": "https://github.com/winboat-org/electron.git",
+      "revision": "c328b030fd3357139f66c8a3a84a4384c0136eed",
+      "developmentRef": "refs/heads/winboat-43.2.0",
+      "objectVerified": true
+    },
+    {
+      "repository": "helios",
+      "canonicalUrl": "https://github.com/winboat-org/helios.git",
+      "revision": "ef3ec2a386c8a049aa9acdb62ccf296defcc9b79",
+      "developmentRef": "refs/heads/master",
+      "objectVerified": true
+    },
+    {
+      "repository": "mesa-helios",
+      "canonicalUrl": "https://github.com/winboat-org/mesa-helios.git",
+      "revision": "162130aa091909cb3364f3693318d30d11b0f233",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true
+    },
+    {
+      "repository": "qemu-helios",
+      "canonicalUrl": "https://github.com/winboat-org/qemu-helios.git",
+      "revision": "6577af923eac07522b4a6879854f1469c48c5801",
+      "developmentRef": "refs/heads/helios-11.1.1",
+      "objectVerified": true
+    },
+    {
+      "repository": "venus-protocol",
+      "canonicalUrl": "https://github.com/winboat-org/venus-protocol.git",
+      "revision": "fe08e82c3819e8ee3c547b1ea810fde61f46fa78",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true
+    },
+    {
+      "repository": "virglrenderer",
+      "canonicalUrl": "https://github.com/winboat-org/virglrenderer.git",
+      "revision": "34ef8546174c9a5b8c308239c6725422aa3879c5",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true
+    },
+    {
+      "repository": "vkd3d-proton",
+      "canonicalUrl": "https://github.com/winboat-org/vkd3d-proton.git",
+      "revision": "6862ca7add7ea994c6035e4b82358439dd181264",
+      "developmentRef": "refs/heads/master",
+      "objectVerified": true
+    },
+    {
+      "repository": "winboat",
+      "canonicalUrl": "https://github.com/winboat-org/winboat.git",
+      "revision": "17563cacb82ca31efe5feb12e3968f51951f1085",
+      "developmentRef": "refs/heads/main",
+      "objectVerified": true
+    }
+  ]
+}
