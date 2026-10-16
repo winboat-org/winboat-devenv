@@ -21,7 +21,7 @@
       provenance = "verified-push";
     };
     virglrenderer = {
-      rev = "48cbbf401443e96c7e7f2cd113e432c557ebf6a0";
+      rev = "34ef8546174c9a5b8c308239c6725422aa3879c5";
       ref = "refs/heads/main";
       provenance = "verified-push";
     };
