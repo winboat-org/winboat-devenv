@@ -26,7 +26,7 @@
       provenance = "verified-push";
     };
     mesa-helios = {
-      rev = "3c6e237eac13dd04bc0e373600d802d13f308068";
+      rev = "162130aa091909cb3364f3693318d30d11b0f233";
       ref = "refs/heads/main";
       provenance = "verified-push";
     };
