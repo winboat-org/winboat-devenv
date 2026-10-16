@@ -35,3 +35,33 @@ The new source cohort still needs publication, exact hosted component artifacts
 and a fresh installer assembly. Keep this separate from the earlier successful
 installer/lifecycle/graphics acceptance. The broader Stage 7 fresh-host acceptance
 and retirement of unrelated legacy tools remain pending.
+
+## Publication and hosted checks, 2026-10-16
+
+Root ownership implementation is `0564c26`; packaging path filters in `c347f42`
+skip component-pin-only pushes. Source pins through `ca5ceb1` are published.
+Component checkpoints are DXVK `aaca727`, vkd3d `6862ca7`, renderer `34ef854`,
+QEMU `6577af9`, CLVK `cfb2f21`, and Mesa `162130a`. Helios `ef3ec2a` is committed
+locally and awaits publication after its prebuilt engines pass.
+
+All packaging producers passed from root `c347f42`: loaders/probes `38908874043`,
+catalog verifier `38908874872`, ADL shim `38908874440`, and installer plus Windows
+interface `38908874409`. QEMU `38908617323`, renderer `38908597729`, and vkd3d
+`38908638495` passed. QEMU's artifact is 142,507,902 bytes and remains separate
+from the guest distribution. An annotation audit of these seven runs/nine jobs
+found no deprecated Node runtime warnings.
+
+Mesa's initial push selected the pre-migration root before publication finished.
+Its next attempt exposed a branding include omitted during the header move;
+`7efd19e` and `162130a` fix the include directory, own the branding input and
+remove Helios paths from its Windows interface. Current Mesa run: `38910066348`.
+The Windows interface passed local PowerShell checks.
+
+DXVK's push run `38908559584` passed after retrying a Microsoft SDK range-read
+timeout, but its artifacts span attempts. Complete-cohort run `38910673158`
+keeps both architectures in one successful attempt for exact release selection.
+CLVK run `38908713541` is building in its own repository. Its previous equivalent
+LLVM-based compiler build took about two hours. CLVK's local checkout lacked
+ancestor objects; fetching complete history fixed publication without rewriting
+its source or remote history. Current CI receipts/watch logs are under
+`.state/stage06/ownership-*` and `*-cohort-watch.log`.
