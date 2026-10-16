@@ -31,7 +31,7 @@
       provenance = "verified-push";
     };
     vkd3d-proton = {
-      rev = "3d1ba76b2c2e89b657112b44e0771beff3677ebe";
+      rev = "6862ca7add7ea994c6035e4b82358439dd181264";
       ref = "refs/heads/master";
       provenance = "verified-push";
     };
