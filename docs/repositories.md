@@ -26,28 +26,32 @@ remote reachability.
 
 All canonical URLs use `https://github.com/winboat-org/<repository>.git`.
 Transport and contributor namespace are local choices, not canonical identity.
-Layout version 1 preserves the existing Helios gitlinks and build paths:
+Layout version 2 uses independent component checkouts and two managed child gitlinks:
 
 | Repository | Path relative to workspace | Ownership |
 | --- | --- | --- |
 | helios | `repos/helios` | Top-level checkout |
-| qemu-helios | `repos/helios/qemu-helios` | Helios gitlink |
-| dxvk | `repos/helios/dxvk-helios` | Helios gitlink |
-| virglrenderer | `repos/helios/virglrenderer` | Helios gitlink |
-| mesa-helios | `repos/helios/icd/mesa` | Helios gitlink |
-| vkd3d-proton | `repos/helios/vkd3d-proton-helios` | Helios gitlink |
-| dxil-spirv | `repos/helios/vkd3d-proton-helios/subprojects/dxil-spirv` | vkd3d gitlink |
-| venus-protocol | `repos/helios/venus-protocol` | Current Helios gitlink; Mesa ownership is the migration target |
+| qemu-helios | `repos/qemu-helios` | Independent checkout |
+| dxvk | `repos/dxvk` | Independent checkout |
+| virglrenderer | `repos/virglrenderer` | Independent checkout |
+| mesa-helios | `repos/mesa-helios` | Independent checkout |
+| vkd3d-proton | `repos/vkd3d-proton` | Independent checkout |
+| dxil-spirv | `repos/vkd3d-proton/subprojects/dxil-spirv` | vkd3d gitlink |
+| venus-protocol | `repos/mesa-helios/subprojects/venus-protocol` | Mesa gitlink |
 | winboat | `repos/winboat` | Top-level checkout |
 | WBFreeRDP | `repos/WBFreeRDP` | Top-level checkout |
 | electron | `repos/electron` | Top-level checkout |
 | clvk-helios | `repos/clvk-helios` | Top-level checkout |
 
-Stage 7 can flatten former Helios submodules into independent checkouts once
-recipes accept explicit dependencies. DXIL-SPIRV retains its parent relationship;
-Venus protocol moves to Mesa ownership as requested. Version the manifest layout
-and migrate existing workspaces explicitly. Never create duplicate writable
-checkouts of a logical repository or rewrite the reference checkout in place.
+Layout version 2 removes all six managed Helios gitlinks. DXIL-SPIRV remains
+under vkd3d and Venus belongs to Mesa. For an existing version 1 workspace, run
+`wb-migrate-layout --plan` and `wb-migrate-layout --apply` before source sync.
+The command adopts existing Git directories, preserves nested checkout metadata,
+refs, remotes and dirty work, and records verified receipts under
+`.state/layout-migrations/`. A receipt can be reversed with
+`wb-migrate-layout --recover <receipt.json>` before resuming normal operations.
+Do not clone duplicate writable copies or delete old source directories.
+The unselected LookingGlass reference is unchanged.
 
 ## Subsets
 

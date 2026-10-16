@@ -21,12 +21,17 @@ let
     "clvk-cross-warning-flags.patch"
     "clvk-clang-cl-warnings.patch"
   ];
-  symbolPolicy = pkgs.writeText "clvk-symbol-policy.py" (builtins.readFile ../scripts/clvk-symbol-policy.py);
-  clspvPatchDirectory = "${sources.helios}/ci/patches/clspv";
-  clspvPatches = map
-    (name: pkgs.writeText name (builtins.readFile "${clspvPatchDirectory}/${name}"))
-    (builtins.filter (name: pkgs.lib.hasSuffix ".patch" name)
-      (builtins.attrNames (builtins.readDir clspvPatchDirectory)));
+  symbolPolicy = pkgs.writeText "clvk-symbol-policy.py" (
+    builtins.readFile ../scripts/clvk-symbol-policy.py
+  );
+  clspvPatchDirectory = "${sources.clvk-helios}/nix/patches/clspv";
+  clspvPatches =
+    map (name: pkgs.writeText name (builtins.readFile "${clspvPatchDirectory}/${name}"))
+      (
+        builtins.filter (name: pkgs.lib.hasSuffix ".patch" name) (
+          builtins.attrNames (builtins.readDir clspvPatchDirectory)
+        )
+      );
 in
 pkgs.runCommand "clvk-helios-msvc-cross-compiler-${configuration}"
   {

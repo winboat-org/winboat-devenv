@@ -51,7 +51,7 @@ snapshots; uninstall restored all nine registry snapshots and unloaded Helios.
 Replacement of a genuine earlier package passed the same loaded-code/graphics
 checks. Both packages report the same version; the higher-version GUI path remains
 unmeasured. Loaded old runtime files remain with the original cleanup warnings.
-See [release usage](docs/releases.md) for measured limits. Stage 7 remains planned.
+See [release usage](docs/releases.md) for measured limits. Stage 7 ownership cleanup is in progress; fresh-host acceptance remains pending.
 
 ## Start here
 

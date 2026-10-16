@@ -17,7 +17,7 @@ let
     vkd3d-engine-x86 = load "vkd3d-proton" "engine-x86";
     helios-guest-x64 = load "helios" "guest-x64";
     helios-guest-x86 = load "helios" "guest-x86";
-    helios-development-package = load "helios" "development-package";
+    helios-development-package = import ./adapters/guest-package.nix;
     mesa-guest-x64 = load "mesa-helios" "guest-x64";
     mesa-guest-x86 = load "mesa-helios" "guest-x86";
     clvk-helios = import ./adapters/clvk.nix;
@@ -51,6 +51,7 @@ selected
   bindingContract = {
     schemaVersion = 1;
     tokens = [
+      "@controlRoot@"
       "@sourceDirectory@"
       "@buildDirectory@"
       "@nativeFile@"

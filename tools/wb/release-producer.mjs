@@ -21,6 +21,7 @@ import {
 } from "./common.mjs";
 import { Workspace, discover } from "./workspace.mjs";
 import * as builds from "./builds.mjs";
+import * as repositories from "./repos.mjs";
 import * as windows from "./windows.mjs";
 import * as devbox from "./devbox.mjs";
 import { create_zip, extract_artifact } from "./archives.mjs";
@@ -62,17 +63,19 @@ function source_dependencies(ws, target, manifest) {
       s.revision,
     ]),
   );
-  dependencies[OWNERS[target]] = ws.repos[OWNERS[target]].pin.rev;
-  if (target.startsWith("helios-") || target === "clvk-helios")
-    for (const name of [
-      "helios",
-      "dxvk",
-      "vkd3d-proton",
-      "dxil-spirv",
-      "venus-protocol",
-      "mesa-helios",
-    ])
-      dependencies[name] = ws.repos[name].pin.rev;
+  for (const dependency of manifest?.componentDependencies ?? [])
+    for (const [name, source] of Object.entries(dependency.sources ?? {})) {
+      require_(
+        !dependencies[name] || dependencies[name] === source.revision,
+        "inconsistent consumed source revision",
+      );
+      dependencies[name] = source.revision;
+    }
+  dependencies[OWNERS[target]] =
+    OWNERS[target] === "winboat-devenv"
+      ? git(ws.root, "rev-parse", "HEAD").stdout.trim()
+      : ws.repos[OWNERS[target]].pin.rev;
+
   return dependencies;
 }
 function destination(target, p) {
@@ -99,8 +102,9 @@ function destination(target, p) {
         path.basename(p)
       );
   }
-  if (target === "clvk-helios") {
-    if (p === "package/clvk.dll") return "payload/opencl/clvk.dll";
+  if (target === "clvk-helios" && p === "package/clvk.dll")
+    return "payload/opencl/clvk.dll";
+  if (target === "helios-guest-support") {
     if (
       [
         "package/vulkan-1.dll",
@@ -176,7 +180,8 @@ export async function seal(
   );
   for (const [name, s] of Object.entries(built.sources))
     require_(
-      s.revision === ws.repos[name].pin.rev &&
+      s.revision ===
+        (name === "winboat-devenv" ? rootRevision : ws.repos[name].pin.rev) &&
         !s.diffSha256 &&
         !s.untracked?.length,
       "dirty or mismatched component build source",
@@ -229,14 +234,15 @@ export async function seal(
     mode: "release",
     repository: workflow.repository,
     sourceRepository: "winboat-org/" + owner,
-    revision: ws.repos[owner].pin.rev,
+    revision:
+      owner === "winboat-devenv" ? rootRevision : ws.repos[owner].pin.rev,
     rootRevision,
     target,
     buildTarget: built.target,
     configuration,
     architecture: target.endsWith("x86")
       ? "x86"
-      : ["clvk-helios", "helios-guest-x64"].includes(target)
+      : ["helios-guest-support", "helios-guest-x64"].includes(target)
         ? "x64+x86"
         : "x64",
     abi: ["qemu-helios", "virglrenderer"].includes(target)
@@ -298,7 +304,7 @@ export async function seal(
     m.productName = branding.HELIOS_PRODUCT;
     m.publisher = branding.HELIOS_PUBLISHER;
   }
-  if (target === "clvk-helios")
+  if (["clvk-helios", "helios-guest-support"].includes(target))
     m.upstream = readJSON(
       path.join(output, "files/package/source-revisions.json"),
     );
@@ -429,13 +435,7 @@ async function installer_build(ws, args, operationId) {
     target: "helios-installer",
     configuration: args.configuration,
     mode: "release",
-    sources: {
-      helios: {
-        revision: ws.repos.helios.pin.rev,
-        diffSha256: null,
-        untracked: [],
-      },
-    },
+    sources: {},
     files: builds._files(path.join(output, "files")),
     toolchain: {
       lockSha256: digest(path.join(ws.root, "devenv.lock")),
@@ -532,13 +532,7 @@ async function windows_release_tool_build(ws, args, operationId) {
     target: args.target,
     configuration: args.configuration,
     mode: "release",
-    sources: {
-      helios: {
-        revision: ws.repos.helios.pin.rev,
-        diffSha256: null,
-        untracked: [],
-      },
-    },
+    sources: {},
     files: builds._files(path.join(output, "files")),
     toolchain: {
       lockSha256: digest(path.join(ws.root, "devenv.lock")),
@@ -561,6 +555,62 @@ async function windows_release_tool_build(ws, args, operationId) {
   const manifestPath = path.join(output, "manifest.json");
   write_json(manifestPath, manifest);
   return manifestPath;
+}
+// Resolve only artifacts for the canonical pinned engines; exact_engines verifies
+// their complete archive, source closure, toolchain and successful run afterward.
+export function discover_engines(ws, configuration) {
+  const selected = [];
+  for (const target of [
+    "dxvk-engine-x64",
+    "dxvk-engine-x86",
+    "vkd3d-engine-x64",
+    "vkd3d-engine-x86",
+  ]) {
+    const owner = OWNERS[target],
+      repository = "winboat-org/" + owner;
+    const name = target + "-" + configuration + "-" + ws.repos[owner].pin.rev;
+    const artifacts = JSON.parse(
+      run([
+        env.WB_GH,
+        "api",
+        "repos/" +
+          repository +
+          "/actions/artifacts?per_page=100&name=" +
+          encodeURIComponent(name),
+      ]).stdout,
+    ).artifacts;
+    let found;
+    for (const artifact of artifacts) {
+      if (
+        artifact.expired ||
+        artifact.workflow_run?.head_sha !== ws.repos[owner].pin.rev
+      )
+        continue;
+      const runInfo = JSON.parse(
+        run([
+          env.WB_GH,
+          "api",
+          "repos/" + repository + "/actions/runs/" + artifact.workflow_run.id,
+        ]).stdout,
+      );
+      if (
+        runInfo.conclusion !== "success" ||
+        !["push", "workflow_dispatch"].includes(runInfo.event) ||
+        runInfo.head_repository.full_name !== repository
+      )
+        continue;
+      found = {
+        repository,
+        artifactId: artifact.id,
+        runId: runInfo.id,
+        runAttempt: runInfo.run_attempt,
+      };
+      break;
+    }
+    require_(found, "no successful artifact for pinned engine " + name);
+    selected.push(found);
+  }
+  return JSON.stringify(selected);
 }
 export async function exact_engines(
   ws,
@@ -607,7 +657,7 @@ export async function exact_engines(
         meta.workflow_run.id === s.runId &&
         workflow.run_attempt === s.runAttempt &&
         workflow.conclusion === "success" &&
-        workflow.event === "workflow_dispatch" &&
+        ["workflow_dispatch", "push"].includes(workflow.event) &&
         workflow.head_repository.full_name === s.repository,
       "engine artifact expired/failed/forked/mismatched",
     );
@@ -647,8 +697,9 @@ export async function exact_engines(
     const m = await read_metadata(archive, "component.json"),
       original = await read_metadata(archive, "build-manifest.json");
     require_(
-      valid_sha(s.buildRootRevision ?? rootRevision) &&
-        m.value.rootRevision === (s.buildRootRevision ?? rootRevision) &&
+      valid_sha(s.buildRootRevision ?? m.value.rootRevision) &&
+        m.value.rootRevision ===
+          (s.buildRootRevision ?? m.value.rootRevision) &&
         m.value.configuration === configuration &&
         m.value.workflow.runId === s.runId &&
         m.value.workflow.runAttempt === s.runAttempt &&
@@ -679,7 +730,7 @@ export async function exact_engines(
     require_(
       original.value.target === target &&
         original.value.recipe?.rootRevision ===
-          (s.buildRootRevision ?? rootRevision) &&
+          (s.buildRootRevision ?? m.value.rootRevision) &&
         original.value.recipe?.rootDiffSha256 === hash("") &&
         original.value.configuration === configuration &&
         original.value.mode === "release" &&
@@ -693,7 +744,7 @@ export async function exact_engines(
           source.revision,
         ]),
       ),
-      helper = target.startsWith("dxvk-") ? "helios" : "dxil-spirv";
+      helper = target.startsWith("dxvk-") ? owner : "dxil-spirv";
     require_(
       sources[owner] &&
         sources[helper] &&
@@ -741,7 +792,7 @@ export async function main(argv = process.argv.slice(2)) {
       env.WB_CI_STATE_ROOT ? { stateRoot: env.WB_CI_STATE_ROOT } : {},
     ),
     owner = OWNERS[args.target],
-    productionOwner = args.target === "clvk-helios" ? "helios" : owner;
+    productionOwner = owner;
   require_(
     owner &&
       ["release", "debug"].includes(args.configuration) &&
@@ -749,12 +800,28 @@ export async function main(argv = process.argv.slice(2)) {
     "invalid repository-owned component target",
   );
   clean_root(ws, args.root_revision);
+  if (env.GITHUB_EVENT_NAME === "push" && owner !== "winboat-devenv") {
+    const repo = JSON.parse(
+      run([env.WB_GH, "api", "repos/winboat-org/" + owner]).stdout,
+    );
+    require_(
+      env.GITHUB_REF === "refs/heads/" + repo.default_branch,
+      "automatic build requires the default branch",
+    );
+    require_(
+      valid_sha(args.source_revision),
+      "invalid pushed component revision",
+    );
+    ws.repos[owner].pin.rev = args.source_revision;
+  }
   require_(
     valid_sha(args.source_revision) &&
-      ws.repos[productionOwner].pin.rev === args.source_revision &&
+      (productionOwner === "winboat-devenv"
+        ? args.root_revision
+        : ws.repos[productionOwner].pin.rev) === args.source_revision &&
       env.GITHUB_REPOSITORY === "winboat-org/" + productionOwner &&
       env.GITHUB_SHA === args.source_revision &&
-      env.GITHUB_EVENT_NAME === "workflow_dispatch",
+      ["workflow_dispatch", "push"].includes(env.GITHUB_EVENT_NAME),
     "workflow must execute the exact selected component pin",
   );
   const operationId = identity(),
@@ -778,6 +845,13 @@ export async function main(argv = process.argv.slice(2)) {
       workflow.runAttempt > 0,
     "missing hosted workflow identity",
   );
+  if (args.phase === "sync") {
+    if (owner !== "winboat-devenv") {
+      const [selected, containers] = ws.select({ repo: [owner] });
+      await repositories.sync(ws, selected, containers, operationId);
+    }
+    return;
+  }
   let manifestPath;
   if (
     [
@@ -795,7 +869,7 @@ export async function main(argv = process.argv.slice(2)) {
     } else {
       const dependencies = await exact_engines(
         ws,
-        args.engine_selection ?? "[]",
+        args.engine_selection || discover_engines(ws, args.configuration),
         args.root_revision,
         args.configuration,
         path.join(ws.state, "release-components", operationId, "engines"),

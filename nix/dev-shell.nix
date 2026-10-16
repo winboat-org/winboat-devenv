@@ -52,6 +52,7 @@ in
     ])
     ++ [ devenvCli ];
   # scripts outrank the Git package on PATH; the wrapper uses an absolute Git.
+  scripts.wb-migrate-layout.exec = ''exec ${commands.layoutMigration}/bin/wb-migrate-layout "$@"'';
   scripts.wb.exec = ''exec ${commands.wb}/bin/wb "$@"'';
   scripts.git.exec = ''exec ${commands.git}/bin/git "$@"'';
   scripts.wb-format = {
@@ -121,6 +122,7 @@ in
     ${pkgs.powershell}/bin/pwsh -NoProfile -File ${./scripts/windows-syntax.ps1} "$WB_WORKSPACE_ROOT/ci/windows" "$WB_WORKSPACE_ROOT/config/provision.lock.json"
   '';
   env.WB_WORKSPACE_ROOT = config.devenv.root;
+  env.WB_PACKAGING_ROOT = "${config.devenv.root}/packaging/windows";
   env.WB_NIXPKGS = toString pkgs.path;
 
   scripts.wb-pins = {

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "winboat-org/helios",
+  "sourceRevision": "d82ce565ac792eb48da5e59f2a82a12ff221851d",
+  "packagingOwner": "winboat-org/winboat-devenv",
+  "clvkCompilerPatchesOwner": "winboat-org/clvk-helios",
+  "dxvkCompatibilityHeadersOwner": "winboat-org/dxvk",
+  "mesaCompatibilityHeadersOwner": "winboat-org/mesa-helios",
+  "layoutVersion": 2,
+  "note": "The whole packaging tree moved to winboat-devenv. CLVK no longer produces loaders or probes. All six managed Helios gitlinks are retired. Independent checkouts preserve history, refs, remotes and dirty work through receipt-backed adoption. Existing lifecycle acceptance remains historical; the new source cohort requires fresh hosted builds."
+}

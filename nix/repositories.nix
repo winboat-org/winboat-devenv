@@ -18,34 +18,16 @@ let
 in
 {
   schemaVersion = 1;
-  layoutVersion = 1;
+  layoutVersion = 2;
   repositories = {
-    helios =
-      (repo "helios" heliosRoot [
-        "qemu-helios"
-        "dxvk"
-        "virglrenderer"
-        "mesa-helios"
-        "vkd3d-proton"
-        "venus-protocol"
-      ])
-      // {
-        submodules = {
-          mode = "selected";
-          paths = [
-            "qemu-helios"
-            "dxvk-helios"
-            "virglrenderer"
-            "icd/mesa"
-            "vkd3d-proton-helios"
-            "venus-protocol"
-          ];
-        };
-      };
-    qemu-helios = nested "qemu-helios" "${heliosRoot}/qemu-helios" [
+    helios = repo "helios" heliosRoot [
+      "dxvk"
+      "vkd3d-proton"
+    ];
+    qemu-helios = repo "qemu-helios" "repos/qemu-helios" [
       "virglrenderer"
-    ] "helios" "qemu-helios";
-    dxvk = (nested "dxvk" "${heliosRoot}/dxvk-helios" [ ] "helios" "dxvk-helios") // {
+    ];
+    dxvk = (repo "dxvk" "repos/dxvk" [ ]) // {
       submodules = {
         mode = "selected";
         paths = [
@@ -63,16 +45,19 @@ in
         ];
       };
     };
-    virglrenderer = nested "virglrenderer" "${heliosRoot}/virglrenderer" [
+    virglrenderer = repo "virglrenderer" "repos/virglrenderer" [
       "venus-protocol"
-    ] "helios" "virglrenderer";
-    mesa-helios = nested "mesa-helios" "${heliosRoot}/icd/mesa" [
-      "venus-protocol"
-    ] "helios" "icd/mesa";
+    ];
+    mesa-helios = (repo "mesa-helios" "repos/mesa-helios" [ "venus-protocol" ]) // {
+      submodules = {
+        mode = "selected";
+        paths = [ "subprojects/venus-protocol" ];
+      };
+    };
     vkd3d-proton =
-      (nested "vkd3d-proton" "${heliosRoot}/vkd3d-proton-helios" [
+      (repo "vkd3d-proton" "repos/vkd3d-proton" [
         "dxil-spirv"
-      ] "helios" "vkd3d-proton-helios")
+      ])
       // {
         submodules = {
           mode = "selected";
@@ -84,7 +69,7 @@ in
         };
       };
     dxil-spirv =
-      (nested "dxil-spirv" "${heliosRoot}/vkd3d-proton-helios/subprojects/dxil-spirv" [ ] "vkd3d-proton"
+      (nested "dxil-spirv" "repos/vkd3d-proton/subprojects/dxil-spirv" [ ] "vkd3d-proton"
         "subprojects/dxil-spirv"
       )
       // {
@@ -102,11 +87,10 @@ in
           ];
         };
       };
-    # Current gitlink ownership is Helios. Stage 7 moves it to Mesa together
-    # with the build consumers and the layout version, as requested.
+    # Mesa owns the protocol gitlink; renderer consumption stays explicit.
     venus-protocol =
-      nested "venus-protocol" "${heliosRoot}/venus-protocol" [ ] "helios"
-        "venus-protocol";
+      nested "venus-protocol" "repos/mesa-helios/subprojects/venus-protocol" [ ] "mesa-helios"
+        "subprojects/venus-protocol";
     winboat = repo "winboat" "repos/winboat" [ ];
     WBFreeRDP = repo "WBFreeRDP" "repos/WBFreeRDP" [ ];
     electron = repo "electron" "repos/electron" [ ];

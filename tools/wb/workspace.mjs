@@ -114,7 +114,10 @@ export class Workspace {
             2,
           );
     this.manifest = readJSON(env.WB_MANIFEST_FILE);
-    if (this.manifest.schemaVersion !== 1 || this.manifest.layoutVersion !== 1)
+    if (
+      this.manifest.schemaVersion !== 1 ||
+      ![1, 2].includes(this.manifest.layoutVersion)
+    )
       throw new Failure("unsupported repository layout/schema", 2);
     this.repos = structuredClone(this.manifest.repositories);
     this.pins_path = path.join(this.root, "nix/pins.nix");

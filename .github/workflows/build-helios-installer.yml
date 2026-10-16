@@ -1,0 +1,135 @@
+name: Build the Helios installer
+on:
+  push:
+    branches: [master]
+    paths: [installer/**, packaging/**, metadata/**, kmd_render/driver-version.env, nix/**, tools/wb/**, devenv.lock, .github/workflows/build-helios-installer.yml]
+  workflow_dispatch:
+    inputs:
+      root_revision:
+        description: Committed winboat-devenv source and pins (40 hex characters)
+        required: true
+        type: string
+      component_revision:
+        description: Exact component commit; must equal this workflow SHA
+        required: true
+        type: string
+      configuration:
+        required: true
+        type: choice
+        options: [release, debug]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: component-${{ github.workflow }}-${{ github.sha }}-${{ inputs.root_revision }}-${{ inputs.configuration || 'release' }}
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'winboat-org/winboat-devenv'
+    environment: component-build
+    runs-on: ubuntu-24.04
+    outputs:
+      root_revision: ${{ steps.identity.outputs.root_revision }}
+      component_revision: ${{ steps.identity.outputs.component_revision }}
+      configuration: ${{ steps.identity.outputs.configuration }}
+      artifact-id: ${{ steps.artifact.outputs.artifact-id }}
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [helios-installer]
+    steps:
+      - name: Resolve and record immutable build identities
+        id: identity
+        env:
+          SELECTED_ROOT: ${{ inputs.root_revision }}
+          SELECTED_COMPONENT: ${{ inputs.component_revision }}
+          SELECTED_CONFIGURATION: ${{ inputs.configuration }}
+          GH_TOKEN: ${{ secrets.COMPONENT_INPUTS_TOKEN || github.token }}
+        run: |
+          root_revision="$SELECTED_ROOT"
+          if [[ -z "$root_revision" ]]; then root_revision="$GITHUB_SHA"; fi
+          component_revision="${SELECTED_COMPONENT:-$GITHUB_SHA}"
+          configuration="${SELECTED_CONFIGURATION:-release}"
+          [[ "$root_revision" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$component_revision" =~ ^[0-9a-f]{40}$ ]]
+          test "$component_revision" = "$GITHUB_SHA"
+          [[ "$configuration" = release || "$configuration" = debug ]]
+          printf 'root_revision=%s\ncomponent_revision=%s\nconfiguration=%s\n' "$root_revision" "$component_revision" "$configuration" >> "$GITHUB_OUTPUT"
+          printf 'Root: %s\nComponent: %s\nConfiguration: %s\n' "$root_revision" "$component_revision" "$configuration" >> "$GITHUB_STEP_SUMMARY"
+      - name: Checkout the exact root operation and installer source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, node24
+        with:
+          repository: winboat-org/winboat-devenv
+          ref: ${{ steps.identity.outputs.root_revision }}
+          path: workspace
+          persist-credentials: false
+          submodules: false
+          token: ${{ secrets.COMPONENT_INPUTS_TOKEN || github.token }}
+      - name: Install Nix
+        uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31.11.2, composite
+        with:
+          enable_kvm: false
+          extra_nix_config: |
+            max-jobs = 1
+            cores = 2
+      - name: Realize the component command
+        working-directory: workspace
+        run: |
+          component_tools=$(nix build --no-link --print-out-paths --file nix/ci.nix component)
+          printf '%s/bin\n' "$component_tools" >> "$GITHUB_PATH"
+      - name: Restore immutable source-object cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0, node24
+        with:
+          path: workspace/.state/source-cache
+          key: component-${{ runner.os }}-${{ steps.identity.outputs.root_revision }}-${{ steps.identity.outputs.component_revision }}-${{ hashFiles('workspace/devenv.lock', 'workspace/config/provision.lock.json', 'workspace/nix/pins.nix') }}-${{ matrix.target }}-${{ steps.identity.outputs.configuration }}
+      - name: Build the repository-owned artifact through Nix operations
+        working-directory: workspace
+        env:
+          OWNER: 'winboat-devenv'
+          TARGET: ${{ matrix.target }}
+          COMPONENT_REVISION: ${{ steps.identity.outputs.component_revision }}
+          ROOT_REVISION: ${{ steps.identity.outputs.root_revision }}
+          CONFIGURATION: ${{ steps.identity.outputs.configuration }}
+          GH_TOKEN: ${{ secrets.COMPONENT_INPUTS_TOKEN || github.token }}
+        run: >-
+          wb-component-build --owner "$OWNER" --target "$TARGET"
+          --source-revision "$COMPONENT_REVISION" --root-revision "$ROOT_REVISION"
+          --configuration "$CONFIGURATION"
+      - name: Upload this run's individual artifact
+        id: artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, node24
+        with:
+          name: ${{ matrix.target }}-${{ steps.identity.outputs.configuration }}-${{ steps.identity.outputs.component_revision }}
+          path: workspace/out/ci-components/${{ matrix.target }}-${{ steps.identity.outputs.configuration }}/
+          include-hidden-files: true
+          compression-level: 1
+          if-no-files-found: error
+          retention-days: 30
+      - name: Record exact hosted artifact identity
+        env:
+          ARTIFACT_ID: ${{ steps.artifact.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.artifact.outputs.artifact-digest }}
+        run: printf '%s %s\n' "$ARTIFACT_ID" "$ARTIFACT_DIGEST"
+  verify-interface:
+    name: Verify the prebuilt installer interface
+    needs: build
+    runs-on: windows-2025
+    timeout-minutes: 15
+    steps:
+      - name: Checkout the exact interface probe
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, node24
+        with:
+          repository: winboat-org/winboat-devenv
+          ref: ${{ needs.build.outputs.root_revision }}
+          persist-credentials: false
+          token: ${{ secrets.COMPONENT_INPUTS_TOKEN || github.token }}
+      - name: Download this build's exact installer artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2, node24
+        with:
+          artifact-ids: ${{ needs.build.outputs.artifact-id }}
+          path: out/installer
+          merge-multiple: true
+      - name: Probe the hashed prebuilt installer
+        shell: pwsh
+        run: ./nix/windows/VerifyInstaller.ps1 -Directory out/installer

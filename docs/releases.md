@@ -76,24 +76,28 @@ probe. Root CI consumes those already built artifacts. No release was published.
 ## Production ownership
 
 Each workflow owns one build responsibility. Architecture matrices stay within
-that component. The common execution template is
-[ci/component-build.yml.in](../ci/component-build.yml.in); workflow paths in
-artifact provenance come from GitHub's actual workflow identity.
+that component. Workflow files declare their own responsibility; shared Nix operations implement
+the build. Artifact provenance records GitHub's actual workflow identity.
 
 | Repository    | Workflow                      | Responsibility                       |
 | ------------- | ----------------------------- | ------------------------------------ |
 | helios        | `build-helios-drivers.yml`    | Signed KMD and native/WoW64 UMDs     |
-| helios        | `build-helios-installer.yml`  | Migrated installer and packer        |
-| helios        | `build-adl-compatibility.yml` | ADL compatibility shim               |
-| helios        | `build-catalog-verifier.yml`  | Prebuilt catalog membership verifier |
-| helios        | `build-clvk-runtime.yml`      | CLVK runtime, loaders and probes     |
+| winboat-devenv | `build-helios-installer.yml`  | Migrated installer and packer        |
+| winboat-devenv | `build-adl-compatibility.yml` | ADL compatibility shim               |
+| winboat-devenv | `build-catalog-verifier.yml`  | Prebuilt catalog membership verifier |
+| clvk-helios   | `build-clvk-runtime.yml`      | CLVK DLL and runtime symbols         |
+| winboat-devenv | `build-guest-support.yml`     | Khronos loaders and package probes   |
 | qemu-helios   | `build-qemu.yml`              | QEMU executable, modules and symbols |
 | virglrenderer | `build-virglrenderer.yml`     | Renderer and paired Venus headers    |
 | mesa-helios   | `build-icds.yml`              | Native and WoW64 Mesa ICDs           |
 | dxvk          | `build-dxvk.yml`              | Native and WoW64 DXVK engines        |
 | vkd3d-proton  | `build-vkd3d-proton.yml`      | Native and WoW64 vkd3d engines       |
 
-Manual dispatch selects exact root/component commits and release/debug output.
+Components build automatically on a push to their default branch. Each run resolves
+and records one immutable winboat-devenv revision for dependency pins and recipes.
+The pushed component SHA is built without changing those dependency pins; release
+selection accepts it only after that SHA is explicitly pinned. Manual dispatch
+selects exact root/component commits and release/debug output.
 Cross jobs use hosted Ubuntu and only their component command and source closure.
 The primary driver retains its Windows WDK build requirement, fulfilled by a
 hosted Windows job with portable Nix-verified inputs. The installer
@@ -118,8 +122,12 @@ The Helios driver job requires four exact artifacts from the DXVK/vkd3d jobs,
 using JSON selectors with `repository`, `artifactId`, `runId`, and `runAttempt`.
 It imports and verifies their original build manifests, configuration and source
 identities. Missing engines fail before driver compilation; no dependency-build
-fallback is used. CLVK's designated Helios job uses the existing Linux recipe and
-retains its fixed Khronos/LLVM revision table and no-compiler-symbol policy report.
+fallback is used. On push, the driver operation resolves successful artifacts by
+exact target, configuration and canonical pinned engine SHA, then verifies their
+full provenance and archive digest. The engines are static COFF libraries plus
+bridge headers because the UMD links them into its DLLs. Driver jobs export only
+Helios source. CLVK builds in its own repository, retains LLVM provenance and
+the no-compiler-symbol policy, and no longer builds or distributes probes.
 
 ## Composed CI environments
 
@@ -301,9 +309,10 @@ on each component repository; a repository's `GITHUB_TOKEN` generally does not
 grant cross-repository artifact access. A fine-grained token or GitHub App can
 provide that scope. Do not grant publication permissions to the read token.
 Missing/expired tokens or artifacts are reported, not replaced with another run.
-CLVK source sync includes Helios because its declared target consumes the Helios
-loader and probe sources as well as CLVK. Source-sync steps supply the same read
-token. The Nix command configures Git's
+CLVK source sync includes only its own compiler closure. Its two clspv patches
+now live in CLVK. DXVK and Mesa own their compatibility headers. Khronos loaders
+and guest probes belong to winboat-devenv and have an LLVM-free input closure.
+Source-sync steps supply the same read token. The Nix command configures Git's
 GitHub credential helper for that process, keeping credentials out of URLs and
 leaving the user's Git configuration untouched. Private dependencies require
 Contents read access across repositories even when the build repository is public.
@@ -328,4 +337,5 @@ download, local/hosted packing comparison and compilation-free hosted logs.
 Then use a fresh named devbox to exercise signing reboot, install/resume,
 repair/update, uninstall/snapshots and actual registry/kernel/DLL/interactive
 observations. Existing guests, keys, media, images and closures remain preserved.
-Stage 7 removals and fresh-host migration remain separate.
+The ownership cleanup is in progress. The new artifact cohort and fresh-host
+migration require their own acceptance evidence.

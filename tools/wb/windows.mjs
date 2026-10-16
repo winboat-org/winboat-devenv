@@ -146,13 +146,14 @@ export function job_id(v) {
     throw new Failure("invalid Windows job ID", 2);
   return v;
 }
-export async function payloads(ws, name) {
+export async function payloads(ws, name, extra = []) {
   const files = [
       "Control.ps1",
       "Task.ps1",
       "LoadedIdentity.cs",
       "Toolchain.ps1",
       "RegistryProjection.ps1",
+      ...extra,
     ].map((n) => path.join(env.WB_DEVBOX_PAYLOADS, n)),
     id = hash(files.map(digest).join("")),
     remote = ROOT + "\\control\\" + id,
@@ -1092,6 +1093,7 @@ export async function build(
       "mesa-guest-x64",
       "mesa-guest-x86",
       "clvk-helios",
+      "helios-guest-support",
     ])
       await componentDependency(t);
   else if (target.startsWith("helios-guest")) {
@@ -1128,6 +1130,16 @@ export async function build(
   const bindings = {
     "@sourceDirectory@":
       sourceRoot + "\\" + sources[component].relativePath.replaceAll("/", "\\"),
+    "@controlRoot@":
+      target === "helios-development-package"
+        ? await payloads(ws, name, [
+            "PackageGuest.ps1",
+            "Install-Helios.ps1",
+            "Uninstall-Helios.ps1",
+            "Verify-Helios.ps1",
+            "Helios-PackageCommon.ps1",
+          ])
+        : "",
     "@buildDirectory@": buildRoot,
     "@specification@": ROOT + "\\jobs\\" + operationId + "\\build.json",
   };

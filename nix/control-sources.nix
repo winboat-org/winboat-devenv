@@ -37,6 +37,7 @@ let
           "wb/publication.mjs"
           "wb/repos.mjs"
           "wb/workspace.mjs"
+          "wb/layout.mjs"
           "mcp/server.mjs"
         ]
   );

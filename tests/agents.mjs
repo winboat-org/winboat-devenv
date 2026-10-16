@@ -135,7 +135,7 @@ test("parallel MCP clients reuse one durable mutation and wait on the same compl
 test("large MCP receipts retain full evidence and expose bounded pages by ID", async (t) => {
   const f = new Fixture(t);
   f.wb("repo", "sync", "--repo", "venus-protocol");
-  const p = path.join(f.root, "repos/helios/venus-protocol");
+  const p = f.path("venus-protocol");
   for (let i = 0; i < 250; i++)
     write(path.join(p, "untracked-" + i + "-" + "x".repeat(90)), "dirty");
   const client = mcp(t, f);

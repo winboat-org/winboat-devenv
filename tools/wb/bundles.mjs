@@ -34,6 +34,7 @@ export const REQUIRED = [
   "mesa-guest-x64",
   "mesa-guest-x86",
   "clvk-helios",
+  "helios-guest-support",
   "helios-installer",
   "helios-compatibility",
   "helios-catalog-verifier",
@@ -44,10 +45,11 @@ export const REQUIRED = [
 ];
 export const OWNERS = {
   "helios-guest-x64": "helios",
-  "helios-installer": "helios",
-  "helios-compatibility": "helios",
-  "helios-catalog-verifier": "helios",
+  "helios-installer": "winboat-devenv",
+  "helios-compatibility": "winboat-devenv",
+  "helios-catalog-verifier": "winboat-devenv",
   "clvk-helios": "clvk-helios",
+  "helios-guest-support": "winboat-devenv",
   "qemu-helios": "qemu-helios",
   virglrenderer: "virglrenderer",
   "mesa-guest-x64": "mesa-helios",
@@ -225,11 +227,13 @@ export function validate(ws, input) {
       m.state !== "built"
     )
       fail("dirty or unidentified component artifact");
-    const productionOwner = m.target === "clvk-helios" ? "helios" : owner;
+    const productionOwner = owner,
+      ownerRevision =
+        owner === "winboat-devenv" ? buildRootRevision : input.pins[owner];
     if (
       m.repository !== "winboat-org/" + productionOwner ||
       m.sourceRepository !== "winboat-org/" + owner ||
-      m.revision !== input.pins[owner]
+      m.revision !== ownerRevision
     )
       fail("component source does not agree with release pins");
     if (
@@ -243,7 +247,7 @@ export function validate(ws, input) {
       fail("component configuration mismatch");
     const architecture = m.target.endsWith("-x86")
       ? "x86"
-      : m.target === "clvk-helios" || m.target === "helios-guest-x64"
+      : m.target === "helios-guest-support" || m.target === "helios-guest-x64"
         ? "x64+x86"
         : "x64";
     if (m.architecture !== architecture || m.abi !== "msvc-mt")
@@ -254,29 +258,25 @@ export function validate(ws, input) {
       !integer(m.workflow.runId) ||
       !integer(m.workflow.runAttempt) ||
       !valid_sha(m.workflow.headSha) ||
-      m.workflow.event !== "workflow_dispatch"
+      !["workflow_dispatch", "push"].includes(m.workflow.event)
     )
       fail("component workflow identity is incomplete");
-    const workflowOwner = m.target === "clvk-helios" ? "helios" : owner;
-    if (m.workflow.headSha !== input.pins[workflowOwner])
+    if (m.workflow.headSha !== ownerRevision)
       fail("component workflow source differs from selected owner pin");
     if (!m.dependencies || !Object.keys(m.dependencies).length)
       fail("missing component dependency provenance");
     for (const [name, revision] of Object.entries(m.dependencies))
-      if (revision !== input.pins[name])
+      if (
+        revision !==
+        (name === "winboat-devenv" ? buildRootRevision : input.pins[name])
+      )
         fail("protocol/engine dependency pairing mismatch: " + name);
     const pairings = {
       "mesa-guest-x64": ["venus-protocol"],
       "mesa-guest-x86": ["venus-protocol"],
       "vkd3d-engine-x64": ["dxil-spirv"],
       "vkd3d-engine-x86": ["dxil-spirv"],
-      "helios-guest-x64": [
-        "dxvk",
-        "vkd3d-proton",
-        "dxil-spirv",
-        "venus-protocol",
-        "mesa-helios",
-      ],
+      "helios-guest-x64": ["dxvk", "vkd3d-proton", "dxil-spirv"],
     };
     for (const name of pairings[m.target] ?? [])
       if (m.dependencies[name] !== input.pins[name])
@@ -460,7 +460,10 @@ async function checked_inputs(
       fail("original build source/recipe/toolchain provenance differs");
     for (const [name, source] of Object.entries(original.sources))
       if (
-        source.revision !== input.pins[name] ||
+        source.revision !==
+          (name === "winboat-devenv"
+            ? (a.buildRootRevision ?? input.root.revision)
+            : input.pins[name]) ||
         source.diffSha256 ||
         source.untracked?.length
       )
@@ -533,14 +536,25 @@ async function checked_inputs(
   const clvk = input.artifacts.find(
     (a) => a.provenance.target === "clvk-helios",
   );
+  const support = input.artifacts.find(
+    (a) => a.provenance.target === "helios-guest-support",
+  );
   const upstream = readJSON(
-    path.join(roots[clvk.id], "files/package/source-revisions.json"),
+    path.join(roots[support.id], "files/package/source-revisions.json"),
   );
   if (
-    !equal(upstream, clvk.provenance.upstream) ||
+    !equal(upstream, support.provenance.upstream) ||
     !Object.values(upstream).every(valid_sha)
   )
     fail("Khronos/LLVM upstream source provenance differs");
+  const compilerUpstream = readJSON(
+    path.join(roots[clvk.id], "files/package/source-revisions.json"),
+  );
+  if (
+    !equal(compilerUpstream, clvk.provenance.upstream) ||
+    !Object.values(compilerUpstream).every(valid_sha)
+  )
+    fail("CLVK compiler upstream provenance differs");
   const policy = readJSON(
     path.join(roots[clvk.id], "files/package/llvm-symbol-policy.json"),
   );
@@ -634,6 +648,9 @@ export function install_manifest(input, files, packageId) {
     clvk: input.pins["clvk-helios"],
     ...input.artifacts.find((a) => a.provenance.target === "clvk-helios")
       .provenance.upstream,
+    ...input.artifacts.find(
+      (a) => a.provenance.target === "helios-guest-support",
+    ).provenance.upstream,
   };
   return {
     schemaVersion: 1,
@@ -1180,7 +1197,7 @@ function check_remote(a) {
     workflow.run_attempt !== m.workflow.runAttempt ||
     workflow.head_sha !== m.workflow.headSha ||
     workflow.path !== m.workflow.path ||
-    workflow.event !== "workflow_dispatch" ||
+    !["workflow_dispatch", "push"].includes(workflow.event) ||
     workflow.conclusion !== "success" ||
     workflow.head_repository?.full_name !== m.repository
   )

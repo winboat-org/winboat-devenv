@@ -59,9 +59,10 @@ local disk mirror and local `CARGO_TARGET_DIR`. Desktop probes require an
 interactive session; installs use durable elevated tasks. A copy or reboot is
 not proof that the requested driver or DLL is loaded.
 
-Component build CI belongs in component repositories. This repository's release
-CI verifies and bundles existing artifacts, including a prebuilt installer;
-it never compiles component or installer binaries. The final distribution is
+Component build CI belongs in component repositories. This repository owns
+installer, compatibility, verifier and guest-support builds in separate workflows.
+Its assembly workflow verifies and bundles prebuilt artifacts; assembly never
+compiles components or installer binaries. The final distribution is
 the complete Windows guest-stack installer and release manifest. QEMU and
 virglrenderer stay in their component CI artifacts, along with component symbols;
 do not copy host builds, input archives or unpacked payloads into the distribution.

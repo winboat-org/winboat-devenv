@@ -59,7 +59,7 @@ export async function prepare(ws, args, operationId, engines) {
     dereference: true,
   });
   const sources = {};
-  for (const component of ["helios", "dxvk", "vkd3d-proton", "dxil-spirv"]) {
+  for (const component of ["helios"]) {
     const repo = ws.repos[component],
       selected =
         component === "helios"
@@ -196,12 +196,12 @@ export async function collect(ws, args) {
         Object.entries(spec.sources).map(([n, s]) => [n, s.revision]),
       ),
       componentDependencies: spec.dependencies.map(
-        ({ target, manifestSha256 }) => {
+        ({ target, manifestSha256, manifest }) => {
           require_(
             /^[0-9a-f]{64}$/.test(manifestSha256 ?? ""),
             "hosted engine manifest identity missing",
           );
-          return { target, manifestSha256 };
+          return { target, manifestSha256, sources: manifest.sources };
         },
       ),
       files,

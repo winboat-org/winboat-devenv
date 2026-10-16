@@ -121,6 +121,11 @@ let
       inherit pkgs sources;
       configuration = spec.configuration;
     };
+    helios-guest-support = import ./adapters/guest-support.nix {
+      inherit pkgs;
+      source = ./.;
+      sysroot = msvcSysroot;
+    };
     clvk-helios = import ./adapters/clvk-cross.nix {
       inherit pkgs sources;
       configuration = spec.configuration;

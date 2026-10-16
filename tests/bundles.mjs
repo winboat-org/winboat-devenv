@@ -99,7 +99,9 @@ async function fixture(t) {
     lockSha256 = digest(path.join(root, "devenv.lock"));
   const names = [
       ...new Set([
-        ...bundles.REQUIRED.map((target) => bundles.OWNERS[target]),
+        ...bundles.REQUIRED.map((target) => bundles.OWNERS[target]).filter(
+          (name) => name !== "winboat-devenv",
+        ),
         "venus-protocol",
         "dxil-spirv",
       ]),
@@ -131,7 +133,7 @@ async function fixture(t) {
   };
   for (const target of bundles.REQUIRED) {
     const owner = bundles.OWNERS[target],
-      producer = target === "clvk-helios" ? "helios" : owner;
+      producer = owner;
     const directory = path.join(root, ".state", "sources", target);
     fs.mkdirSync(directory, { recursive: true });
     const m = {
@@ -142,12 +144,12 @@ async function fixture(t) {
       target,
       repository: "winboat-org/" + producer,
       sourceRepository: "winboat-org/" + owner,
-      revision: pins[owner],
+      revision: owner === "winboat-devenv" ? revision : pins[owner],
       rootRevision: revision,
       configuration: "release",
       architecture: target.endsWith("-x86")
         ? "x86"
-        : ["helios-guest-x64", "clvk-helios"].includes(target)
+        : ["helios-guest-x64", "helios-guest-support"].includes(target)
           ? "x64+x86"
           : "x64",
       abi: "msvc-mt",
@@ -157,7 +159,7 @@ async function fixture(t) {
         path: ".github/workflows/build-" + target + ".yml",
         runId: 100,
         runAttempt: 1,
-        headSha: pins[producer],
+        headSha: producer === "winboat-devenv" ? revision : pins[producer],
         event: "workflow_dispatch",
       },
       files: [],
@@ -240,6 +242,23 @@ async function fixture(t) {
         );
     if (target === "clvk-helios") {
       image("clvk.dll", "payload/opencl/clvk.dll");
+      m.upstream = { llvm: "5".repeat(40) };
+      add(
+        "files/package/source-revisions.json",
+        Buffer.from(JSON.stringify(m.upstream)),
+      );
+      add(
+        "files/package/llvm-symbol-policy.json",
+        Buffer.from(
+          JSON.stringify({
+            debugSymbols: false,
+            pdbFiles: 0,
+            compilerCommandsChecked: 12,
+          }),
+        ),
+      );
+    }
+    if (target === "helios-guest-support") {
       image("vulkan-1.dll", "payload/loaders/vulkan-1.dll");
       image("x86/vulkan-1.dll", "payload/loaders/x86/vulkan-1.dll", "x86");
       image("OpenCL.dll", "payload/loaders/OpenCL.dll");
@@ -685,6 +704,8 @@ test("explicit build roots preserve older artifacts and reject mismatched origin
     const a = f.input.artifacts.find((a) => a.id === target);
     a.buildRootRevision = buildRoot;
     a.provenance.rootRevision = buildRoot;
+    a.provenance.revision = buildRoot;
+    a.provenance.workflow.headSha = buildRoot;
     if (a.provenance.installer)
       a.provenance.installer.sourceRevision = buildRoot;
     if (a.provenance.verifier) a.provenance.verifier.sourceRevision = buildRoot;
@@ -712,7 +733,10 @@ test("explicit build roots preserve older artifacts and reject mismatched origin
   const a = f.input.artifacts.find((a) => a.id === "helios-compatibility");
   a.buildRootRevision = "d".repeat(40);
   write_json(f.manifest, f.input);
-  await assert.rejects(bundles.verify(f.ws, f, identity()), /root\/toolchain/);
+  await assert.rejects(
+    bundles.verify(f.ws, f, identity()),
+    /source|root\/toolchain/,
+  );
   a.buildRootRevision = buildRoot;
   const originalPath = path.join(
       f.ws.state,
@@ -742,6 +766,7 @@ test("hosted collection retains the engine receipts required for release verific
     .map((a) => ({
       target: a.id,
       manifestSha256: a.provenance.originalManifestSha256,
+      manifest: { sources: a.provenance.sourceProvenance },
     }));
   write(path.join(filesRoot, "images.json"), "[]\n");
   write(path.join(filesRoot, "licenses/NOTICE"), "retained attribution\n");
@@ -777,7 +802,14 @@ test("hosted collection retains the engine receipts required for release verific
       root_revision: spec.rootRevision,
     }),
   );
-  assert.deepEqual(manifest.componentDependencies, dependencies);
+  assert.deepEqual(
+    manifest.componentDependencies,
+    dependencies.map(({ target, manifestSha256, manifest }) => ({
+      target,
+      manifestSha256,
+      sources: manifest.sources,
+    })),
+  );
   delete spec.dependencies[0].manifestSha256;
   write_json(path.join(prepared, "driver-request.json"), spec);
   await assert.rejects(

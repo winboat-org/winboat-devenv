@@ -33,6 +33,10 @@ let
           "build-adl-compatibility.nix"
           "build-catalog-verifier.nix"
           "build-helios-installer.nix"
+          "adapters/guest-support.nix"
+          "adapters/khronos-inputs.nix"
+          "adapters/guest-package.nix"
+          "windows/PackageGuest.ps1"
           "release-rust-toolchain.nix"
           "scripts/host-smoke.py"
           "scripts/host-vulkan-probe.c"
@@ -90,6 +94,28 @@ let
           "adapters/clvk-no-compiler-symbols.patch"
           "adapters/clvk-cross-warning-flags.patch"
           "adapters/clvk-clang-cl-warnings.patch"
+        ]
+    + "\nmkdir -p $out/packaging/windows/probes\n"
+    + pkgs.lib.concatMapStringsSep "\n" (
+      name:
+      ''cp ${
+        pkgs.writeText name (builtins.readFile (../../packaging/windows/probes + "/${name}"))
+      } "$out/packaging/windows/probes/${name}"''
+    ) (builtins.attrNames (builtins.readDir ../../packaging/windows/probes))
+    + "\n"
+    +
+      pkgs.lib.concatMapStringsSep "\n"
+        (
+          name:
+          ''cp ${
+            pkgs.writeText name (builtins.readFile (../../packaging/windows + "/${name}"))
+          } "$out/windows/${name}"''
+        )
+        [
+          "Install-Helios.ps1"
+          "Uninstall-Helios.ps1"
+          "Verify-Helios.ps1"
+          "Helios-PackageCommon.ps1"
         ]
   );
   devenv = inputs.devenv-cli.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -204,6 +230,16 @@ in
   inherit environment operationSources releaseEnvironment;
   component = componentCommand false;
   windowsComponent = componentCommand true;
+  layoutMigration = pkgs.writeShellApplication {
+    name = "wb-migrate-layout";
+    runtimeInputs = [
+      pkgs.nodejs
+      pkgs.git
+    ];
+    text = releaseEnvironment + ''
+      exec ${pkgs.nodejs}/bin/node ${operationSources}/wb/layout.mjs "$@"
+    '';
+  };
   sourceSync = pkgs.writeShellApplication {
     name = "wb-source-sync";
     runtimeInputs = [

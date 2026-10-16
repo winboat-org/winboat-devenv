@@ -3,6 +3,7 @@ import test from "node:test";
 import { once } from "node:events";
 import { Failure } from "../tools/wb/common.mjs";
 import * as builds from "../tools/wb/builds.mjs";
+import { move_checkout, recover_checkout } from "../tools/wb/layout.mjs";
 import { sortedJSON } from "../tools/wb/common.mjs";
 import {
   assert as a,
@@ -83,7 +84,7 @@ check("selection and read-only plan", (f) => {
     new Set(selected.selected),
     new Set(["qemu-helios", "virglrenderer", "venus-protocol"]),
   );
-  a.deepEqual(selected.containers, ["helios"]);
+  a.deepEqual(selected.containers, ["mesa-helios"]);
   a.deepEqual(f.wb("repo", "list", "--repo", "clkvk-helios").selected, [
     "clvk-helios",
   ]);
@@ -98,7 +99,7 @@ check("selection and read-only plan", (f) => {
 });
 check("selective nested sync and all", (f) => {
   f.wb("repo", "sync", "--repo", "qemu-helios");
-  a.ok(fs.statSync(path.join(f.path("qemu-helios"), ".git")).isFile());
+  a.ok(fs.statSync(path.join(f.path("qemu-helios"), ".git")).isDirectory());
   for (const p of [
     path.join(f.path("dxvk"), ".git"),
     path.join(f.path("qemu-helios"), "forbidden-qemu-module/.git"),
@@ -150,12 +151,12 @@ check("conflict and parent consistency refusal", (f) => {
   write(
     f.pins,
     edit_pins(fs.readFileSync(f.pins, "utf8"), {
-      "qemu-helios": { rev: f.shas.winboat },
+      "dxil-spirv": { rev: f.shas.winboat },
     }),
   );
-  f.local.workspace.remotes["qemu-helios"] = f.urls.winboat;
+  f.local.workspace.remotes["dxil-spirv"] = f.urls.winboat;
   f.writeLocal();
-  a.match(refused(f, "repo", "sync", "--repo", "qemu-helios").error, /gitlink/);
+  a.match(refused(f, "repo", "sync", "--repo", "dxil-spirv").error, /gitlink/);
   a.ok(!fs.existsSync(path.join(f.path("helios"), ".git")));
 });
 check("successful push preserves root work and index", (f) => {
@@ -494,14 +495,16 @@ check("checkpoint scope and dependency-first parent publication", (f) => {
   a.equal(f.g(p, "show", ":other.txt").stdout, "staged unrelated\n");
   const sha = f.head(p);
   f.wrapper("-C", p, "push", "origin", "HEAD:dev");
-  const parent = f.path("helios");
+  const parent = f.path("mesa-helios");
   a.equal(
-    f.g(parent, "ls-tree", "HEAD", "venus-protocol").stdout.split(/\s+/)[2],
+    f
+      .g(parent, "ls-tree", "HEAD", "subprojects/venus-protocol")
+      .stdout.split(/\s+/)[2],
     sha,
   );
-  a.equal(f.pinValues().helios.rev, f.shas.helios);
+  a.equal(f.pinValues()["mesa-helios"].rev, f.shas["mesa-helios"]);
   f.wrapper("-C", parent, "push", "origin", "HEAD:dev");
-  a.equal(f.pinValues().helios.rev, f.head(parent));
+  a.equal(f.pinValues()["mesa-helios"].rev, f.head(parent));
 });
 check("fork scoped remotes and missing fork", (f) => {
   f.wb("repo", "sync", "--subset", "winboat");
@@ -936,5 +939,51 @@ check(
     fs.unlinkSync(path.join(files, "source-overlay"));
     fs.symlinkSync(".", path.join(files, "source-overlay"));
     a.throws(() => builds.verify(manifest), Failure);
+  },
+);
+
+check(
+  "layout migration retains dirty work, nested Git metadata and refs",
+  (f) => {
+    f.wb("repo", "sync", "--repo", "venus-protocol");
+    const source = f.path("venus-protocol"),
+      destination = path.join(f.base, "adopted protocol");
+    write(path.join(source, "source.txt"), "retained unstaged work\n");
+    write(path.join(source, "local.txt"), "retained untracked work\n");
+    const receipt = path.join(f.base, "migration.json");
+    const result = move_checkout(source, destination, receipt);
+    a.equal(result.state, "verified");
+    a.ok(fs.statSync(path.join(destination, ".git")).isDirectory());
+    a.equal(
+      fs.readFileSync(path.join(destination, "local.txt"), "utf8"),
+      "retained untracked work\n",
+    );
+    a.equal(f.head(destination), f.shas["venus-protocol"]);
+    a.equal(recover_checkout(receipt).state, "recovered");
+    a.equal(f.head(source), f.shas["venus-protocol"]);
+    a.equal(move_checkout(source, destination, receipt).state, "verified");
+    a.throws(
+      () => move_checkout(f.path("mesa-helios"), destination, receipt),
+      /destination already exists/,
+    );
+    a.ok(fs.existsSync(path.join(f.path("mesa-helios"), ".git")));
+    f.wb("repo", "sync", "--repo", "vkd3d-proton");
+    write(
+      path.join(f.path("dxil-spirv"), "source.txt"),
+      "nested dirty source\n",
+    );
+    const engineDestination = path.join(f.base, "adopted engine");
+    a.equal(
+      move_checkout(
+        f.path("vkd3d-proton"),
+        engineDestination,
+        path.join(f.base, "engine-migration.json"),
+      ).state,
+      "verified",
+    );
+    a.equal(
+      f.head(path.join(engineDestination, "subprojects/dxil-spirv")),
+      f.shas["dxil-spirv"],
+    );
   },
 );

@@ -43,7 +43,8 @@ assuming a parent checkout location. Root adapters compose these interfaces.
 | `dxvk-engine-x64/x86`, `vkd3d-engine-x64/x86` | Linux clang-cl/LLD cross builds of MSVC COFF archives with `/MT` and embedded CodeView symbols |
 | `helios-guest-x64/x86` | Durable Windows WDK builds; KMD is x64 only, UMD11/UMD12 have x64/x86 contracts |
 | `mesa-guest-x64/x86` | Linux clang-cl/LLD MSVC `/MT` cross builds and generated paired protocol headers |
-| `clvk-helios` | Linux MSVC `/MT` cross build with pinned LLVM/clspv, loaders and x64/x86 smoke programs; LLVM/Clang have no debug symbols |
+| `clvk-helios` | CLVK DLL and runtime PDB, with pinned LLVM/clspv; LLVM/Clang have no debug symbols |
+| `helios-guest-support` | winboat-devenv-owned Khronos loaders and x64/x86 package probes; no LLVM compiler closure |
 | `helios-development-package` | Composes verified component artifacts, original install scripts, licenses and provenance; runtime PDBs remain in component artifacts |
 | `winboat`, `electron` | Explicit adapter/input contracts; missing fixed dependency closures fail closed |
 

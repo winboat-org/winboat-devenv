@@ -120,7 +120,7 @@ them in its artifact. Full current-host loaded-stack acceptance passed in both
 clean CLI/MCP repeats.
 
 `helios-development-package` assembles the existing script-driven development
-bundle from Helios x64 (including its four UMDs), Mesa x64/x86 and CLVK/loaders.
+bundle from Helios x64 (including its four UMDs), Mesa x64/x86, CLVK, and the separately built guest loaders/probes.
 Pass repeated `--dependency-manifest <artifact-manifest>` arguments to select
 already verified builds explicitly; omitted dependencies build through the same
 recipes. MCP exposes the equivalent `dependencyManifests` array. Selection checks

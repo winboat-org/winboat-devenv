@@ -22,6 +22,7 @@ in
     spec
     pkgs
     src
+    sysroot
     tools
     ;
   build =
