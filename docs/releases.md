@@ -204,7 +204,7 @@ choose or change an upstream license. Install payloads contain zero PDBs.
 
 The three schemas are deliberately distinct: original build manifest schema 1,
 `winboat-component-artifact` schema 1, and `winboat-release-input` schema 3.
-Earlier release-input schemas are rejected; regenerate from the eleven guest
+Earlier release-input schemas are rejected; regenerate from the twelve guest
 and assembly-tool variants, including the catalog verifier. Candidate manifest
 schema 2 identifies the `helios-guest-installer` distribution.
 Normalization retains the original build manifest and explicitly verifies its
@@ -221,7 +221,7 @@ selection are unsupported. Dirty root sources and unidentified builds are refuse
 
 Create a selection JSON with `schemaVersion: 1`, `rootRevision`, `configuration`
 and an `artifacts` array. Every row has exact `repository`, `artifactId`, `runId`
-and `runAttempt`. Supply all eleven variants listed by `REQUIRED` in
+and `runAttempt`. Supply all twelve variants listed by `REQUIRED` in
 [the verifier](../tools/wb/bundles.mjs). Artifact metadata and the successful
 workflow are checked using GitHub's API; expired artifacts, fork runs, rerun
 attempt mismatches and archive digest mismatches fail closed.

@@ -66,3 +66,10 @@ LLVM-based compiler build took about two hours. CLVK's local checkout lacked
 ancestor objects; fetching complete history fixed publication without rewriting
 its source or remote history. Current CI receipts/watch logs are under
 `.state/stage06/ownership-*` and `*-cohort-watch.log`.
+
+The first Helios build compiled and signed successfully, but its final verification
+job lacked `GH_TOKEN` for the default-branch metadata check. Workflow fix
+`d03c2d1` supplies the same read token used by preparation; its new push run is
+`38916395471`. The pin checkpoint is `becf0db`. The private selection collector
+now targets this run. The complete cohort requires twelve variants (including
+the separate guest-support artifact).
