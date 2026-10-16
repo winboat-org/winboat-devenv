@@ -61,6 +61,9 @@ not proof that the requested driver or DLL is loaded.
 
 Component build CI belongs in component repositories. This repository's release
 CI verifies and bundles existing artifacts, including a prebuilt installer;
-it never compiles component or installer binaries. Preserve license, provenance
-and symbols through migration. Remove old installer, win-mcp and submodules
+it never compiles component or installer binaries. The final distribution is
+the complete Windows guest-stack installer and release manifest. QEMU and
+virglrenderer stay in their component CI artifacts, along with component symbols;
+do not copy host builds, input archives or unpacked payloads into the distribution.
+Preserve license, provenance and symbols through migration. Remove old installer, win-mcp and submodules
 only after the replacement passes the migration gates.

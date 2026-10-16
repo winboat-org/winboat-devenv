@@ -20,6 +20,12 @@ the original cleanup warnings; deferred file cleanup is not claimed. One
 replacement shutdown exceeded 120 seconds, then exited cleanly without force.
 Prerequisites: Stages 2 and 4. Agent setup is useful but not a prerequisite.
 
+The release output contract now contains only the complete guest-stack installer
+and release manifest. Eleven guest/build-tool inputs are required; QEMU and
+virglrenderer remain in their component CI. Input archives, symbols and loose
+payload copies are excluded from the distribution. The revised hosted run is
+pending; the measurements above describe the earlier accepted candidate.
+
 [Release usage](../releases.md) describes the exact-input contracts, six component
 repositories with ten responsibility-specific build workflows, the hosted
 prebuilt-only root workflow, composed CI/development tools and shared CLI/MCP operations.

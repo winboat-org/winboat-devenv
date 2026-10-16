@@ -4447,5 +4447,29 @@
     "whitespace": "passed",
     "locksUnchanged": true,
     "managedRepositoriesClean": 12
+  },
+  "guestDistributionCorrection": {
+    "state": "implementation-validated-real-assembly-pending",
+    "requestedScope": "Complete Windows guest stack: Helios KMD and native/WoW64 UMD11/UMD12, Mesa Vulkan/Zink/OpenGL, CLVK, Khronos loaders and guest dependencies.",
+    "releaseInputSchema": 3,
+    "candidateSchema": 2,
+    "requiredArtifacts": 11,
+    "excludedHostArtifacts": ["qemu-helios", "virglrenderer"],
+    "outputFiles": ["HeliosSetup.exe", "release-manifest.json"],
+    "retention": "Original component and symbol artifacts remain in producer CI. Exact identities and hashes remain in the release manifest.",
+    "workflow": ".github/workflows/assemble-helios-installer.yml",
+    "implementationChanged": true,
+    "nativeAndSdkTests": 128,
+    "nativeLog": {
+      "path": "workspace-state:validation/native.35VwL5nh.log",
+      "size": 13407,
+      "sha256": "9b7efdb62c9a8eb9b2945ed55cd73f5cd9c006f47c6c1f2a095a92e61a2aefc2"
+    },
+    "devenvTestLog": {
+      "path": "workspace-state:stage06/devenv-test-guest-distribution.log",
+      "size": 297,
+      "sha256": "a30f8f74d56d643694ea59ca9f0c41aeab4dfb13cf64cb6de209844b0ca56d3d"
+    },
+    "published": false
   }
 }

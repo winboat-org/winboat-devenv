@@ -99,7 +99,7 @@ async function fixture(t) {
     lockSha256 = digest(path.join(root, "devenv.lock"));
   const names = [
       ...new Set([
-        ...Object.values(bundles.OWNERS),
+        ...bundles.REQUIRED.map((target) => bundles.OWNERS[target]),
         "venus-protocol",
         "dxil-spirv",
       ]),
@@ -110,7 +110,7 @@ async function fixture(t) {
     ws.repos[n] = { pin: { rev: pins[n] } };
   });
   const input = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     kind: "winboat-release-input",
     configuration: "release",
     root: {
@@ -150,9 +150,7 @@ async function fixture(t) {
         : ["helios-guest-x64", "clvk-helios"].includes(target)
           ? "x64+x86"
           : "x64",
-      abi: ["qemu-helios", "virglrenderer"].includes(target)
-        ? "linux"
-        : "msvc-mt",
+      abi: "msvc-mt",
       dependencies: { ...pins },
       toolchain: { lockSha256, identity: hash(target) },
       workflow: {
@@ -313,8 +311,6 @@ async function fixture(t) {
         sourceRepository: bundles.ROOT_REPOSITORY,
       };
     }
-    if (["qemu-helios", "virglrenderer"].includes(target))
-      add("closure.nar", Buffer.from("fixture complete closure"));
     m.sourceProvenance = Object.fromEntries(
       Object.entries(pins).map(([name, revision]) => [
         name,
@@ -671,7 +667,7 @@ test("exact archives verify; install schema keeps symbols outside payload and al
   assert.equal(m.schemaVersion, 1);
   assert.deepEqual(m.applicationArchitectures, ["x64", "x86"]);
   assert.equal(m.source.dxvk, f.input.pins.dxvk);
-  assert.equal(m.symbolStorage, "component-artifacts");
+  assert.equal(m.symbolStorage, "component-workflow-artifacts");
   assert.equal(m.components.mesa.vulkanApiVersion, "1.4.352");
   assert.equal(
     m.artifacts.filter((a) => a.target.startsWith("mesa-guest-")).length,
@@ -796,6 +792,12 @@ test("hosted collection retains the engine receipts required for release verific
 test("all incompatible release identities fail before a guest task", async (t) => {
   const f = await fixture(t);
   const cases = [
+    ["legacy host-inclusive input", (m) => (m.schemaVersion = 2), /contract/],
+    [
+      "host component in guest release",
+      (m) => (m.artifacts[0].provenance.target = "qemu-helios"),
+      /exactly/,
+    ],
     ["missing artifact", (m) => m.artifacts.pop(), /exactly/],
     [
       "wrong commit",
@@ -1183,17 +1185,21 @@ test("hosted handoff validates packed bytes and rejects altered receipts or payl
   const candidate = await bundles.complete(f.ws, args, identity());
   assert.equal(candidate.payloadDigest, prepared.payloadDigest);
   assert.equal(readJSON(candidate.manifest).published, false);
-  assert.ok(
-    !fs.existsSync(
-      path.join(
-        f.ws.state,
-        "bundles",
-        operationId,
-        "inputs",
-        "qemu-helios",
-        "closure.nar",
-      ),
-    ),
+  assert.deepEqual(fs.readdirSync(path.dirname(candidate.manifest)).sort(), [
+    "HeliosSetup.exe",
+    "release-manifest.json",
+  ]);
+  const release = readJSON(candidate.manifest);
+  assert.equal(release.schemaVersion, 2);
+  assert.equal(release.distribution, "helios-guest-installer");
+  assert.deepEqual(fs.readFileSync(candidate.installer), exe);
+  await bundles.verify_packed_payload(
+    candidate.installer,
+    bundles.table(payload),
+    {
+      size: 128,
+      sha256: hash(pe()),
+    },
   );
   assert.ok(
     !fs.existsSync(
@@ -1247,13 +1253,13 @@ test("hosted handoff validates packed bytes and rejects altered receipts or payl
   );
 });
 
-test("native closure members are streamed and corrupt retained-only bytes still fail", async (t) => {
+test("symbol members stay in component archives but corrupt symbol bytes still fail", async (t) => {
   const f = await fixture(t),
-    a = f.input.artifacts.find((a) => a.id === "qemu-helios");
+    a = f.input.artifacts.find((a) => a.id === "helios-guest-x64");
   const source = path.join(f.ws.root, ".state/sources", a.id);
   write(
-    path.join(source, "closure.nar"),
-    Buffer.from("corrupt complete closure"),
+    path.join(source, "files/symbols/runtime.pdb"),
+    Buffer.from("corrupt runtime symbols"),
   );
   const archive = path.join(f.artifacts_dir, a.archive.path);
   fs.unlinkSync(archive);

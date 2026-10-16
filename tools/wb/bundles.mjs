@@ -37,8 +37,6 @@ export const REQUIRED = [
   "helios-installer",
   "helios-compatibility",
   "helios-catalog-verifier",
-  "qemu-helios",
-  "virglrenderer",
   "dxvk-engine-x64",
   "dxvk-engine-x86",
   "vkd3d-engine-x64",
@@ -183,7 +181,7 @@ function root_source(ws, root) {
 }
 export function validate(ws, input) {
   if (
-    input.schemaVersion !== 2 ||
+    input.schemaVersion !== 3 ||
     input.kind !== "winboat-release-input" ||
     !["release", "debug"].includes(input.configuration)
   )
@@ -248,13 +246,7 @@ export function validate(ws, input) {
       : m.target === "clvk-helios" || m.target === "helios-guest-x64"
         ? "x64+x86"
         : "x64";
-    if (
-      m.architecture !== architecture ||
-      m.abi !==
-        (m.target === "qemu-helios" || m.target === "virglrenderer"
-          ? "linux"
-          : "msvc-mt")
-    )
+    if (m.architecture !== architecture || m.abi !== "msvc-mt")
       fail("component architecture/ABI mismatch");
     if (
       !m.workflow ||
@@ -274,8 +266,6 @@ export function validate(ws, input) {
       if (revision !== input.pins[name])
         fail("protocol/engine dependency pairing mismatch: " + name);
     const pairings = {
-      "qemu-helios": ["virglrenderer", "venus-protocol"],
-      virglrenderer: ["venus-protocol"],
       "mesa-guest-x64": ["venus-protocol"],
       "mesa-guest-x86": ["venus-protocol"],
       "vkd3d-engine-x64": ["dxil-spirv"],
@@ -476,16 +466,8 @@ async function checked_inputs(
       )
         fail("dirty original component source");
     for (const row of original.files) {
-      if (row.type === "directorySymlink") {
-        if (
-          !["host-stack", "qemu-helios", "virglrenderer"].includes(
-            original.target,
-          ) ||
-          !a.provenance.files.some((f) => f.path === "closure.nar")
-        )
-          fail("component directory link lacks its exact host closure");
-        continue;
-      }
+      if (row.type === "directorySymlink")
+        fail("guest component contains a directory link");
       const normalized = a.provenance.files.find(
         (f) => f.path === "files/" + row.path,
       );
@@ -503,8 +485,8 @@ async function checked_inputs(
       if (!a.provenance.files.some((f) => f.path === "files/" + row))
         fail("original license/symbol provenance omitted");
     for (const f of a.provenance.files) {
-      // Other members (symbols, licenses, native closures) were hashed as
-      // streams and stay inside the retained component ZIPs.
+      // Other members were hashed as streams. Symbols remain in their original
+      // component workflow artifacts rather than the installable distribution.
       if (!retainedPaths.has(f.path)) continue;
       const p = verify_file(target, f);
       if (
@@ -664,7 +646,7 @@ export function install_manifest(input, files, packageId) {
     applicationArchitectures: ["x64", "x86"],
     source,
     signing: driver.signing,
-    symbolStorage: "component-artifacts",
+    symbolStorage: "component-workflow-artifacts",
     releaseRoot: input.root,
     artifacts: input.artifacts.map((a) => ({
       target: a.provenance.target,
@@ -962,22 +944,10 @@ async function finish_candidate(
     exe,
     fs.constants.COPYFILE_EXCL | fs.constants.COPYFILE_FICLONE,
   );
-  fs.cpSync(payload, path.join(output, "payload"), {
-    recursive: true,
-    errorOnExist: true,
-    mode: fs.constants.COPYFILE_FICLONE,
-  });
-  const retained = path.join(output, "component-artifacts");
-  mkdir(retained);
-  for (const a of input.artifacts)
-    fs.copyFileSync(
-      verify_file(path.resolve(args.artifacts_dir), a.archive),
-      path.join(retained, a.id + ".zip"),
-      fs.constants.COPYFILE_EXCL | fs.constants.COPYFILE_FICLONE,
-    );
   const release = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     kind: "winboat-release-candidate",
+    distribution: "helios-guest-installer",
     state: "candidate",
     operationId,
     packingOperationId,
@@ -1321,7 +1291,7 @@ export async function lock(ws, args, operationId) {
     fail("lock requires a clean download directory");
   mkdir(directory);
   const input = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     kind: "winboat-release-input",
     configuration: selection.configuration,
     root: {

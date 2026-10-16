@@ -425,3 +425,14 @@ The acceptance guest is stopped with the candidate installed; the previous
 development guest remains stopped and preserved. Both locks are unchanged.
 No implementation code changed after the already passed 126-check suite;
 this acceptance checkpoint adds measured evidence and documentation only.
+
+The 2026-10-16 distribution correction removes QEMU and virglrenderer from the
+Windows release inputs. Input schema 3 selects eleven guest/build-tool variants;
+candidate schema 2 contains only `HeliosSetup.exe` and `release-manifest.json`.
+The installer keeps the complete guest stack (KMD, native/WoW64 UMD11/UMD12,
+Mesa Vulkan/Zink/OpenGL, CLVK and loaders), verification tools and guest notices.
+Original component and symbol archives stay with their producers. No loose
+payload or input archive copies are retained in the final distribution. The
+public workflow is `assemble-helios-installer.yml`. Validate the revised real
+candidate and record its hosted artifact size before treating this correction
+as accepted; historical candidate bytes and acceptance receipts remain unchanged.

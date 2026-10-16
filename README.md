@@ -33,7 +33,11 @@ automatic SSH configuration, durable waits, retry IDs and bounded evidence.
 Its measured client/protocol and live build/install/loaded-code checks passed;
 see [Stage 5 evidence](docs/evidence/stage-05-acceptance.json) for client/UI limits.
 Stage 6 supplies exact component workflows, migrated installer sources and a
-prebuilt-only candidate bundler. All 13 selected component archives passed exact
+prebuilt-only guest installer bundler. Its distribution contains only the complete
+Windows guest-stack installer and release manifest. QEMU and virglrenderer stay
+in their own component CI; input archives, symbols and the unpacked payload
+are excluded from the final download. The revised eleven-input hosted run is
+pending. The earlier 13 selected component archives passed exact
 source, dependency and member verification. Hosted QEMU's archive is 142.5 MB,
 87% smaller than before. Local candidate assembly and hosted run
 [`38353599147`](https://github.com/winboat-org/winboat-devenv/actions/runs/38353599147)

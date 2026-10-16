@@ -203,15 +203,21 @@ checking a filename or version string after its on-disk file was replaced.
 
 Stage 6's [release implementation](releases.md) distinguishes original build,
 normalized component, exact release-input, install-package and candidate schemas.
-Four typed bundle tools use the shared Nix-packaged Node operations. Assembly
+Six typed bundle tools use the shared Nix-packaged Node operations. Assembly
 verifies supplied bytes and Windows catalog membership, then executes the
 prebuilt packer; it does not build, sign, install or publish components.
-Hosted workflow and fresh installer runtime acceptance remain pending.
+The measured hosted assembly and fresh installer lifecycle/graphics acceptance
+passed; current scope and remaining limits are recorded in the stage evidence.
 
 Component repositories build and publish immutable, manifested artifacts using
 their Nix entry points or a pinned Windows toolchain. The root release pipeline
 downloads exact component artifacts and an already compiled installer, verifies
-provenance/compatibility/hashes/licenses, assembles and publishes bundles.
+provenance/compatibility/hashes/licenses, and produces the complete Windows guest
+installer plus its release manifest. Its guest payload includes KMD, native/WoW64
+UMD11/UMD12, Mesa Vulkan and Zink/OpenGL ICDs, CLVK and required loaders.
+QEMU and virglrenderer builds remain in their component CI artifacts. Component
+archives, symbols and the unpacked staging payload are not copied into the final
+distribution. Release publication remains a separate authorized operation.
 **No component or installer compilation takes place in this repository's CI.**
 
 Moving installer source here does not move compilation into root CI. A Helios

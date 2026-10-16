@@ -1,7 +1,10 @@
 # Exact component artifacts and release candidates
 
 Stage 6 supplies repository-owned component workflows and a shared verifier and
-packer. All 13 exact inputs, local candidate assembly and hosted assembly passed.
+packer. The earlier 13-input candidate passed local and hosted assembly. The current
+release contract selects 11 guest/build-tool inputs and distributes only the
+complete Windows guest installer plus its release manifest. QEMU and virglrenderer
+remain in their own component workflows; a refreshed hosted run is pending.
 Fresh installer acceptance passed its measured current-host lifecycle and graphics
 checks, with the limits below. The measured gates and
 artifact identities are recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
@@ -27,9 +30,9 @@ Local and hosted payload digest is
 Both produced a byte-identical 38,633,082-byte installer, SHA256
 `6e0c815d3f3432e039b8ac7f03d6a460edb7144c029f4ab9981dc7d6f6359170`.
 All 734 final hosted artifact members verified. Root logs contain no component
-or installer compilation. The 1.36 GB candidate evidence archive preserves the
-13 original component/symbol archives and unpacked payload; the distributable
-installer itself is 38.6 MB.
+or installer compilation. That historical 1.36 GB archive copied all
+13 original component/symbol archives and the unpacked payload. The revised
+contract removes those copies and host build inputs from the final distribution.
 
 Local packing corrections verify the CMS signature, pinned certificate bytes,
 validity and code-signing usage, then catalog membership with the existing
@@ -187,9 +190,10 @@ choose or change an upstream license. Install payloads contain zero PDBs.
 ## Immutable inputs
 
 The three schemas are deliberately distinct: original build manifest schema 1,
-`winboat-component-artifact` schema 1, and `winboat-release-input` schema 2.
-Release-input schema 1 is rejected; regenerate the input from the thirteen
-separately produced variants, including the catalog verifier.
+`winboat-component-artifact` schema 1, and `winboat-release-input` schema 3.
+Earlier release-input schemas are rejected; regenerate from the eleven guest
+and assembly-tool variants, including the catalog verifier. Candidate manifest
+schema 2 identifies the `helios-guest-installer` distribution.
 Normalization retains the original build manifest and explicitly verifies its
 file table, clean source identities, toolchain digest and recipe revision.
 The resulting install manifest retains the existing package schema 1, with
@@ -204,7 +208,7 @@ selection are unsupported. Dirty root sources and unidentified builds are refuse
 
 Create a selection JSON with `schemaVersion: 1`, `rootRevision`, `configuration`
 and an `artifacts` array. Every row has exact `repository`, `artifactId`, `runId`
-and `runAttempt`. Supply all thirteen variants listed by `REQUIRED` in
+and `runAttempt`. Supply all eleven variants listed by `REQUIRED` in
 [the verifier](../tools/wb/bundles.mjs). Artifact metadata and the successful
 workflow are checked using GitHub's API; expired artifacts, fork runs, rerun
 attempt mismatches and archive digest mismatches fail closed.
@@ -243,10 +247,14 @@ No compiler, signing, catalog generation, dependency fetching or guest install
 runs in this assembly task. A real packed output must pass its `HLIOSET2` footer
 and container digest check before a candidate receipt is published.
 
-The output under `out/bundles/<operation-id>/` retains `HeliosSetup.exe`, the
-loose verified install payload for existing CLI/MCP installation, all exact
-component archives (including symbols and host closures), and a release
-manifest. Payload digests can be compared across local/CI assemblies. A local
+The output under `out/bundles/<operation-id>/` contains exactly `HeliosSetup.exe`
+and `release-manifest.json`. The executable embeds the complete guest stack:
+KMD and native/WoW64 UMD11/UMD12, Mesa Vulkan and Zink/OpenGL ICDs, CLVK,
+Khronos loaders, installer verification tools, guest notices and compatibility
+payloads. Input archives and symbols remain in component workflow artifacts;
+the manifest retains their exact artifact IDs, digests and source identities.
+Staging inputs stay in project-owned operation state. QEMU and virglrenderer
+are neither required nor included by this Windows release contract. Payload digests can be compared across local/CI assemblies. A local
 mocked transport comparison does not establish real packer or hosted byte
 reproducibility. Installation, loaded verification and publication remain false
 in a candidate receipt.
@@ -263,7 +271,7 @@ part of devbox/environment operations.
 
 ## Hosted assembly and publication
 
-The root [candidate workflow](../.github/workflows/assemble-release-candidate.yml) only
+The root [candidate workflow](../.github/workflows/assemble-helios-installer.yml) only
 checks out exact inputs, verifies/downloads archives, packs and retains a
 reviewable candidate. It has read permissions and no release publication step.
 It neither compiles components nor runs the installer build script.
@@ -300,8 +308,9 @@ Windows for the shared prebuilt packing script, and hosted Ubuntu for final
 verification and retention. It transfers artifacts by exact IDs from that run.
 `wb bundle prepare` creates the hashed packing request; `wb bundle complete`
 re-verifies the exact components, receipt, prebuilt PE stub and every decoded
-container member. Symbols/licenses and host closures are streamed for verification
-and retained inside their original ZIPs instead of expanded to disk. The same
+container member. Non-payload symbols and metadata are streamed for verification
+from guest component ZIPs. Original component artifacts remain with their producers;
+the final upload contains only the installer and release manifest. The same
 logic also serves local devbox assembly. Root jobs need no named devbox or private
 state. A separate release publication requires authorization and a verified candidate.
 Source publication proceeds children before parent gitlinks and root pins.

@@ -1,4 +1,4 @@
-name: Assemble a prebuilt release candidate
+name: Assemble the Helios guest installer
 on:
   workflow_dispatch:
     inputs:
@@ -170,12 +170,13 @@ jobs:
         run: |
           wb-release bundle fetch --manifest out/packing/release-input.json --artifacts-dir out/ci-inputs --foreground --json
           wb-release bundle complete --manifest out/packing/release-input.json --artifacts-dir out/ci-inputs --preparation-dir out/packing --packed-dir out/packed --foreground --json
-      - name: Retain candidate, provenance and symbols
+      - name: Retain the guest installer and release manifest
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: candidate-${{ inputs.source_revision }}-${{ inputs.release_input_sha256 }}
-          path: out/bundles/
-          include-hidden-files: true
+          name: helios-guest-installer-${{ inputs.source_revision }}-${{ inputs.release_input_sha256 }}
+          path: |
+            out/bundles/*/HeliosSetup.exe
+            out/bundles/*/release-manifest.json
           compression-level: 0
           if-no-files-found: error
           retention-days: 30
