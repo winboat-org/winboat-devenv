@@ -119,6 +119,7 @@ export function plan(ws, selected, containers) {
     selected,
     containers,
     repositories: records,
+    layoutMigrationRequired: ws.legacy_checkouts([...selected, ...containers]),
     stateWrites: ["source-cache", "operations", "locks"].map((n) =>
       path.join(ws.state, n),
     ),
@@ -132,6 +133,12 @@ export async function sync(ws, selected, containers, operationId) {
   const scope = [...new Set([...selected, ...containers])],
     result = plan(ws, selected, containers);
   return ws.repo_locks(scope, () => {
+    if (result.layoutMigrationRequired.length)
+      throw new Failure(
+        "legacy checkouts require wb-migrate-layout --apply before source sync; no replacements were cloned",
+        2,
+        { repositories: result.layoutMigrationRequired },
+      );
     for (const name of scope) {
       const repo = ws.repos[name],
         p = ws.paths[name],

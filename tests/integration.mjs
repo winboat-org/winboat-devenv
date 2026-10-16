@@ -987,3 +987,22 @@ check(
     );
   },
 );
+
+check(
+  "source sync preserves legacy checkouts and refuses duplicate replacements",
+  (f) => {
+    const old = path.join(f.root, "repos/helios/dxvk-helios");
+    fs.mkdirSync(old, { recursive: true });
+    f.g(old, "init");
+    const plan = f.wb("repo", "plan", "--repo", "dxvk");
+    a.equal(plan.layoutMigrationRequired[0].repository, "dxvk");
+    a.match(
+      refused(f, "repo", "sync", "--repo", "dxvk").error,
+      /wb-migrate-layout/,
+    );
+    a.ok(fs.existsSync(path.join(old, ".git")));
+    a.ok(!fs.existsSync(f.path("dxvk")));
+    f.wb("repo", "sync", "--repo", "winboat");
+    a.ok(fs.existsSync(path.join(f.path("winboat"), ".git")));
+  },
+);

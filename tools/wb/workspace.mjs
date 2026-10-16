@@ -16,6 +16,14 @@ import {
   readJSON,
   read,
 } from "./common.mjs";
+export const LEGACY_REPOSITORY_PATHS = {
+  "qemu-helios": "helios/qemu-helios",
+  dxvk: "helios/dxvk-helios",
+  virglrenderer: "helios/virglrenderer",
+  "mesa-helios": "helios/icd/mesa",
+  "vkd3d-proton": "helios/vkd3d-proton-helios",
+  "venus-protocol": "helios/venus-protocol",
+};
 export function discover(explicit) {
   const candidates = [];
   if (explicit) candidates.push(resolve(explicit));
@@ -265,6 +273,20 @@ export class Workspace {
     };
     [...names].sort().forEach(visit);
     return result;
+  }
+  legacy_checkouts(names) {
+    if (this.manifest.layoutVersion !== 2) return [];
+    return Object.entries(LEGACY_REPOSITORY_PATHS)
+      .filter(([name]) => names.includes(name))
+      .map(([repository, relative]) => ({
+        repository,
+        path: path.join(this.repo_root, relative),
+        destination: this.paths[repository],
+      }))
+      .filter(
+        (row) =>
+          row.path !== row.destination && exists(path.join(row.path, ".git")),
+      );
   }
   exists(n) {
     const p = this.paths[n];

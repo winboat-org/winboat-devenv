@@ -50,6 +50,8 @@ The command adopts existing Git directories, preserves nested checkout metadata,
 refs, remotes and dirty work, and records verified receipts under
 `.state/layout-migrations/`. A receipt can be reversed with
 `wb-migrate-layout --recover <receipt.json>` before resuming normal operations.
+Source sync reports affected legacy locations and refuses to clone replacements
+until adoption. Unselected repository operations remain available.
 Do not clone duplicate writable copies or delete old source directories.
 The unselected LookingGlass reference is unchanged.
 

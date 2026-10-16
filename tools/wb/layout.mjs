@@ -10,7 +10,7 @@ import {
   Failure,
   identity,
 } from "./common.mjs";
-import { Workspace, discover } from "./workspace.mjs";
+import { Workspace, discover, LEGACY_REPOSITORY_PATHS } from "./workspace.mjs";
 import { pathToFileURL } from "node:url";
 
 function snapshot(root) {
@@ -173,14 +173,6 @@ export function recover_checkout(receipt) {
   write_json(receipt, state);
   return state;
 }
-const previous = {
-  "qemu-helios": "helios/qemu-helios",
-  dxvk: "helios/dxvk-helios",
-  virglrenderer: "helios/virglrenderer",
-  "mesa-helios": "helios/icd/mesa",
-  "vkd3d-proton": "helios/vkd3d-proton-helios",
-  "venus-protocol": "helios/venus-protocol",
-};
 export function main(argv = process.argv.slice(2)) {
   if (argv[0] === "--recover" && argv.length === 2) {
     const ws = new Workspace(discover());
@@ -202,7 +194,7 @@ export function main(argv = process.argv.slice(2)) {
   const ws = new Workspace(discover());
   if (ws.manifest.layoutVersion !== 2)
     throw new Failure("layout migration requires manifest version 2", 2);
-  const moves = Object.entries(previous)
+  const moves = Object.entries(LEGACY_REPOSITORY_PATHS)
     .map(([name, p]) => ({
       name,
       source: path.join(ws.repo_root, p),

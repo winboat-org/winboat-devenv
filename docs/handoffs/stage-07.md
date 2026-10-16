@@ -73,3 +73,8 @@ job lacked `GH_TOKEN` for the default-branch metadata check. Workflow fix
 `38916395471`. The pin checkpoint is `becf0db`. The private selection collector
 now targets this run. The complete cohort requires twelve variants (including
 the separate guest-support artifact).
+
+A follow-up guard prevents source sync from cloning replacement repositories
+while an affected version 1 checkout still exists. Unrelated selections remain
+available. The complete validation task passed 130 native tests plus PowerShell
+checks; its log is `.state/validation/native.TNZ5mxA2.log`.
