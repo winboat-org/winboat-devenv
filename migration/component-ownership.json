@@ -7,5 +7,5 @@
   "dxvkCompatibilityHeadersOwner": "winboat-org/dxvk",
   "mesaCompatibilityHeadersOwner": "winboat-org/mesa-helios",
   "layoutVersion": 2,
-  "note": "The whole packaging tree moved to winboat-devenv. CLVK no longer produces loaders or probes. All six managed Helios gitlinks are retired. Independent checkouts preserve history, refs, remotes and dirty work through receipt-backed adoption. Existing lifecycle acceptance remains historical; the new source cohort requires fresh hosted builds."
+  "note": "The whole packaging tree moved to winboat-devenv. CLVK no longer produces loaders or probes. All six managed Helios gitlinks are retired. Independent checkouts preserve history, refs, remotes and dirty work through receipt-backed adoption. All component builds and local/hosted installer assembly passed for the new cohort. Existing lifecycle acceptance remains historical; fresh-host and new loaded-state acceptance remain separate."
 }

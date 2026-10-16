@@ -1,0 +1,293 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "094c006367907cc717cf36b79adfced50f04329a",
+  "releaseInputRevision": "a78fdadec373958a17e1c403602690c3d2fe8384",
+  "releaseInputSha256": "a610eb8a1da6891ba6633dd6f62320d6a6178f7cc8a1dc994a28bf6bd44d2cb1",
+  "run": {
+    "repository": "winboat-org/winboat-devenv",
+    "runId": 38928618010,
+    "url": "https://github.com/winboat-org/winboat-devenv/actions/runs/38928618010",
+    "conclusion": "success",
+    "attempt": 1
+  },
+  "artifact": {
+    "id": 12058630627,
+    "name": "helios-guest-installer-094c006367907cc717cf36b79adfced50f04329a-a610eb8a1da6891ba6633dd6f62320d6a6178f7cc8a1dc994a28bf6bd44d2cb1",
+    "size": 39504564,
+    "sha256": "4a461f46cdb6b531b1043cf0d063f7a5ba1d44a2fdff7170b07773001913c491",
+    "entries": [
+      "op-8a22fc06735f4e52b46513d9abb92206/HeliosSetup.exe",
+      "op-8a22fc06735f4e52b46513d9abb92206/release-manifest.json"
+    ]
+  },
+  "files": [
+    {
+      "name": "HeliosSetup.exe",
+      "size": 38626130,
+      "sha256": "9cb2dff7f8057d82da301917133f576b4c62dc89e53081eacc59da22015f774c"
+    },
+    {
+      "name": "release-manifest.json",
+      "size": 878012,
+      "sha256": "bf494d6b05cda1ad868bcb832b5d92d9e78b9540b4a39944f8d2a36c11af0921"
+    }
+  ],
+  "payload": {
+    "count": 711,
+    "digest": "631d509740d47ddfab1a98a0d0a7beae8ba382fae42c54dbc2585128633625ab",
+    "variants": [
+      "helios-guest-support",
+      "helios-catalog-verifier",
+      "helios-installer",
+      "helios-compatibility",
+      "mesa-guest-x64",
+      "mesa-guest-x86",
+      "dxvk-engine-x64",
+      "dxvk-engine-x86",
+      "vkd3d-engine-x64",
+      "vkd3d-engine-x86",
+      "helios-guest-x64",
+      "clvk-helios"
+    ]
+  },
+  "installerMatchesLocal": true,
+  "jobs": [
+    {
+      "name": "Verify component inputs",
+      "conclusion": "success",
+      "annotations": []
+    },
+    {
+      "name": "Pack the prebuilt installer",
+      "conclusion": "success",
+      "annotations": []
+    },
+    {
+      "name": "Verify and retain the candidate",
+      "conclusion": "success",
+      "annotations": []
+    }
+  ],
+  "deprecatedNodeWarnings": [],
+  "installed": false,
+  "loaded": false,
+  "scope": "component-ownership-and-installer-assembly",
+  "verifiedAt": "2026-10-16T16:10:21.155Z",
+  "nodeRuntimeAudit": {
+    "runs": [
+      {
+        "repository": "winboat-devenv",
+        "runId": 38928618010,
+        "jobs": [
+          {
+            "name": "Verify component inputs",
+            "conclusion": "success",
+            "annotations": []
+          },
+          {
+            "name": "Pack the prebuilt installer",
+            "conclusion": "success",
+            "annotations": []
+          },
+          {
+            "name": "Verify and retain the candidate",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "winboat-devenv",
+        "runId": 38920546571,
+        "jobs": [
+          {
+            "name": "build (helios-guest-support)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "winboat-devenv",
+        "runId": 38920546494,
+        "jobs": [
+          {
+            "name": "build (helios-catalog-verifier)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "winboat-devenv",
+        "runId": 38920546559,
+        "jobs": [
+          {
+            "name": "build (helios-installer)",
+            "conclusion": "success",
+            "annotations": []
+          },
+          {
+            "name": "Verify the prebuilt installer interface",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "winboat-devenv",
+        "runId": 38920546543,
+        "jobs": [
+          {
+            "name": "build (helios-compatibility)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "qemu-helios",
+        "runId": 38908617323,
+        "jobs": [
+          {
+            "name": "build (qemu-helios)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "virglrenderer",
+        "runId": 38908597729,
+        "jobs": [
+          {
+            "name": "build (virglrenderer)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "vkd3d-proton",
+        "runId": 38908638495,
+        "jobs": [
+          {
+            "name": "build (vkd3d-engine-x64)",
+            "conclusion": "success",
+            "annotations": []
+          },
+          {
+            "name": "build (vkd3d-engine-x86)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "mesa-helios",
+        "runId": 38910066348,
+        "jobs": [
+          {
+            "name": "build (mesa-guest-x64)",
+            "conclusion": "success",
+            "annotations": []
+          },
+          {
+            "name": "build (mesa-guest-x86)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "dxvk",
+        "runId": 38910673158,
+        "jobs": [
+          {
+            "name": "build (dxvk-engine-x86)",
+            "conclusion": "success",
+            "annotations": []
+          },
+          {
+            "name": "build (dxvk-engine-x64)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "helios",
+        "runId": 38916395471,
+        "jobs": [
+          {
+            "name": "prepare-inputs (helios-guest-x64)",
+            "conclusion": "success",
+            "annotations": []
+          },
+          {
+            "name": "Compile and sign the driver",
+            "conclusion": "success",
+            "annotations": []
+          },
+          {
+            "name": "Verify and publish the driver artifact",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      },
+      {
+        "repository": "clvk-helios",
+        "runId": 38908713541,
+        "jobs": [
+          {
+            "name": "build (clvk-helios)",
+            "conclusion": "success",
+            "annotations": []
+          }
+        ]
+      }
+    ],
+    "runCount": 12,
+    "jobCount": 20,
+    "allSucceeded": true,
+    "deprecatedNodeWarnings": []
+  },
+  "localAssembly": {
+    "jobId": "op-e47b97064ead40ac80bb872f5d402280",
+    "conclusion": "success",
+    "files": [
+      {
+        "name": "HeliosSetup.exe",
+        "size": 38626130,
+        "sha256": "9cb2dff7f8057d82da301917133f576b4c62dc89e53081eacc59da22015f774c"
+      },
+      {
+        "name": "release-manifest.json",
+        "size": 878012,
+        "sha256": "938a28e15ccca7594331e90ee58844df52b54c4003dd8621e28462fcfb88cf1c"
+      }
+    ],
+    "payloadDigest": "631d509740d47ddfab1a98a0d0a7beae8ba382fae42c54dbc2585128633625ab"
+  },
+  "validation": {
+    "nativeTests": 130,
+    "powerShellChecks": "passed",
+    "log": ".state/validation/native.TNZ5mxA2.log",
+    "hostedWorkflowLint": false
+  },
+  "sourceVerification": {
+    "receipt": "component-ownership-sources.json",
+    "repositories": 12,
+    "allCleanAndPinned": true
+  },
+  "preservation": {
+    "devenvLockSha256": "676be455589fee75101e93bd8ba1e23b7f6389b00780f53294173494c7000fcc",
+    "provisionLockSha256": "73ace512793bae2ece3a3ecda2507fa4401abce7470fef783945c9b0ecc3b408",
+    "packingGuest": "release-acceptance-20261013",
+    "shutdownJobId": "op-82188422a6a049c0960e1af7a1f38465",
+    "cleanShutdown": true
+  },
+  "freshHostAcceptance": false,
+  "newInstalledAndLoadedAcceptance": false
+}

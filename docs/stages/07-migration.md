@@ -5,7 +5,9 @@ Status: in progress. Prerequisites: Stages 1–6 and retained replacement eviden
 The ownership cleanup is implemented: independent component checkouts, Venus
 under Mesa, all packaging sources and producers in winboat-devenv, and CLVK in
 its own repository. Layout adoption preserves existing work and provides recovery.
-Fresh hosted builds and the broader fresh-host acceptance below are separate gates.
+All component builds and local/hosted installer assembly passed for this cohort;
+see the [handoff](../handoffs/stage-07.md). The broader fresh-host acceptance below
+remains pending.
 
 ## Outcome
 

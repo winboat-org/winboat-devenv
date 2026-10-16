@@ -1,10 +1,21 @@
 # Exact component artifacts and release candidates
 
-Stage 6 supplies repository-owned component workflows and a shared verifier and
-packer. The earlier 13-input candidate passed local and hosted assembly. The current
-release contract selects 11 guest/build-tool inputs and distributes only the
-complete Windows guest installer plus its release manifest. QEMU and virglrenderer
-remain in their own component workflows. Hosted run
+Repository-owned component workflows supply exact artifacts to the shared
+verifier and packer. The current ownership contract selects twelve guest/build-tool
+variants, including the separately owned loaders and probes, and distributes only
+the complete Windows guest installer plus its release manifest. QEMU and
+virglrenderer remain in their own component workflows. The current cohort and
+its validation are recorded in the [ownership handoff](handoffs/stage-07.md).
+Hosted run
+[`38928618010`](https://github.com/winboat-org/winboat-devenv/actions/runs/38928618010)
+passed all three assembly jobs. Its 39,504,564-byte artifact contains exactly the
+38,626,130-byte installer and release manifest; the installer is byte-identical to
+local assembly. All twelve audited build/assembly runs and twenty jobs passed
+without deprecated Node runtime warnings. Exact identities are in the
+[ownership CI receipt](evidence/component-ownership-ci.json). This cohort has no
+new installed/loaded-state acceptance; the lifecycle evidence below is historical.
+
+The earlier eleven-input guest-only candidate's hosted run
 [`38901101323`](https://github.com/winboat-org/winboat-devenv/actions/runs/38901101323)
 passed all three jobs and produced a 39,269,903-byte artifact with exactly two
 files. Its 38,624,459-byte installer is byte-identical to local assembly, SHA256
@@ -79,19 +90,19 @@ Each workflow owns one build responsibility. Architecture matrices stay within
 that component. Workflow files declare their own responsibility; shared Nix operations implement
 the build. Artifact provenance records GitHub's actual workflow identity.
 
-| Repository    | Workflow                      | Responsibility                       |
-| ------------- | ----------------------------- | ------------------------------------ |
-| helios        | `build-helios-drivers.yml`    | Signed KMD and native/WoW64 UMDs     |
+| Repository     | Workflow                      | Responsibility                       |
+| -------------- | ----------------------------- | ------------------------------------ |
+| helios         | `build-helios-drivers.yml`    | Signed KMD and native/WoW64 UMDs     |
 | winboat-devenv | `build-helios-installer.yml`  | Migrated installer and packer        |
 | winboat-devenv | `build-adl-compatibility.yml` | ADL compatibility shim               |
 | winboat-devenv | `build-catalog-verifier.yml`  | Prebuilt catalog membership verifier |
-| clvk-helios   | `build-clvk-runtime.yml`      | CLVK DLL and runtime symbols         |
+| clvk-helios    | `build-clvk-runtime.yml`      | CLVK DLL and runtime symbols         |
 | winboat-devenv | `build-guest-support.yml`     | Khronos loaders and package probes   |
-| qemu-helios   | `build-qemu.yml`              | QEMU executable, modules and symbols |
-| virglrenderer | `build-virglrenderer.yml`     | Renderer and paired Venus headers    |
-| mesa-helios   | `build-icds.yml`              | Native and WoW64 Mesa ICDs           |
-| dxvk          | `build-dxvk.yml`              | Native and WoW64 DXVK engines        |
-| vkd3d-proton  | `build-vkd3d-proton.yml`      | Native and WoW64 vkd3d engines       |
+| qemu-helios    | `build-qemu.yml`              | QEMU executable, modules and symbols |
+| virglrenderer  | `build-virglrenderer.yml`     | Renderer and paired Venus headers    |
+| mesa-helios    | `build-icds.yml`              | Native and WoW64 Mesa ICDs           |
+| dxvk           | `build-dxvk.yml`              | Native and WoW64 DXVK engines        |
+| vkd3d-proton   | `build-vkd3d-proton.yml`      | Native and WoW64 vkd3d engines       |
 
 Components build automatically on a push to their default branch. Each run resolves
 and records one immutable winboat-devenv revision for dependency pins and recipes.

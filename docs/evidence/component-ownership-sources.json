@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "scope": "pinned-source-object-availability",
   "layoutVersion": 2,
-  "rootRevision": "131aaf9933244dedd8ec42d48734ac6e473ed98e",
-  "operationId": "op-ea8a247c5b954fb7bf1499051e22bc4a",
+  "rootRevision": "a78fdadec373958a17e1c403602690c3d2fe8384",
+  "operationId": "op-b6a609e544d648a0bb5142f991372c92",
   "repositories": [
     {
       "repository": "WBFreeRDP",
@@ -43,7 +43,7 @@
     {
       "repository": "helios",
       "canonicalUrl": "https://github.com/winboat-org/helios.git",
-      "revision": "ef3ec2a386c8a049aa9acdb62ccf296defcc9b79",
+      "revision": "d03c2d1632d9d64123629440464e2484afd42f49",
       "developmentRef": "refs/heads/master",
       "objectVerified": true
     },
