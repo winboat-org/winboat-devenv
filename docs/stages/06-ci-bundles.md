@@ -23,8 +23,9 @@ Prerequisites: Stages 2 and 4. Agent setup is useful but not a prerequisite.
 The release output contract now contains only the complete guest-stack installer
 and release manifest. Eleven guest/build-tool inputs are required; QEMU and
 virglrenderer remain in their component CI. Input archives, symbols and loose
-payload copies are excluded from the distribution. The revised hosted run is
-pending; the measurements above describe the earlier accepted candidate.
+payload copies are excluded from the distribution. Hosted run `38901101323` passed all three jobs: the final two-file archive is
+39.27 MB and its installer matches local assembly byte for byte. All 32 guest
+runtime and verification files are unchanged. Earlier measurements remain historical.
 
 [Release usage](../releases.md) describes the exact-input contracts, six component
 repositories with ten responsibility-specific build workflows, the hosted

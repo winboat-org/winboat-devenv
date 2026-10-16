@@ -436,3 +436,12 @@ payload or input archive copies are retained in the final distribution. The
 public workflow is `assemble-helios-installer.yml`. Validate the revised real
 candidate and record its hosted artifact size before treating this correction
 as accepted; historical candidate bytes and acceptance receipts remain unchanged.
+
+Guest-only hosted run `38901101323` passed all three jobs. Artifact `12046352169`
+is 39,269,903 bytes and contains exactly the installer and release manifest.
+Installer SHA256 `f9c5aac51a4160ccb7cbc97130b14b957e55f4c630e13294dd13b42a16b34ec5`
+matches local assembly; all 32 guest runtime/verification files are unchanged.
+Source `c21dd28` and reviewed data `46e2088` identify this accepted correction.
+The follow-up ownership migration now moves packaging to root, separates CLVK
+runtime from guest support, enables default-branch builds and removes obsolete
+Helios workflows/submodule ownership. Historical acceptance remains retained.

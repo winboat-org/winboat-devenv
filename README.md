@@ -36,8 +36,9 @@ Stage 6 supplies exact component workflows, migrated installer sources and a
 prebuilt-only guest installer bundler. Its distribution contains only the complete
 Windows guest-stack installer and release manifest. QEMU and virglrenderer stay
 in their own component CI; input archives, symbols and the unpacked payload
-are excluded from the final download. The revised eleven-input hosted run is
-pending. The earlier 13 selected component archives passed exact
+are excluded from the final download. The revised eleven-input hosted run
+[`38901101323`](https://github.com/winboat-org/winboat-devenv/actions/runs/38901101323)
+passed: two files, 39.27 MB, with an installer byte-identical to local assembly. The earlier 13 selected component archives passed exact
 source, dependency and member verification. Hosted QEMU's archive is 142.5 MB,
 87% smaller than before. Local candidate assembly and hosted run
 [`38353599147`](https://github.com/winboat-org/winboat-devenv/actions/runs/38353599147)

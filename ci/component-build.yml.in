@@ -41,7 +41,7 @@ jobs:
           [[ "$COMPONENT_REVISION" =~ ^[0-9a-f]{40}$ ]]
           test "$COMPONENT_REVISION" = "$GITHUB_SHA"
       - name: Checkout the exact root operation and installer source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, verified 2026-10-06
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, node24
         with:
           repository: winboat-org/winboat-devenv
           ref: ${{ inputs.root_revision }}
@@ -56,7 +56,7 @@ jobs:
           component_tools=$(nix build --no-link --print-out-paths --file nix/ci.nix @PACKAGE@)
           printf '%s/bin\n' "$component_tools" >> "$GITHUB_PATH"
       - name: Restore immutable source-object cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4, verified 2026-10-06
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0, node24
         with:
           path: workspace/.state/source-cache
           key: component-${{ runner.os }}-${{ inputs.root_revision }}-${{ inputs.component_revision }}-${{ hashFiles('workspace/devenv.lock', 'workspace/config/provision.lock.json', 'workspace/nix/pins.nix') }}-${{ matrix.target }}-${{ inputs.configuration }}
@@ -77,7 +77,7 @@ jobs:
           --configuration "$CONFIGURATION" @EXTRA_ARGS@
       - name: Upload this run's individual artifact
         id: artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4, verified 2026-10-06
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, node24
         with:
           name: ${{ matrix.target }}-${{ inputs.configuration }}-${{ inputs.component_revision }}
           path: workspace/out/ci-components/${{ matrix.target }}-${{ inputs.configuration }}/

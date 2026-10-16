@@ -4449,7 +4449,7 @@
     "managedRepositoriesClean": 12
   },
   "guestDistributionCorrection": {
-    "state": "implementation-validated-real-assembly-pending",
+    "state": "local-and-hosted-guest-only-candidate-accepted",
     "requestedScope": "Complete Windows guest stack: Helios KMD and native/WoW64 UMD11/UMD12, Mesa Vulkan/Zink/OpenGL, CLVK, Khronos loaders and guest dependencies.",
     "releaseInputSchema": 3,
     "candidateSchema": 2,
@@ -4470,6 +4470,86 @@
       "size": 297,
       "sha256": "a30f8f74d56d643694ea59ca9f0c41aeab4dfb13cf64cb6de209844b0ca56d3d"
     },
-    "published": false
+    "published": false,
+    "sourceRevision": "c21dd287a53f3658cf2102ea8e5ce1ae549314c1",
+    "releaseInputRevision": "46e2088ee630c771c0850b69f63c7806d6b92d4e",
+    "releaseInputPath": "docs/release-inputs/winboat-release-inputs-20261016.json",
+    "releaseInputSha256": "915678d7a027b49f236ee33d9d4d8e891e3aabfae7215726e5dfb2b29c332eba",
+    "local": {
+      "state": "local-guest-only-candidate-verified",
+      "operationId": "op-23c4270d26444128930bb85e1d744326",
+      "releaseInputSha256": "915678d7a027b49f236ee33d9d4d8e891e3aabfae7215726e5dfb2b29c332eba",
+      "container": {
+        "format": "HLIOSET2",
+        "file": {
+          "path": "HeliosSetup.exe",
+          "size": 38624459,
+          "sha256": "f9c5aac51a4160ccb7cbc97130b14b957e55f4c630e13294dd13b42a16b34ec5"
+        }
+      },
+      "payloadDigest": "4279490519f160309bcda3d037f75effb742f5ba93f1b90d32dd0091a0f20ef1",
+      "outputFiles": [
+        {
+          "path": "HeliosSetup.exe",
+          "size": 38624459,
+          "sha256": "f9c5aac51a4160ccb7cbc97130b14b957e55f4c630e13294dd13b42a16b34ec5"
+        },
+        {
+          "path": "release-manifest.json",
+          "size": 645022,
+          "sha256": "ea4be36cf67207299a8a0c4d30d67c6b200d14b6cc46627ecd76e231a5bbe07c"
+        }
+      ],
+      "payloadMembers": 714,
+      "guestRuntimeFilesUnchanged": 32,
+      "changedPayloadFiles": ["manifest.json"],
+      "removedPayloadFiles": [
+        "licenses/qemu-helios/share/licenses/qemu-helios/COPYING",
+        "licenses/qemu-helios/share/licenses/qemu-helios/COPYING.LIB",
+        "licenses/qemu-helios/share/licenses/qemu-helios/edk2-licenses.txt",
+        "licenses/qemu-helios/share/licenses/qemu-helios/firmware-README",
+        "licenses/virglrenderer/share/licenses/virglrenderer/COPYING"
+      ],
+      "componentArtifacts": 11,
+      "hostArtifactsIncluded": false,
+      "published": false
+    },
+    "localHostJob": "op-8b19ae25a8f94818b1af521bbb9077d1",
+    "localGuestJob": "op-9b9665beaae543c1884dfb2b1762fdda",
+    "hostedRunId": 38901101323,
+    "hostedRunUrl": "https://github.com/winboat-org/winboat-devenv/actions/runs/38901101323",
+    "guestPreservation": {
+      "name": "release-acceptance-20261013",
+      "state": "stopped",
+      "cleanShutdown": true,
+      "shutdownJob": "op-ee7be98b336247c0a517c2821a8a7028",
+      "installationChanged": false
+    },
+    "initialLocalRefusal": {
+      "job": "op-52297c7d1a9d45539e3bc5f80409076e",
+      "reason": "Local out alias traverses a symlink; retried using its canonical artifact directory without changing the boundary check."
+    },
+    "hosted": {
+      "state": "hosted-guest-only-candidate-accepted",
+      "runId": 38901101323,
+      "artifactId": 12046352169,
+      "archiveSize": 39269903,
+      "archiveSha256": "4e2821415b797d9fd40967af1e6bcb90eb567a345c9dbfe71b04367d5446dde4",
+      "members": [
+        "op-7f49fa2332c14389871ae07925f12818/HeliosSetup.exe",
+        "op-7f49fa2332c14389871ae07925f12818/release-manifest.json"
+      ],
+      "installerSize": 38624459,
+      "installerSha256": "f9c5aac51a4160ccb7cbc97130b14b957e55f4c630e13294dd13b42a16b34ec5",
+      "payloadDigest": "4279490519f160309bcda3d037f75effb742f5ba93f1b90d32dd0091a0f20ef1",
+      "installerBytesEqualToLocal": true,
+      "hostArtifactsIncluded": false,
+      "published": false
+    },
+    "hostedLog": {
+      "path": "workspace-state:stage06/guest-release-hosted-success.log",
+      "size": 352596,
+      "sha256": "44616d20da9b31ef2415c29bd03f2b0c60e704fb0a4385f536578b4f26162e18"
+    }
   }
 }

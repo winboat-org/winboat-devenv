@@ -4,7 +4,12 @@ Stage 6 supplies repository-owned component workflows and a shared verifier and
 packer. The earlier 13-input candidate passed local and hosted assembly. The current
 release contract selects 11 guest/build-tool inputs and distributes only the
 complete Windows guest installer plus its release manifest. QEMU and virglrenderer
-remain in their own component workflows; a refreshed hosted run is pending.
+remain in their own component workflows. Hosted run
+[`38901101323`](https://github.com/winboat-org/winboat-devenv/actions/runs/38901101323)
+passed all three jobs and produced a 39,269,903-byte artifact with exactly two
+files. Its 38,624,459-byte installer is byte-identical to local assembly, SHA256
+`f9c5aac51a4160ccb7cbc97130b14b957e55f4c630e13294dd13b42a16b34ec5`.
+All 32 guest runtime and verification files match the earlier accepted package.
 Fresh installer acceptance passed its measured current-host lifecycle and graphics
 checks, with the limits below. The measured gates and
 artifact identities are recorded in [Stage 6 evidence](evidence/stage-06-implementation.json).
