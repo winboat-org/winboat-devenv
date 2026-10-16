@@ -61,9 +61,9 @@
       provenance = "canonical-winboat-43.2.0-2026-10-02";
     };
     clvk-helios = {
-      rev = "56c626132782bf083a80a6c17f5ca763be0ff8fb";
+      rev = "cfb2f21e912a22974b77526e4362f959c13c714f";
       ref = "refs/heads/main";
-      provenance = "reference-helios-windows-ci";
+      provenance = "verified-push";
     };
   };
 }
