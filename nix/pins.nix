@@ -16,7 +16,7 @@
       provenance = "verified-push";
     };
     dxvk = {
-      rev = "6948271578bf2aa6481389a07b5070c95f911952";
+      rev = "aaca727df5e29514c19bf59261929da6973a088c";
       ref = "refs/heads/master";
       provenance = "verified-push";
     };
