@@ -2,7 +2,7 @@ name: Build the ADL compatibility shim
 on:
   push:
     branches: [master]
-    paths: [installer/**, packaging/**, metadata/**, kmd_render/driver-version.env, nix/**, tools/wb/**, devenv.lock, .github/workflows/build-adl-compatibility.yml]
+    paths: [installer/**, packaging/**, metadata/**, kmd_render/driver-version.env, nix/**, "!nix/pins.nix", tools/wb/**, devenv.lock, .github/workflows/build-adl-compatibility.yml]
   workflow_dispatch:
     inputs:
       root_revision:

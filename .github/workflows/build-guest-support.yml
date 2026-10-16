@@ -2,7 +2,7 @@ name: Build guest loaders and probes
 on:
   push:
     branches: [master]
-    paths: [installer/**, packaging/**, metadata/**, kmd_render/driver-version.env, nix/**, tools/wb/**, devenv.lock, .github/workflows/build-guest-support.yml]
+    paths: [installer/**, packaging/**, metadata/**, kmd_render/driver-version.env, nix/**, "!nix/pins.nix", tools/wb/**, devenv.lock, .github/workflows/build-guest-support.yml]
   workflow_dispatch:
     inputs:
       root_revision:
